@@ -1,0 +1,234 @@
+---
+title: "Problemas de estadística descriptiva"
+author: "Bioestadística"
+date: "Septiembre 2025"
+output:
+  html_document:
+    self_contained: true  
+    theme: simplex
+    toc: yes
+    toc_float:
+      collapsed: true
+fontsize: 14pt
+---
+```{r setup, include=FALSE}
+# Load useful packages
+library(rmdformats)   # for extra formatting if needed
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+<style>
+body {
+  font-size: 14px;   /* un poco más grande */
+  color: black;      /* asegura texto en negro */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #D9230F;        /* títulos en rojo */
+}
+
+h3, h4, h5, h6 {
+  color: black;        /* títulos en rojo */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+
+.handwritten {
+  font-family: 'Handlee', monospace;
+  font-size: 1.1em;
+}
+
+.respuesta {
+  background-color: #F0F0F0;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  line-height: 1.2;
+}
+</style>
+
+
+
+
+## Problema 1: Sinusitis y antibióticos.
+
+Investigadores que estudiaban el efecto del tratamiento con antibióticos para la sinusitis aguda compararon este tratamiento con terapias únicamente sintomáticas. Para ello, asignaron al azar a 166 adultos diagnosticados con sinusitis aguda a uno de dos grupos: tratamiento o control. El grupo de tratamiento recibió un ciclo de 10 días con amoxicilina (un antibiótico). El grupo de control recibió un placebo con el mismo aspecto y sabor, pero consistente en tratamientos sintomáticos habituales como paracetamol, descongestionantes nasales, etc. Al final de los 10 días, se preguntó a los pacientes si habían notado mejoría en sus síntomas. Los resultados se resumen en la siguiente tabla:
+
+<center>
+<table style="border-collapse:collapse;border-spacing:0;min-width:400px;">
+  <thead>
+    <tr>
+      <th style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;font-style:italic;font-weight:normal;padding:12px 10px;text-align:center;color:black;" colspan="5">
+        Self-reported improvement in symptoms
+      </th>
+    </tr>
+    <tr>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;" colspan="2"></td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;font-weight:bold;padding:12px 10px;color:black;">Sí</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;font-weight:bold;padding:12px 10px;color:black;">No</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;font-weight:bold;padding:12px 10px;color:black;">Total</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;font-style:italic;padding:12px 10px;color:black;" rowspan="2">Grupo</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;font-weight:bold;padding:12px 10px;color:black;">Tratamiento</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">66</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">19</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">85</td>
+    </tr>
+    <tr>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;font-weight:bold;padding:12px 10px;color:black;">Control</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">65</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">16</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">81</td>
+    </tr>
+    <tr>
+      <td style="border-top:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;"></td>
+      <td style="border-top:1px solid black;border-left:1px solid white;border-right:1px solid white;font-weight:bold;padding:12px 10px;color:black;">Total</td>
+      <td style="border-top:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">131</td>
+      <td style="border-top:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">35</td>
+      <td style="border-top:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">166</td>
+    </tr>
+  </tbody>
+</table>
+</center>
+
+<small>Garbutt JM, Banister C, Spitznagel E, Piccirillo JF. Amoxicillin for Acute Rhinosinusitis: A Randomized Controlled Trial. JAMA. 2012;307(7):685–692. doi:10.1001/jama.2012.138</small>
+
+
+
+**Preguntas:**
+
+a) ¿Qué porcentaje de pacientes del grupo de tratamiento informó haber mejorado sus síntomas?
+
+<div class="respuesta handwritten">
+
+Ha mejorado sus síntomas un `r round(66/85,3)*100`% (66/85) de los pacientes del grupo de tratamiento.
+
+</div>
+
+
+b) ¿Qué porcentaje informó mejoría en el grupo control?
+
+<div class="respuesta handwritten">
+
+Ha mejorado sus síntomas un `r round(65/81,3)*100`% (65/81) de los pacientes del grupo de control.
+
+</div>
+
+c) ¿En qué grupo el porcentaje de pacientes con mejoría fue mayor?
+
+<div style="background-color:#F0F0F0; padding:15px 15px; margin:10px 0; border-radius:8px;" class="handwritten">
+El porcentaje es muy similar, 77.6% frente 80.2%.
+</div>
+
+d) Los resultados podrían hacer pensar que existe una diferencia real en la eficacia entre el antibiótico y el placebo para mejorar los síntomas de la sinusitis. Sin embargo, esta no es la única explicación posible. ¿Qué otra explicación se podría dar a la diferencia observada entre los porcentajes de mejoría en ambos grupos?
+
+<div class="respuesta handwritten">
+La diferencia observada podría deberse al azar.
+</div>
+
+
+## Problema 2. Comportamiento gustativo en colibríes
+
+Investigadores plantearon la hipótesis de que un receptor del sabor en los colibríes, T1R1-T1R3, desempeñaba un papel principal en dictar el comportamiento gustativo; en concreto, en determinar qué compuestos detectan los colibríes como dulces.  
+
+En una serie de pruebas de campo, se presentaron simultáneamente a los colibríes dos recipientes: uno con el estímulo de prueba (*test stimuli*) y otro con sacarosa.  
+El estímulo de prueba incluyó aspartamo, eritritol, agua y sacarosa.  El aspartamo es un edulcorante artificial que sabe dulce para los humanos, pero **no es detectado** por T1R1-T1R3.  El eritritol es un edulcotrante artificial que sí activa T1R1-T1R3.  
+Se recogieron datos sobre el tiempo que un colibrí bebía de un recipiente, medido en segundos.  
+
+a) ¿Qué pruebas son controles y cuáles tratamientos?
+
+<div class="respuesta handwritten">
+- Control: recipiente con sacarosa.  
+- Tratamientos: recipientes con aspartamo, eritritol y agua.
+</div>
+
+b) Indentifica las variables de respuesta del estudio. Son numéricas o categóricas?
+
+<div class="respuesta handwritten">
+- Variable de respuesta: tiempo de consumo (segundos).  
+- Tipo: numérica continua.
+</div>
+
+c) Describe la pregunta principal de investigación.
+
+<div class="respuesta handwritten">
+Si el receptor de sabor T1R1-T1R3 desempeña un papel principal en determinar el comportamiento gustativo.
+</div>
+
+## Problema 3. Coloración de huevos
+
+El significado evolutivo de la variación en la coloración de los huevos entre aves no se comprende completamente. Una hipótesis sugiere que la coloración de los huevos puede ser un indicador de la calidad de la hembra: hembras más sanas serían capaces de depositar pigmento azul-verde en la cáscara en lugar de usarlo para sí mismas como antioxidante.  
+
+Estudio con 32 papamoscas cerrojillos:  
+- La mitad de las hembras recibió dieta suplementaria antes y durante la puesta.  
+- Se midió la oscuridad del color azul de los huevos mediante espectrofotometría (ej.: media = 0,594 unidades de absorbancia).  
+- También se registró la masa del huevo.
+
+---
+
+### a) Grupos control y tratamiento
+
+<div class="respuesta handwritten">
+- **Control:** hembras sin dieta suplementaria.  
+- **Tratamiento:** hembras con dieta suplementaria.
+</div>
+
+---
+
+### b) Pregunta principal de investigación
+
+<div class="respuesta handwritten">
+¿La intensidad del color azul-verde refleja la salud y calidad de la hembra?
+</div>
+
+---
+
+### c) Variable de respuesta principal
+
+<div class="respuesta handwritten">
+- Variable primaria: cromaticidad azul-verde en los huevos (oscuridad del color).  
+- Tipo: numérica continua.  
+</div>
+
+
+# 1.4 Método Buteyko, componentes del estudio
+
+**Enunciado:**  
+El método Buteyko es una técnica de respiración superficial desarrollada por Konstantin Buteyko, un médico ruso, en 1952. Evidencia anecdótica sugiere que el método Buteyko puede reducir los síntomas del asma y mejorar la calidad de vida.  
+En un estudio científico para determinar la efectividad de este método, los investigadores reclutaron **600 pacientes asmáticos** de entre 18 y 69 años que dependían de medicación para el tratamiento del asma.  
+Estos pacientes se dividieron aleatoriamente en **dos grupos de investigación**: uno practicaba el método Buteyko y el otro no.  
+A los pacientes se les puntuó la **calidad de vida**, la **actividad**, los **síntomas de asma** y la **reducción de medicación** en una escala de 0 a 10.  
+En promedio, los participantes del grupo Buteyko experimentaron una **reducción significativa de los síntomas de asma** y una **mejora en la calidad de vida**.
+
+---
+
+### a) Identifica la pregunta principal de investigación del estudio
+
+<div class="respuesta handwritten">
+¿Cuál es la efectividad del método Buteyko en la reducción de los síntomas de asma y en la mejora de la calidad de vida en pacientes asmáticos?
+</div>
+
+---
+
+### b) ¿Quiénes son los sujetos de este estudio y cuántos se incluyen?
+
+<div class="respuesta handwritten">
+Los sujetos son pacientes asmáticos de entre 18 y 69 años que dependen de medicación para el asma.  
+Número total de participantes: 600.
+</div>
+
+---
+
+### c) ¿Cuáles son las variables del estudio? Identifica cada variable como numérica o categórica. Si es numérica, indica si es discreta o continua. Si es categórica, indica si es ordinal.
+
+<div class="respuesta handwritten">
+- **Calidad de vida**: numérica, continua (escala 0-10).  
+- **Actividad**: numérica, continua (escala 0-10).  
+- **Síntomas de asma**: numérica, continua (escala 0-10).  
+- **Reducción de medicación**: numérica, continua (escala 0-10).  
+- **Asignación al grupo (Buteyko vs. control)**: categórica, nominal (dos niveles: Buteyko / No Buteyko).
+</div>
