@@ -13,7 +13,7 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 ## 📖 Teoría
 - [Presentación de la asignatura](/T/0/PresentacionBioestadistica.html)
 - [Tema 1: Estadística descriptiva](T/1/1.EstadisticaDescriptiva.html)
-- [Tema 2: Introducción a R](slides/T/2/2.IntroR.html)
+- [Tema 2: Introducción a R](T/2/2.IntroR.html)
 - [Tema 3: Visualización de datos](T/3/3.VisualizacionDatos.html)
 
 ---
