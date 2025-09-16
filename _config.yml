@@ -1,5 +1,1 @@
-title: "Clases de Bioestadística UAB"
-description: "Portal de materiales de la asignatura"
-theme: minimal
-
-markdown: kramdown
+theme: jekyll-theme-minimal
