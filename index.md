@@ -3,37 +3,28 @@ layout: default
 title: "Clases de Bioestadística UAB"
 ---
 
-# 📊 Clases de Bioestadística UAB
+# 📊 Clases de Bioestadística
+## Grado en Genética (UAB)
 
-Bienvenida al portal de la asignatura.  
-Aquí encontrarás todos los materiales organizados por secciones.
+Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales organizados por secciones.
 
 ---
 
 ## 📖 Teoría
-- [Tema 1: Introducción a la Bioestadística](slides/tema1.html)
-- [Tema 2: Distribuciones de probabilidad](slides/tema2.html)
-- [Tema 3: Inferencia estadística](slides/tema3.html)
+- [Presentación de la asignatura](/T/0/PresentacionBioestadistica.html)
+- [Tema 1: Estadística descriptiva](T/1/1.EstadisticaDescriptiva.html)
+- [Tema 2: Introducción a R](slides/T/2/2.IntroR.html)
+- [Tema 3: Visualización de datos](T/3/3.VisualizacionDatos.html)
 
 ---
 
 ## 🗣️ Seminarios
-- [Seminario 1: Análisis de datos biomédicos](seminarios/seminario1.html)
-- [Seminario 2: Presentación de resultados](seminarios/seminario2.html)
+- [Seminario 1: La importancia de mostrar los datos](S/1/S1.html)
 
 ---
 
 ## 💻 Prácticas de ordenador
-- [Práctica 1: Introducción a R](practicas/practica1.html)
-- [Práctica 2: Visualización de datos en R](practicas/practica2.html)
-- [Práctica 3: Análisis estadístico en R](practicas/practica3.html)
-
----
-
-## 📂 Recursos
-- [Guía de RMarkdown](recursos/guia_rmarkdown.pdf)
-- [Tutorial de GitHub Pages](recursos/github_pages_tutorial.html)
-- [Cheat Sheet de R](https://posit.co/resources/cheatsheets/)
+- [Práctica 1: Estadística descriptiva y visualización de datos - Introducción a `R` y `ggplot2`](P/1/PracticaR.html)
 
 ---
 
