@@ -25,6 +25,7 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 
 ## 💻 Prácticas de ordenador
 - [Práctica 1: Estadística descriptiva y visualización de datos - Introducción a `R` y `ggplot2`](P/1/PracticaR.html)
+- <a href="P/1/PracticaR.Rmd" download>Descarga el documento `Rmd` de la Práctica 1 aquí</a>.
 
 ---
 
