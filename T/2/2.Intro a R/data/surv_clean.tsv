@@ -1,0 +1,7 @@
+case_id	age_years	sex	lab_confirmed	wt_kg
+694928	23	m	FALSE	70
+86340d	0	f	TRUE	18
+92d002	16	m	TRUE	59
+544bd1	10	f	TRUE	39
+544bd1	10	f	TRUE	39
+544bd1	10	f	FALSE	39

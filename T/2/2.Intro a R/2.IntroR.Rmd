@@ -1,0 +1,1164 @@
+---
+title: "<br>"
+subtitle: ""
+author: ""
+date: ""
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, rutgers, "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css", "https://use.fontawesome.com/releases/v7.0.0/css/all.css"]
+    lib_dir: libs
+    self_contained: true
+    nature:
+      mathjax: "default"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+      
+---
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+#knitr::include_graphics()
+knitr::opts_chunk$set(
+  cache = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  fig.retina = 5
+)
+library(ggplot2)
+library(readr)
+library(knitr)
+library(tidyverse)
+library(gtsummary)
+
+#pagedown::chrome_print(".html")
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_accent(
+  base_color = "#1c5253", link_color =  "#DE1144", code_inline_color = "#DE1144",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "400", "400i"),
+  code_font_google   = google_font("Roboto Mono"),
+    
+)
+```
+
+class: animated, fadeIn
+# Outline
+
+#### **1. Introducción a R**
+- R como una potente calculadora
+- R para estadística descriptiva básica
+
+#### **2. Manipulación de datos**
+
+- Introducción a `Tidyverse`
+- Abrir y leer ficheros
+- Concepto de "_pipe_"
+- Limpiar los datos
+- Filtrar, seleccionar, crear y transformar columnas de un `data.frame`
+- Maneras de leer y guardar datos
+
+#### **3. Estadística descriptiva con R**
+- Funciones útiles del paquete `Tidyverse`
+- Ejemplos prácticos
+
+<style>
+.title-slide {
+  background-image: url('img/1.png');
+  background-size: 100%;
+}
+</style>
+
+
+---
+
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+# 01
+## Introducción a R
+
+
+---
+class: animated, fadeIn
+
+# R es una potente calculadora
+
+<i class="fa fa-calculator"></i>  R permite realizar cálculos interactivos:
+
+
+```{r}
+2+2
+```
+
+--
+
+```{r}
+sqrt(139)^cos(1.3)-log10(8)
+```
+
+--
+
+```{r}
+a <- sqrt(139)^cos(1.3)-log10(8)
+b <- 4
+c <- a^b
+c
+```
+
+Hemos **asignado** un valor a las variables `a`, `b` y `c` con "<-".
+
+--
+
+**R** dispone de muchas funciones matemáticas _built-in_.
+
+---
+class: animated, fadeIn
+
+## Funciones matemáticas _built-in_
+
+| Comando de R          | Función                           |
+|-----------------------|-----------------------------------|
+| `abs()`               | Valor absoluto &#x7c; $x$ &#x7c;  |
+| `cos()`, `sin()`, `tan()`  | Coseno, seno, tangente             |
+| `exp(x)`              | Función exponencial, $e^x$         |
+| `log(x)`              | Logaritmo natural (base $e$), $\log x = \ln x$ |
+| `log10(x)`            | Logaritmo en base 10, $\log_{10}x$ |
+| `sum()`               | Suma de los valores de un vector |
+| `cumsum()`            | Suma acumulada                 |
+---
+class: animated, fadeIn
+
+## Funciones matemáticas _built-in_
+
+**Ejemplo con `sum()`**
+
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=90)}
+# Simulate daily cases over a 30-day period
+cases_per_day <- c(12, 25, 43, 58, 32, 19, 61, 54, 33, 27, 45, 48, 61, 39, 21, 18, 39, 56, 44, 52, 35, 27, 42, 51, 36, 29, 49, 47, 52, 37)
+total_cases <- sum(cases_per_day)
+total_cases
+```
+
+La función `c()` combina los números en un **vector**.
+
+---
+class: animated, fadeIn
+
+## Funciones estadísticas *built-in*
+
+R también ofrece funciones _built-in_ para realizar **estadística simple**: gráfica y descriptiva.
+
+.pull-left[
+Por ejemplo, para crear un **histograma**:
+
+```{r, fig.width = 4, fig.height = 4, fig.align = "center"}
+hist(cases_per_day)
+```
+]
+
+.pull-right[
+Para crear un **boxplot**:
+
+
+```{r, fig.width = 4, fig.height = 4, fig.align = "center"}
+boxplot(cases_per_day)
+```
+]
+
+
+<div style="background-color:#FFDA9E">
+<b><i class="fas fa-info-circle"></i>&nbsp;Nota.</b> Aprenderemos a hacer gráficos más completos durante el curso.</b> 
+</div>
+
+---
+class: animated, fadeIn
+## Funciones estadísticas *built-in*
+
+| Comando de R              | Función                               |
+|---------------------------|---------------------------------------|
+| `mean(x)`                  | Media aritmética de $x$               |
+| `exp(mean(log(x)))`        | Media geométrica de $x$               |
+| `1/mean(1/x)`              | Media armónica de $x$                 |
+| `median(x)`                | Mediana de $x$                        |
+| `min(x)`, `max(x)`         | Mínimo y máximo de $x$                |
+| `range(x)`                 | Rango de $x$                          |
+| `sd(x)`                    | Desviación estándar de $x$            |
+| `var(x)`                   | Varianza de $x$                       |
+
+
+#### Ejemplo con `median()`
+```{r}
+median(cases_per_day)
+```
+
+
+---
+exclude: true
+class: animated, fadeIn
+# Interaccionant amb R
+
+## Consells sobre els noms de variables
+
+1. No es poden començar amb un número (`2x` <i class="fas fa-thumbs-down"></i>; `x2` <i class="fas fa-thumbs-up"></i>)
+2. Són sensibles a majúscules/minúscules (`genome_length` ≠ `Genome_length`)
+3. Noms autoexplicatius, evitant noms de funcions (`mean` <i class="fas fa-thumbs-down"></i>; `meanCoverage` <i class="fas fa-thumbs-up"></i>)
+4. Format `camelCase`
+5. Utilitza un estil consistent dins de l'script
+
+
+---
+exclude: true
+class: animated, fadeIn
+# Sistema de paquets a R
+
+R té molts paquets addicionals que proporcionen més **funcions**.
+
+<center><img src="images/number-of-submitted-packages-to-CRAN.png" width=70%></center>
+
+---
+exclude: true
+class: animated, fadeIn
+
+# Sistema de paquets a R
+
+R té molts paquets addicionals que proporcionen més **funcions**.
+
+Pots **instal·lar** un nou paquet amb la comanda `install.packages()`:
+
+
+```{r, eval = F}
+install.packages("ggplot2")
+```
+
+
+Pots instal·lar més d'un paquet si utilitzes un vector `c()`:
+
+```{r, eval = F}
+install.packages(c("plyr","reshape2"))
+```
+
+
+Pots instal·lar-lo des del menú de RStudio: *Tools* > *Install packages*.
+
+
+
+És important carregar un paquet després d'instal·lar-lo amb `library()`
+
+
+
+```{r, eval = F}
+library("ggplot2")
+```
+
+
+---
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+# 02
+## Manipulación de datos
+
+---
+class: animated, fadeIn
+
+# Introducción a `Tidyverse`
+
+<img src="img/hex-tidyverse.png" width="20%" style="float:right; margin-left:20px">
+
+El conjunto de paquetes integrados de `Tidyverse` está diseñado para hacer que las operaciones comunes en la **manipulación de datos** sean más fáciles de usar.  
+Los paquetes incluyen funciones para organizar, ordenar, leer/escribir, analizar y visualizar datos, entre otros.  
+
+--
+
+```{r, eval = F}
+install.packages("tidyverse")
+library("tidyverse")
+```
+
+--
+### _Pipes_ (`%>%`)
+Para hacer que el código R sea más legible, las herramientas de `Tidyverse` utilizan la **canalización** (_pipes_), `%>%` (desde R 4.10, se puede utilizar `|>`), que forma parte del paquete `dplyr` que se instala automáticamente con `Tidyverse`: permite que la salida de un comando se use como entrada para otro.
+
+
+```{r}
+sqrt(83) %>% round(digits = 2) # Ctrl + Shift + M
+```
+
+---
+class: animated, fadeIn
+# Trabajando con datos
+
+### Leer datos en R
+Independientemente del análisis que estemos realizando, generalmente necesitamos leer **datos**. La **función** que usemos en R dependerá del tipo de archivo de datos que estemos importando (por ejemplo, texto, Excel, etc.) y de cómo estén separadas o delimitadas las datos en ese archivo.
+
+--
+
+| Tipo de datos | Extensión | Función | Paquete |
+|---------------|-----------|---------|---------|
+| *Valores separados por comas* | `csv` | `read.csv()` | `utils` (por defecto) |
+|   |   | `read_csv()` | `readr` |
+| *Valores separados por tabulaciones* | `tsv`/`tab` | `read_tsv()` | `readr` |
+| Otros | `txt` | `read.table()` | `utils` |
+|  |  | `read_delim()` | `readr` |
+| Excel | `xlsx`, `xls` | `read_excel()` | `readxl` |
+
+
+---
+class: animated, fadeIn
+# Trabajando con datos
+
+### Leer datos en R
+
+```{r, example}
+metadata <- read.csv(file="data/virus_exp_design.csv", header = T)
+
+metadata <- read.table(file="data/virus_exp_design.csv", sep = ",", header = T)
+
+metadata <- read_csv(file="data/virus_exp_design.csv", col_names = T)
+
+metadata <- read_delim(file="data/virus_exp_design.csv", delim = ",", col_names = T)
+```
+
+```{r echo = F, tidy=TRUE}
+metadata
+```
+
+
+---
+class: animated, fadeIn
+# Trabajando con datos
+
+Leeremos los datos que corresponden a casos de una epidemia de ébola simulada (obtenidos de: https://www.epirhandbook.com/). En R, una tabla se llama **data.frame**.
+
+```{r}
+surv_raw <- read_tsv("data/ebola_epidemic.tab", col_names = T)
+``` 
+
+<div style="font-size: 60%;">
+
+```{r, echo = F, tidy=T}
+head(surv_raw, 25) %>% 
+  tibble() %>% 
+  DT::datatable(
+    options = list(
+      scrollY = 300,
+      scrollX = 600,
+      pageLength = 25,
+      fontSize = '5%',
+      dom = "ti",
+      ordering = FALSE,
+      rownames = FALSE,
+      options = list(pageLength = 5, scrollX=T),
+      class = 'white-space: nowrap' 
+    )
+  )
+``` 
+</div> 
+
+---
+class: animated, fadeIn
+## Limpiar y organizar los datos
+
+Una vez que los datos están importados, lo primero que hacemos es limpiar los datos. 
+
+**¿Qué significa "limpiar" los datos?**
+
+1. Preparación para el análisis y visualización
+2. Estandarizar los nombres de las columnas
+3. Filtrar filas y columnas
+4. Unificar la ortografía
+5. Crear variables categóricas y nuevas variables calculadas
+6. Unir con otros datos
+7. Eliminar duplicados
+...
+
+--
+
+Esto lo haremos con el paquete `dplyr`.
+
+<center>
+<img src="https://dplyr.tidyverse.org/logo.png" width="15%"></img>
+</center>
+
+---
+class: animated, fadeIn
+## Limpiar y organizar los datos
+
+Funciones principales:
+
+Función       | Utilidad                               
+---------------|---------------------------------------
+`filter()`    | subconjunto de filas
+`select()`    | subconjunto de columnas
+`distinct()`  | eliminar duplicados 
+`clean_names()` | estandarizar nombre de columnas (automático) 
+`rename()`    | cambiar el nombre de las columnas de manera manual
+`mutate()`    | crear y transformar columnas
+
+---
+class: animated, fadeIn
+## Limpiar y organizar los datos
+
+Usaremos el siguiente dataframe más pequeño con el propósito de hacerlo más sencillo:
+
+
+```{r, echo=F}
+surv_raw <- data.frame(
+  stringsAsFactors = FALSE,
+       check.names = FALSE,
+         case_id = c("694928","86340d","92d002","544bd1","544bd1"),
+         age = c(23L, 0L, 16L, 10L, 10L),
+         sex = c("m", "f", "m", "f", "f"), 
+         lab_confirmed = c(FALSE, TRUE, TRUE, TRUE, FALSE),
+         `wt (kg)` = c(70L, 18L, 59L, 39L, 39L)
+                       )
+surv_raw <- surv_raw %>% 
+  add_row(surv_raw[4,], .before = 5)
+```
+
+```{r, eval=T, echo = F}
+surv_raw %>% 
+  knitr::kable()
+```
+
+---
+class: animated, fadeIn
+
+## Filtrar filas con `filter()`
+
+.pull-left[
+
+
+```{r, eval=F, echo=T}
+filter(surv_raw)
+```
+
+Primer argumento: el `data.frame`.
+
+]
+
+.pull-right[
+
+```{r eval = T, echo=F}
+library(kableExtra)
+filter(surv_raw) %>% knitr::kable() %>% kable_styling(font_size = 16) 
+```
+
+]
+
+
+---
+class: animated, fadeIn
+
+## Filtrar filas con `filter()`
+
+.pull-left[
+
+
+```{r, eval=F, echo=T}
+filter(surv_raw, age < 18) 
+```
+
+Segundo (y más) argumento(s): la prueba lógica para filtrar las filas que queremos *mantener*.
+
+]
+
+.pull-right[
+
+```{r eval = T, echo=F}
+filter(surv_raw, age < 18) %>% knitr::kable() %>% kable_styling(font_size = 16) 
+```
+
+]
+
+---
+class: animated, fadeIn
+
+## Filtrar filas con `filter()`
+
+.pull-left[
+
+
+```{r, eval=F, echo=T}
+filter(surv_raw, age < 18, sex == "f")
+```
+
+Segundo (y más) argumento(s): la prueba lógica para filtrar las filas que queremos *mantener*.
+
+]
+
+.pull-right[
+
+```{r eval = T, echo=F}
+filter(surv_raw, age < 18, sex == "f") %>% knitr::kable() %>% kable_styling(font_size = 16) 
+```
+
+]
+
+Fíjate que usamos doble igual (==) para comprobar si es igual (equivalente).
+
+--
+
+Si queremos buscar que no sea igual (diferente), debemos usar la expresión `!=`.
+
+---
+class: animated, fadeIn
+
+## Filtrar filas con `filter()`
+
+.pull-left[
+
+```{r, eval=F, echo=T}
+filter(surv_raw, 
+  age < 18 & 
+  (sex == "f" | lab_confirmed == TRUE)
+)
+```
+
+*Los saltos de línea y las indentaciones no tienen impacto* (útil para mantener el código más ordenado).
+
+La lógica se puede hacer más compleja utilizando:
+* `&` (y) 
+* `|` (o)
+* Paréntesis
+ 
+
+]
+
+.pull-right[
+
+```{r eval = T, echo=F}
+filter(surv_raw, age < 18 & (sex == "f" | lab_confirmed == TRUE)) %>%
+  knitr::kable() %>% kable_styling(font_size = 16) 
+```
+
+]
+
+---
+class: animated, fadeIn
+
+## Seleccionar columnas con `select()`
+
+
+.pull-left[
+
+```{r, eval=F, echo=T}
+select(surv_raw, ___) 
+```
+
+`select()` también espera recibir un `data.frame` en el primer argumento.
+
+]
+
+.pull-right[
+
+```{r eval = T, echo=F}
+surv_raw %>%
+  knitr::kable() %>% kable_styling(font_size = 16) 
+```
+
+]
+
+
+---
+class: animated, fadeIn
+
+## Seleccionar columnas con `select()`
+
+.pull-left[
+
+```{r, eval=F, echo=T}
+select(surv_raw, case_id, age)
+```
+
+Puedes indicar a `select()` los nombres de columna(s) que quieres *mantener*.
+
+]
+
+.pull-right[
+
+```{r eval = T, echo=F}
+select(surv_raw, case_id, age) %>%
+  knitr::kable() %>% kable_styling(font_size = 16) 
+```
+
+]
+
+---
+class: animated, fadeIn
+
+## Seleccionar columnas con `select()`
+
+.pull-left[
+
+```{r, eval=F, echo=T}
+select(surv_raw, case_id, age, sex)
+```
+
+Puedes indicar a `select()` los nombres de columna(s) que quieres *mantener*.
+
+]
+
+.pull-right[
+
+```{r eval = T, echo=F}
+select(surv_raw, case_id, age, sex) %>%
+  knitr::kable() %>% kable_styling(font_size = 16) 
+```
+
+]
+
+---
+
+class: animated, fadeIn
+
+## Seleccionar columnas con `select()`
+
+.pull-left[
+
+```{r, eval=F, echo=T}
+select(surv_raw, -case_id, -lab_confirmed)
+```
+
+O qué columnas quieres *eliminar* con el símbolo menos "-".
+
+]
+
+.pull-right[
+
+```{r eval = T, echo=F}
+select(surv_raw, -case_id, -lab_confirmed) %>%
+  knitr::kable()  %>% kable_styling(font_size = 16) 
+```
+
+]
+
+---
+
+class: animated, fadeIn
+
+## `filter()` y `select()` simultáneamente
+
+Puedes utilizar el símbolo **%>%** ("_pipe_") para "pasar" datos de una función a la siguiente.
+
+Una orden típica de limpieza contiene una secuencia de pasos enlazados:
+
+- Renombrar columnas
+- Filtrar filas
+- Seleccionar columnas
+- Eliminar duplicados
+- Limpiar valores
+- ...
+
+---
+
+class: animated, fadeIn
+## `filter()` y `select()` simultáneamente
+
+
+Anteriormente, el primer argumento era el dataframe:
+
+`filter(`**surv_raw**`, age < 18)`
+
+--
+
+Usando las pipes, podemos escribir lo mismo como:
+
+**surv_raw** `%>% filter(age < 18)`
+
+--
+
+Puedes pipear los datos a través de *múltiples* funciones:
+
+**surv_raw**
+
+
+```{r, eval=T, echo=F}
+surv_raw %>% knitr::kable() %>% kable_styling(font_size = 16) 
+```
+
+
+
+---
+class: animated, fadeIn
+
+## `filter()` y `select()` simultáneamente
+
+
+Anteriormente, el primer argumento era el dataframe:
+
+`filter(`**surv_raw**`, age < 18)`
+
+Usando las pipes, podemos escribir lo mismo como:
+
+**surv_raw** `%>% filter(age < 18)`
+
+Puedes pipear los datos a través de *múltiples* funciones:
+
+**surv_raw** **%>%** `filter(age < 18)`
+
+
+```{r, eval=T, echo=F}
+surv_raw %>% filter(age < 18) %>% knitr::kable()  %>% kable_styling(font_size = 16) 
+```
+
+---
+class: animated, fadeIn
+
+## `filter()` y `select()` simultáneamente
+
+
+Anteriormente, el primer argumento era el dataframe:
+
+`filter(`**surv_raw**`, age < 18)`
+
+Usando las pipes, podemos escribir lo mismo como:
+
+**surv_raw** `%>% filter(age < 18)`
+
+Puedes pipear los datos a través de *múltiples* funciones:
+
+**surv_raw** **%>%** 
+  `filter(age < 18)` **%>%** 
+  `select(case_id, age, sex)`
+
+```{r, eval=T, echo=F}
+surv_raw %>% filter(age < 18) %>% select(case_id, age, sex) %>% knitr::kable()  %>% kable_styling(font_size = 16) 
+```
+
+---
+class: animated, fadeIn
+
+## `filter()` y `select()` simultáneamente
+
+
+Anteriormente, el primer argumento era el dataframe:
+
+`filter(`**surv_raw**`, age < 18)`
+
+Usando las pipes, podemos escribir lo mismo como:
+
+**surv_raw** `%>% filter(age < 18)`
+
+Puedes pipear los datos a través de *múltiples* funciones:
+
+**surv_raw** **%>%** 
+  `filter(age < 18)` **%>%** 
+  `select(case_id, age, sex)` **%>%** 
+  `distinct()`
+
+```{r, eval=T, echo=F}
+surv_raw %>% filter(age < 18) %>% select(case_id, age, sex) %>% distinct()  %>% knitr::kable()  %>% kable_styling(font_size = 16) 
+```
+
+---
+class: animated, fadeIn
+
+## Limpiar los nombres de las columnas  
+
+Podemos ver los nombres de las columnas del dataframe `surv_raw` con `names()`:
+
+
+```{r, echo=T, eval=T}
+surv_raw %>%  # datos
+  names()     # mostrar el nombre de las columnas                          
+```
+
+--
+
+Aplicar `clean_names()` a `surv_raw` con un *pipe*: esto estandariza automáticamente los nombres de las columnas (minúsculas, sin espacios ni caracteres especiales).
+
+```{r, echo=T, eval=T}
+library(janitor)
+
+surv_raw %>%            # datos
+  clean_names() %>%     # estandarizar nombre de columnas     #<<
+  names()               # muestra los nuevos nombres
+```
+
+  
+---
+class: animated, fadeIn
+
+## Limpiar los nombres de las columnas  
+
+Podemos ver los nombres de las columnas del dataframe `surv_raw` con `names()`:
+
+
+```{r, echo=T, eval=T}
+surv_raw %>%  # datos
+  names()     # mostrar el nombre de las columnas                         
+```
+
+También podemos aplicar la función `rename()` para cambiar los nombres de las columnas de manera manual.
+
+```{r, echo=T, eval=T}
+surv_raw %>%                        # datos
+  clean_names() %>%                 # estandarizar nombre de columnas 
+  rename(                           # cambio manual                    #<<
+      age_years  = age)  %>%            # nombre nuevo = nombre antiguo             #<< 
+  names()                           # mostrar el nombre de las columnas 
+```
+
+---
+class: animated, fadeIn
+
+## La función `mutate()` para crear nuevas columnas
+
+La sintaxis es:
+
+
+```{r, echo=T, eval=F}
+DATASET %>% 
+  mutate(NOMBRE_COLUMNA_NUEVA = UNA_FUNCION(argumentos))                        
+```
+
+--
+
+.pull-left[
+
+```{r, echo=T, eval=F}
+surv_raw %>% 
+  mutate(age_group = ifelse(
+    test = age >= 18,
+    yes = "adult",  
+    no = "minor")
+    ) 
+```
+
+`ifelse()` comprueba de manera lógica cada fila y escribe el resultado en la columna `age_group`:  
+
+* "adult" si la prueba es TRUE  
+* "minor" si la prueba es FALSE
+
+
+]
+
+.pull-right[
+
+```{r, echo=F, eval=T}
+surv_raw %>% 
+  mutate(age_group = ifelse(
+    test = age >= 18,
+    yes = 'adult',
+    no = 'minor')) %>% 
+  knitr::kable() %>% kable_styling(font_size = 12) 
+```
+
+]
+
+
+---
+class: animated, fadeIn
+
+## La función `mutate()` para editar columnas
+
+La sintaxis es:
+
+
+```{r, echo=T, eval=F}
+DATASET %>% 
+  mutate(MISMO_NOMBRE_COLUMNA = UNA_FUNCION(argumentos))                        
+```
+
+
+.pull-left[
+
+```{r, echo=T, eval=F}
+surv_raw %>% 
+  mutate(sex = recode(sex,
+    "m" = "male",
+    "f" = "female")) 
+```
+
+La columna `sex` se sobrescribe con los nuevos valores que hemos definido.
+
+* "female" si el valor es `f`  
+* "male" si el valor es `m`
+
+]
+
+.pull-right[
+
+```{r, echo=F, eval=T}
+surv_raw %>% 
+  mutate(sex = recode(sex,
+    "m" = "male",
+    "f" = "female"))  %>% 
+  knitr::kable() %>% kable_styling(font_size = 14) 
+```
+
+]
+
+
+---
+class: animated, fadeIn
+## Guardar datos
+
+Para escribir nuestra tabla en un archivo separado por comas (`.csv`), podemos utilizar la función `write_csv()`. Hay dos argumentos obligatorios:
+
+- el nombre de la tabla
+- la ruta y el nombre del archivo al que se exportará
+
+--
+
+Por ejemplo, queremos guardar el dataframe después de haber limpiado los nombres de las columnas:
+
+
+```{r, echo = T, eval = T}
+surv_clean <- surv_raw %>%  # guarda en un objeto #<<
+  clean_names() %>%          
+  rename(                           
+      age_years  = age)
+```
+
+--
+Por defecto, el delimitador está establecido (ya que es `csv`) y las columnas se separarán con una coma (paquete `utils`, por defecto):
+
+
+```{r}
+write_csv(surv_clean, file="data/surv_clean.csv", col_names = T, quote = "none")
+```
+
+--
+Otra función de uso general es `write_delim()`, que permite especificar el delimitador (paquete `tidyr`).
+
+```{r}
+write_delim(surv_clean, file="data/surv_clean.tsv", delim = "\t", quote = "none", col_names = T)
+```
+
+---
+class: animated, fadeIn
+
+## Guardar datos
+
+Resumen de las funciones generales para guardar archivos:
+
+| Tipo de datos                     | Extensión         | Función               | Paquete     |
+|-----------------------------------|------------------|----------------------|------------|
+| *Valores separados por comas*       | `.csv`           | `write.csv()`        | `utils` (por defecto)    |
+|                                   |                  | `write_csv()`        | `readr`    |
+| *Valores separados por tabulaciones* | `.tsv`, `.tab`   | `write.table()`      | `utils`    |
+|                                   |                  | `write_tsv()`        | `readr`    |
+| Otros       | `.txt`, `.dat`   | `write.table()`      | `utils`    |
+|                                   |                  | `write_delim()`      | `readr`    |
+| Excel                   | `.xlsx`, `.xls`  | `write_xlsx()`       | `writexl`  |
+|                                   |                  | `write.xlsx()`       | `openxlsx` |
+
+---
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+# 03
+## Estadística descriptiva
+
+---
+class: animated, fadeIn
+## Funciones básicas para estadística descriptiva
+
+Continuaremos con `Tidyverse` y otras funciones interesantes que el paquete nos ofrece:
+
+| Función | Definición |
+|---|---|
+| `count()` | Contar |
+| `group_by()` | Agrupar |
+| `summarize()` | Resumir |
+| `arrange()` | Ordenar |
+
+
+---
+class: animated, fadeIn
+
+## La función `count()`
+
+Pasa los datos con el pipe a `count()` e indica el nombre de la columna.
+
+Esto devuelve el número de filas (observaciones) por cada valor único (por grupo).
+
+--
+
+```{r, echo=T}
+surv_raw <- read_tsv("data/ebola_epidemic.tab")
+
+surv_raw %>% 
+  count(hospital)                            #<<
+```
+
+---
+class: animated, fadeIn
+## La función `count()`
+
+Puedes incluir múltiples columnas para hacer los grupos:
+
+
+```{r, echo=T}
+surv_raw %>% 
+  count(hospital, sex)                            #<<
+```
+
+---
+class: animated, fadeIn
+
+## `group_by()` y `summarize()`
+
+Pero, ¿y si quieres más que solo los recuentos?
+
+--
+
+- **"¿Cuál es la edad media en cada grupo?"**
+
+--
+
+- **"¿Cuál es la fecha más reciente de inicio de síntomas en cada grupo?"**
+
+--
+
+- **"¿Cuál es el número de defunciones en cada grupo?"**
+
+--
+
+Las funciones `group_by()` y `summarise()` juntas te dan la flexibilidad de crear un nuevo dataframe resumido con estadísticas por grupos.
+
+---
+class: animated, fadeIn
+
+## `group_by()` y `summarize()`
+
+La sintaxis es:
+
+```{r, echo=T, eval=F}
+DATASET %>% 
+  group_by(COLUMNAS) %>%
+  summarise(NUEVA_COLUMNA = UNA_FUNCION())                        
+```
+
+--
+- ¿Cuántos casos hay registrados en cada hospital?
+
+```{r summarise}
+surv_raw %>% 
+  group_by(hospital) %>% 
+  summarise(n_rows = n())                        #<<
+```
+
+---
+class: animated, fadeIn
+
+## `group_by()` y `summarize()`
+
+La sintaxis es:
+
+```{r, echo=T, eval=F}
+DATASET %>% 
+  group_by(COLUMNAS) %>%
+  summarise(NUEVA_COLUMNA = UNA_FUNCION())                           
+```
+
+- ¿Cuál es la edad media en cada grupo?
+
+```{r}
+surv_raw %>% 
+  group_by(hospital) %>% 
+  summarise(
+    n_rows  = n(),                               
+    age_avg = mean(age_years, na.rm = T))       #<<
+```
+
+---
+class: animated, fadeIn
+
+## `group_by()` y `summarize()`
+
+La sintaxis es:
+
+```{r, echo=T, eval=F}
+DATASET %>% 
+  group_by(COLUMNAS) %>%
+  summarise(NUEVA_COLUMNA = UNA_FUNCION())                           
+```
+
+- ¿Cuál es la fecha más reciente de inicio de síntomas en cada grupo?
+
+```{r}
+surv_raw %>% 
+  group_by(hospital) %>% 
+  summarise(
+    n_rows  = n(),                               
+    age_avg = mean(age_years, na.rm = T),
+    max_onset = max(date_onset, na.rm = T))       #<<
+```
+
+---
+class: animated, fadeIn
+
+## `group_by()` y `summarize()`
+
+La sintaxis es:
+
+```{r, echo=T, eval=F}
+DATASET %>% 
+  group_by(COLUMNAS) %>%
+  summarise(NUEVA_COLUMNA = UNA_FUNCION())                           
+```
+
+- ¿Cuál es el número de defunciones en cada grupo?
+
+```{r}
+surv_raw %>% 
+  group_by(hospital) %>% 
+  summarise(
+    n_rows  = n(),                               
+    age_avg = mean(age_years, na.rm = T),
+    max_onset = max(date_onset, na.rm = T),
+    deaths    = sum(outcome == "Death", na.rm = TRUE))       #<<
+```
+
+---
+class: animated, fadeIn
+
+## Ordena con `arrange()`
+
+Ordena la tabla colocando la(s) columna(s) por la(s) que quieres ordenar dentro de `arrange()`:
+
+```{r}
+surv_raw %>% 
+  group_by(hospital) %>% 
+  summarise(
+    n_rows  = n(),                               
+    age_avg = mean(age_years, na.rm = T),
+    max_onset = max(date_onset, na.rm=T),
+    deaths    = sum(outcome == "Death", na.rm = TRUE)) %>%
+  arrange(n_rows)                                  #<<
+```
+
+--
+
+Podemos ordenar en orden descendente con "-" (`arrange(-n_rows)`).
+
+
+---
+
+# Recursos
+
+- Batra, Neale, et al. The Epidemiologist Rf Handbook. 2021. https://www.epirhandbook.com/en/. Muy recomendable para iniciarse en R con casos aplicados. Algunos ejemplos de este curso se han realizado a partir del material y con ideas de este fabuloso recurso.
+
+- Tutorial general de `Tidyverse`: https://rpubs.com/paraneda/tidyverse
+
+ 
+---
+class: animated, fadeIn
+
+## Contacto
+
+<div style="margin-top: 20vh; text-align:center;">
+
+| Marta Coronado Zamora | David Castellano | 
+|:-:|:-:|
+| <a href="mailto:marta.coronado@uab.cat"><i class="fa fa-paper-plane fa-fw"></i> marta.coronado@uab.cat</a> | <a href="mailto:david.castellano@uab.cat"><i class="fa fa-paper-plane fa-fw"></i>&nbsp; david.castellano@uab.cat</a> | 
+| <a href="https://bsky.app/profile/geneticament.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @geneticament.bsky.social</a> |                 <a href="https://bsky.app/profile/castellanoed.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @castellanoed.bsky.social</a> |
+| <a href="https://www.uab.cat"><i class="fa fa-map-marker fa-fw"></i>&nbsp; Universitat Autònoma de Barcelona</a> |    <a href="https://gutengroup.mcb.arizona.edu/"> <i class="fa fa-map-marker fa-fw"></i>&nbsp; University of Arizona</a> |
+

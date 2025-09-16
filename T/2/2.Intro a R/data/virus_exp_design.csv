@@ -1,0 +1,7 @@
+sample,virus_type,strain,treatment,time_point
+sample1,Influenza,A,No Treatment,T0
+sample2,Influenza,B,No Treatment,T1
+sample3,Influenza,C,No Treatment,T2
+sample4,Influenza,A,Vaccine,T0
+sample5,Influenza,B,Vaccine,T1
+sample6,Influenza,C,Vaccine,T2

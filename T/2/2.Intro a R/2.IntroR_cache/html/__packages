@@ -1,0 +1,15 @@
+ggplot2
+readr
+knitr
+tidyverse
+tibble
+tidyr
+purrr
+dplyr
+stringr
+forcats
+lubridate
+gtsummary
+xaringanthemer
+kableExtra
+janitor
