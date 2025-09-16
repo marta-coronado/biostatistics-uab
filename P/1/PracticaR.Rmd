@@ -175,7 +175,7 @@ En este directorio de trabajo que hayas escogido, realizaremos todos los anális
 
 ## Leer el archivo con los datos de expresión  
 
-Lee en `R` el archivo "`GSE68849_expression.csv`" que encontrarás en la carpeta **data**. Puedes abrirlo primero con Excel o con otro programa de visualización de datos (como un editor de texto) para comprobar si tiene nombres de columnas y cómo están separadas.  
+Lee en `R` el archivo ["**GSE68849_expression.csv**"](https://github.com/marta-coronado/biostatistics-uab/blob/main/P/1/data/GSE68849_expression.csv) que encontrarás en la carpeta [**data**](https://github.com/marta-coronado/biostatistics-uab/blob/main/P/1/data/). Puedes abrirlo primero con Excel o con otro programa de visualización de datos (como un editor de texto) para comprobar si tiene nombres de columnas y cómo están separadas.  
 
 #### **<i class="fa fa-cogs"></i>** Actividad 1.2  
 **¿Cuál será el código en R para abrir el archivo?** Guarda el contenido del archivo en un objeto llamado `expressionData`.  
