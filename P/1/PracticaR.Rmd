@@ -156,7 +156,7 @@ getwd()
 Podemos definir una nueva ruta de trabajo con `setwd()`:
 
 ```{r, eval = F}
-setwd("/ruta/nou/directori")
+setwd("/ruta/nuevo/directorio")
 ```
 
 O de manera gráfica dentro de RStudio a *Session > Set Working Directory > Choose Directory...*). 
@@ -164,7 +164,7 @@ O de manera gráfica dentro de RStudio a *Session > Set Working Directory > Choo
 #### **<i class="fa fa-cogs"></i>** Actividad 1.1  
 **Decide una ruta de trabajo en tu ordenador con `setwd()` o de manera gráfica. Comprueba que sea correcta con `getwd()`.**
 
-<i class="fa fa-key"></i> Por ejemplo, puedes escoger la carpeta donde te hayas descargado el material del Moodle.
+<i class="fa fa-key"></i> Por ejemplo, puedes escoger una carpeta que hayas creado en el Escritorio o Descargas.
 
 
 ```{r, respuesta 1}
@@ -175,12 +175,14 @@ En este directorio de trabajo que hayas escogido, realizaremos todos los anális
 
 ## Leer el archivo con los datos de expresión  
 
-Lee en `R` el archivo ["**GSE68849_expression.csv**"](https://github.com/marta-coronado/biostatistics-uab/blob/main/P/1/data/GSE68849_expression.csv) que encontrarás en la carpeta [**data**](https://github.com/marta-coronado/biostatistics-uab/blob/main/P/1/data/). Puedes abrirlo primero con Excel o con otro programa de visualización de datos (como un editor de texto) para comprobar si tiene nombres de columnas y cómo están separadas.  
+Lee en `R` el archivo ["**GSE68849_expression.csv**"](https://github.com/marta-coronado/biostatistics-uab/blob/main/P/1/data/GSE68849_expression.csv) que encontrarás en la carpeta [**data**](https://github.com/marta-coronado/biostatistics-uab/blob/main/P/1/data/). 
+
+![](img/fichero.png)
 
 #### **<i class="fa fa-cogs"></i>** Actividad 1.2  
 **¿Cuál será el código en R para abrir el archivo?** Guarda el contenido del archivo en un objeto llamado `expressionData`.  
 
-<i class="fa fa-key"></i> Puedes utilizar los comandos que vimos en la diapositiva 12 de teoría del Tema 2: Introducción a R. Ten en cuenta que quizás necesites cargar una librería, como `library(readr)`.
+<i class="fa fa-key"></i> Puedes utilizar los comandos que vimos en la [diapositiva 12 de introducción a R](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#18). Ten en cuenta que quizás necesites cargar una librería, como `library(readr)`, según la función que quieras usar.
 
 ```{r, respuesta 2}
 
@@ -199,7 +201,13 @@ head(expressionData)
 
 #### **<i class="fa fa-cogs"></i>** Actividad 1.4
 
-Para saber el tipo de variable que contiene `expressionData`, podemos utilizar la función `str()`. Rellena la siguiente tabla indicando qué tipo de variable contiene `expressionData`.
+Para saber el tipo de variable que contiene `expressionData`, podemos utilizar la función `str(DATA.FRAME)`. Rellena la siguiente tabla indicando qué tipo de variable contiene el `data.frame expressionData`.
+
+
+```{r}
+
+```
+
 
 | Variable           | Tipo de variable (Cuantitativa / Cualitativa) | Tipo específico (Discreta / Continua / Nominal / Ordinal) | Observaciones |
 |-------------------|-----------------------------------------------|-----------------------------------------------------------|---------------|
@@ -207,7 +215,6 @@ Para saber el tipo de variable que contiene `expressionData`, podemos utilizar l
 | _Treatment_         | [ ]                                           | [ ]                                                       | [ ]           |
 | _Gene_              | [ ]                                           | [ ]                                                       | [ ]           |
 | _Expression level_  | [ ]                                           | [ ]                                                       | [ ]           |
-
 
 
 ## Estadística descriptiva
@@ -244,8 +251,9 @@ Como queremos contar todas las filas resultantes, no hace falta especificar ning
 
 Alternativamente, te mostramos una función que no se ha visto en la teoría y que permite hacer lo mismo: `n_distinct` junto con `summarize`:
 
-```{r, n_distinct}
-
+```{r, n_distinct, eval = F, echo = T}
+expressionData %>%
+  summarize(n=n_distinct(gene))
 ```
 
 
@@ -269,7 +277,7 @@ Una de las columnas es `subject`. Extrae todos los datos correspondientes al suj
 
 
 #### **<i class="fa fa-cogs"></i>** Actividad 1.9  
-Calcula la media de expresión para cada tratamiento. Deberás combinar `group_by()` y `summarize()`. La diapositiva 42 puede servir de guía:
+Calcula la media de expresión para cada tratamiento. Deberás combinar `group_by()` y `summarize()`. La [diapositiva 42](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#62) puede servir de guía:
 
 
 ```{r, respuesta 9}
@@ -279,9 +287,9 @@ Calcula la media de expresión para cada tratamiento. Deberás combinar `group_b
 
 #### **<i class="fa fa-cogs"></i>** Actividad 1.10
 
-Crea una nueva columna basada en el nivel de expresión de los genes: <10 → "bajo",10-100 → "moderado", 100-1000 → "alto", >1000 → "muy alto"  
+Crea una nueva columna basada en el nivel de expresión de los genes: <10 → "bajo", 10-100 → "moderado", 100-1000 → "alto", >1000 → "muy alto"  (*binning*)
 
-En la diapositiva 32 viste cómo hacerlo con `ifelse()` para dos grupos. Ahora lo haremos con `case_when()`, que permite trabajar con múltiples condiciones. Un ejemplo que puede servirte:
+En la [diapositiva 32](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#44) viste cómo hacerlo con `ifelse()` para dos grupos. Ahora lo haremos con `case_when()`, que permite trabajar con múltiples condiciones. Un ejemplo que puede servirte:
 
 
 ```{r, eval = F}
@@ -354,7 +362,7 @@ Para mejorar los ejes, haremos lo siguiente:
 ```{r, eval = F}
 exp.heatmap <- exp.heatmap +
   labs(x = "???", y = "???") + 
-  theme(axis.text.x = element_text(angle = ???, vjust = 0.5)) # Rotar les etiquetes de l'eix x
+  theme(axis.text.x = element_text(angle = ???, vjust = 0.5))
 exp.heatmap
 
 ```

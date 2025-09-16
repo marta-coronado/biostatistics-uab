@@ -30,7 +30,6 @@ library(ggplot2)
 library(readr)
 library(knitr)
 library(tidyverse)
-library(gtsummary)
 
 #pagedown::chrome_print(".html")
 ```
@@ -313,6 +312,8 @@ class: animated, fadeIn
 
 ### Leer datos en R
 
+Tabla de datos disponible [aquí](https://github.com/marta-coronado/biostatistics-uab/blob/main/T/2/data/virus_exp_design.csv). 
+
 ```{r, example}
 metadata <- read.csv(file="data/virus_exp_design.csv", header = T)
 
@@ -332,7 +333,7 @@ metadata
 class: animated, fadeIn
 # Trabajando con datos
 
-Leeremos los datos que corresponden a casos de una epidemia de ébola simulada (obtenidos de: https://www.epirhandbook.com/). En R, una tabla se llama **data.frame**.
+Leeremos los datos que corresponden a casos de una epidemia de ébola simulada (obtenidos de: https://www.epirhandbook.com/ y disponibles [aquí](https://github.com/marta-coronado/biostatistics-uab/blob/main/T/2/data/ebola_epidemic.tab)). En R, una tabla se llama **`data.frame`**.
 
 ```{r}
 surv_raw <- read_tsv("data/ebola_epidemic.tab", col_names = T)
@@ -899,7 +900,7 @@ surv_raw %>%
 class: animated, fadeIn
 ## Guardar datos
 
-Para escribir nuestra tabla en un archivo separado por comas (`.csv`), podemos utilizar la función `write_csv()`. Hay dos argumentos obligatorios:
+Para escribir nuestra tabla en un archivo separado por comas (`.csv`), podemos utilizar la función `write.csv()`. Hay dos argumentos obligatorios:
 
 - el nombre de la tabla
 - la ruta y el nombre del archivo al que se exportará
@@ -921,14 +922,14 @@ Por defecto, el delimitador está establecido (ya que es `csv`) y las columnas s
 
 
 ```{r}
-write_csv(surv_clean, file="data/surv_clean.csv", col_names = T, quote = "none")
+write.csv(surv_clean, file="data/surv_clean.csv", col.names = T, quote = F)
 ```
 
 --
-Otra función de uso general es `write_delim()`, que permite especificar el delimitador (paquete `tidyr`).
+Otra función de uso general es `write.table()`, que permite especificar el delimitador.
 
 ```{r}
-write_delim(surv_clean, file="data/surv_clean.tsv", delim = "\t", quote = "none", col_names = T)
+write.table(surv_clean, file="data/surv_clean.tsv", sep = "\t", quote = F, col.names = T)
 ```
 
 ---

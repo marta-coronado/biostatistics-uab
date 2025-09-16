@@ -30,7 +30,6 @@ library(ggplot2)
 library(readr)
 library(knitr)
 library(tidyverse)
-library(gtsummary)
 library(ggsignif)
 
 #pagedown::chrome_print(".html")
@@ -232,7 +231,7 @@ long_df
 class: animated, fadeIn
 # Trabajando con datos
 
-Leeremos los datos que corresponden a casos de una epidemia de ébola simulada (obtenidos de: https://www.epirhandbook.com/). En R, una tabla se llama **data.frame**.
+Leeremos los datos que corresponden a casos de una epidemia de ébola simulada (obtenidos de: https://www.epirhandbook.com/ y disponibles [aquí](https://github.com/marta-coronado/biostatistics-uab/blob/main/T/2/data/ebola_epidemic.tab)). En R, una tabla se llama **data.frame**.
 
 ```{r}
 surv_raw <- read_tsv("data/ebola_epidemic.tab", col_names = T)
@@ -1251,7 +1250,7 @@ Figure 7 - Tahami, M.S., Vargas-Chavez, C., Poikela, N., Coronado-Zamora, M., et
 
 # Resumen
 
-- La mayoría de los gráficos exploratorios y de comunicación básicos en biología se pueden generar con herramientas generales de gráficos estadísticos (`ggplot2`) --> Datos cuantitativos y cualitativos
+- La mayoría de los gráficos exploratorios y de comunicación básicos en biología se pueden generar con herramientas generales de gráficos estadísticos (`ggplot2`) → **Datos cuantitativos y cualitativos**
 
   - Diagramas de dispersión (scatterplots)
   - Diagramas de barras (barplots)
