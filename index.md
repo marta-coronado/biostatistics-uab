@@ -21,6 +21,7 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 ## 🗣️ Seminarios
 - [Seminario 1: La importancia de mostrar los datos](S/1/S1.html)
 - [Seminario 2: Problemas de estadística descriptiva](S/2/Problemas_Estadistica_Descriptiva.html)
+  
 ---
 
 ## 💻 Prácticas de ordenador
