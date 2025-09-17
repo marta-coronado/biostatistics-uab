@@ -1,0 +1,14 @@
+rmdformats
+ggplot2
+patchwork
+kableExtra
+gridExtra
+tidyr
+dplyr
+readr
+knitr
+xaringanthemer
+xaringanExtra
+gghalves
+ggthemes
+ggbeeswarm
