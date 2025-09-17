@@ -110,7 +110,7 @@ Investigadores que estudiaban el efecto del tratamiento con antibióticos para l
 
 <div class="respuesta handwritten">
 
-Ha mejorado sus síntomas un `r round(66/85,3)*100`% (66/85) de los pacientes del grupo de tratamiento.
+
 
 </div>
 
@@ -119,20 +119,18 @@ Ha mejorado sus síntomas un `r round(66/85,3)*100`% (66/85) de los pacientes de
 
 <div class="respuesta handwritten">
 
-Ha mejorado sus síntomas un `r round(65/81,3)*100`% (65/81) de los pacientes del grupo de control.
-
 </div>
 
 ### c) ¿En qué grupo el porcentaje de pacientes con mejoría fue mayor?
 
-<div style="background-color:#F0F0F0; padding:15px 15px; margin:10px 0; border-radius:8px;" class="handwritten">
-El porcentaje es muy similar, 77.6% frente 80.2%.
+<div class="respuesta handwritten">
+
 </div>
 
 ### d) Los resultados podrían hacer pensar que existe una diferencia real en la eficacia entre el antibiótico y el placebo para mejorar los síntomas de la sinusitis. Sin embargo, esta no es la única explicación posible. ¿Qué otra explicación se podría dar a la diferencia observada entre los porcentajes de mejoría en ambos grupos?
 
 <div class="respuesta handwritten">
-La diferencia observada podría deberse al azar.
+
 </div>
 
 
@@ -147,21 +145,19 @@ Se recogieron datos sobre el tiempo que un colibrí bebía de un recipiente, med
 ###  a) ¿Qué pruebas son controles y cuáles tratamientos?
 
 <div class="respuesta handwritten">
-- Control: recipiente con sacarosa.  
-- Tratamientos: recipientes con aspartamo, eritritol y agua.
+
 </div>
 
 ###  b) Indentifica las variables de respuesta del estudio. Son numéricas o categóricas?
 
 <div class="respuesta handwritten">
-- Variable de respuesta: tiempo de consumo (segundos).  
-- Tipo: numérica continua.
+
 </div>
 
 ###  c) Describe la pregunta principal de investigación.
 
 <div class="respuesta handwritten">
-Si el receptor de sabor T1R1-T1R3 desempeña un papel en determinar qué compuestos detectan los colibríes como dulces.
+
 </div>
 
 ## Problema 3: Coloración de huevos
@@ -179,21 +175,19 @@ En un estudio realizado con 32 papamoscas cerrojillo (*Ficedula hypoleuca*), a l
 ### a) Identifica los grupos control y tratamiento.
 
 <div class="respuesta handwritten">
-- Control: hembras sin dieta suplementaria.  
-- Tratamiento: hembras con dieta suplementaria.
+
 </div>
 
 ### b) Describe la pregunta principal de investigación.
 
 <div class="respuesta handwritten">
-¿La intensidad del color azul-verde refleja la salud y calidad de la hembra?
+
 </div>
 
 ### c) ¿Cuál es la variable de respuesta principal?
 
 <div class="respuesta handwritten">
-- Variable primaria: cromaticidad azul-verde en los huevos (oscuridad del color).  
-- Tipo: numérica continua.  
+
 </div>
 
 
@@ -210,23 +204,19 @@ A los pacientes se les puntuó la calidad de vida, la actividad, los síntomas d
 ### a) Identifica la pregunta principal de investigación del estudio.
 
 <div class="respuesta handwritten">
-¿Cuál es la efectividad del método Buteyko en la reducción de los síntomas de asma y en la mejora de la calidad de vida en pacientes asmáticos?
+
 </div>
 
 ### b) ¿Quiénes son los sujetos de este estudio y cuántos se incluyen?
 
 <div class="respuesta handwritten">
-Los sujetos son pacientes asmáticos de entre 18 y 69 años que dependen de medicación para el asma.  Número total de participantes: 600.
+
 </div>
 
 ### c) ¿Cuáles son las variables del estudio? Identifica cada variable como numérica o categórica. Si es numérica, indica si es discreta o continua. Si es categórica, indica si es ordinal.
 
 <div class="respuesta handwritten">
-- Calidad de vida: numérica, continua (escala 0-10).  
-- Actividad: numérica, continua (escala 0-10).  
-- Síntomas de asma: numérica, continua (escala 0-10).  
-- Reducción de medicación: numérica, continua (escala 0-10).  
-- Asignación al grupo (Buteyko vs. control): categórica, nominal (dos niveles: Buteyko / No Buteyko).
+
 </div>
 
 
@@ -264,22 +254,19 @@ Los factores ambientales en etapas tempranas de la vida pueden tener efectos dur
 ### a) ¿Qué tipo de estudio es este? ¿Observacional o experimental?
 
 <div class="respuesta handwritten">
-Experimental.
+
 </div>
 
 ### b) ¿Cuáles son los tratamientos experimental y de control en este estudio?
 
 <div class="respuesta handwritten">
-El grupo experimental está formado por los polluelos que recibieron suplementos de vitaminas.
-El grupo de control está formado por los polluelos que no recibieron suplementos de vitaminas.
+
 </div>
 
 ### c) Explica por qué la aleatorización es una característica importante de este experimento.
 
 <div class="respuesta handwritten">
-La aleatorización garantiza que no existan diferencias sistemáticas entre los grupos de control y de tratamiento.
-Aunque los polluelos puedan variar en aspectos que afecten a la masa corporal y a los niveles de corticosterona, la asignación aleatoria esencialmente equilibra estas diferencias, en promedio, entre los dos grupos.
-Esto es fundamental para que la interpretación causal de los resultados sea válida.
+
 </div>
 
 
@@ -294,13 +281,13 @@ Investigadores recopilaron datos para examinar la relación entre contaminantes 
 ### a) Identifica la población de interés y la muestra en este estudio.
 
 <div class="respuesta handwritten">
-La población de interés consiste en los bebés nacidos en el sur de California. La muestra consiste en los 143.196 bebés nacidos entre 1989 y 1993 en el sur de California.
+
 </div>
 
 ### b) Comenta si los resultados del estudio se pueden generalizar a la población y si los hallazgos permiten establecer relaciones causales.
 
 <div class="respuesta handwritten">
-Suponiendo que la muestra sea representativa de la población de interés, los resultados del estudio pueden generalizarse a la población. Sin embargo, los hallazgos no pueden usarse para establecer relaciones causales, ya que se trata de un estudio observacional y no de un experimento.
+
 </div>
 
 
@@ -375,13 +362,13 @@ tabla_wrap <- patchwork::wrap_elements(full = tabla_grob)
 ### a) ¿Sería mejor la media o la mediana para representar lo que podríamos considerar un ingreso típico para los 42 clientes de esta cafetería? ¿Qué nos dice esto sobre la robustez de ambas medidas?
 
 <div class="respuesta handwritten">
-La mediana es una medida mucho mejor para representar la cantidad típica ganada por estas 42 personas. La media es mucho más alta que el ingreso de 40 de las 42 personas. Esto se debe a que la media es un promedio aritmético y se ve afectada por las dos observaciones extremas. La mediana no se ve afectada tanto, ya que es robusta frente a los valores atípicos.
+
 </div>
 
 ### b) ¿Sería mejor la desviación típica o el rango intercuartílico (IQR) para representar la cantidad de variabilidad en los ingresos de los 42 clientes de esta cafetería? ¿Qué nos dice esto sobre la robustez de ambas medidas?
 
 <div class="respuesta handwritten">
-El rango intercuartílico (IQR) es una medida mucho mejor de la variabilidad en los ingresos de casi todas las 42 personas. La desviación típica se ve muy afectada por los dos salarios altos, pero el IQR es robusto frente a estas observaciones extremas.
+
 </div>
 
 
@@ -400,56 +387,14 @@ Al final de la semana, se registran las respuestas: 31 individuos eligieron la o
 
 <div class="respuesta handwritten">
 
-Estos datos son categóricos. Pueden resumirse numéricamente en una tabla de frecuencias o en una tabla de frecuencias relativas, y resumirse gráficamente en un diagrama de barras de conteos o proporciones.
-
 </div>
 
  <i class="fa fa-rocket"></i> **Reto: Haz el gráfico con `ggplot2`** (opcional)
 
-```{r, echo = F, fig.height=5}
-library(ggplot2)
-library(kableExtra)
-
-# Datos de ejemplo
-respuestas <- c("Al menos 2 veces al día", "Al menos 1 vez al día",
-                "Varias veces a la semana", "Varias veces al mes")
-frecuencias <- c(31, 55, 39, 12)
-
-# Tabla de frecuencias
-tabla <- data.frame(
-  Respuesta = respuestas,
-  Frecuencia = frecuencias,
-  Proporcion = round(frecuencias / sum(frecuencias), 3)
-)
-
-# Gráfico de barras
-plotBarras <- ggplot(tabla, aes(x = Respuesta, y = Frecuencia, fill = Respuesta)) +
-  geom_bar(stat = "identity") +
-  geom_text(aes(label = Frecuencia), vjust = -0.5) +
-  labs(title = "Hábitos de uso de hilo dental", x = "Respuesta", y = "") +
-  theme_minimal(base_size = 10) +
-  theme(legend.position = "none", axis.text.x = element_text(angle = 25, hjust = 1)) +
-  theme(axis.text = element_text(color="black"),
-        panel.grid = element_blank())
-
-
-tabla_grob <- gridExtra::tableGrob(
-  tabla, 
-  rows = NULL,
-  theme = gridExtra::ttheme_default(
-    core = list(fg_params = list(cex = 0.7)),   # tamaño de fuente del cuerpo
-    colhead = list(fg_params = list(cex = 0.8)) # tamaño de la cabecera
-  )
-)
-tabla_wrap <- patchwork::wrap_elements(full = tabla_grob)
-plotBarras | tabla_wrap
-```
-
-
 ### b) Evalúa si los resultados de esta encuesta pueden generalizarse para proporcionar información sobre los hábitos de uso del hilo dental en la población general.
 
 <div class="respuesta handwritten">
-Los resultados de este estudio no pueden generalizarse a la población en general. Los individuos que respondieron la encuesta representan un subconjunto específico de la población que está consciente de la salud dental, ya que se encuentran en el consultorio del dentista para una cita. Además, puede existir un sesgo de respuesta; aunque las encuestas sean anónimas, es probable que los encuestados sientan cierta presión para dar una respuesta “correcta” en ese entorno, y digan que usan hilo dental con más frecuencia de lo que realmente lo hacen.
+
 </div>
 
 
@@ -542,24 +487,24 @@ ggplot() +
 ### a) ¿Qué conjunto tiene menor error aleatorio? ¿Cuál tiene el mayor error aleatorio?
 
 <div class="respuesta handwritten">
-El error aleatorio es función de la desviación estándar. B tiene menor error aleatorio y C tiene el mayor error aleatorio.
+
 </div>
 
 ### b) ¿Qué conjunto es más preciso? ¿Cuál es menos preciso?
 
 <div class="respuesta handwritten">
-Una desviación estándar menor indica mayor precisión. B es más preciso, y C es menos preciso.
+
 </div>
 
 ### c) ¿Alguno de los conjuntos probablemente tiene un error sistemático (está sesgado)?
 
 <div class="respuesta handwritten">
-D da un resultado divergente; D probablemente esté sesgado.
+
 </div>
 
 ### d) Si se conociera que el valor verdadero es 8.31, ¿qué conjunto sería más exacto?
 <div class="respuesta handwritten">
-La estimación de C es igual al valor verdadero. Entonces, C sería la más exacta. En este ejemplo, el menos preciso es el más exacto.
+
 </div>
 
 
@@ -568,94 +513,7 @@ A continuación se muestran datos sobre el número de bacterias resistentes a un
 
 ### a) Determina la mediana y los cuartiles.
 
-Ordenamos los datos:
-`13, 13, 14, 14, 15, 15, 16, 20, 21, 26`
-
-Primero determinamos la mediana. Tenemos 10 números. Nos interesan los números de las posiciones `n/2` y `n/2 +1`, es decir, los valores de la posicion `10/2=5` y `10/2 + 1=6`. Los valores en las posiciones 5 y 6 son 15 y 15.
-
-$$
-\text{mediana}(x) = \frac{\left(
-{\left(\tfrac{n}{2}\right)}^{th} + {\left(\tfrac{n}{2}+1\right)}^{th}\right)
-}{2}
-$$
-<br>
-$$
-\text{mediana}(x) = \frac{\left(
-{\left(\tfrac{10}{2}\right)}^{th} + {\left(\tfrac{10}{2}+1\right)}^{th}\right)
-}{2}= \frac{
-{5}^{th} + {6}^{th}
-}{2}=\frac{
-15 + 15
-}{2}=15
-$$
-
 ### b) Calcula la varianza y la desviación estándard.
-
-**Paso 1: Calcular la media**
-
-\[
-\bar{x} = \frac{14 + 15 + 13 + 21 + 15 + 14 + 26 + 16 + 20 + 13}{10} = \frac{167}{10} = 16.7
-\]
-
-**Paso 2: Restar la media a cada dato (desviación respecto a la media)**
-
-| \(x_i\) | \(x_i - \bar{x}\) |
-|:-------:|:----------------:|
-| 14      | -2.7             |
-| 15      | -1.7             |
-| 13      | -3.7             |
-| 21      | 4.3              |
-| 15      | -1.7             |
-| 14      | -2.7             |
-| 26      | 9.3              |
-| 16      | -0.7             |
-| 20      | 3.3              |
-| 13      | -3.7             |
-
-
-**Paso 3: Elevar al cuadrado cada desviación**
-
-\[
-(x_i - \bar{x})^2
-\]
-
-| \(x_i - \bar{x}\) | \((x_i - \bar{x})^2\) |
-|:-------:|:----------------:|
-| -2.7            | 7.29             |
-| -1.7            | 2.89             |
-| -3.7            | 13.69            |
-| 4.3             | 18.49            |
-| -1.7            | 2.89             |
-| -2.7            | 7.29             |
-| 9.3             | 86.49            |
-| -0.7            | 0.49             |
-| 3.3             | 10.89            |
-| -3.7            | 13.69            |
-
-
-**Paso 4: Sumar todos los cuadrados**
-
-\[
-\sum (x_i - \bar{x})^2 = 7.29 + 2.89 + 13.69 + 18.49 + 2.89 + 7.29 + 86.49 + 0.49 + 10.89 + 13.69 = 164.1
-\]
-
----
-
-**Paso 5: Dividir entre \(n-1\) para obtener la varianza muestral**
-
-\[
-s^2 = \frac{\sum (x_i - \bar{x})^2}{n-1} = \frac{164.1}{10-1} = \frac{164.1}{9} \approx 18.23
-\]
-
-
-
-**Paso 6: Desviación estándar**
-
-\[
-s = \sqrt{s^2} = \sqrt{18.23} \approx 4.27
-\]
-
-
 
 ### c) Determina el rango intercuartílico. 
 Los cuartiles son valores que dividen un conjunto de datos ordenados en cuatro partes iguales, cada una conteniendo el 25% de los datos. Existen tres cuartiles principales:
@@ -692,50 +550,4 @@ Si la posición obtenida no es un número entero, se interpola entre los valores
 
 *Nota: si calculas Q1 y Q3 en R, es probable que los valores difieran ligeramente de los que obtienes “a mano”. No te preocupes: R utiliza algoritmos de interpolación diferentes a los que usamos manualmente.*
 
-**Paso 1: Ordenar los datos de menor a mayor**
-
-`13, 13, 14, 14, 15, 15, 16, 20, 21, 26`
-
-**Paso 2: Posición Q1**
-
-$$
-Q1 =  \frac{10+1}{4}=2.75
-$$
-En las posiciones 2 y 3 están los valores 13 y 14. Interpolamos el valor: 
-
-$$
-Q1=13+0.75*(14-13)=13.75
-$$
-
-**Para calcular la Q3:**
-
-$$
-Q3 =  \frac{3*(10+1)}{4}=8.25
-$$
-
-En las posiciones 8 y 9 están los valores 20 y 21 Interpolamos el valor: 
-
-$$
-Q3 = 20+0.25*(21-20)=20.25
-$$
-
-
-**Paso 5: Calcular el rango intercuartílico (IQR)**
-
-\[
-\text{IQR} = Q3 - Q1 = 20.25 - 13.75 = 6.5
-\]
-
 ### d) ¿Qué valor tendría que tener una observación en este conjunto de datos para considerarse un valor atípico?
-
-Para determinar los valores atípicos, calculamos los límites inferior y superior:
-
-\[
-\text{Límite inferior} = Q1 - 1.5 \times IQR  = 13.75 - 1.5 \times  6.5 = 4
-\]  
-\[
-\text{Límite superior} = Q3 + 1.5 \times IQR =  20.25  + 1.5 \times  6.5 = 30
-\]
-
-- Cualquier valor **menor que 4** → valor atípico inferior  
-- Cualquier valor **mayor que 30** → valor atípico superior  

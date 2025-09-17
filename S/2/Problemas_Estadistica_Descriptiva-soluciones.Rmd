@@ -1,0 +1,741 @@
+---
+title: "Problemas de estadística descriptiva"
+author: "Bioestadística"
+date: "Septiembre 2025"
+output:
+  html_document:
+    self_contained: true  
+    theme: simplex
+    css: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css
+    toc: yes
+    toc_float:
+      collapsed: true
+fontsize: 14pt
+---
+```{r setup, include=FALSE}
+# Load useful packages
+library(rmdformats)   # for extra formatting if needed
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+
+<style>
+body {
+  font-size: 14px;   /* un poco más grande */
+  color: black;      /* asegura texto en negro */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #D9230F;        /* títulos en rojo */
+}
+
+h3, h4, h5, h6 {
+  color: black;        /* títulos en rojo */
+}
+
+h3 {
+  font-size: 1em;   /* tamaño igual al texto normal */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+
+.handwritten {
+  font-family: 'Handlee', monospace;
+  font-size: 1.1em;
+}
+
+.respuesta {
+  background-color: #F0F0F0;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  line-height: 1.2;
+}
+</style>
+
+
+
+
+## Problema 1: Sinusitis y antibióticos.
+
+Investigadores que estudiaban el efecto del tratamiento con antibióticos para la sinusitis aguda compararon este tratamiento con terapias únicamente sintomáticas. Para ello, asignaron al azar a 166 adultos diagnosticados con sinusitis aguda a uno de dos grupos: tratamiento o control. El grupo de tratamiento recibió un ciclo de 10 días con amoxicilina (un antibiótico). El grupo de control recibió un placebo con el mismo aspecto y sabor, pero consistente en tratamientos sintomáticos habituales como paracetamol, descongestionantes nasales, etc. Al final de los 10 días, se preguntó a los pacientes si habían notado mejoría en sus síntomas. Los resultados se resumen en la siguiente tabla:
+
+<center>
+<table style="border-collapse:collapse;border-spacing:0;min-width:400px;">
+  <thead>
+    <tr>
+      <th style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;font-style:italic;font-weight:normal;padding:12px 10px;text-align:center;color:black;" colspan="5">
+        Self-reported improvement in symptoms
+      </th>
+    </tr>
+    <tr>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;" colspan="2"></td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;font-weight:bold;padding:12px 10px;color:black;">Sí</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;font-weight:bold;padding:12px 10px;color:black;">No</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;font-weight:bold;padding:12px 10px;color:black;">Total</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;font-style:italic;padding:12px 10px;color:black;" rowspan="2">Grupo</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;font-weight:bold;padding:12px 10px;color:black;">Tratamiento</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">66</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">19</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">85</td>
+    </tr>
+    <tr>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;font-weight:bold;padding:12px 10px;color:black;">Control</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">65</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">16</td>
+      <td style="border-bottom:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">81</td>
+    </tr>
+    <tr>
+      <td style="border-top:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;"></td>
+      <td style="border-top:1px solid black;border-left:1px solid white;border-right:1px solid white;font-weight:bold;padding:12px 10px;color:black;">Total</td>
+      <td style="border-top:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">131</td>
+      <td style="border-top:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">35</td>
+      <td style="border-top:1px solid black;border-left:1px solid white;border-right:1px solid white;padding:12px 10px;color:black;">166</td>
+    </tr>
+  </tbody>
+</table>
+</center>
+
+<small>Garbutt JM, Banister C, Spitznagel E, Piccirillo JF. Amoxicillin for Acute Rhinosinusitis: A Randomized Controlled Trial. JAMA. 2012;307(7):685–692. doi:10.1001/jama.2012.138</small>
+
+<br>
+**Preguntas:**
+
+### a) ¿Qué porcentaje de pacientes del grupo de tratamiento informó haber mejorado sus síntomas?
+
+<div class="respuesta handwritten">
+
+Ha mejorado sus síntomas un `r round(66/85,3)*100`% (66/85) de los pacientes del grupo de tratamiento.
+
+</div>
+
+
+### b) ¿Qué porcentaje informó mejoría en el grupo control?
+
+<div class="respuesta handwritten">
+
+Ha mejorado sus síntomas un `r round(65/81,3)*100`% (65/81) de los pacientes del grupo de control.
+
+</div>
+
+### c) ¿En qué grupo el porcentaje de pacientes con mejoría fue mayor?
+
+<div style="background-color:#F0F0F0; padding:15px 15px; margin:10px 0; border-radius:8px;" class="handwritten">
+El porcentaje es muy similar, 77.6% frente 80.2%.
+</div>
+
+### d) Los resultados podrían hacer pensar que existe una diferencia real en la eficacia entre el antibiótico y el placebo para mejorar los síntomas de la sinusitis. Sin embargo, esta no es la única explicación posible. ¿Qué otra explicación se podría dar a la diferencia observada entre los porcentajes de mejoría en ambos grupos?
+
+<div class="respuesta handwritten">
+La diferencia observada podría deberse al azar.
+</div>
+
+
+## Problema 2: Comportamiento gustativo en colibríes
+
+Investigadores plantearon la hipótesis de que un receptor del sabor en los colibríes, T1R1-T1R3, desempeñaba un papel principal en dictar el comportamiento gustativo; en concreto, en determinar qué compuestos detectan los colibríes como dulces. En una serie de pruebas de campo, se presentaron simultáneamente a los colibríes dos recipientes: uno con el estímulo de prueba (*test stimuli*) y otro con sacarosa. El estímulo de prueba incluyó aspartamo, eritritol, agua y sacarosa.  El aspartamo es un edulcorante artificial que sabe dulce para los humanos, pero no es detectado por T1R1-T1R3.  El eritritol es un edulcotrante artificial que sí activa T1R1-T1R3. 
+
+Se recogieron datos sobre el tiempo que un colibrí bebía de un recipiente, medido en segundos.  
+
+**Preguntas:**
+
+###  a) ¿Qué pruebas son controles y cuáles tratamientos?
+
+<div class="respuesta handwritten">
+- Control: recipiente con sacarosa.  
+- Tratamientos: recipientes con aspartamo, eritritol y agua.
+</div>
+
+###  b) Indentifica las variables de respuesta del estudio. Son numéricas o categóricas?
+
+<div class="respuesta handwritten">
+- Variable de respuesta: tiempo de consumo (segundos).  
+- Tipo: numérica continua.
+</div>
+
+###  c) Describe la pregunta principal de investigación.
+
+<div class="respuesta handwritten">
+Si el receptor de sabor T1R1-T1R3 desempeña un papel en determinar qué compuestos detectan los colibríes como dulces.
+</div>
+
+## Problema 3: Coloración de huevos
+
+El significado evolutivo de la variación en la coloración de los huevos entre aves no se comprende completamente. Una hipótesis sugiere que la coloración de los huevos puede ser un indicador de la calidad de la hembra: hembras más sanas serían capaces de depositar pigmento azul-verde en la cáscara en lugar de usarlo para sí mismas como antioxidante.  
+
+<center>
+<img src="https://www.vertebradosibericos.org/aves/reproduccion/fichypre1.jpg" width=40%></img>
+</center>
+
+En un estudio realizado con 32 papamoscas cerrojillo (*Ficedula hypoleuca*), a la mitad de las hembras se les proporcionó una dieta suplementaria antes y durante la puesta de huevos. Se midió la oscuridad del color azul de los huevos mediante espectrofotometría; por ejemplo, la cantidad media de croma azul-verde fue de 0.594 unidades de absorbancia. También se registró la masa del huevo.
+
+**Preguntas**
+
+### a) Identifica los grupos control y tratamiento.
+
+<div class="respuesta handwritten">
+- Control: hembras sin dieta suplementaria.  
+- Tratamiento: hembras con dieta suplementaria.
+</div>
+
+### b) Describe la pregunta principal de investigación.
+
+<div class="respuesta handwritten">
+¿La intensidad del color azul-verde refleja la salud y calidad de la hembra?
+</div>
+
+### c) ¿Cuál es la variable de respuesta principal?
+
+<div class="respuesta handwritten">
+- Variable primaria: cromaticidad azul-verde en los huevos (oscuridad del color).  
+- Tipo: numérica continua.  
+</div>
+
+
+## Problema 4: Método Buteyko
+
+El método Buteyko es una técnica de respiración superficial desarrollada por Konstantin Buteyko, un médico ruso, en 1952. Evidencia anecdótica sugiere que el método Buteyko puede reducir los síntomas del asma y mejorar la calidad de vida. En un estudio científico para determinar la efectividad de este método, los investigadores reclutaron 600 pacientes asmáticos de entre 18 y 69 años que dependían de medicación para el tratamiento del asma. Estos pacientes se dividieron aleatoriamente en dos grupos de investigación: uno practicaba el método Buteyko y el otro no.  
+A los pacientes se les puntuó la calidad de vida, la actividad, los síntomas de asma y la reducción de medicación en una escala de 0 a 10. En promedio, los participantes del grupo Buteyko experimentaron una reducción significativa de los síntomas de asma y una mejora en la calidad de vida.
+
+<small>73J. McGowan. “Health Education: Does the Buteyko Institute Method make a difference?” In: Thorax 58 (2003).</small>
+<br>
+
+**Preguntas**
+
+### a) Identifica la pregunta principal de investigación del estudio.
+
+<div class="respuesta handwritten">
+¿Cuál es la efectividad del método Buteyko en la reducción de los síntomas de asma y en la mejora de la calidad de vida en pacientes asmáticos?
+</div>
+
+### b) ¿Quiénes son los sujetos de este estudio y cuántos se incluyen?
+
+<div class="respuesta handwritten">
+Los sujetos son pacientes asmáticos de entre 18 y 69 años que dependen de medicación para el asma.  Número total de participantes: 600.
+</div>
+
+### c) ¿Cuáles son las variables del estudio? Identifica cada variable como numérica o categórica. Si es numérica, indica si es discreta o continua. Si es categórica, indica si es ordinal.
+
+<div class="respuesta handwritten">
+- Calidad de vida: numérica, continua (escala 0-10).  
+- Actividad: numérica, continua (escala 0-10).  
+- Síntomas de asma: numérica, continua (escala 0-10).  
+- Reducción de medicación: numérica, continua (escala 0-10).  
+- Asignación al grupo (Buteyko vs. control): categórica, nominal (dos niveles: Buteyko / No Buteyko).
+</div>
+
+
+<div class="respuesta">
+
+## Diferencias entre un estudio experimental y observacional
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(
+  data.frame(
+    "Característica" = c("Control del investigador", 
+                         "Aleatorización", 
+                         "Causalidad", 
+                         "Ejemplo"),
+    "Estudio experimental" = c("Manipula variables (p. ej., asigna tratamientos o intervenciones).", 
+                               "Puede asignar aleatoriamente a los sujetos a grupos.", 
+                               "Permite establecer relaciones causales (si está bien diseñado).", 
+                               "Ensayo clínico con un fármaco vs. placebo."),
+    "Estudio observacional" = c("No manipula, solo observa lo que ocurre de manera natural.", 
+                                "No hay asignación aleatoria.", 
+                                "Solo permite identificar asociaciones, no causalidad.", 
+                                "Estudio de la relación entre contaminación ambiental y nacimientos prematuros.")
+  ),
+  format = "html",
+  table.attr = "style='border-collapse:collapse; width:100%;'",
+  escape = FALSE,
+  col.names = c("Característica", "Estudio experimental", "Estudio observacional")
+)
+```
+</div>
+
+## Problema 5: Polluelos y antioxidantes.
+Los factores ambientales en etapas tempranas de la vida pueden tener efectos duraderos en un organismo. En un estudio,  investigadores examinaron si la suplementación dietética con vitaminas C y E influye en la masa corporal y el nivel de corticosterona en polluelos de gaviota patiamarilla. Los polluelos fueron asignados aleatoriamente a un grupo sin suplementación o al grupo experimental con suplemento de vitaminas. El estudio inicial consistió en 108 nidos, con 3 huevos por nido. Los polluelos fueron evaluados a los 7 días de edad.
+
+### a) ¿Qué tipo de estudio es este? ¿Observacional o experimental?
+
+<div class="respuesta handwritten">
+Experimental.
+</div>
+
+### b) ¿Cuáles son los tratamientos experimental y de control en este estudio?
+
+<div class="respuesta handwritten">
+El grupo experimental está formado por los polluelos que recibieron suplementos de vitaminas.
+El grupo de control está formado por los polluelos que no recibieron suplementos de vitaminas.
+</div>
+
+### c) Explica por qué la aleatorización es una característica importante de este experimento.
+
+<div class="respuesta handwritten">
+La aleatorización garantiza que no existan diferencias sistemáticas entre los grupos de control y de tratamiento.
+Aunque los polluelos puedan variar en aspectos que afecten a la masa corporal y a los niveles de corticosterona, la asignación aleatoria esencialmente equilibra estas diferencias, en promedio, entre los dos grupos.
+Esto es fundamental para que la interpretación causal de los resultados sea válida.
+</div>
+
+
+## Problema 6: Contaminación del aire y nacimientos prematuros 
+Investigadores recopilaron datos para examinar la relación entre contaminantes del aire y los nacimientos prematuros en el sur de California. Durante el estudio, los niveles de contaminación del aire se midieron mediante estaciones de control de calidad del aire. En concreto, se registraron los niveles de monóxido de carbono (en partes por millón), dióxido de nitrógeno y ozono (en partes por cien millones), y material particulado grueso (PM10, en µg/m³). Se recopilaron datos sobre la duración de la gestación en 143196 nacimientos ocurridos entre los años 1989 y 1993, y para cada nacimiento se calculó la exposición a la contaminación del aire durante la gestación. El análisis sugirió que un aumento en los niveles ambientales de PM_[10] y, en menor medida, de CO, podría estar asociado con la ocurrencia de nacimientos prematuros. Se puede asumir que los 143.196 nacimientos representan efectivamente la población completa de nacimientos en ese período.
+
+<small>B. Ritz et al. “Effect of air pollution on preterm birth among children born in Southern California between 1989 and 1993”. In: Epidemiology 11.5 (2000), pp. 502–511.</small>
+
+<br>
+**Preguntas**
+
+### a) Identifica la población de interés y la muestra en este estudio.
+
+<div class="respuesta handwritten">
+La población de interés consiste en los bebés nacidos en el sur de California. La muestra consiste en los 143.196 bebés nacidos entre 1989 y 1993 en el sur de California.
+</div>
+
+### b) Comenta si los resultados del estudio se pueden generalizar a la población y si los hallazgos permiten establecer relaciones causales.
+
+<div class="respuesta handwritten">
+Suponiendo que la muestra sea representativa de la población de interés, los resultados del estudio pueden generalizarse a la población. Sin embargo, los hallazgos no pueden usarse para establecer relaciones causales, ya que se trata de un estudio observacional y no de un experimento.
+</div>
+
+
+## Problema 7: Ingresos en la cafetería. 
+El primer histograma (1) presenta la distribución de los ingresos anuales de 40 clientes en una cafetería universitaria. Supongamos que dos personas nuevas entran en la cafetería: una que gana 220000$ y otra que gana 260000$. El segundo histograma (2) muestra la nueva distribución de ingresos, añadiendo esos 2 universitarios. También se proporcionan estadísticas resumidas en la tabla.
+
+```{r, echo = F, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(patchwork)
+library(gridExtra)
+library(grid)
+library(kableExtra)
+# Simulación de datos para el grupo 1
+datos1 <- rnorm(40, mean = 65090, sd = 2122)
+
+# Simulación de datos para el grupo 2
+# Añadimos outliers grandes para acercarnos al máximo de 250000
+outliers <- c(220000, 260000)
+datos2 <- c(datos1, outliers)
+
+# Tus histogramas ya definidos
+a <- ggplot(data.frame(valor=datos1), aes(x = valor)) +
+  geom_histogram(color = "black", fill = "cadetblue4", bins = 20) +
+  theme_minimal(base_size = 16) +
+  labs(x = "(1)", y = "") +
+  theme(axis.text.y = element_blank(),
+        axis.text = element_text(color="black"),
+        panel.grid = element_blank())
+
+b <- ggplot(data.frame(valor=datos2), aes(x = valor)) +
+  geom_histogram(color = "black", fill = "cadetblue4", bins = 70) +
+  theme_minimal(base_size = 16) +
+  labs(x = "(2)", y = "") +
+  theme(axis.text.y = element_blank(),
+        axis.text = element_text(color="black"),
+        panel.grid = element_blank())
+
+# Tabla como objeto grob
+tabla <- data.frame(
+  Estadístico = c("n", "Min.", "1st Qu.", "Mediana", "Media", "3rd Qu.", "Max.", "SD"),
+  `Grupo 1` = c(
+    as.integer(length(datos1)),
+    min(datos1),
+    quantile(datos1, 0.25),
+    median(datos1),
+    mean(datos1),
+    quantile(datos1, 0.75),
+    max(datos1),
+    sd(datos1)
+  ),
+  `Grupo 2` = c(
+    as.integer(length(datos2)),
+    min(datos2),
+    quantile(datos2, 0.25),
+    median(datos2),
+    mean(datos2),
+    quantile(datos2, 0.75),
+    max(datos2),
+    sd(datos2)
+  )
+)
+
+tabla_grob <- gridExtra::tableGrob(tabla, rows = NULL)
+tabla_wrap <- patchwork::wrap_elements(full = tabla_grob)
+
+# Combinar gráficos y tabla: histogramas apilados a la izquierda, tabla a la derecha
+(a / b) | tabla_wrap
+```
+
+**Preguntas**
+
+### a) ¿Sería mejor la media o la mediana para representar lo que podríamos considerar un ingreso típico para los 42 clientes de esta cafetería? ¿Qué nos dice esto sobre la robustez de ambas medidas?
+
+<div class="respuesta handwritten">
+La mediana es una medida mucho mejor para representar la cantidad típica ganada por estas 42 personas. La media es mucho más alta que el ingreso de 40 de las 42 personas. Esto se debe a que la media es un promedio aritmético y se ve afectada por las dos observaciones extremas. La mediana no se ve afectada tanto, ya que es robusta frente a los valores atípicos.
+</div>
+
+### b) ¿Sería mejor la desviación típica o el rango intercuartílico (IQR) para representar la cantidad de variabilidad en los ingresos de los 42 clientes de esta cafetería? ¿Qué nos dice esto sobre la robustez de ambas medidas?
+
+<div class="respuesta handwritten">
+El rango intercuartílico (IQR) es una medida mucho mejor de la variabilidad en los ingresos de casi todas las 42 personas. La desviación típica se ve muy afectada por los dos salarios altos, pero el IQR es robusto frente a estas observaciones extremas.
+</div>
+
+
+## Problema 8: Hábitos de uso del hilo dental.
+Supongamos que se entrega un cuestionario anónimo a los pacientes en un consultorio dental cuando llegan a su cita. Una de las preguntas es: "¿Con qué frecuencia usas hilo dental?", y se proporcionan cuatro opciones de respuesta:
+a) al menos dos veces al día,
+b) al menos una vez al día,
+c) varias veces a la semana,
+d) varias veces al mes.
+
+Al final de la semana, se registran las respuestas: 31 individuos eligieron la opción a), 55 eligieron la b), 39 eligieron la c) y 12 eligieron la d).
+
+**Preguntas**
+
+### a) Describe cómo se podrían resumir estos datos de forma numérica y gráfica.
+
+<div class="respuesta handwritten">
+
+Estos datos son categóricos. Pueden resumirse numéricamente en una tabla de frecuencias o en una tabla de frecuencias relativas, y resumirse gráficamente en un diagrama de barras de conteos o proporciones.
+
+</div>
+
+ <i class="fa fa-rocket"></i> **Reto: Haz el gráfico con `ggplot2`** (opcional)
+
+```{r, echo = F, fig.height=5}
+library(ggplot2)
+library(kableExtra)
+
+# Datos de ejemplo
+respuestas <- c("Al menos 2 veces al día", "Al menos 1 vez al día",
+                "Varias veces a la semana", "Varias veces al mes")
+frecuencias <- c(31, 55, 39, 12)
+
+# Tabla de frecuencias
+tabla <- data.frame(
+  Respuesta = respuestas,
+  Frecuencia = frecuencias,
+  Proporcion = round(frecuencias / sum(frecuencias), 3)
+)
+
+# Gráfico de barras
+plotBarras <- ggplot(tabla, aes(x = Respuesta, y = Frecuencia, fill = Respuesta)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = Frecuencia), vjust = -0.5) +
+  labs(title = "Hábitos de uso de hilo dental", x = "Respuesta", y = "") +
+  theme_minimal(base_size = 10) +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 25, hjust = 1)) +
+  theme(axis.text = element_text(color="black"),
+        panel.grid = element_blank())
+
+
+tabla_grob <- gridExtra::tableGrob(
+  tabla, 
+  rows = NULL,
+  theme = gridExtra::ttheme_default(
+    core = list(fg_params = list(cex = 0.7)),   # tamaño de fuente del cuerpo
+    colhead = list(fg_params = list(cex = 0.8)) # tamaño de la cabecera
+  )
+)
+tabla_wrap <- patchwork::wrap_elements(full = tabla_grob)
+plotBarras | tabla_wrap
+```
+
+
+### b) Evalúa si los resultados de esta encuesta pueden generalizarse para proporcionar información sobre los hábitos de uso del hilo dental en la población general.
+
+<div class="respuesta handwritten">
+Los resultados de este estudio no pueden generalizarse a la población en general. Los individuos que respondieron la encuesta representan un subconjunto específico de la población que está consciente de la salud dental, ya que se encuentran en el consultorio del dentista para una cita. Además, puede existir un sesgo de respuesta; aunque las encuestas sean anónimas, es probable que los encuestados sientan cierta presión para dar una respuesta “correcta” en ese entorno, y digan que usan hilo dental con más frecuencia de lo que realmente lo hacen.
+</div>
+
+
+
+## Problema 9: Error vs. variabilidad
+En estadística, un error no es un "equivocación". La variabilidad es una parte inherente de los resultados de las mediciones y del proceso de medición. Los errores observados se pueden dividir en dos componentes: error aleatorio y error sistemático. Los errores sistemáticos son errores que no están determinados por el azar, sino que se introducen por una inexactitud (ya sea en la observación o en el proceso de medición) inherente al sistema. Los errores aleatorios están relacionados con el muestreo. Cada medición subsiguiente tiene un error aleatorio, lo que lleva a imprecisión en la estimación. Una medición con bajo error aleatorio se dice que es precisa. En el error sistemático, cada medición subsiguiente tiene el mismo error recurrente debido a un sesgo.
+
+Cuatro analistas, A, B, C y D, prepararon cinco muestras replicadas para medir el pH de una muestra específica de suelo. Los resultados son los siguientes:
+
+```{r, echo = F}
+library(kableExtra)
+
+# Datos de los analistas
+analistas <- c("A", "B", "C", "D")
+mediciones <- list(
+  c(8.208, 8.239, 8.258, 8.264, 8.283),
+  c(8.278, 8.288, 8.293, 8.304, 8.308),
+  c(8.259, 8.289, 8.308, 8.329, 8.363),
+  c(8.389, 8.393, 8.399, 8.413, 8.423)
+)
+
+# Crear tabla con medias y SD
+tabla <- data.frame(
+  Analista = analistas,
+  Med1 = sapply(mediciones, `[`, 1),
+  Med2 = sapply(mediciones, `[`, 2),
+  Med3 = sapply(mediciones, `[`, 3),
+  Med4 = sapply(mediciones, `[`, 4),
+  Med5 = sapply(mediciones, `[`, 5),
+  Media = sapply(mediciones, mean),
+  SD = sapply(mediciones, sd)
+)
+
+# Mostrar tabla
+kable(tabla) %>%
+  kable_styling(full_width = FALSE, position = "center")
+
+```
+
+```{r, echo = F, fig.height=2.5, fig.width=7, message=FALSE, warning=FALSE, fig.align='center'}
+
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+
+# Datos
+datos <- data.frame(
+  Analista = rep(c("A","B","C","D"), each = 5),
+  Medicion = c(
+    8.208, 8.239, 8.258, 8.264, 8.283,  # A
+    8.278, 8.288, 8.293, 8.304, 8.308,  # B
+    8.259, 8.289, 8.308, 8.329, 8.363,  # C
+    8.389, 8.393, 8.399, 8.413, 8.423   # D
+  )
+)
+
+# Media de cada analista
+medias <- datos %>% group_by(Analista) %>% summarise(Media = mean(Medicion))
+
+
+# Calcular rango de cada analista
+rangos <- datos %>%
+  group_by(Analista) %>%
+  summarise(min_val = min(Medicion)-0.01,
+            max_val = max(Medicion)+0.01,
+            .groups = "drop") %>%
+  mutate(xmin = as.numeric(factor(Analista)) - 0.2,
+         xmax = as.numeric(factor(Analista)) + 0.2)
+
+# Gráfico
+ggplot() +
+  # Rectángulos que engloban todos los puntos
+  geom_rect(data = rangos, aes(xmin = xmin, xmax = xmax, ymin = min_val, ymax = max_val),
+            fill = "lightgray", alpha = 0.3) +
+  # Puntos individuales
+  geom_point(data = datos, aes(x = Analista, y = Medicion),
+             size = 3, color = "cadetblue4") +
+  # Media de cada analista
+  labs(x = "", y = "pH") +
+  theme_minimal(base_size = 14) +
+  coord_flip() + 
+  theme_bw(base_size = 14) +
+  theme(axis.text = element_text(color="black"),
+        panel.grid = element_blank())
+
+
+
+```
+
+### a) ¿Qué conjunto tiene menor error aleatorio? ¿Cuál tiene el mayor error aleatorio?
+
+<div class="respuesta handwritten">
+El error aleatorio es función de la desviación estándar. B tiene menor error aleatorio y C tiene el mayor error aleatorio.
+</div>
+
+### b) ¿Qué conjunto es más preciso? ¿Cuál es menos preciso?
+
+<div class="respuesta handwritten">
+Una desviación estándar menor indica mayor precisión. B es más preciso, y C es menos preciso.
+</div>
+
+### c) ¿Alguno de los conjuntos probablemente tiene un error sistemático (está sesgado)?
+
+<div class="respuesta handwritten">
+D da un resultado divergente; D probablemente esté sesgado.
+</div>
+
+### d) Si se conociera que el valor verdadero es 8.31, ¿qué conjunto sería más exacto?
+<div class="respuesta handwritten">
+La estimación de C es igual al valor verdadero. Entonces, C sería la más exacta. En este ejemplo, el menos preciso es el más exacto.
+</div>
+
+
+## Problema 10: Cálculo de parámetros de estadística
+A continuación se muestran datos sobre el número de bacterias resistentes a un virus en un estudio experimental: `14, 15, 13, 21, 15, 14, 26, 16, 20, 13`
+
+### a) Determina la mediana y los cuartiles.
+
+Ordenamos los datos:
+`13, 13, 14, 14, 15, 15, 16, 20, 21, 26`
+
+Primero determinamos la mediana. Tenemos 10 números. Nos interesan los números de las posiciones `n/2` y `n/2 +1`, es decir, los valores de la posicion `10/2=5` y `10/2 + 1=6`. Los valores en las posiciones 5 y 6 son 15 y 15.
+
+$$
+\text{mediana}(x) = \frac{\left(
+{\left(\tfrac{n}{2}\right)}^{th} + {\left(\tfrac{n}{2}+1\right)}^{th}\right)
+}{2}
+$$
+<br>
+$$
+\text{mediana}(x) = \frac{\left(
+{\left(\tfrac{10}{2}\right)}^{th} + {\left(\tfrac{10}{2}+1\right)}^{th}\right)
+}{2}= \frac{
+{5}^{th} + {6}^{th}
+}{2}=\frac{
+15 + 15
+}{2}=15
+$$
+
+### b) Calcula la varianza y la desviación estándard.
+
+**Paso 1: Calcular la media**
+
+\[
+\bar{x} = \frac{14 + 15 + 13 + 21 + 15 + 14 + 26 + 16 + 20 + 13}{10} = \frac{167}{10} = 16.7
+\]
+
+**Paso 2: Restar la media a cada dato (desviación respecto a la media)**
+
+| \(x_i\) | \(x_i - \bar{x}\) |
+|:-------:|:----------------:|
+| 14      | -2.7             |
+| 15      | -1.7             |
+| 13      | -3.7             |
+| 21      | 4.3              |
+| 15      | -1.7             |
+| 14      | -2.7             |
+| 26      | 9.3              |
+| 16      | -0.7             |
+| 20      | 3.3              |
+| 13      | -3.7             |
+
+
+**Paso 3: Elevar al cuadrado cada desviación**
+
+\[
+(x_i - \bar{x})^2
+\]
+
+| \(x_i - \bar{x}\) | \((x_i - \bar{x})^2\) |
+|:-------:|:----------------:|
+| -2.7            | 7.29             |
+| -1.7            | 2.89             |
+| -3.7            | 13.69            |
+| 4.3             | 18.49            |
+| -1.7            | 2.89             |
+| -2.7            | 7.29             |
+| 9.3             | 86.49            |
+| -0.7            | 0.49             |
+| 3.3             | 10.89            |
+| -3.7            | 13.69            |
+
+
+**Paso 4: Sumar todos los cuadrados**
+
+\[
+\sum (x_i - \bar{x})^2 = 7.29 + 2.89 + 13.69 + 18.49 + 2.89 + 7.29 + 86.49 + 0.49 + 10.89 + 13.69 = 164.1
+\]
+
+---
+
+**Paso 5: Dividir entre \(n-1\) para obtener la varianza muestral**
+
+\[
+s^2 = \frac{\sum (x_i - \bar{x})^2}{n-1} = \frac{164.1}{10-1} = \frac{164.1}{9} \approx 18.23
+\]
+
+
+
+**Paso 6: Desviación estándar**
+
+\[
+s = \sqrt{s^2} = \sqrt{18.23} \approx 4.27
+\]
+
+
+
+### c) Determina el rango intercuartílico. 
+Los cuartiles son valores que dividen un conjunto de datos ordenados en cuatro partes iguales, cada una conteniendo el 25% de los datos. Existen tres cuartiles principales:
+
+Primer cuartil 
+- Q1: Es el valor que deja el 25% de los datos por debajo de él.
+
+Segundo cuartil (mediana)
+- Q2: Es la mediana, que divide el conjunto en dos partes iguales (50% por debajo y 50% por encima).
+
+Tercer cuartil 
+- Q3: Es el valor que deja el 75% de los datos por debajo de él.
+
+Estos cuartiles se calculan a partir de la posición de los datos en una distribución ordenada.
+
+Fórmulas para calcular las posiciones de los tres cuartiles:
+ 
+$$
+Q1 = \frac{n+1}{4}
+$$
+
+ 
+$$
+Q2 = \frac{n+1}{2}
+$$
+
+ 
+$$
+Q3 = \frac{3(n+1)}{2}
+$$
+
+ 
+Si la posición obtenida no es un número entero, se interpola entre los valores cercanos. Si lo es (cuando se tiene un número impar de observaciones), entonces corresponde a la mediana de la primera y segunda mitad de los datos.
+
+*Nota: si calculas Q1 y Q3 en R, es probable que los valores difieran ligeramente de los que obtienes “a mano”. No te preocupes: R utiliza algoritmos de interpolación diferentes a los que usamos manualmente.*
+
+**Paso 1: Ordenar los datos de menor a mayor**
+
+`13, 13, 14, 14, 15, 15, 16, 20, 21, 26`
+
+**Paso 2: Posición Q1**
+
+$$
+Q1 =  \frac{10+1}{4}=2.75
+$$
+En las posiciones 2 y 3 están los valores 13 y 14. Interpolamos el valor: 
+
+$$
+Q1=13+0.75*(14-13)=13.75
+$$
+
+**Para calcular la Q3:**
+
+$$
+Q3 =  \frac{3*(10+1)}{4}=8.25
+$$
+
+En las posiciones 8 y 9 están los valores 20 y 21 Interpolamos el valor: 
+
+$$
+Q3 = 20+0.25*(21-20)=20.25
+$$
+
+
+**Paso 5: Calcular el rango intercuartílico (IQR)**
+
+\[
+\text{IQR} = Q3 - Q1 = 20.25 - 13.75 = 6.5
+\]
+
+### d) ¿Qué valor tendría que tener una observación en este conjunto de datos para considerarse un valor atípico?
+
+Para determinar los valores atípicos, calculamos los límites inferior y superior:
+
+\[
+\text{Límite inferior} = Q1 - 1.5 \times IQR  = 13.75 - 1.5 \times  6.5 = 4
+\]  
+\[
+\text{Límite superior} = Q3 + 1.5 \times IQR =  20.25  + 1.5 \times  6.5 = 30
+\]
+
+- Cualquier valor **menor que 4** → valor atípico inferior  
+- Cualquier valor **mayor que 30** → valor atípico superior  
