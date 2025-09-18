@@ -1134,6 +1134,22 @@ ggplot(surv_raw %>% drop_na(age_cat_5),
 
 ]
 
+---
+
+## Reto con `ggplot2`
+
+- Crea una nueva visualización con alguno de los `geom_` que hemos visto u otro, como por ejemplo `geom_line()`, `geom_violin()`, ...
+- Utiliza los datos de la simulación (puedes leerlos directamente con el link!):
+
+```{r}
+library(readr)
+
+surv_raw <- "https://github.com/marta-coronado/biostatistics-uab/blob/main/T/2/data/ebola_epidemic.tab"
+
+surv_raw <- read_tsv(surv_raw, col_names = T)
+```
+
+
 
 ---
 layout: false
