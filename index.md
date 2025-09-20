@@ -16,6 +16,7 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Tema 2: Introducción a R](T/2/2.IntroR.html)
 - [Tema 3: Visualización de datos](T/3/3.VisualizacionDatos.html)
 - [Tema 4: Distribuciones de probabilidad](T/4/4.ProbRmd.html)
+- [Tema 5: Distribución binomial](T/5/5.Binomial.html)
 
 ---
 
