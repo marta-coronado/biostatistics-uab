@@ -309,6 +309,27 @@ $$
 P(X=5) = 252 \times \tfrac{1}{243} \times \tfrac{32}{243}
 = \tfrac{8064}{59049} \approx 0.1366
 $$
+---
+
+class: animated, fadeIn
+
+
+#### Coeficiente binomial
+
+El coeficiente binomial $ \binom{10}{5} $ es el **número de maneras de elegir $k$ elementos** de un conjunto de tamaño $n$, **sin importar el orden** de la elección.  
+
+Matemáticamente:
+
+$$
+{n \choose k} \;=\; \frac{n!}{k!\,(n - k)!}
+$$
+
+donde:
+
+- $n = 1, 2, \dots$  
+- $x = 0, 1, 2, \dots , n$ 
+- Para cualquier número entero $m$, $m! = m \times (m - 1) \times (m - 2) \times \dots \times 1$
+
 
 ---
 class: animated, fadeIn
