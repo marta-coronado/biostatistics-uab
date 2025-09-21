@@ -1144,7 +1144,7 @@ ggplot(surv_raw %>% drop_na(age_cat_5),
 ```{r}
 library(readr)
 
-surv_raw <- "https://github.com/marta-coronado/biostatistics-uab/blob/main/T/2/data/ebola_epidemic.tab"
+surv_raw <- "https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/T/2/data/ebola_epidemic.tab"
 
 surv_raw <- read_tsv(surv_raw, col_names = T)
 ```
