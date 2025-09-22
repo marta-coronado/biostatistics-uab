@@ -884,3 +884,4 @@ layout: false
 class: left, bottom, inverse, animated, bounceInDown
 ### Créditos
 #### Adaptado de: CSDA tutorial - Probability distributions (EMBL, Sarah Kaspar, PhD)
+#### Dr. Hafid Laayouni por compartir sus materiales
