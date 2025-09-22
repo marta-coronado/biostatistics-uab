@@ -193,8 +193,8 @@ Lee en `R` el archivo ["**GSE68849_expression.csv**"](https://github.com/marta-c
 
 
 ```{r, respuesta 3, eval = F}
-head(expressionData)
-# Contiene los datos de expresión génica en dos grupos de sujetos: control y con infección
+
+
 ```
 
 ## Tipos de variables

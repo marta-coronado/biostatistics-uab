@@ -422,8 +422,6 @@ quieras usar.</p>
 <code>head(expressionData)</code> y <code>View(expressionData)</code>
 para explorar el contenido de <code>expressionData</code>. ¿Qué
 información contiene?</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">head</span>(expressionData)</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co"># Contiene los datos de expresión génica en dos grupos de sujetos: control y con infección</span></span></code></pre></div>
 </div>
 </div>
 <div id="tipos-de-variables" class="section level2">
@@ -509,8 +507,8 @@ concatenar comandos.</p>
 <p>Alternativamente, te mostramos una función que no se ha visto en la
 teoría y que permite hacer lo mismo: <code>n_distinct</code> junto con
 <code>summarize</code>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>expressionData <span class="sc">%&gt;%</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n_distinct</span>(gene))</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>expressionData <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n_distinct</span>(gene))</span></code></pre></div>
 </div>
 <div id="actividad-1.7" class="section level4">
 <h4><strong><i class="fa fa-cogs"></i></strong> Actividad 1.7</h4>
@@ -543,13 +541,13 @@ alto” (<em>binning</em>)</p>
 32</a> viste cómo hacerlo con <code>ifelse()</code> para dos grupos.
 Ahora lo haremos con <code>case_when()</code>, que permite trabajar con
 múltiples condiciones. Un ejemplo que puede servirte:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>surv_raw <span class="ot">&lt;-</span> surv_raw <span class="sc">%&gt;%</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age_group =</span> <span class="fu">case_when</span>(</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    age <span class="sc">&lt;</span> <span class="dv">12</span> <span class="sc">~</span> <span class="st">&quot;infante&quot;</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    age <span class="sc">&gt;=</span> <span class="dv">12</span> <span class="sc">&amp;</span> age <span class="sc">&lt;</span> <span class="dv">18</span> <span class="sc">~</span> <span class="st">&quot;adolescente&quot;</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    age <span class="sc">&gt;=</span> <span class="dv">18</span> <span class="sc">&amp;</span> age <span class="sc">&lt;</span> <span class="dv">65</span> <span class="sc">~</span> <span class="st">&quot;adulto&quot;</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>    age <span class="sc">&gt;=</span> <span class="dv">65</span> <span class="sc">~</span> <span class="st">&quot;anciano&quot;</span></span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  ))</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>surv_raw <span class="ot">&lt;-</span> surv_raw <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age_group =</span> <span class="fu">case_when</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>    age <span class="sc">&lt;</span> <span class="dv">12</span> <span class="sc">~</span> <span class="st">&quot;infante&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    age <span class="sc">&gt;=</span> <span class="dv">12</span> <span class="sc">&amp;</span> age <span class="sc">&lt;</span> <span class="dv">18</span> <span class="sc">~</span> <span class="st">&quot;adolescente&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    age <span class="sc">&gt;=</span> <span class="dv">18</span> <span class="sc">&amp;</span> age <span class="sc">&lt;</span> <span class="dv">65</span> <span class="sc">~</span> <span class="st">&quot;adulto&quot;</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>    age <span class="sc">&gt;=</span> <span class="dv">65</span> <span class="sc">~</span> <span class="st">&quot;anciano&quot;</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  ))</span></code></pre></div>
 </div>
 <div id="actividad-1.11-opcional" class="section level4">
 <h4><strong><i class="fa fa-cogs"></i></strong> Actividad 1.11
@@ -579,13 +577,13 @@ cada gen dentro de cada sujeto
 (<code>fill = log(expression_level)</code>). Para ello, utilizaremos
 <code>geom_tile()</code>.</p>
 <p>Modifica los ??? del siguiente código:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>exp.heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> expressionData,</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>                      <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> ???,</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>                                    <span class="at">y =</span> ???,</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>                                    <span class="at">fill =</span> <span class="fu">log</span>(???))) <span class="sc">+</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  geom_???()</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>exp.heatmap</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>exp.heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> expressionData,</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>                      <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> ???,</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>                                    <span class="at">y =</span> ???,</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>                                    <span class="at">fill =</span> <span class="fu">log</span>(???))) <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  geom_???()</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>exp.heatmap</span></code></pre></div>
 <p>Aunque es un buen comienzo, podemos mejorar varias cosas:</p>
 <ul>
 <li>Los ejes se podrían visualizar mejor, ya que no podemos leer los
@@ -603,19 +601,19 @@ infección.</li>
 grados para poder leer los nombres de los sujetos.</li>
 <li>Omitiremos el título del eje <code>y</code>.</li>
 </ol>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>exp.heatmap <span class="ot">&lt;-</span> exp.heatmap <span class="sc">+</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;???&quot;</span>, <span class="at">y =</span> <span class="st">&quot;???&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> ???, <span class="at">vjust =</span> <span class="fl">0.5</span>))</span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>exp.heatmap</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>exp.heatmap <span class="ot">&lt;-</span> exp.heatmap <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;???&quot;</span>, <span class="at">y =</span> <span class="st">&quot;???&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> ???, <span class="at">vjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>exp.heatmap</span></code></pre></div>
 <p>A continuación, necesitamos separar las muestras de control de las
 muestras infectadas con el virus de la gripe. Para hacerlo, utilizaremos
 la función <code>facet_grid()</code> de <code>ggplot</code>, usando la
 variable <code>treatment</code> para separar los dos grupos.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>exp.heatmap <span class="ot">&lt;-</span>  exp.heatmap <span class="sc">+</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">facet_grid</span>(. <span class="sc">~</span> ???, <span class="at">scales =</span> ...)</span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>exp.heatmap</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>exp.heatmap <span class="ot">&lt;-</span>  exp.heatmap <span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">facet_grid</span>(. <span class="sc">~</span> ???, <span class="at">scales =</span> ...)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>exp.heatmap</span></code></pre></div>
 <p><i class="fas fa-info-circle"></i> Añade
 <code>scales = &quot;free_x&quot;, space = &quot;free_x&quot;</code> dentro de
 <code>facet_grid()</code> para eliminar los espacios vacíos del gráfico.
@@ -623,11 +621,11 @@ variable <code>treatment</code> para separar los dos grupos.</p>
 <p>Y finalmente, podemos cambiar la escala de color; por ejemplo,
 podríamos utilizar la escala de color
 <code>scale_fill_viridis()</code>:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">library</span>(viridis)</span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>exp.heatmap <span class="ot">&lt;-</span> exp.heatmap <span class="sc">+</span> </span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  scale_???()</span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>exp.heatmap</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">library</span>(viridis)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>exp.heatmap <span class="ot">&lt;-</span> exp.heatmap <span class="sc">+</span> </span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  scale_???()</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>exp.heatmap</span></code></pre></div>
 <p>Si has seguido todos los pasos, ¡ahora tu gráfico debería ser
 exactamente como el que se proporcionó al inicio!</p>
 <p><strong>¿Qué genes están sobreexpresados en el grupo
