@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title> </title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/rutgers.css" rel="stylesheet" />
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
+    <link href="libs/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v7.0.0/css/all.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# <br>
+]
+.author[
+### 
+]
+
+---
+
+
+
+
+
+
+
+
+class: animated, fadeIn
+# Outline
+
+#### **Distribución normal**
+- Datos discretos *vs.* continuos
+- Curvas de densidad
+- Cálculo de probabilidades a partir de la distribución normal
+- Probabilidades complementarias
+- Distribución normal en `R`
+- Función de distribución acumulada
+- Estandarización
+- Cálculo de probabilidad entre dos puntos
+- Regla empírica
+- Aproximación de la normal a la binomial
+- Corrección de continuidad
+
+
+&lt;style&gt;
+.title-slide {
+  background-image: url('img/1.png');
+  background-size: 100%;
+}
+&lt;/style&gt;
+
+
+---
+
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+## Distribución normal
+
+---
+class: animated, fadeIn
+
+## Datos discretos *vs.* continuos
+
+- Una variable aleatoria y discreta puede tomar un número **finito** de valores
+  - El número de caras en una serie de lanzamientos de moneda
+  - Número de personas que han tenido varicela en una muestra aleatoria
+  
+--
+
+En el tema anterior, hemos considerado distribuciones de probabilidad para este tipo de datos discretos: la **distribución binomial** es un caso particular de modelos discretos
+
+--
+
+- Sin embargo, muchos conjuntos de datos provenientes de experimentos consisten en **mediciones continuas**. Una **variable aleatoria continua** puede tomar cualquier valor real dentro de un intérvalo.
+  - Altura en una población
+  - Presión arterial en una población
+  
+--
+
+La **distribución normal** será un modelo particular para datos continuos.
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-1-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+class: animated, fadeIn
+
+### Ejemplos de variables aleatorias continuas
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-2-1.png" width="864" style="display: block; margin: auto;" /&gt;
+
+---
+class: animated, fadeIn
+
+## Probabilidades para distribuciones continuas
+
+Dos características importantes de las distribuciones continuas:
+
+- El área total bajo la curva de densidad es 1.
+
+- La probabilidad de que una variable tome un valor dentro de un intervalo específico es el área bajo la curva sobre ese intervalo.
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-3-1.png" width="648" style="display: block; margin: auto;" /&gt;
+
+
+---
+class: animated, fadeIn
+
+## Probabilidades para distribuciones continuas
+
+Cuando trabajamos con variables aleatorias continuas, la probabilidad se calcula para **intervalos de valores** y no para valores individuales.
+
+- La probabilidad de que una variable aleatoria continua `\(X\)` tome un valor individual es **0**.  
+  Es decir, `\(P(X = x) = 0\)`.
+
+- Por lo tanto, `\(P(a &lt; X &lt; b)\)` es equivalente a   `\(P(a \le X \le b)\)`.
+
+???
+Si la probabilidad en los extremos es 0, incluir o excluir los límites no cambia el valor de la probabilidad del intervalo:
+
+---
+class: animated, fadeIn
+
+### Curvas de densidad
+
+Una curva suave que representa una distribución de frecuencias se llama **curva de densidad**.
+
+- Las coordenadas verticales de una curva de densidad se representan en una escala llamada escala de densidad.
+- Cuando se utiliza la escala de densidad, las frecuencias relativas se representan como áreas bajo la curva.
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-4-1.png" width="936" style="display: block; margin: auto;" /&gt;
+
+&lt;center&gt;A medida que aumentamos el número de intervalos (bins) del histograma, 
+este se aproxima a una curva suave que describe la distribución de los datos.&lt;/center&gt;
+
+--
+
+- El área total bajo la curva de densidad es 1.
+
+--
+- Para dos números cualquiera _a_ y _b_, la área bajo la curva de densidad entre  _a_ y _b_ equivale a la proporción de valores _Y_ entre  _a_ y _b_.
+
+---
+class: animated, fadeIn
+
+### Curvas de densidad
+.pull-left[
+Para datos continuos no tenemos valores discretos igualmente espaciados como pasaba con los datos discretos.
+
+]
+.pull-right[
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-5-1.png" width="576" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: animated, fadeIn
+
+# La distribución normal
+
+- Una de las **distribuciones más importantes** en las ciencias naturales 
+
+- Tiene forma de campana simétrica (*bell curve*)
+
+-  Aplica el **teorema central del límite**: si muestreas un número suficiente de muestras acabas obteniendo una distribución normal
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-6-1.png" width="432" style="display: block; margin: auto;" /&gt;
+
+
+???
+- La altura de la curva es muy pequeña para valores de y a más de tres desviaciones estándar.
+
+---
+class: animated, fadeIn
+
+## Cómo se describe la distribución normal
+
+La distribución normal se describe con **dos parámetros**:
+
+- La **media** de la distribución (`\(\mu\)`)  
+- La **desviación estándar** de la distribución (`\(\sigma\)`)  
+
+--
+
+Cambiar los valores de `\(\mu\)` y `\(\sigma\)` altera la **posición** y la **forma** de la distribución.
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;" /&gt;
+
+---
+class: animated, fadeIn
+
+## Cómo se describe la distribución normal
+
+Si una variable `\(X\)` sigue una distribución normal con media `\(\mu\)` y desviación estándar `\(\sigma\)`, escribimos:
+
+$$
+X \sim N(\mu, \sigma^2)
+$$
+
+donde:
+
+- `\(\mu\)` y `\(\sigma\)` son los **parámetros** de la distribución.  
+- `\(\mu\)` representa la **media**, que determina el **centro** de la distribución.  
+- `\(\sigma\)` representa la **desviación estándar**, que determina la **dispersión** o **anchura** de la curva.
+
+
+---
+class: animated, fadeIn
+
+### Cálculo de probabilidades a partir de la distribución normal
+
+- Para una **distribución de probabilidad discreta**, podemos calcular la probabilidad de que una variable sea **igual a un valor específico**.  
+
+- Para una **distribución de probabilidad continua**, **no podemos calcular la probabilidad de que una variable sea igual a un valor exacto**, sino que debemos calcular la probabilidad de que la variable **caiga dentro de un intervalo determinado**.
+
+
+--
+
+**Definición**
+
+- Sea `\(X\)` una variable aleatoria continua.  
+- Una **distribución de probabilidad** o **función de densidad de probabilidad** de `\(X\)` es una función `\(f(x)\)` tal que, para cualesquiera dos números `\(a\)` y `\(b\)` con `\(a \le b\)`, se cumple que:
+
+$$
+P(a \le X \le b) = \int_a^b f(x) \, dx
+$$
+
+- Es decir, la probabilidad de que `\(X\)` se encuentre en el intervalo `\([a, b]\)` se puede calcular **integrando la función de densidad de probabilidad** de la variable aleatoria `\(X\)`.
+
+---
+class: animated, fadeIn
+
+### Cálculo de probabilidades a partir de la distribución normal
+
+La probabilidad de que `\(X\)` tome un valor en el intervalo `\([a, b]\)` es **el área sobre este intervalo y bajo la curva de la función de densidad**:
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-8-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+
+---
+class: animated, fadeIn
+
+### Cálculo de probabilidades a partir de la distribución normal
+
+- Calcular el área bajo la curva no es sencillo, por lo que usamos **tablas de probabilidad**.  
+
+- Estas tablas han sido calculadas previamente con un ordenador.  
+
+- Todo lo que necesitamos hacer es **identificar la probabilidad correcta en la tabla**.  
+
+- Solo **una distribución normal especial** ha sido tabulada: `\(N(0,1)\)`.
+
+  - La distribución `\(N(0,1)\)` se llama **distribución normal estándar**.
+    - Se caracteriza por una media `\(\mu\)`=0 y una desviación estándard `\(\sigma\)`=1
+
+
+---
+class: animated, fadeIn
+
+### Cálculo de probabilidades a partir de la distribución normal
+
+Las tablas nos permiten **consultar probabilidades de la forma** `\(P(Z \le z)\)`.
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-9-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+--
+
+&lt;center&gt;
+Si `\(Z \sim N(0,1)\)`, cuál es `\(P(Z \le 1.42)\)`?
+
+---
+class: animated, fadeIn
+
+#### La tabla nos permite leer las probabilidades de la forma `\(P(Z≤z)\)`
+
+&lt;table class="table" style="font-size: 14px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption style="font-size: initial !important;"&gt;Tabla: Probabilidades acumuladas P(Z ≤ z)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; Z &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.00 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.01 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.02 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.03 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.04 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.05 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.06 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.07 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.08 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.09 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5000 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5040 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5080 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5120 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5160 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5199 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5239 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5279 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5319 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5359 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5398 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5438 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5478 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5517 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5557 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5596 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5636 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5675 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5714 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5753 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5793 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5832 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5871 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5910 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5948 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5987 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6026 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6064 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6103 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6141 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6179 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6217 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6255 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6293 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6331 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6368 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6406 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6443 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6480 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6517 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.4 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6554 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6591 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6628 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6664 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6700 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6736 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6772 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6808 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6844 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6879 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.5 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6915 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6950 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6985 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7019 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7054 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7088 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7123 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7157 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7190 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7224 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.6 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7257 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7291 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7324 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7357 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7389 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7422 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7454 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7486 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7517 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7549 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.7 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7580 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7611 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7642 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7673 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7704 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7734 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7764 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7794 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7823 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7852 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.8 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7881 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7910 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7939 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7967 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7995 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8023 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8051 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8078 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8106 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8133 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.9 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8159 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8186 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8212 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8238 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8264 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8289 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8315 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8340 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8365 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8389 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1.0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8413 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8438 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8461 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8485 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8508 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8531 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8554 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8577 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8599 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8621 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1.1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8643 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8665 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8686 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8708 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8729 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8749 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8770 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8790 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8810 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8830 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1.2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8849 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8869 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8888 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8907 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8925 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8944 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8962 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8980 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8997 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9015 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1.3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9032 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9049 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9066 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9082 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9099 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9115 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9131 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9147 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9162 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9177 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1.4 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9192 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9207 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9222 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9236 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9251 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9265 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9279 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9292 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9306 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9319 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1.5 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9332 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9345 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9357 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9370 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9382 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9394 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9406 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9418 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9429 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9441 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1.6 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9452 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9463 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9474 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9484 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9495 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9505 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9515 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9525 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9535 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9545 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+class: animated, fadeIn
+
+### Cálculo de probabilidades a partir de la distribución normal
+
+También hay tablas que nos permiten **consultar probabilidades de la forma** `\(P(Z \ge z)\)`.
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-11-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+--
+
+&lt;center&gt;
+Si `\(Z \sim N(0,1)\)`, cuál es `\(P(Z \ge 1.42)\)`?
+
+
+---
+class: animated, fadeIn
+
+#### La tabla nos permite leer las probabilidades de la forma `\(P(Z≥z)\)`
+
+&lt;table class="table" style="font-size: 14px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption style="font-size: initial !important;"&gt;Tabla: Probabilidades P(Z ≥ z)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; Z &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.00 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.01 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.02 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.03 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.04 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.05 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.06 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.07 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.08 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.09 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5000 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4960 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4920 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4880 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4840 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4801 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4761 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4721 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4681 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4641 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4602 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4562 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4522 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4483 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4443 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4404 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4364 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4325 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4286 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4247 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4207 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4168 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4129 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4090 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4052 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4013 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3974 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3936 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3897 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3859 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3821 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3783 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3745 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3707 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3669 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3632 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3594 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3557 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3520 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3483 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.4 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3446 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3409 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3372 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3336 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3300 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3264 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3228 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3192 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3156 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3121 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.5 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3085 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3050 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3015 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2981 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2946 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2912 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2877 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2843 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2810 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2776 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.6 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2743 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2709 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2676 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2643 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2611 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2578 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2546 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2514 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2483 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2451 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.7 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2420 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2389 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2358 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2327 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2296 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2266 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2236 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2206 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2177 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2148 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.8 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2119 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2090 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2061 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2033 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2005 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1977 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1949 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1922 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1894 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1867 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.9 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1841 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1814 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1788 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1762 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1736 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1711 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1685 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1660 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1635 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1611 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1.0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1587 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1562 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1539 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1515 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1492 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1469 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1446 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1423 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1401 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1379 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1.1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1357 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1335 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1314 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1292 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1271 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1251 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1230 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1210 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1190 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1170 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1.2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1151 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1131 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1112 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1093 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1075 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1056 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1038 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1020 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1003 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0985 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1.3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0968 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0951 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0934 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0918 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0901 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0885 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0869 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0853 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0838 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0823 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1.4 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0808 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0793 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0778 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0764 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0749 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0735 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0721 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0708 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0694 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0681 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1.5 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0668 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0655 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0643 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0630 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0618 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0606 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0594 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0582 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0571 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0559 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1.6 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0548 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0537 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0526 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0516 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0505 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0495 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0485 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0475 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0465 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.0455 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+class: animated, fadeIn
+
+### Probabilidades complementarias
+
+- La **probabilidad total** bajo la curva normal es 1.  
+- Por lo tanto, conocer `\(P(Z  \le  z)\)` o `\(P(Z  \ge  z)\)` permite calcular la otra:  
+
+$$
+P(Z  \le 1.42) = 1 - P(Z  \ge 1.42), \quad \quad
+P(Z\ge 1.42) = 1 - P(Z  \le 1.42)
+$$
+
+- Esto se conoce como **probabilidad complementaria**.  
+- Muy útil para leer una sola tabla Z en cualquier dirección.
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-13-1.png" width="518.4" style="display: block; margin: auto;" /&gt;
+
+---
+class: animated, fadeIn
+
+### Probabilidades complementarias
+
+Si `\(Z \sim N(0,1)\)`, cuál es `\(P(Z \le -0.76)\)`?
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-14-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+--
+**Recordando la simetría de la normal**:
+$$
+P(Z \le -z) = P(Z \ge z)
+$$
+
+---
+class: animated, fadeIn
+
+### Probabilidades complementarias
+
+Si `\(Z \sim N(0,1)\)`, cuál es `\(P(Z\le -0.76)\)`?
+
+- Usamos la tabla `\(Z \ge z\)`  
+- Para `\(-0.76\)`, buscamos `\(0.76\)` en la tabla  
+
+$$
+P(Z \ge 0.76) \approx 0.2236
+$$
+
+&lt;table class="table" style="font-size: 14px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption style="font-size: initial !important;"&gt;Tabla: Probabilidades P(Z ≥ z)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; Z &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.00 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.01 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.02 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.03 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.04 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.05 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.06 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.07 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.08 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.09 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5000 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4960 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4920 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4880 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4840 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4801 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4761 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4721 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4681 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4641 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4602 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4562 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4522 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4483 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4443 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4404 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4364 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4325 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4286 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4247 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4207 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4168 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4129 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4090 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4052 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4013 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3974 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3936 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3897 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3859 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3821 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3783 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3745 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3707 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3669 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3632 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3594 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3557 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3520 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3483 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.4 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3446 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3409 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3372 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3336 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3300 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3264 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3228 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3192 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3156 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3121 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.5 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3085 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3050 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3015 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2981 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2946 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2912 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2877 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2843 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2810 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2776 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.6 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2743 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2709 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2676 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2643 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2611 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2578 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2546 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2514 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2483 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2451 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.7 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2420 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2389 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2358 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2327 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2296 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2266 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2236 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2206 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2177 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2148 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.8 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2119 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2090 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2061 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2033 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2005 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1977 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1949 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1922 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1894 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1867 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.9 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1841 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1814 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1788 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1762 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1736 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1711 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1685 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1660 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1635 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.1611 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+class: animated, fadeIn
+
+### Probabilidades complementarias
+
+Si `\(Z \sim N(0,1)\)`, cuál es `\(P(Z&gt;-0.4)\)`?
+
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-16-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+
+--
+
+$$
+P(Z \ge -0.4) = P(Z \le 0.4) = 1 - P(Z \ge 0.4)
+$$
+
+---
+class: animated, fadeIn
+
+### Probabilidades complementarias
+
+Si `\(Z \sim N(0,1)\)`, cuál es `\(P(Z \ge -0.4)\)`?
+
+- Usamos la tabla `\(Z \ge z\)`  
+- Para `\(-0.4\)`, buscamos `\(0.4\)` en la tabla  
+
+$$
+P(Z \ge 0.4) \approx 0.3446
+$$
+
+Por último, `\(P(Z \le 0.4) = 1-P(Z \ge 0.4)\)`
+
+$$
+1- P(Z \ge 0.4) = 1 - 0.3446  \approx 0.6554
+$$
+
+&lt;table class="table" style="font-size: 14px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption style="font-size: initial !important;"&gt;Tabla: Probabilidades P(Z ≥ z)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; Z &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.00 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.01 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.02 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.03 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.04 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.05 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.06 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.07 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.08 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.09 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.5000 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4960 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4920 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4880 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4840 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4801 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4761 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4721 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4681 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4641 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4602 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4562 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4522 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4483 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4443 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4404 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4364 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4325 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4286 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4247 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4207 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4168 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4129 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4090 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4052 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.4013 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3974 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3936 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3897 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3859 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3821 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3783 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3745 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3707 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3669 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3632 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3594 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3557 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3520 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3483 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.4 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3446 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3409 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3372 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3336 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3300 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3264 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3228 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3192 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3156 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3121 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.5 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3085 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3050 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.3015 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2981 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2946 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2912 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2877 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2843 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2810 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.2776 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+---
+class: animated, fadeIn
+
+### Distribución normal en `R`
+
+Cada tipo de distribución en `R` tiene cuatro funciones principales. En el caso de la **distribución normal**, todas terminan con `norm`:
+
+- `dnorm`: función de densidad de probabilidad (PDF)  
+- `pnorm`: función de distribución acumulada (CDF)  
+- `qnorm`: función cuantil (inversa de la acumulada)  
+- `rnorm`: generador de números aleatorios: simula valores de una normal  
+
+--
+
+La función de distribución acumulada permite calcular **probabilidades de rangos**:
+
+- Probabilidad de superar un valor: `\(P(Z &gt; z)\)`, `\(P(Z \ge z)\)`  
+- Probabilidad de menor que un valor: `\(P(Z &lt; z)\)`, `\(P(Z \le z)\)` 
+
+---
+class: animated, fadeIn
+
+### Función de distribución acumulada 
+
+- Por ejemplo: ¿cuál es la probabilidad de que `\(Z\)` sea **mayor que -0.5** o **menor que 1.42**?  
+
+`$$P(Z \ge -0.5), \quad \quad \quad P(Z \le 1.42)$$`  
+
+--
+
+&gt; En R usaríamos `pnorm()`: por defecto computa `\(P(Z \le z)\)`, la probabilidad acumulada _hasta_ `\(z\)` para una distribución normal estándard `\(N(0,1)\)`:
+
+
+
+``` r
+pnorm(1.42)        # P(Z &lt; 1.42)
+```
+
+```
+## [1] 0.9221962
+```
+
+--
+
+``` r
+1 - pnorm(-0.5)   # P(Z &gt; -0.5) = P(Z &lt; 0.5) = 1 - P(Z &lt; -0.5) 
+```
+
+```
+## [1] 0.6914625
+```
+
+--
+
+``` r
+pnorm(-0.5, lower.tail = F)
+```
+
+```
+## [1] 0.6914625
+```
+
+---
+class: animated, fadeIn
+
+## Estandarización
+
+- Todas las probabilidades que hemos calculado hasta ahora corresponden a la **distribución normal estándar**:
+
+$$
+Z \sim N(0,1)
+$$
+
+- La notación general: `\(X \sim N(\mu, \sigma^2)\)`  
+  - `\(\mu\)` = media (centro de la curva)  
+  - `\(\sigma\)` = desviación estándar (anchura de la curva)  
+
+- En la **distribución normal estándar** se denota como:  
+  - El **0** indica que la curva está centrada en 0.  
+  - El **1** indica que la desviación estándar es 1.  
+
+--
+
+- Si queremos calcular probabilidades para una **normal con media `\(\mu\)` y desviación estándar `\(\sigma\)` diferentes**, debemos **convertirla a la normal estándar**.
+  - Este proceso se conoce como **estandarización**.
+
+---
+class: animated, fadeIn
+
+### Ejemplo de estandarización
+
+.pull-left[
+Supongamos `\(X \sim N(3,4)\)`, cuál es `\(P(X \le 6.2)\)`?
+]
+
+.pull-right[
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-21-1.png" width="504" /&gt;
+]
+
+---
+class: animated, fadeIn
+
+### Ejemplo de estandarización
+
+.pull-left[
+Supongamos `\(X \sim N(3,4)\)`, cuál es `\(P(X \le 6.2)\)`?
+
+Para poder usar la tabla de la normal estándar,  
+convertimos esta probabilidad en una que siga  
+`\(Z \sim N(0,1)\)`, realizando dos pasos:
+
+1. **Restar la media `\(\mu\)`**  
+   → recentra la distribución en 0.  
+2. **Dividir por la desviación estándar `\(\sigma\)`**  
+   → reescala la distribución para que su desviación sea 1.
+
+Este mismo proceso se aplica al punto de corte.  
+Así obtenemos:
+
+$$
+P(X  \le 6.2) \;=\; P(Z  \le 1.6) \approx 0.9452
+$$
+
+donde `\(Z \sim N(0,1)\)`.
+]
+
+.pull-right[
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-22-1.png" width="504" /&gt;
+]
+
+---
+class: animated, fadeIn
+
+## Estandarización
+
+Este proceso puede describirse con la siguiente regla:
+
+&gt; Si `\(X \sim N(\mu,\ \sigma^2)\)` y `\(Z = \dfrac{X - \mu}{\sigma}\)`,  
+
+&gt; entonces `\(Z \sim N(0,1)\)`
+
+---
+class: animated, fadeIn
+
+### Ejemplo de estandarización
+
+Supongamos que el peso al nacer de los bebés  
+se distribuye de manera **normal** con:
+
+- **Media** `$$\mu = 3500\;g$$`
+- **Desviación estándar** `$$\sigma = 500\;g$$`
+
+--
+
+Queremos calcular la probabilidad de que un bebé   pese **menos de 3100 g**:
+
+$$
+X \sim N(3500,\;500^2), \qquad P(X \le 3100)\;=? 
+$$
+
+&gt; Para poder usar la tabla de la normal estándar,  
+aplicamos el **procedimiento de estandarización**:
+
+$$
+Z = \frac{X - \mu}{\sigma}
+$$
+
+
+---
+class: animated, fadeIn
+
+### Ejemplo de estandarización
+
+.pull-left[
+
+
+Sabemos que `\(X \sim N(3500,\;500^2)\)`  y queremos calcular  `\(P(X \le 3100)\)`.
+
+- **Estandarizamos** restando la media y dividiendo por la desviación estándar:
+
+$$
+Z = \frac{X - 3500}{500} \sim N(0,1)
+$$
+
+$$
+P(X \le 3100)
+= P\left(\frac{X - 3500}{500} &lt; \frac{3100 - 3500}{500}\right)=
+$$
+
+$$
+= P(Z \le -0.8)
+$$
+
+- Usando la simetría de la normal:
+
+$$
+P(Z \le -0.8) = P(Z \ge 0.8) = 0.2219
+$$
+]
+
+.pull-right[
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-23-1.png" width="504" /&gt;
+]
+
+---
+class: animated, fadeIn
+
+### Qué peso tendría un bebé que está en el percentil 99?
+
+1. Primero, identificamos el valor `\(z\)` que corresponde a una probabilidad de 0.99 usando la tabla de la normal estándar.  
+   - El valor es aproximadamente:  
+   $$
+   z = 2.32
+   $$
+
+&lt;table class="table" style="font-size: 14px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption style="font-size: initial !important;"&gt;Tabla: Probabilidades P(Z ≤ z) con valor destacado&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; Z &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.00 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.01 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.02 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.03 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.04 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.05 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.06 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.07 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.08 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 0.09 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 2.0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9772 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9778 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9783 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9788 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9793 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9798 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9803 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9808 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9812 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9817 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 2.1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9821 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9826 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9830 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9834 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9838 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9842 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9846 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9850 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9854 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9857 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 2.2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9861 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9864 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9868 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9871 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9875 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9878 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9881 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9884 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9887 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9890 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 2.3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9893 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9896 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9898 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9901 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9904 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9906 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9909 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9911 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9913 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9916 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 2.4 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9918 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9920 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9922 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9925 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9927 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9929 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9931 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9932 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9934 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9936 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 2.5 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9938 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9940 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9941 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9943 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9945 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9946 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9948 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9949 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9951 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9952 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 2.6 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9953 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9955 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9956 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9957 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9959 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9960 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9961 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9962 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9963 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9964 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 2.7 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9965 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9966 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9967 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9968 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9969 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9970 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9971 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9972 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9973 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9974 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 2.8 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9974 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9975 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9976 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9977 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9977 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9978 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9979 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9979 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9980 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9981 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 2.9 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9981 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9982 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9982 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9983 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9984 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9984 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9985 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9985 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9986 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9986 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 3.0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9987 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9987 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9987 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9988 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9988 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9989 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9989 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9989 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9990 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9990 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+---
+class: animated, fadeIn
+
+### Qué peso tendría un bebé que está en el percentil 99?
+
+Ahora calculamos el peso `\(X\)` del bebé usando la fórmula de transformación de la normal estándar a la original:
+
+$$
+X = \sigma Z + \mu
+$$
+
+Sustituyendo los valores (`\(\mu = 3500 \, \text{g}\)`, `\(\sigma = 500 \, \text{g}\)`):
+
+$$
+X = 500 \times 2.326 + 3500
+$$
+
+$$
+X \approx 1163 + 3500 = 4663 \, \text{g}
+$$
+
+Por lo tanto, un bebé en el percentil 99 pesaría aproximadamente **4663 g**.
+
+---
+class: animated, fadeIn
+
+### Qué peso tendría un bebé que está en el percentil 99? en `R`
+
+La función `qnorm` se usa para calcular el cuantil o valor de la variable correspondiente a una probabilidad acumulada en una distribución normal.
+
+
+``` r
+qnorm(p = 0.99, mean = 3500, sd = 300)
+```
+
+```
+## [1] 4197.904
+```
+
+---
+class: animated, fadeIn
+
+## Reto: demuestra por qué JPelirrojo está equivocado
+
+&lt;center&gt;
+
+&lt;video controls width="250"&gt;
+  &lt;source src="img/iq80.mp4" type="video/mp4" /&gt;
+
+  &lt;source src="img/iq80.mp4" type="video/mp4" /&gt;
+  
+Las pruebas modernas de CI están calibradas de manera que el promedio se establece en 100, con una desviación estándar, generalmente de 15 puntos. **¿Es verdad que la mayoría de la población tiene un IQ menor de 80?**
+
+---
+class: animated, fadeIn
+
+## Probabilidad entre dos puntos
+
+En una población de arenque (*Pomolobus aestivalis*),  
+las longitudes de los peces siguen una **distribución normal**:
+
+- Media: `\(\mu = 54.0 \,\text{mm}\)`  
+- Desviación estándar: `\(\sigma = 4.5 \,\text{mm}\)`  
+
+¿Cuál es el porcentaje de peces con longitud entre **58 y 60 mm**?
+
+&gt; `$$X \sim N(54,\;4.5^2), \qquad P(58 \le X \le 60)\;=?$$`
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-26-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+class: animated, fadeIn
+
+## Probabilidad entre dos puntos
+
+Supongamos que las longitudes de los peces, `\(Y\)`, siguen una distribución normal con media `\(\mu = 54\)` mm y desviación estándar `\(\sigma = 4.5\)` mm.
+
+Primero, calculamos los **z-scores** correspondientes:
+
+.pull-left[
+Para `\(y = 60\)`:
+
+$$
+z = \frac{60 - 54}{4.5} = 1.33
+$$
+]
+.pull-right[
+Para `\(y = 58\)`:
+
+$$
+z = \frac{58 - 54}{4.5} = 0.89
+$$
+]
+
+--
+
+De acuerdo con la distribución normal estándar, queremos:
+
+$$
+P(58 \le Y \le 60) = P(0.89 \le Z \le 1.33) = P(Z \ge 0.89) - P(Z \ge 1.33)
+$$
+
+--
+
+&gt; Para un intervalo `\([a,b]\)`, con `\(a \le b\)`:
+
+$$
+P(a \le Z \le b) = P(Z \ge a) - P(Z\ge b)
+$$
+
+&gt; Esto funciona porque `\(P(Z\ge a)\)` incluye todo lo que está por encima de `\(a\)`, y  `\(P(Z\ge b)\)` incluye todo lo que está por encima de b. Si restamos `\(P(Z\ge a) - P(Z\ge b)\)` nos quedamos con la parte de la distribución que está entre a y b.
+
+---
+class: animated, fadeIn
+
+## Probabilidad entre dos puntos
+
+Usando valores de la tabla de la normal estándar:
+
+$$
+P(Z \ge 0.89) = 0.1867, \quad P(Z \ge 1.33) = 0.0918
+$$
+--
+
+Por lo tanto:
+
+$$
+P(58 \le Y \le 60) = 0.1867 - 0.0918 = 0.0949
+$$
+
+Es decir, aproximadamente **9.49%** de los peces miden entre 58 y 60 mm.
+
+--
+
+&lt;br&gt;&lt;br&gt;
+&gt; Regla general:
+
+&gt; &gt; si usas la tabla de `\(P(Z \le z)\)`
+$$
+P(a \le Z \le b) = P(Z \le b) - P(Z \le a)
+$$
+
+&gt; &gt; si usas la tabla de `\(P(Z \ge z)\)`
+
+$$
+P(a \le Z \le b) = P(Z \ge a) - P(Z \ge b) 
+$$
+
+---
+class: animated, fadeIn
+
+### Probabilidad entre dos puntos en `R`
+
+
+``` r
+# Parámetros de la distribución
+mu &lt;- 54
+sigma &lt;- 4.5
+
+# Intervalo de interés
+y1 &lt;- 58
+y2 &lt;- 60
+
+pnorm(y1, mean = mu, sd = sigma)
+```
+
+```
+## [1] 0.8129686
+```
+
+``` r
+pnorm(y2, mean = mu, sd = sigma)
+```
+
+```
+## [1] 0.9087888
+```
+
+``` r
+# Probabilidad de que Y esté entre 58 y 60
+p &lt;- pnorm(y2, mean = mu, sd = sigma) - pnorm(y1, mean = mu, sd = sigma)
+p
+```
+
+```
+## [1] 0.09582018
+```
+
+
+
+---
+class: animated, fadeIn
+
+## La regla empírica
+
+Para **distribuciones normales “perfectas”**, es decir, distribuciones simétricas, sin colas extremadamente largas o cortas, generalmente se observa que:
+
+- Aproximadamente **el 68%** de las observaciones caen dentro de **±1 desviación estándar (σ)** de la media.  
+- Alrededor del **95%** se encuentra dentro de **±2σ** de la media.  
+- Más del **99%** se encuentra dentro de **±3σ** de la media.  
+
+&gt; Este patrón se conoce como la **regla empírica** o **68–95–99.7%**, y es muy útil para interpretar la variabilidad en datos biológicos, físicos o sociales.
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-28-1.png" width="360" style="display: block; margin: auto;" /&gt;
+
+---
+class: animated, fadeIn
+
+## La regla empírica
+
+Para **distribuciones normales “perfectas”**, es decir, distribuciones simétricas, sin colas extremadamente largas o cortas, generalmente se observa que:
+
+- Aproximadamente **el 68%** de las observaciones caen dentro de **±1 desviación estándar (σ)** de la media.  
+- Alrededor del **95%** se encuentra dentro de **±2σ** de la media.  
+- Más del **99%** se encuentra dentro de **±3σ** de la media.  
+
+&gt; Este patrón se conoce como la **regla empírica** o **68–95–99.7%**, y es muy útil para interpretar la variabilidad en datos biológicos, físicos o sociales.
+
+.pull-left[
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-29-1.png" width="360" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+Si la media es 10 y la SD es 2, el 95% de los valores estarán entre 6 y 14.
+]
+
+---
+class: animated, fadeIn
+
+## La aproximación normal a la binomial
+
+Bajo algunas condiciones, podemos utilizar la distribución normal para aproximarnos a la distribución binomial.
+
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-30-1.png" width="396" style="display: block; margin: auto;" /&gt;
+
+--
+
+En general, si `\(X \sim Bin(n,p)\)`, entonces:
+- `\(\mu = np\)`
+- `\(\sigma^2=npq\)` donde `\(q=1-p\)`
+
+Para `\(n\)` grandes y `\(p\)` muy pequeñas o muy grandes:
+- `\(X \sim N(np,npq)\)`
+`\(n&gt;10\)` y `\(p\approx1/2\)` o `\(n&gt;30\)` y `\(p\)` lejos de `\(1/2\)`
+
+---
+class: animated, fadeIn
+
+### Ejemplo de aproximación normal a la binomial
+
+Queremos calcular la probabilidad de obtener **60 caras o más** al lanzar una moneda 100 veces, asumiendo que la moneda es **balanceada**.
+
+
+--
+- Si la moneda es balanzeada significa que la probabilidad de sacar cara es `\(p = 1/2\)`
+
+- `\(X\)` sigue una distribución binomial: `\(X \sim \text{Binomial}(n = 100, p = 0.5)\)`
+
+- Si `\(X \sim Bin(n,p)\)` entonces `\(X \sim N(np,npq)\)` (`\(n\)` es grande)
+- Utilizamos la aproximación a la distribución normal:
+
+$$
+P(X \ge 60)=P(Z \ge 2)
+$$
+
+--
+&gt; Falta algo más...
+
+---
+class: animated, fadeIn
+
+### Corrección de continuidad
+
+La distribución binomial es discreta, mientras que la distribución normal es continua. La corrección de continuidad es un ajuste que se aplica cuando se aproxima una distribución discreta mediante una continua.
+
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-31-1.png" width="252" /&gt;&lt;img src="6.Normal_files/figure-html/unnamed-chunk-31-2.png" width="252" /&gt;&lt;img src="6.Normal_files/figure-html/unnamed-chunk-31-3.png" width="252" /&gt;&lt;img src="6.Normal_files/figure-html/unnamed-chunk-31-4.png" width="252" /&gt;
+
+
+---
+class: animated, fadeIn
+
+### Corrección de continuidad
+
+- Número de lanzamientos: `\(n = 100\)`  
+- Probabilidad de cara: `\(p = 0.5\)`  
+- Número de caras: `\(X \sim \text{Binomial}(n = 100, p = 0.5)\)`  
+- Media y desviación estándar de la binomial:  
+$$
+\mu = n p = 50, \quad \sigma = \sqrt{n p (1-p)} = \sqrt{100 \times 0.5 \times 0.5} = 5
+$$
+--
+
+Para usar la **aproximación normal**, aplicamos la **corrección de continuidad**:
+
+$$
+P(X \ge 60) \approx P\left(Z \ge \frac{59.5 - \mu}{\sigma}\right)= P\left(Z \ge \frac{59.5 - 50}{5}\right)
+= P(Z \ge 1.9)
+$$
+--
+
+Si usamos la tabla de la normal, `\(P(X \ge 60) = P(Z \ge 1.9) \approx 0.0287\)`
+
+---
+class: animated, fadeIn
+
+### Corrección de continuidad
+
+- Número de lanzamientos: `\(n = 100\)`  
+- Probabilidad de cara: `\(p = 0.5\)`  
+- Número de caras: `\(X \sim \text{Binomial}(n = 100, p = 0.5)\)`  
+- Media y desviación estándar de la binomial:  
+$$
+\mu = n p = 50, \quad \sigma = \sqrt{n p (1-p)} = \sqrt{100 \times 0.5 \times 0.5} = 5
+$$
+
+En `R`:
+
+``` r
+# Parámetros
+mu &lt;- 50; sigma &lt;- 5; x &lt;- 60
+
+# Z con corrección de continuidad
+z &lt;- (x - 0.5 - mu) / sigma; z
+```
+
+```
+## [1] 1.9
+```
+
+``` r
+# Probabilidad usando la aproximación normal
+pnorm(z, lower.tail = FALSE)
+```
+
+```
+## [1] 0.02871656
+```
+
+
+---
+class: animated, fadeIn
+
+### Resumen
+
+- La **distribución normal** puede aproximar muchas distribuciones naturales en biología.
+
+- Si los datos se ajustan bien a la normal:
+  - La **media** indica el centro de la distribución.
+  - La **desviación estándar** indica la **dispersión** de los datos.
+
+- **Regla empírica** ("68-95-99.7"):
+  - ~68% de los valores dentro de **1 desviación estándar** de la media.
+  - ~95% dentro de **2 desviaciones estándar**.
+  - ~99.7% dentro de **3 desviaciones estándar**.
+
+- La normal no solo describe datos naturales, sino también distribuciones teóricas llamadas **distribuciones de muestreo**.
+  - Estas distribuciones describen cómo varía un **estadístico** si repetimos experimentos o tomamos muchas muestras de la misma población.
+
+- Incluso si los datos originales **no son normales**, muchas distribuciones de muestreo **son aproximadamente normales** (teorema central del límite).
+
+- Por esto, la distribución normal es **fundamental en estadística** y en la inferencia biológica.
+
+
+---
+class: animated, fadeIn
+
+## Contacto
+
+&lt;div style="margin-top: 20vh; text-align:center;"&gt;
+
+| Marta Coronado Zamora | David Castellano | 
+|:-:|:-:|
+| &lt;a href="mailto:marta.coronado@uab.cat"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt; marta.coronado@uab.cat&lt;/a&gt; | &lt;a href="mailto:david.castellano@uab.cat"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt;&amp;nbsp; david.castellano@uab.cat&lt;/a&gt; | 
+| &lt;a href="https://bsky.app/profile/geneticament.bsky.social"&gt;&lt;i class="fab fa-bluesky fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @geneticament.bsky.social&lt;/a&gt; |                 &lt;a href="https://bsky.app/profile/castellanoed.bsky.social"&gt;&lt;i class="fab fa-bluesky fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @castellanoed.bsky.social&lt;/a&gt; |
+| &lt;a href="https://www.uab.cat"&gt;&lt;i class="fa fa-map-marker fa-fw"&gt;&lt;/i&gt;&amp;nbsp; Universitat Autònoma de Barcelona&lt;/a&gt; |    &lt;a href="https://gutengroup.mcb.arizona.edu/"&gt; &lt;i class="fa fa-map-marker fa-fw"&gt;&lt;/i&gt;&amp;nbsp; University of Arizona&lt;/a&gt; |
+
+---
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+### Créditos
+#### Adaptado de: CSDA tutorial - Probability distributions (EMBL, Sarah Kaspar, PhD)
+#### Dr. Hafid Laayouni por compartir sus materiales
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+  "mathjax": "default",
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

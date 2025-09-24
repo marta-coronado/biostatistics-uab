@@ -1,0 +1,2212 @@
+---
+title: "<br>"
+subtitle: ""
+author: ""
+date: ""
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, rutgers, "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css", "https://use.fontawesome.com/releases/v7.0.0/css/all.css"]
+    lib_dir: libs
+    self_contained: true
+    nature:
+      mathjax: "default"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+      
+---
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+#knitr::include_graphics()
+knitr::opts_chunk$set(
+  cache = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  fig.retina = 5
+)
+library(ggplot2)
+library(readr)
+library(knitr)
+#pagedown::chrome_print(".html")
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_accent(
+  base_color = "#1c5253", link_color =  "#DE1144", code_inline_color = "#DE1144",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "400", "400i"),
+  code_font_google   = google_font("Roboto Mono"),
+    
+)
+```
+
+```{r xaringanExtra-clipboard, echo=FALSE}
+library(xaringanExtra)
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #90BE6D\"></i>",
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
+
+
+class: animated, fadeIn
+# Outline
+
+#### **Distribución normal**
+- Datos discretos *vs.* continuos
+- Curvas de densidad
+- Cálculo de probabilidades a partir de la distribución normal
+- Probabilidades complementarias
+- Distribución normal en `R`
+- Función de distribución acumulada
+- Estandarización
+- Cálculo de probabilidad entre dos puntos
+- Regla empírica
+- Aproximación de la normal a la binomial
+- Corrección de continuidad
+
+
+<style>
+.title-slide {
+  background-image: url('img/1.png');
+  background-size: 100%;
+}
+</style>
+
+
+---
+
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+## Distribución normal
+
+---
+class: animated, fadeIn
+
+## Datos discretos *vs.* continuos
+
+- Una variable aleatoria y discreta puede tomar un número **finito** de valores
+  - El número de caras en una serie de lanzamientos de moneda
+  - Número de personas que han tenido varicela en una muestra aleatoria
+  
+--
+
+En el tema anterior, hemos considerado distribuciones de probabilidad para este tipo de datos discretos: la **distribución binomial** es un caso particular de modelos discretos
+
+--
+
+- Sin embargo, muchos conjuntos de datos provenientes de experimentos consisten en **mediciones continuas**. Una **variable aleatoria continua** puede tomar cualquier valor real dentro de un intérvalo.
+  - Altura en una población
+  - Presión arterial en una población
+  
+--
+
+La **distribución normal** será un modelo particular para datos continuos.
+
+```{r, fig.height=3, echo = F, fig.align='center'}
+library(ggplot2)
+
+# ----------------------------
+# 1️⃣ Distribución Binomial (discreta)
+# ----------------------------
+n <- 10      # número de ensayos
+p <- 0.5     # probabilidad de éxito
+x_bin <- 0:n
+y_bin <- dbinom(x_bin, size = n, prob = p)
+df_bin <- data.frame(x = x_bin, y = y_bin)
+
+p_bin <- ggplot(df_bin, aes(x = factor(x), y = y)) +
+  geom_bar(stat = "identity", fill = "cadetblue4") +
+  labs(title = "Distribución binomial",
+       x = "Número de éxitos",
+       y = "Probabilidad") +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+# ----------------------------
+# 2️⃣ Distribución Normal (continua)
+# ----------------------------
+x_norm <- seq(-4, 4, length.out = 200)
+y_norm <- dnorm(x_norm, mean = 0, sd = 1)
+df_norm <- data.frame(x = x_norm, y = y_norm)
+
+p_norm <- ggplot(df_norm, aes(x = x, y = y)) +
+    geom_area(fill = "salmon") +  # área bajo la curva
+  geom_line(color = "salmon", size = 1.2) +
+  labs(title = "Distribución normal",
+       x = "Valor",
+       y = "Densidad") +
+  scale_x_continuous(breaks = seq(-4, 4, by = 1),  # ticks cada 0.5
+                     labels = scales::label_number(accuracy = 0.1)) +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+
+# ----------------------------
+# Mostrar gráficos juntos
+# ----------------------------
+library(gridExtra)
+grid.arrange(p_bin, p_norm, ncol = 2)
+```
+
+---
+class: animated, fadeIn
+
+### Ejemplos de variables aleatorias continuas
+```{r, fig.height=7.5, fig.width=12, echo = F, fig.align='center'}
+
+library(UsingR)
+
+p_brain <- ggplot(fat, aes(x = bicep)) +
+    geom_histogram(aes(y = ..density..), fill = "salmon", alpha = 0.6) +  # área bajo la curva
+      geom_density( size = 1, color = "salmon") +  # área bajo la curva
+
+  labs(title = "Circunferencia del biceps extendido (cm)",
+       x = "",
+       y = "Densidad") +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+p_iris <- ggplot(iris[iris$Species=="virginica",], aes(x = Sepal.Width)) +
+    geom_histogram(aes(y = ..density..), fill = "aquamarine3", alpha = 0.6) +  # área bajo la curva
+      geom_density( size = 1, color = "aquamarine3") +  # área bajo la curva
+
+  labs(title = "Ancho del sépalo en flores (cm)",
+       x = "",
+       y = "Densidad") +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+p_babyboom <- ggplot(babyboom, aes(x = wt)) +
+    geom_histogram(aes(y = ..density..), fill = "#CDBA96", alpha = 0.6) +  # área bajo la curva
+      geom_density(size = 1, color = "#CDBA96") +  # área bajo la curva
+
+  labs(title = "Peso de bebés (g)",
+       x = "",
+       y = "Densidad") +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+
+p_normtemp <- ggplot(normtemp, aes(x = hr)) +
+    geom_histogram(aes(y = ..density..), fill = "lightblue3", alpha = 0.6) +  # área bajo la curva
+      geom_density( size = 1, color = "lightblue3") +  # área bajo la curva
+
+  labs(title = "Frecuencia cardíaca en reposo",
+       x = "",
+       y = "Densidad") +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+library(gridExtra)
+grid.arrange(p_brain, p_iris, p_babyboom, p_normtemp, ncol = 2)
+```
+
+---
+class: animated, fadeIn
+
+## Probabilidades para distribuciones continuas
+
+Dos características importantes de las distribuciones continuas:
+
+- El área total bajo la curva de densidad es 1.
+
+- La probabilidad de que una variable tome un valor dentro de un intervalo específico es el área bajo la curva sobre ese intervalo.
+
+```{r, echo = F, fig.align='center', fig.height=5, fig.width=9}
+library(dplyr)
+library(ggplot2)
+
+set.seed(123)
+
+# Datos simulados con distribución normal
+dt <- data.frame(x = rnorm(5000, mean = 170, sd = 10))
+
+dt %>%
+  mutate(
+    # Creamos grupos (bins) de 1 cm
+    grp = cut(x, seq(130, 210, by = 1), labels = FALSE, include.lowest = TRUE),
+    # Marcamos el intervalo que queremos resaltar: 175–185 cm
+    is_highlight = between(x, 175, 185)
+  ) %>%
+  ggplot(aes(x, fill = is_highlight)) +
+    geom_histogram(binwidth = 1, boundary = 130, closed = "left",
+                   col = "black", alpha = 0.5, size = 0.1, show.legend = F) +
+    scale_x_continuous(breaks = seq(130, 210, 10)) +
+    scale_fill_manual(values = c("FALSE" = "#FFE4E1", "TRUE" = "#8B5F65")) +
+    labs(x = "Altura (cm)", y = "Frecuencia") +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+
+```
+
+
+---
+class: animated, fadeIn
+
+## Probabilidades para distribuciones continuas
+
+Cuando trabajamos con variables aleatorias continuas, la probabilidad se calcula para **intervalos de valores** y no para valores individuales.
+
+- La probabilidad de que una variable aleatoria continua $X$ tome un valor individual es **0**.  
+  Es decir, $P(X = x) = 0$.
+
+- Por lo tanto, $P(a < X < b)$ es equivalente a   $P(a \le X \le b)$.
+
+???
+Si la probabilidad en los extremos es 0, incluir o excluir los límites no cambia el valor de la probabilidad del intervalo:
+
+---
+class: animated, fadeIn
+
+### Curvas de densidad
+
+Una curva suave que representa una distribución de frecuencias se llama **curva de densidad**.
+
+- Las coordenadas verticales de una curva de densidad se representan en una escala llamada escala de densidad.
+- Cuando se utiliza la escala de densidad, las frecuencias relativas se representan como áreas bajo la curva.
+
+```{r, echo = F, fig.align='center', fig.height=3, fig.width=13}
+library(dplyr)
+library(ggplot2)
+
+set.seed(123)
+
+# Datos simulados con distribución normal
+dt <- data.frame(x = rnorm(5000, mean = 170, sd = 10))
+
+p1 <- ggplot(dt, aes(x)) +
+    geom_histogram(fill="#FFE4E1",bins=8, closed = "left", col = "black", alpha = 0.5, size = 0.1, show.legend = F) +
+    scale_x_continuous(breaks = seq(130, 210, 10)) +
+    labs(x = "", y = "", subtitle="8 bins") +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"), axis.text.y=element_blank(),  axis.ticks.y = element_blank())
+
+p2 <- ggplot(dt, aes(x)) +
+    geom_histogram(fill="#FFE4E1",bins=15, closed = "left", col = "black", alpha = 0.5, size = 0.1, show.legend = F) +
+    scale_x_continuous(breaks = seq(130, 210, 10)) +
+    labs(x = "", y = "", subtitle="15 bins") +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"), axis.text.y=element_blank(),  axis.ticks.y = element_blank())
+
+p3 <-ggplot(dt, aes(x)) +
+    geom_histogram(fill="#FFE4E1",bins=30, closed = "left", col = "black", alpha = 0.5, size = 0.1, show.legend = F) +
+    scale_x_continuous(breaks = seq(130, 210, 10)) +
+    labs(x = "", y = "", subtitle="30 bins") +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"), axis.text.y=element_blank(),  axis.ticks.y = element_blank())
+
+p4 <-ggplot(dt, aes(x)) +
+    geom_histogram(fill="#FFE4E1",aes(y=..density..), bins=50, closed = "left", col = "black", alpha = 0.5, size = 0.1, show.legend = F) +
+  geom_density()+
+    scale_x_continuous(breaks = seq(130, 210, 10)) +
+    labs(x = "", y = "", subtitle="50 bins") +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"), axis.text.y=element_blank(),  axis.ticks.y = element_blank())
+
+
+library(gridExtra)
+grid.arrange(p1, p2, p3, p4, ncol = 4)
+```
+
+<center>A medida que aumentamos el número de intervalos (bins) del histograma, 
+este se aproxima a una curva suave que describe la distribución de los datos.</center>
+
+--
+
+- El área total bajo la curva de densidad es 1.
+
+--
+- Para dos números cualquiera _a_ y _b_, la área bajo la curva de densidad entre  _a_ y _b_ equivale a la proporción de valores _Y_ entre  _a_ y _b_.
+
+---
+class: animated, fadeIn
+
+### Curvas de densidad
+.pull-left[
+Para datos continuos no tenemos valores discretos igualmente espaciados como pasaba con los datos discretos.
+
+]
+.pull-right[
+```{r, echo = F, fig.align='center', fig.height=7, fig.width=8}
+library(ggplot2)
+
+# Simular distribución ligeramente sesgada a la izquierda
+n <- 10000
+x_raw <- rbeta(n, shape1 = 5, shape2 = 4)  # casi normal, un poco sesgada a la izquierda
+x_scaled <- x_raw * 14                       # escalar a 0-14
+
+# Calcular densidad
+dens <- density(x_scaled)
+dens_data <- data.frame(x = dens$x, y = dens$y)
+
+# Definir los segmentos manualmente para que las líneas verticales coincidan con 2, 4, 6, 8, 10
+breaks <- c( 2, 4, 6, 8, 10, 12, 14) # 6 segmentos
+
+# Calcular proporción de área bajo la curva en cada segmento
+proportions <- sapply(1:6, function(i){
+    sum(dens$y[dens$x >= breaks[i] & dens$x < breaks[i+1]]) / sum(dens$y)
+})
+
+# Posiciones para las líneas verticales y proporciones
+lines_df <- data.frame(x = breaks)
+text_df <- data.frame(
+    x = (breaks[-7] + breaks[-1])/2,  # centro de cada segmento
+    y = 0.04,
+    label = round(proportions, 2)
+)
+# Graficar
+ggplot(dens_data, aes(x, y)) +
+    geom_line(size = 1.2) +
+  geom_area(fill="cadetblue3") + 
+    geom_vline(xintercept = breaks, linetype = "dashed", color = "black") +
+    geom_text(data = text_df, aes(x = x, y = y, label = label), vjust = -0.5, size = 6) +
+  labs(x="",y="") +
+    scale_x_continuous(breaks = seq(0, 14, 2)) +
+  ggthemes::theme_base(base_size = 16) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"), axis.text.y=element_blank(),  axis.ticks.y = element_blank())
+
+```
+]
+
+---
+class: animated, fadeIn
+
+# La distribución normal
+
+- Una de las **distribuciones más importantes** en las ciencias naturales 
+
+- Tiene forma de campana simétrica (*bell curve*)
+
+-  Aplica el **teorema central del límite**: si muestreas un número suficiente de muestras acabas obteniendo una distribución normal
+
+```{r, echo = F, fig.align='center', fig.height=5, fig.width=6}
+p4 + labs(subtitle="")
+```
+
+
+???
+- La altura de la curva es muy pequeña para valores de y a más de tres desviaciones estándar.
+
+---
+class: animated, fadeIn
+
+## Cómo se describe la distribución normal
+
+La distribución normal se describe con **dos parámetros**:
+
+- La **media** de la distribución ($\mu$)  
+- La **desviación estándar** de la distribución ($\sigma$)  
+
+--
+
+Cambiar los valores de $\mu$ y $\sigma$ altera la **posición** y la **forma** de la distribución.
+
+```{r, echo = F, fig.align='center', fig.height=5.2, fig.width=8}
+library(ggplot2)
+
+# Crear un data frame con varias distribuciones normales
+params <- data.frame(
+  mu = c(40, 100, 120),
+  sigma = c(10, 20, 5),
+  label = c("μ=40, σ=10", "μ=100, σ=20", "μ=120, σ=5")
+)
+
+# Generar secuencia x amplia para cubrir todos los rangos
+x <- seq(0, 160, length.out = 1000)
+
+# Calcular densidades para cada distribución
+dens_data <- do.call(rbind, lapply(1:nrow(params), function(i){
+  data.frame(
+    x = x,
+    y = dnorm(x, mean = params$mu[i], sd = params$sigma[i]),
+    label = params$label[i]
+  )
+}))
+
+# Graficar
+ggplot(dens_data, aes(x = x, y = y, color = label)) +
+  geom_line(size = 1.2) +
+  labs(
+    x = "Valor",
+    y = "Densidad",
+    color = "Distribución",
+    title = "Distribuciones normales con distintas μ y σ"
+  ) +
+  ggthemes::theme_base(base_size = 16) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"), axis.text.y=element_blank(),  axis.ticks.y = element_blank()) +
+  scale_color_brewer(type="qual", palette = 2)
+```
+
+---
+class: animated, fadeIn
+
+## Cómo se describe la distribución normal
+
+Si una variable $X$ sigue una distribución normal con media $\mu$ y desviación estándar $\sigma$, escribimos:
+
+$$
+X \sim N(\mu, \sigma^2)
+$$
+
+donde:
+
+- $\mu$ y $\sigma$ son los **parámetros** de la distribución.  
+- $\mu$ representa la **media**, que determina el **centro** de la distribución.  
+- $\sigma$ representa la **desviación estándar**, que determina la **dispersión** o **anchura** de la curva.
+
+
+---
+class: animated, fadeIn
+
+### Cálculo de probabilidades a partir de la distribución normal
+
+- Para una **distribución de probabilidad discreta**, podemos calcular la probabilidad de que una variable sea **igual a un valor específico**.  
+
+- Para una **distribución de probabilidad continua**, **no podemos calcular la probabilidad de que una variable sea igual a un valor exacto**, sino que debemos calcular la probabilidad de que la variable **caiga dentro de un intervalo determinado**.
+
+
+--
+
+**Definición**
+
+- Sea $X$ una variable aleatoria continua.  
+- Una **distribución de probabilidad** o **función de densidad de probabilidad** de $X$ es una función $f(x)$ tal que, para cualesquiera dos números $a$ y $b$ con $a \le b$, se cumple que:
+
+$$
+P(a \le X \le b) = \int_a^b f(x) \, dx
+$$
+
+- Es decir, la probabilidad de que $X$ se encuentre en el intervalo $[a, b]$ se puede calcular **integrando la función de densidad de probabilidad** de la variable aleatoria $X$.
+
+---
+class: animated, fadeIn
+
+### Cálculo de probabilidades a partir de la distribución normal
+
+La probabilidad de que $X$ tome un valor en el intervalo $[a, b]$ es **el área sobre este intervalo y bajo la curva de la función de densidad**:
+
+```{r, echo = F, fig.height=6, fig.width=7, fig.align='center'}
+library(ggplot2)
+
+# Parámetros de la normal
+mu <- 0
+sigma <- 1
+
+# Secuencia de x
+x <- seq(-4, 4, length.out = 500)
+
+# Densidad normal
+dens_df <- data.frame(
+  x = x,
+  y = dnorm(x, mean = mu, sd = sigma)
+)
+
+# Intervalo
+a <- 0.6
+b <- 1.8
+
+# Datos para sombrear
+shade_df <- subset(dens_df, x >= a & x <= b)
+
+ggplot(dens_df, aes(x, y)) +
+  geom_line(color = "cadetblue4", size = 1.2) +
+  geom_ribbon(data = shade_df, aes(ymin = 0, ymax = y),
+              fill = "grey70", alpha = 0.5) +
+  geom_vline(xintercept = c(a, b), linetype = "dashed", size = 1) +
+  annotate("text", x = 0.4, y = 0.31, label = "a", size = 6) +
+    annotate("text", x = 2, y = 0.31, label = "b", size = 6) +
+
+  labs(x = "x", y = "f(x)") +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"), axis.text.y=element_blank(),  axis.ticks.y = element_blank()) 
+```
+
+
+---
+class: animated, fadeIn
+
+### Cálculo de probabilidades a partir de la distribución normal
+
+- Calcular el área bajo la curva no es sencillo, por lo que usamos **tablas de probabilidad**.  
+
+- Estas tablas han sido calculadas previamente con un ordenador.  
+
+- Todo lo que necesitamos hacer es **identificar la probabilidad correcta en la tabla**.  
+
+- Solo **una distribución normal especial** ha sido tabulada: $N(0,1)$.
+
+  - La distribución $N(0,1)$ se llama **distribución normal estándar**.
+    - Se caracteriza por una media $\mu$=0 y una desviación estándard $\sigma$=1
+
+
+---
+class: animated, fadeIn
+
+### Cálculo de probabilidades a partir de la distribución normal
+
+Las tablas nos permiten **consultar probabilidades de la forma** $P(Z \le z)$.
+
+```{r, echo = F, fig.height=6, fig.width=7, fig.align='center'}
+library(ggplot2)
+
+# Parámetros de la normal
+mu <- 0
+sigma <- 1
+
+# Secuencia de x
+x <- seq(-4, 4, length.out = 500)
+
+# Densidad normal
+dens_df <- data.frame(
+  x = x,
+  y = dnorm(x, mean = mu, sd = sigma)
+)
+
+# Intervalo
+a <- min(dens_df$x)
+b <- 1.42
+
+# Datos para sombrear
+shade_df <- subset(dens_df, x >= a & x <= b)
+
+ggplot(dens_df, aes(x, y)) +
+  geom_line(color = "cadetblue4", size = 1.2) +
+  geom_ribbon(data = shade_df, aes(ymin = 0, ymax = y),
+              fill = "grey70", alpha = 0.5) +
+  geom_vline(xintercept = c(a, b), linetype = "dashed", size = 1) +
+    annotate("text", x = 1.62, y = 0.31, label = "z", size = 6) +
+
+  labs(x = "x", y = "f(x)") +
+  scale_x_continuous(breaks=0) +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"), axis.text.y=element_blank(),  axis.ticks.y = element_blank()) 
+```
+
+--
+
+<center>
+Si $Z \sim N(0,1)$, cuál es $P(Z \le 1.42)$?
+
+---
+class: animated, fadeIn
+
+#### La tabla nos permite leer las probabilidades de la forma $P(Z≤z)$
+
+```{r, echo = F}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+# Valores de las filas (0.0 a 3.0 por 0.1)
+rows <- seq(0, 3.0, by = 0.1)
+
+# Valores de las columnas (0.00 a 0.09 por 0.01)
+cols <- seq(0, 0.09, by = 0.01)
+
+# Generar tabla
+z_table <- sapply(cols, function(c){
+  sapply(rows, function(r){
+    pnorm(r + c)
+  })
+})
+
+# Convertir a data frame y agregar columna de fila
+z_table_df <- as.data.frame(z_table)
+z_table_df <- cbind(Z = rows, z_table_df)
+
+# Nombres de columnas tipo tabla Z
+colnames(z_table_df) <- c("Z", paste0("0.0", 0:9))
+
+# Mostrar tabla
+# --- Tabla bonita ---
+kable(head(z_table_df, 17), digits = 4, align = "c",
+      caption = "Tabla: Probabilidades acumuladas P(Z ≤ z)") %>%
+  kable_styling(
+    full_width = FALSE,   # evita que ocupe todo el ancho
+    position = "center",  # centra la tabla
+    font_size = 14
+  ) %>%
+  row_spec(0, bold = TRUE, background = "#e6f2ff") %>%  # encabezado en gris claro
+  column_spec(1, bold = TRUE, background = "#e6f2ff") 
+
+```
+
+---
+class: animated, fadeIn
+
+### Cálculo de probabilidades a partir de la distribución normal
+
+También hay tablas que nos permiten **consultar probabilidades de la forma** $P(Z \ge z)$.
+
+```{r, echo = F, fig.height=6, fig.width=7, fig.align='center'}
+library(ggplot2)
+
+# Parámetros de la normal
+mu <- 0
+sigma <- 1
+
+# Secuencia de x
+x <- seq(-4, 4, length.out = 500)
+
+# Densidad normal
+dens_df <- data.frame(
+  x = x,
+  y = dnorm(x, mean = mu, sd = sigma)
+)
+
+# Intervalo
+a <- 1.42
+b <- max(dens_df$x)
+
+# Datos para sombrear
+shade_df <- subset(dens_df, x >= a & x <= b)
+
+ggplot(dens_df, aes(x, y)) +
+  geom_line(color = "cadetblue4", size = 1.2) +
+  geom_ribbon(data = shade_df, aes(ymin = 0, ymax = y),
+              fill = "grey70", alpha = 0.5) +
+  geom_vline(xintercept = c(a, b), linetype = "dashed", size = 1) +
+    annotate("text", x = 1.62, y = 0.31, label = "z", size = 6) +
+
+  labs(x = "x", y = "f(x)") +
+  scale_x_continuous(breaks=0) +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"), axis.text.y=element_blank(),  axis.ticks.y = element_blank()) 
+```
+
+--
+
+<center>
+Si $Z \sim N(0,1)$, cuál es $P(Z \ge 1.42)$?
+
+
+---
+class: animated, fadeIn
+
+#### La tabla nos permite leer las probabilidades de la forma $P(Z≥z)$
+
+```{r, echo = F}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+# Valores de las filas (0.0 a 3.0 por 0.1)
+rows <- seq(0, 3.0, by = 0.1)
+
+# Valores de las columnas (0.00 a 0.09 por 0.01)
+cols <- seq(0, 0.09, by = 0.01)
+
+# Generar tabla P(Z > z)
+z_table <- sapply(cols, function(c){
+  sapply(rows, function(r){
+    1 - pnorm(r + c)
+  })
+})
+
+# Convertir a data frame y agregar columna de fila
+z_table_df <- as.data.frame(z_table)
+z_table_df <- cbind(Z = rows, z_table_df)
+
+# Nombres de columnas tipo tabla Z
+colnames(z_table_df) <- c("Z", paste0("0.0", 0:9))
+
+# Mostrar tabla
+kable(head(z_table_df, 17), digits = 4, align = "c",
+      caption = "Tabla: Probabilidades P(Z ≥ z)") %>%
+  kable_styling(
+    full_width = FALSE,
+    position = "center",
+    font_size = 14
+  ) %>%
+  row_spec(0, bold = TRUE, background = "#e6f2ff") %>%
+  column_spec(1, bold = TRUE, background = "#e6f2ff")
+
+```
+
+---
+class: animated, fadeIn
+
+### Probabilidades complementarias
+
+- La **probabilidad total** bajo la curva normal es 1.  
+- Por lo tanto, conocer $P(Z  \le  z)$ o $P(Z  \ge  z)$ permite calcular la otra:  
+
+$$
+P(Z  \le 1.42) = 1 - P(Z  \ge 1.42), \quad \quad
+P(Z\ge 1.42) = 1 - P(Z  \le 1.42)
+$$
+
+- Esto se conoce como **probabilidad complementaria**.  
+- Muy útil para leer una sola tabla Z en cualquier dirección.
+
+```{r, echo = F, fig.height=5.2, fig.width=7.2, fig.align='center'}
+library(ggplot2)
+library(ggthemes)
+
+# Parámetros de la normal
+mu <- 0
+sigma <- 1
+
+# Secuencia de x
+x <- seq(-4, 4, length.out = 500)
+
+# Densidad normal
+dens_df <- data.frame(
+  x = x,
+  y = dnorm(x, mean = mu, sd = sigma)
+)
+
+# Punto Z
+z <- 1.42
+
+# Probabilidades
+p_less <- pnorm(z)       # P(Z < 1.42)
+p_greater <- 1 - p_less  # P(Z > 1.42)
+
+# Datos para sombrear
+shade_left <- subset(dens_df, x <= z)
+shade_right <- subset(dens_df, x >= z)
+
+ggplot(dens_df, aes(x, y)) +
+  geom_line(color = "white", size = 1.2) +
+  
+  # Sombreado P(Z < z)
+  geom_ribbon(data = shade_left, aes(ymin = 0, ymax = y),
+              fill = "cadetblue3", alpha = 0.5) +
+  
+  # Sombreado P(Z > z)
+  geom_ribbon(data = shade_right, aes(ymin = 0, ymax = y),
+              fill = "firebrick3", alpha = 0.5) +
+  
+  # Línea vertical Z
+  geom_vline(xintercept = z, linetype = "dashed", size = 1) +
+  
+  # Etiquetas
+  annotate("text", x = -2.5, y = 0.35, label = paste0("P(Z ≤ 1.42) = ", round(p_less,4)), size = 6, color = "cadetblue4") +
+  annotate("text", x = 3, y = 0.35, label = paste0("P(Z ≥ 1.42) = ", round(p_greater,4)), size = 6, color = "firebrick4") +
+  
+  labs(x = "Z", y = "f(Z)") +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+```
+
+---
+class: animated, fadeIn
+
+### Probabilidades complementarias
+
+Si $Z \sim N(0,1)$, cuál es $P(Z \le -0.76)$?
+
+```{r, echo=F, fig.height=6, fig.width=7, fig.align='center'}
+library(ggplot2)
+library(ggthemes)
+
+# Parámetros de la normal
+mu <- 0
+sigma <- 1
+
+# Secuencia de x
+x <- seq(-4, 4, length.out = 500)
+
+# Densidad normal
+dens_df <- data.frame(
+  x = x,
+  y = dnorm(x, mean = mu, sd = sigma)
+)
+
+# Punto Z
+z <- -0.76
+
+# Probabilidad P(Z < z)
+p_less <- pnorm(z)
+
+# Datos para sombrear P(Z < z)
+shade_left <- subset(dens_df, x <= z)
+
+ggplot(dens_df, aes(x, y)) +
+  geom_line(color = "cadetblue4", size = 1.2) +
+  
+  # Sombreado P(Z < z)
+  geom_ribbon(data = shade_left, aes(ymin = 0, ymax = y),
+              fill = "cadetblue3", alpha = 0.5) +
+  
+  # Línea vertical Z
+  geom_vline(xintercept = z, linetype = "dashed", size = 1) +
+  
+  # Etiqueta probabilidad
+  annotate("text", x = -3, y = 0.35, 
+           label = paste0("P(Z < -0.76) = ?"), 
+           size = 6, color = "cadetblue4") +
+  
+  labs(x = "Z", y = "f(Z)") +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+```
+
+--
+**Recordando la simetría de la normal**:
+$$
+P(Z \le -z) = P(Z \ge z)
+$$
+
+---
+class: animated, fadeIn
+
+### Probabilidades complementarias
+
+Si $Z \sim N(0,1)$, cuál es $P(Z\le -0.76)$?
+
+- Usamos la tabla $Z \ge z$  
+- Para $-0.76$, buscamos $0.76$ en la tabla  
+
+$$
+P(Z \ge 0.76) \approx 0.2236
+$$
+
+```{r, echo = F}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+# Valores de las filas (0.0 a 3.0 por 0.1)
+rows <- seq(0, 3.0, by = 0.1)
+
+# Valores de las columnas (0.00 a 0.09 por 0.01)
+cols <- seq(0, 0.09, by = 0.01)
+
+# Generar tabla P(Z > z)
+z_table <- sapply(cols, function(c){
+  sapply(rows, function(r){
+    1 - pnorm(r + c)
+  })
+})
+
+# Convertir a data frame y agregar columna de fila
+z_table_df <- as.data.frame(z_table)
+z_table_df <- cbind(Z = rows, z_table_df)
+
+# Nombres de columnas tipo tabla Z
+colnames(z_table_df) <- c("Z", paste0("0.0", 0:9))
+
+# Mostrar tabla
+kable(head(z_table_df, 10), digits = 4, align = "c",
+      caption = "Tabla: Probabilidades P(Z ≥ z)") %>%
+  kable_styling(
+    full_width = FALSE,
+    position = "center",
+    font_size = 14
+  ) %>%
+  row_spec(0, bold = TRUE, background = "#e6f2ff") %>%
+  column_spec(1, bold = TRUE, background = "#e6f2ff")
+
+```
+
+---
+class: animated, fadeIn
+
+### Probabilidades complementarias
+
+Si $Z \sim N(0,1)$, cuál es $P(Z>-0.4)$?
+
+
+```{r, echo=F, fig.height=6, fig.width=7, fig.align='center'}
+library(ggplot2)
+library(ggthemes)
+
+# Parámetros de la normal
+mu <- 0
+sigma <- 1
+
+# Secuencia de x
+x <- seq(-4, 4, length.out = 500)
+
+# Densidad normal
+dens_df <- data.frame(
+  x = x,
+  y = dnorm(x, mean = mu, sd = sigma)
+)
+
+# Punto Z
+z <- -0.4
+
+# Probabilidad P(Z > z)
+p_greater <- 1 - pnorm(z)
+
+# Datos para sombrear P(Z > z)
+shade_right <- subset(dens_df, x >= z)
+
+ggplot(dens_df, aes(x, y)) +
+  geom_line(color = "firebrick4", size = 1.2) +
+  
+  # Sombreado P(Z > z)
+  geom_ribbon(data = shade_right, aes(ymin = 0, ymax = y),
+              fill = "firebrick3", alpha = 0.5) +
+  
+  # Línea vertical Z
+  geom_vline(xintercept = z, linetype = "dashed", size = 1) +
+  
+  # Etiqueta probabilidad
+  annotate("text", x = 2.5, y = 0.35, 
+           label = paste0("P(Z > -0.4) = ?"), 
+           size = 6, color = "firebrick4") +
+  
+  labs(x = "Z", y = "f(Z)") +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+```
+
+
+--
+
+$$
+P(Z \ge -0.4) = P(Z \le 0.4) = 1 - P(Z \ge 0.4)
+$$
+
+---
+class: animated, fadeIn
+
+### Probabilidades complementarias
+
+Si $Z \sim N(0,1)$, cuál es $P(Z \ge -0.4)$?
+
+- Usamos la tabla $Z \ge z$  
+- Para $-0.4$, buscamos $0.4$ en la tabla  
+
+$$
+P(Z \ge 0.4) \approx 0.3446
+$$
+
+Por último, $P(Z \le 0.4) = 1-P(Z \ge 0.4)$
+
+$$
+1- P(Z \ge 0.4) = 1 - 0.3446  \approx 0.6554
+$$
+
+```{r, echo = F}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+# Valores de las filas (0.0 a 3.0 por 0.1)
+rows <- seq(0, 3.0, by = 0.1)
+
+# Valores de las columnas (0.00 a 0.09 por 0.01)
+cols <- seq(0, 0.09, by = 0.01)
+
+# Generar tabla P(Z > z)
+z_table <- sapply(cols, function(c){
+  sapply(rows, function(r){
+    1 - pnorm(r + c)
+  })
+})
+
+# Convertir a data frame y agregar columna de fila
+z_table_df <- as.data.frame(z_table)
+z_table_df <- cbind(Z = rows, z_table_df)
+
+# Nombres de columnas tipo tabla Z
+colnames(z_table_df) <- c("Z", paste0("0.0", 0:9))
+
+# Mostrar tabla
+kable(head(z_table_df, 6), digits = 4, align = "c",
+      caption = "Tabla: Probabilidades P(Z ≥ z)") %>%
+  kable_styling(
+    full_width = FALSE,
+    position = "center",
+    font_size = 14
+  ) %>%
+  row_spec(0, bold = TRUE, background = "#e6f2ff") %>%
+  column_spec(1, bold = TRUE, background = "#e6f2ff")
+
+```
+
+
+---
+class: animated, fadeIn
+
+### Distribución normal en `R`
+
+Cada tipo de distribución en `R` tiene cuatro funciones principales. En el caso de la **distribución normal**, todas terminan con `norm`:
+
+- `dnorm`: función de densidad de probabilidad (PDF)  
+- `pnorm`: función de distribución acumulada (CDF)  
+- `qnorm`: función cuantil (inversa de la acumulada)  
+- `rnorm`: generador de números aleatorios: simula valores de una normal  
+
+--
+
+La función de distribución acumulada permite calcular **probabilidades de rangos**:
+
+- Probabilidad de superar un valor: $P(Z > z)$, $P(Z \ge z)$  
+- Probabilidad de menor que un valor: $P(Z < z)$, $P(Z \le z)$ 
+
+---
+class: animated, fadeIn
+
+### Función de distribución acumulada 
+
+- Por ejemplo: ¿cuál es la probabilidad de que $Z$ sea **mayor que -0.5** o **menor que 1.42**?  
+
+$$P(Z \ge -0.5), \quad \quad \quad P(Z \le 1.42)$$  
+
+--
+
+> En R usaríamos `pnorm()`: por defecto computa $P(Z \le z)$, la probabilidad acumulada _hasta_ $z$ para una distribución normal estándard $N(0,1)$:
+
+
+```{r}
+pnorm(1.42)        # P(Z < 1.42)
+```
+
+--
+```{r}
+1 - pnorm(-0.5)   # P(Z > -0.5) = P(Z < 0.5) = 1 - P(Z < -0.5) 
+```
+
+--
+```{r}
+pnorm(-0.5, lower.tail = F)
+```
+
+---
+class: animated, fadeIn
+
+## Estandarización
+
+- Todas las probabilidades que hemos calculado hasta ahora corresponden a la **distribución normal estándar**:
+
+$$
+Z \sim N(0,1)
+$$
+
+- La notación general: $X \sim N(\mu, \sigma^2)$  
+  - $\mu$ = media (centro de la curva)  
+  - $\sigma$ = desviación estándar (anchura de la curva)  
+
+- En la **distribución normal estándar** se denota como:  
+  - El **0** indica que la curva está centrada en 0.  
+  - El **1** indica que la desviación estándar es 1.  
+
+--
+
+- Si queremos calcular probabilidades para una **normal con media $\mu$ y desviación estándar $\sigma$ diferentes**, debemos **convertirla a la normal estándar**.
+  - Este proceso se conoce como **estandarización**.
+
+---
+class: animated, fadeIn
+
+### Ejemplo de estandarización
+
+.pull-left[
+Supongamos $X \sim N(3,4)$, cuál es $P(X \le 6.2)$?
+]
+
+.pull-right[
+```{r, echo = F, fig.height=7.5}
+library(ggplot2)
+library(gridExtra)
+
+# 1️⃣ Original N(3,4)
+mu <- 3
+sigma <- 2  # desviación estándar = sqrt(4)
+x <- seq(-2, 10, length.out = 500)
+dens1 <- data.frame(
+  x = x,
+  y = dnorm(x, mean = mu, sd = sigma)
+)
+shade1 <- subset(dens1, x <= 6.2)
+
+p1 <- ggplot(dens1, aes(x, y)) +
+  geom_line(color="cadetblue4", size=1.2) +
+  geom_ribbon(data=shade1, aes(ymin=0, ymax=y), fill="skyblue", alpha=0.5) +
+  geom_vline(xintercept = c(mu, 6.2), linetype="dashed", size=1) +
+  annotate("text", x = 6.7, y = 0.08, label="6.2") +
+  annotate("text", x = mu+0.3, y = 0.08, label="3") +
+  labs(title="X ~ N(3,4)", x="X", y="f(X)") + xlim(c(-5,10))+
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+# 2️⃣ Centrado en 0 N(0,4)
+dens2 <- data.frame(
+  x = x - mu,
+  y = dnorm(x - mu, mean = 0, sd = sigma)
+)
+shade2 <- subset(dens2, x <= 6.2 - mu)
+
+p2 <- ggplot(dens2, aes(x, y)) +
+  geom_line(color="cadetblue4", size=1.2) +
+  geom_ribbon(data=shade2, aes(ymin=0, ymax=y), fill="skyblue", alpha=0.5) +
+  geom_vline(xintercept = c(0, 6.2 - mu), linetype="dashed", size=1) +
+  annotate("text", x = 6.7 - mu, y = 0.08, label="3.2") +
+  annotate("text", x = 0.4, y = 0.08, label="0") +
+  labs(title="X - μ ~ N(0,4)", x="X - μ", y="f(X - μ)") + xlim(c(-5,10))+
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+# 3️⃣ Estandarizado N(0,1)
+dens3 <- data.frame(
+  x = (x - mu)/sigma,
+  y = dnorm((x - mu)/sigma, mean=0, sd=1)
+)
+shade3 <- subset(dens3, x <= (6.2 - mu)/sigma)
+
+p3 <- ggplot(dens3, aes(x, y)) +
+  geom_line(color="cadetblue4", size=1.2) +
+  geom_ribbon(data=shade3, aes(ymin=0, ymax=y), fill="skyblue", alpha=0.5) +
+  geom_vline(xintercept = c(0, (6.2 - mu)/sigma), linetype="dashed", size=1) +
+  annotate("text", x = (6.2 - mu)/sigma + 0.4, y = 0.15, label="1.6") +
+  annotate("text", x = 0.4, y = 0.15, label="0") +
+  labs(title="Z = (X - μ)/σ ~ N(0,1)", x="Z", y="f(Z)") + xlim(c(-5,10))+
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+# Mostrar los tres gráficos juntos
+grid.arrange(p1, p2, p3, ncol=1)
+
+```
+]
+
+---
+class: animated, fadeIn
+
+### Ejemplo de estandarización
+
+.pull-left[
+Supongamos $X \sim N(3,4)$, cuál es $P(X \le 6.2)$?
+
+Para poder usar la tabla de la normal estándar,  
+convertimos esta probabilidad en una que siga  
+$Z \sim N(0,1)$, realizando dos pasos:
+
+1. **Restar la media $\mu$**  
+   → recentra la distribución en 0.  
+2. **Dividir por la desviación estándar $\sigma$**  
+   → reescala la distribución para que su desviación sea 1.
+
+Este mismo proceso se aplica al punto de corte.  
+Así obtenemos:
+
+$$
+P(X  \le 6.2) \;=\; P(Z  \le 1.6) \approx 0.9452
+$$
+
+donde $Z \sim N(0,1)$.
+]
+
+.pull-right[
+```{r, echo = F, fig.height=7.5}
+library(ggplot2)
+library(gridExtra)
+
+# 1️⃣ Original N(3,4)
+mu <- 3
+sigma <- 2  # desviación estándar = sqrt(4)
+x <- seq(-2, 10, length.out = 500)
+dens1 <- data.frame(
+  x = x,
+  y = dnorm(x, mean = mu, sd = sigma)
+)
+shade1 <- subset(dens1, x <= 6.2)
+
+p1 <- ggplot(dens1, aes(x, y)) +
+  geom_line(color="cadetblue4", size=1.2) +
+  geom_ribbon(data=shade1, aes(ymin=0, ymax=y), fill="skyblue", alpha=0.5) +
+  geom_vline(xintercept = c(mu, 6.2), linetype="dashed", size=1) +
+  annotate("text", x = 6.7, y = 0.08, label="6.2") +
+  annotate("text", x = mu+0.3, y = 0.08, label="3") +
+  labs(title="X ~ N(3,4)", x="X", y="f(X)") + xlim(c(-5,10))+
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+# 2️⃣ Centrado en 0 N(0,4)
+dens2 <- data.frame(
+  x = x - mu,
+  y = dnorm(x - mu, mean = 0, sd = sigma)
+)
+shade2 <- subset(dens2, x <= 6.2 - mu)
+
+p2 <- ggplot(dens2, aes(x, y)) +
+  geom_line(color="cadetblue4", size=1.2) +
+  geom_ribbon(data=shade2, aes(ymin=0, ymax=y), fill="skyblue", alpha=0.5) +
+  geom_vline(xintercept = c(0, 6.2 - mu), linetype="dashed", size=1) +
+  annotate("text", x = 6.7 - mu, y = 0.08, label="3.2") +
+  annotate("text", x = 0.4, y = 0.08, label="0") +
+  labs(title="X - μ ~ N(0,4)", x="X - μ", y="f(X - μ)") + xlim(c(-5,10))+
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+# 3️⃣ Estandarizado N(0,1)
+dens3 <- data.frame(
+  x = (x - mu)/sigma,
+  y = dnorm((x - mu)/sigma, mean=0, sd=1)
+)
+shade3 <- subset(dens3, x <= (6.2 - mu)/sigma)
+
+p3 <- ggplot(dens3, aes(x, y)) +
+  geom_line(color="cadetblue4", size=1.2) +
+  geom_ribbon(data=shade3, aes(ymin=0, ymax=y), fill="skyblue", alpha=0.5) +
+  geom_vline(xintercept = c(0, (6.2 - mu)/sigma), linetype="dashed", size=1) +
+  annotate("text", x = (6.2 - mu)/sigma + 0.4, y = 0.15, label="1.6") +
+  annotate("text", x = 0.4, y = 0.15, label="0") +
+  labs(title="Z = (X - μ)/σ ~ N(0,1)", x="Z", y="f(Z)") + xlim(c(-5,10))+
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+# Mostrar los tres gráficos juntos
+grid.arrange(p1, p2, p3, ncol=1)
+
+```
+]
+
+---
+class: animated, fadeIn
+
+## Estandarización
+
+Este proceso puede describirse con la siguiente regla:
+
+> Si $X \sim N(\mu,\ \sigma^2)$ y $Z = \dfrac{X - \mu}{\sigma}$,  
+
+> entonces $Z \sim N(0,1)$
+
+---
+class: animated, fadeIn
+
+### Ejemplo de estandarización
+
+Supongamos que el peso al nacer de los bebés  
+se distribuye de manera **normal** con:
+
+- **Media** $$\mu = 3500\;g$$
+- **Desviación estándar** $$\sigma = 500\;g$$
+
+--
+
+Queremos calcular la probabilidad de que un bebé   pese **menos de 3100 g**:
+
+$$
+X \sim N(3500,\;500^2), \qquad P(X \le 3100)\;=? 
+$$
+
+> Para poder usar la tabla de la normal estándar,  
+aplicamos el **procedimiento de estandarización**:
+
+$$
+Z = \frac{X - \mu}{\sigma}
+$$
+
+
+---
+class: animated, fadeIn
+
+### Ejemplo de estandarización
+
+.pull-left[
+
+
+Sabemos que $X \sim N(3500,\;500^2)$  y queremos calcular  $P(X \le 3100)$.
+
+- **Estandarizamos** restando la media y dividiendo por la desviación estándar:
+
+$$
+Z = \frac{X - 3500}{500} \sim N(0,1)
+$$
+
+$$
+P(X \le 3100)
+= P\left(\frac{X - 3500}{500} < \frac{3100 - 3500}{500}\right)=
+$$
+
+$$
+= P(Z \le -0.8)
+$$
+
+- Usando la simetría de la normal:
+
+$$
+P(Z \le -0.8) = P(Z \ge 0.8) = 0.2219
+$$
+]
+
+.pull-right[
+```{r, echo = F, fig.height=7.3}
+library(ggplot2)
+library(gridExtra)
+
+# Parámetros
+mu <- 3500
+sigma <- 500
+x <- seq(1500, 5500, length.out = 500)
+
+# --- Distribución original ---
+dens_x <- data.frame(
+  x = x,
+  y = dnorm(x, mean = mu, sd = sigma)
+)
+shade_x <- subset(dens_x, x <= 3100)
+
+p1 <- ggplot(dens_x, aes(x, y)) +
+  geom_line(color="cadetblue4", size=1.2) +
+  geom_ribbon(data = shade_x, aes(ymin = 0, ymax = y),
+              fill = "skyblue", alpha = 0.5) +
+  geom_vline(xintercept = c(mu, 3100), linetype = "dashed") +
+  annotate("text", x = mu+150, y = 0.0005, label = "3500", vjust=-1) +
+  annotate("text", x = 3250, y = 0.0005, label = "3100", vjust=-1) +
+  labs(title = "X ~ N(3500, 500²)",
+       x = "Peso (g)", y = "f(X)") +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+# --- Distribución estandarizada ---
+z <- seq(-4, 4, length.out = 500)
+dens_z <- data.frame(
+  z = z,
+  y = dnorm(z, mean = 0, sd = 1)
+)
+z_cut <- (3100 - mu) / sigma  # -0.8
+shade_z <- subset(dens_z, z <= z_cut)
+
+p2 <- ggplot(dens_z, aes(z, y)) +
+  geom_line(color="cadetblue4", size=1.2) +
+  geom_ribbon(data = shade_z, aes(ymin = 0, ymax = y),
+              fill = "skyblue", alpha = 0.5) +
+  geom_vline(xintercept = c(0, z_cut), linetype = "dashed") +
+  annotate("text", x = 0+0.3, y = 0.05, label = "0", vjust=-1) +
+  annotate("text", x = z_cut+0.3, y = 0.05, label = "-0.8", vjust=-1) +
+  labs(title = "Z ~ N(0,1)",
+       x = "Z", y = "f(Z)") +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+# Mostrar ambos gráficos lado a lado
+grid.arrange(p1, p2, ncol = 1)
+
+```
+]
+
+---
+class: animated, fadeIn
+
+### Qué peso tendría un bebé que está en el percentil 99?
+
+1. Primero, identificamos el valor $z$ que corresponde a una probabilidad de 0.99 usando la tabla de la normal estándar.  
+   - El valor es aproximadamente:  
+   $$
+   z = 2.32
+   $$
+
+```{r, echo = F}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+# Valores de las filas (0.0 a 3.0 por 0.1)
+rows <- seq(2, 3.0, by = 0.1)
+
+# Valores de las columnas (0.00 a 0.09 por 0.01)
+cols <- seq(0, 0.09, by = 0.01)
+
+# Generar tabla P(Z > z)
+z_table <- sapply(cols, function(c){
+  sapply(rows, function(r){
+    pnorm(r + c)
+  })
+})
+
+# Convertir a data frame y agregar columna de fila
+z_table_df <- as.data.frame(z_table)
+z_table_df <- cbind(Z = rows, z_table_df)
+
+# Nombres de columnas tipo tabla Z
+colnames(z_table_df) <- c("Z", paste0("0.0", 0:9))
+
+# Mostrar tabla
+kable(head(z_table_df, 30), digits = 4, align = "c",
+      caption = "Tabla: Probabilidades P(Z ≤ z) con valor destacado") %>%
+  kable_styling(
+    full_width = FALSE,
+    position = "center",
+    font_size = 14
+  ) %>%
+  row_spec(0, bold = TRUE, background = "#e6f2ff") %>%
+  column_spec(1, bold = TRUE, background = "#e6f2ff")
+  # Resaltar la celda correspondiente a P(Z ≥ z) ≈ 0.01
+
+```
+
+
+---
+class: animated, fadeIn
+
+### Qué peso tendría un bebé que está en el percentil 99?
+
+Ahora calculamos el peso $X$ del bebé usando la fórmula de transformación de la normal estándar a la original:
+
+$$
+X = \sigma Z + \mu
+$$
+
+Sustituyendo los valores ($\mu = 3500 \, \text{g}$, $\sigma = 500 \, \text{g}$):
+
+$$
+X = 500 \times 2.326 + 3500
+$$
+
+$$
+X \approx 1163 + 3500 = 4663 \, \text{g}
+$$
+
+Por lo tanto, un bebé en el percentil 99 pesaría aproximadamente **4663 g**.
+
+---
+class: animated, fadeIn
+
+### Qué peso tendría un bebé que está en el percentil 99? en `R`
+
+La función `qnorm` se usa para calcular el cuantil o valor de la variable correspondiente a una probabilidad acumulada en una distribución normal.
+
+```{r}
+qnorm(p = 0.99, mean = 3500, sd = 300)
+```
+
+---
+class: animated, fadeIn
+
+## Reto: demuestra por qué JPelirrojo está equivocado
+
+<center>
+
+<video controls width="250">
+  <source src="img/iq80.mp4" type="video/mp4" />
+
+  <source src="img/iq80.mp4" type="video/mp4" />
+  
+Las pruebas modernas de CI están calibradas de manera que el promedio se establece en 100, con una desviación estándar, generalmente de 15 puntos. **¿Es verdad que la mayoría de la población tiene un IQ menor de 80?**
+
+---
+class: animated, fadeIn
+
+## Probabilidad entre dos puntos
+
+En una población de arenque (*Pomolobus aestivalis*),  
+las longitudes de los peces siguen una **distribución normal**:
+
+- Media: $\mu = 54.0 \,\text{mm}$  
+- Desviación estándar: $\sigma = 4.5 \,\text{mm}$  
+
+¿Cuál es el porcentaje de peces con longitud entre **58 y 60 mm**?
+
+> $$X \sim N(54,\;4.5^2), \qquad P(58 \le X \le 60)\;=?$$
+
+```{r, echo = F, fig.height=4.3, fig.align='center'}
+library(ggplot2)
+library(gridExtra)
+
+mu <- 54
+sigma <- 4.5
+
+library(ggplot2)
+
+x <- seq(40, 70, length.out = 400)
+dens <- dnorm(x, mean = mu, sd = sigma)
+df <- data.frame(x = x, y = dens)
+
+shade <- subset(df, x >= 58 & x <= 60)
+
+ggplot(df, aes(x, y)) +
+  geom_line(color = "cadetblue4", size = 1.2) +
+  geom_ribbon(data = shade, aes(ymin = 0, ymax = y),
+              fill = "cadetblue3", alpha = 0.5) +
+  labs( x = "Longitud (mm)", y = "Densidad"
+  ) +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+```
+
+---
+class: animated, fadeIn
+
+## Probabilidad entre dos puntos
+
+Supongamos que las longitudes de los peces, $Y$, siguen una distribución normal con media $\mu = 54$ mm y desviación estándar $\sigma = 4.5$ mm.
+
+Primero, calculamos los **z-scores** correspondientes:
+
+.pull-left[
+Para $y = 60$:
+
+$$
+z = \frac{60 - 54}{4.5} = 1.33
+$$
+]
+.pull-right[
+Para $y = 58$:
+
+$$
+z = \frac{58 - 54}{4.5} = 0.89
+$$
+]
+
+--
+
+De acuerdo con la distribución normal estándar, queremos:
+
+$$
+P(58 \le Y \le 60) = P(0.89 \le Z \le 1.33) = P(Z \ge 0.89) - P(Z \ge 1.33)
+$$
+
+--
+
+> Para un intervalo $[a,b]$, con $a \le b$:
+
+$$
+P(a \le Z \le b) = P(Z \ge a) - P(Z\ge b)
+$$
+
+> Esto funciona porque $P(Z\ge a)$ incluye todo lo que está por encima de $a$, y  $P(Z\ge b)$ incluye todo lo que está por encima de b. Si restamos $P(Z\ge a) - P(Z\ge b)$ nos quedamos con la parte de la distribución que está entre a y b.
+
+---
+class: animated, fadeIn
+
+## Probabilidad entre dos puntos
+
+Usando valores de la tabla de la normal estándar:
+
+$$
+P(Z \ge 0.89) = 0.1867, \quad P(Z \ge 1.33) = 0.0918
+$$
+--
+
+Por lo tanto:
+
+$$
+P(58 \le Y \le 60) = 0.1867 - 0.0918 = 0.0949
+$$
+
+Es decir, aproximadamente **9.49%** de los peces miden entre 58 y 60 mm.
+
+--
+
+<br><br>
+> Regla general:
+
+> > si usas la tabla de $P(Z \le z)$
+$$
+P(a \le Z \le b) = P(Z \le b) - P(Z \le a)
+$$
+
+> > si usas la tabla de $P(Z \ge z)$
+
+$$
+P(a \le Z \le b) = P(Z \ge a) - P(Z \ge b) 
+$$
+
+---
+class: animated, fadeIn
+
+### Probabilidad entre dos puntos en `R`
+
+```{r}
+# Parámetros de la distribución
+mu <- 54
+sigma <- 4.5
+
+# Intervalo de interés
+y1 <- 58
+y2 <- 60
+
+pnorm(y1, mean = mu, sd = sigma)
+
+pnorm(y2, mean = mu, sd = sigma)
+ 
+# Probabilidad de que Y esté entre 58 y 60
+p <- pnorm(y2, mean = mu, sd = sigma) - pnorm(y1, mean = mu, sd = sigma)
+p
+
+```
+
+
+
+---
+class: animated, fadeIn
+
+## La regla empírica
+
+Para **distribuciones normales “perfectas”**, es decir, distribuciones simétricas, sin colas extremadamente largas o cortas, generalmente se observa que:
+
+- Aproximadamente **el 68%** de las observaciones caen dentro de **±1 desviación estándar (σ)** de la media.  
+- Alrededor del **95%** se encuentra dentro de **±2σ** de la media.  
+- Más del **99%** se encuentra dentro de **±3σ** de la media.  
+
+> Este patrón se conoce como la **regla empírica** o **68–95–99.7%**, y es muy útil para interpretar la variabilidad en datos biológicos, físicos o sociales.
+
+```{r, echo = F, fig.align='center', fig.height=4.3, fig.width=5}
+library(ggplot2)
+library(dplyr)
+library(ggthemes)
+
+# Parámetros
+mu <- 0
+sigma <- 1
+
+# Secuencia de valores para la curva
+x <- seq(mu - 4*sigma, mu + 4*sigma, length.out = 1000)
+df <- data.frame(x = x, y = dnorm(x, mean = mu, sd = sigma))
+
+# Rellenos para cada rango
+fill_areas <- list(
+  data.frame(x = x[x >= mu - sigma & x <= mu + sigma],
+             y = dnorm(x[x >= mu - sigma & x <= mu + sigma], mu, sigma),
+             area = "±1σ"),
+  data.frame(x = x[x >= mu - 2*sigma & x <= mu + 2*sigma],
+             y = dnorm(x[x >= mu - 2*sigma & x <= mu + 2*sigma], mu, sigma),
+             area = "±2σ"),
+  data.frame(x = x[x >= mu - 3*sigma & x <= mu + 3*sigma],
+             y = dnorm(x[x >= mu - 3*sigma & x <= mu + 3*sigma], mu, sigma),
+             area = "±3σ")
+) %>% bind_rows()
+
+# Valores para las líneas verticales
+sd_lines <- data.frame(
+  x = c(mu - 3*sigma, mu - 2*sigma, mu - sigma, mu,
+        mu + sigma, mu + 2*sigma, mu + 3*sigma),
+  label = c("-3σ", "-2σ", "-1σ", "μ",
+            "+1σ", "+2σ", "+3σ")
+)
+
+# Segmentos horizontales para porcentajes
+segments <- data.frame(
+  y = c(0.09, 0.05, 0),        # altura donde poner el segmento
+  xstart = c(mu - sigma, mu - 2*sigma, mu - 3*sigma),
+  xend   = c(mu + sigma, mu + 2*sigma, mu + 3*sigma),
+  label  = c("68%", "95%", "99.7%")
+)
+
+# Gráfico
+ggplot() +
+  # Áreas rellenas (las más pequeñas encima de las grandes)
+  geom_ribbon(data = filter(fill_areas, area == "±3σ"),
+              aes(x = x, ymin = 0, ymax = y, fill = area), alpha = 0.3, show.legend = F) +
+  geom_ribbon(data = filter(fill_areas, area == "±2σ"),
+              aes(x = x, ymin = 0, ymax = y, fill = area), alpha = 0.4, show.legend = F) +
+  geom_ribbon(data = filter(fill_areas, area == "±1σ"),
+              aes(x = x, ymin = 0, ymax = y, fill = area), alpha = 0.6, show.legend = F) +
+  # Curva
+  geom_line(data = df, aes(x = x, y = y), size = 1, color = "white") +
+  # Líneas verticales
+  geom_vline(data = sd_lines, aes(xintercept = x),
+             linetype = "dashed", color = "gray70") +
+  # Segmentos horizontales
+  geom_segment(
+  data = segments,
+  aes(x = xstart, xend = xend, y = y, yend = y),
+  color = "black",
+  linewidth = 1,
+  arrow = arrow(ends = "both",    # flecha en ambos extremos <--->
+                type = "closed",  # estilo "cerrado" para que sea triangular
+                length = unit(0.05, "inches")) # tamaño de las puntas
+) +
+  geom_text(data = segments,
+            aes(x = mu, y = y + 0.02, label = label),
+            color = "black") +
+  # Personalizar eje x
+  scale_x_continuous(
+    breaks = sd_lines$x,
+    labels = sd_lines$label
+  ) +
+  scale_fill_manual(values = c("±1σ" = "orange2",
+                               "±2σ" = "gold",
+                               "±3σ" = "cadetblue3")) +
+  labs(
+    x = "Desviaciones estándar",
+    y = "",
+    fill = "Área"
+  ) +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+
+```
+
+---
+class: animated, fadeIn
+
+## La regla empírica
+
+Para **distribuciones normales “perfectas”**, es decir, distribuciones simétricas, sin colas extremadamente largas o cortas, generalmente se observa que:
+
+- Aproximadamente **el 68%** de las observaciones caen dentro de **±1 desviación estándar (σ)** de la media.  
+- Alrededor del **95%** se encuentra dentro de **±2σ** de la media.  
+- Más del **99%** se encuentra dentro de **±3σ** de la media.  
+
+> Este patrón se conoce como la **regla empírica** o **68–95–99.7%**, y es muy útil para interpretar la variabilidad en datos biológicos, físicos o sociales.
+
+.pull-left[
+```{r, echo = F, fig.align='center', fig.height=4.1, fig.width=5}
+library(ggplot2)
+library(dplyr)
+library(ggthemes)
+
+# Parámetros
+mu <- 0
+sigma <- 1
+
+# Secuencia de valores para la curva
+x <- seq(mu - 4*sigma, mu + 4*sigma, length.out = 1000)
+df <- data.frame(x = x, y = dnorm(x, mean = mu, sd = sigma))
+
+# Rellenos para cada rango
+fill_areas <- list(
+  data.frame(x = x[x >= mu - sigma & x <= mu + sigma],
+             y = dnorm(x[x >= mu - sigma & x <= mu + sigma], mu, sigma),
+             area = "±1σ"),
+  data.frame(x = x[x >= mu - 2*sigma & x <= mu + 2*sigma],
+             y = dnorm(x[x >= mu - 2*sigma & x <= mu + 2*sigma], mu, sigma),
+             area = "±2σ"),
+  data.frame(x = x[x >= mu - 3*sigma & x <= mu + 3*sigma],
+             y = dnorm(x[x >= mu - 3*sigma & x <= mu + 3*sigma], mu, sigma),
+             area = "±3σ")
+) %>% bind_rows()
+
+# Valores para las líneas verticales
+sd_lines <- data.frame(
+  x = c(mu - 3*sigma, mu - 2*sigma, mu - sigma, mu,
+        mu + sigma, mu + 2*sigma, mu + 3*sigma),
+  label = c("-3σ", "-2σ", "-1σ", "μ",
+            "+1σ", "+2σ", "+3σ")
+)
+
+# Segmentos horizontales para porcentajes
+segments <- data.frame(
+  y = c(0.09, 0.05, 0),        # altura donde poner el segmento
+  xstart = c(mu - sigma, mu - 2*sigma, mu - 3*sigma),
+  xend   = c(mu + sigma, mu + 2*sigma, mu + 3*sigma),
+  label  = c("68%", "95%", "99.7%")
+)
+
+# Gráfico
+ggplot() +
+  # Áreas rellenas (las más pequeñas encima de las grandes)
+  geom_ribbon(data = filter(fill_areas, area == "±3σ"),
+              aes(x = x, ymin = 0, ymax = y, fill = area), alpha = 0.3, show.legend = F) +
+  geom_ribbon(data = filter(fill_areas, area == "±2σ"),
+              aes(x = x, ymin = 0, ymax = y, fill = area), alpha = 0.4, show.legend = F) +
+  geom_ribbon(data = filter(fill_areas, area == "±1σ"),
+              aes(x = x, ymin = 0, ymax = y, fill = area), alpha = 0.6, show.legend = F) +
+  # Curva
+  geom_line(data = df, aes(x = x, y = y), size = 1, color = "white") +
+  # Líneas verticales
+  geom_vline(data = sd_lines, aes(xintercept = x),
+             linetype = "dashed", color = "gray70") +
+  # Segmentos horizontales
+  geom_segment(
+  data = segments,
+  aes(x = xstart, xend = xend, y = y, yend = y),
+  color = "black",
+  linewidth = 1,
+  arrow = arrow(ends = "both",    # flecha en ambos extremos <--->
+                type = "closed",  # estilo "cerrado" para que sea triangular
+                length = unit(0.05, "inches")) # tamaño de las puntas
+) +
+  geom_text(data = segments,
+            aes(x = mu, y = y + 0.02, label = label),
+            color = "black") +
+  # Personalizar eje x
+  scale_x_continuous(
+    breaks = sd_lines$x,
+    labels = sd_lines$label
+  ) +
+  scale_fill_manual(values = c("±1σ" = "orange2",
+                               "±2σ" = "gold",
+                               "±3σ" = "cadetblue3")) +
+  labs(
+    x = "Desviaciones estándar",
+    y = "",
+    fill = "Área"
+  ) +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+
+```
+]
+
+.pull-right[
+Si la media es 10 y la SD es 2, el 95% de los valores estarán entre 6 y 14.
+]
+
+---
+class: animated, fadeIn
+
+## La aproximación normal a la binomial
+
+Bajo algunas condiciones, podemos utilizar la distribución normal para aproximarnos a la distribución binomial.
+
+
+```{r, echo = F, fig.height=3, fig.width=5.5, fig.align='center'}
+library(ggplot2)
+library(dplyr)
+library(patchwork)  # Para combinarlos (opcional)
+
+# Parámetros coherentes con la diapositiva
+n <- 300
+p <- 0.5
+mu <- n * p                   # media = 150
+sigma <- sqrt(n * p * (1 - p)) # desviación típica = sqrt(75)
+
+# ---- Distribución binomial ----
+x_binom <- seq(100,200,2)   # rango de interés
+binom_df <- data.frame(
+  x = x_binom,
+  prob = dbinom(x_binom, size = n, prob = p)
+)
+
+p_binom <- ggplot(binom_df, aes(x = x, y = prob)) +
+  geom_col(fill = "cadetblue3", color = "cadetblue3", width = 1) +
+  labs(
+    title = "Bin(300, 0.5)",
+    x = "X",
+    y = "P(X = x)"
+  )  +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+# ---- Distribución normal ----
+x_norm <- seq(100, 200, by = 0.1)
+norm_df <- data.frame(
+  x = x_norm,
+  y = dnorm(x_norm, mean = mu, sd = sigma)
+)
+
+p_norm <- ggplot(norm_df, aes(x = x, y = y)) +
+  geom_line(color = "firebrick3", linewidth = 1) +
+  labs(
+    title = "N(150, 75)",
+    x = "X",
+    y = "Density"
+  ) +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+# ---- Mostrar por separado ----
+p_binom +     # gráfico 1: binomial
+p_norm       # gráfico 2: normal
+
+```
+
+--
+
+En general, si $X \sim Bin(n,p)$, entonces:
+- $\mu = np$
+- $\sigma^2=npq$ donde $q=1-p$
+
+Para $n$ grandes y $p$ muy pequeñas o muy grandes:
+- $X \sim N(np,npq)$
+$n>10$ y $p\approx1/2$ o $n>30$ y $p$ lejos de $1/2$
+
+---
+class: animated, fadeIn
+
+### Ejemplo de aproximación normal a la binomial
+
+Queremos calcular la probabilidad de obtener **60 caras o más** al lanzar una moneda 100 veces, asumiendo que la moneda es **balanceada**.
+
+
+--
+- Si la moneda es balanzeada significa que la probabilidad de sacar cara es $p = 1/2$
+
+- $X$ sigue una distribución binomial: $X \sim \text{Binomial}(n = 100, p = 0.5)$
+
+- Si $X \sim Bin(n,p)$ entonces $X \sim N(np,npq)$ ($n$ es grande)
+- Utilizamos la aproximación a la distribución normal:
+
+$$
+P(X \ge 60)=P(Z \ge 2)
+$$
+
+--
+> Falta algo más...
+
+---
+class: animated, fadeIn
+
+### Corrección de continuidad
+
+La distribución binomial es discreta, mientras que la distribución normal es continua. La corrección de continuidad es un ajuste que se aplica cuando se aproxima una distribución discreta mediante una continua.
+
+```{r, echo = F, fig.height=3.5,fig.width=3.5}
+library(ggplot2)
+
+# Parámetros de la distribución
+mu <- 10
+sigma <- 2
+a <- 8
+b <- 12
+
+# Crear un rango de valores para la curva
+x <- seq(mu - 4*sigma, mu + 4*sigma, length.out = 1000)
+df <- data.frame(x = x, y = dnorm(x, mean = mu, sd = sigma))
+
+# Gráfico 1: P(a <= X <= b)
+ggplot(df, aes(x, y)) +
+  geom_line(size = 1, color="cadetblue") +
+  geom_ribbon(data = subset(df, x >= a-0.5 & x <= b+0.5), 
+              aes(ymin = 0, ymax = y), fill = "cadetblue4", alpha = 0.5) +
+  scale_x_continuous(breaks = c(a, b), labels = c("a", "b")) +
+  labs(title = "P(a ≤ X ≤ b)",x="",y="",
+       subtitle = "Área entre a-0.5 y b+0.5") +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+# Gráfico 2: P(X <= b)
+ggplot(df, aes(x, y)) +
+  geom_line(size = 1, color="cadetblue") +
+  geom_ribbon(data = subset(df, x <= b+0.5), 
+              aes(ymin = 0, ymax = y), fill = "cadetblue4", alpha = 0.5) +
+  scale_x_continuous(breaks = b, labels = "b") +
+  labs(title = "P(X ≤ b)",x="",y="",
+       subtitle = "Área a la izquierda de b+0.5") +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+# Gráfico 3: P(X >= a)
+ggplot(df, aes(x, y)) +
+  geom_line(size = 1, color="cadetblue") +
+  geom_ribbon(data = subset(df, x >= a-0.5), 
+              aes(ymin = 0, ymax = y), fill = "cadetblue4", alpha = 0.5) +
+  scale_x_continuous(breaks = a, labels = "a") +
+  labs(title ="(P(X ≥ a)",x="",y="",
+       subtitle = "Área a la derecha de a-0.5") +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+# Gráfico 4: P(X = a)
+ggplot(df, aes(x, y)) +
+  geom_line(size = 1, color="cadetblue") +
+  geom_ribbon(data = subset(df, x >= a-0.5 & x <= a+0.5), 
+              aes(ymin = 0, ymax = y), fill = "cadetblue4", alpha = 0.5) +
+  scale_x_continuous(breaks = a, labels = "a") +
+  labs(title = "P(X = a)",x="",y="",
+       subtitle = "Área entre a-0.5 y a+0.5") +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+```
+
+
+---
+class: animated, fadeIn
+
+### Corrección de continuidad
+
+- Número de lanzamientos: $n = 100$  
+- Probabilidad de cara: $p = 0.5$  
+- Número de caras: $X \sim \text{Binomial}(n = 100, p = 0.5)$  
+- Media y desviación estándar de la binomial:  
+$$
+\mu = n p = 50, \quad \sigma = \sqrt{n p (1-p)} = \sqrt{100 \times 0.5 \times 0.5} = 5
+$$
+--
+
+Para usar la **aproximación normal**, aplicamos la **corrección de continuidad**:
+
+$$
+P(X \ge 60) \approx P\left(Z \ge \frac{59.5 - \mu}{\sigma}\right)= P\left(Z \ge \frac{59.5 - 50}{5}\right)
+= P(Z \ge 1.9)
+$$
+--
+
+Si usamos la tabla de la normal, $P(X \ge 60) = P(Z \ge 1.9) \approx 0.0287$
+
+---
+class: animated, fadeIn
+
+### Corrección de continuidad
+
+- Número de lanzamientos: $n = 100$  
+- Probabilidad de cara: $p = 0.5$  
+- Número de caras: $X \sim \text{Binomial}(n = 100, p = 0.5)$  
+- Media y desviación estándar de la binomial:  
+$$
+\mu = n p = 50, \quad \sigma = \sqrt{n p (1-p)} = \sqrt{100 \times 0.5 \times 0.5} = 5
+$$
+
+En `R`:
+```{r}
+# Parámetros
+mu <- 50; sigma <- 5; x <- 60
+
+# Z con corrección de continuidad
+z <- (x - 0.5 - mu) / sigma; z
+
+
+# Probabilidad usando la aproximación normal
+pnorm(z, lower.tail = FALSE)
+
+```
+
+
+---
+class: animated, fadeIn
+
+### Resumen
+
+- La **distribución normal** puede aproximar muchas distribuciones naturales en biología.
+
+- Si los datos se ajustan bien a la normal:
+  - La **media** indica el centro de la distribución.
+  - La **desviación estándar** indica la **dispersión** de los datos.
+
+- **Regla empírica** ("68-95-99.7"):
+  - ~68% de los valores dentro de **1 desviación estándar** de la media.
+  - ~95% dentro de **2 desviaciones estándar**.
+  - ~99.7% dentro de **3 desviaciones estándar**.
+
+- La normal no solo describe datos naturales, sino también distribuciones teóricas llamadas **distribuciones de muestreo**.
+  - Estas distribuciones describen cómo varía un **estadístico** si repetimos experimentos o tomamos muchas muestras de la misma población.
+
+- Incluso si los datos originales **no son normales**, muchas distribuciones de muestreo **son aproximadamente normales** (teorema central del límite).
+
+- Por esto, la distribución normal es **fundamental en estadística** y en la inferencia biológica.
+
+
+---
+class: animated, fadeIn
+
+## Contacto
+
+<div style="margin-top: 20vh; text-align:center;">
+
+| Marta Coronado Zamora | David Castellano | 
+|:-:|:-:|
+| <a href="mailto:marta.coronado@uab.cat"><i class="fa fa-paper-plane fa-fw"></i> marta.coronado@uab.cat</a> | <a href="mailto:david.castellano@uab.cat"><i class="fa fa-paper-plane fa-fw"></i>&nbsp; david.castellano@uab.cat</a> | 
+| <a href="https://bsky.app/profile/geneticament.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @geneticament.bsky.social</a> |                 <a href="https://bsky.app/profile/castellanoed.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @castellanoed.bsky.social</a> |
+| <a href="https://www.uab.cat"><i class="fa fa-map-marker fa-fw"></i>&nbsp; Universitat Autònoma de Barcelona</a> |    <a href="https://gutengroup.mcb.arizona.edu/"> <i class="fa fa-map-marker fa-fw"></i>&nbsp; University of Arizona</a> |
+
+---
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+### Créditos
+#### Adaptado de: CSDA tutorial - Probability distributions (EMBL, Sarah Kaspar, PhD)
+#### Dr. Hafid Laayouni por compartir sus materiales
