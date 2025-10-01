@@ -44,10 +44,6 @@ class: animated, fadeIn
 - Curvas acumulativas
 - QQ-plots
 
-#### **Comprobar normalidad**
-- Test de Shapiro–Wilk
-
-
 &lt;style&gt;
 .title-slide {
   background-image: url('img/1.png');
@@ -168,141 +164,47 @@ ggplot(data, aes(sample = frog_size)) +
 ]
 
 
-
 ---
 class: animated, fadeIn
 
-### Comprobar si los datos siguen una distribución normal
+#### QQ-plot: comprobar si una distribución sigue la normal
 
 .pull-left[
-**QQ-plot**
-- Método gráfico para comparar dos distribuciones de probabilidad a través de sus cuantiles.  
-- Si las distribuciones son similares, los puntos caen cerca de la línea `\(y=x\)`.  
-- Se utiliza principalmente para comprobar si los datos siguen una distribución normal.
-
-]
-.pull-right[
-**Test de Shapiro–Wilk**
-- Suposición base (hipótesis nula): los datos se distribuyen de manera normal.  
-- Si el test es significativo (*p* &lt; 0.05), los datos no siguen una distribución normal.  
-- Muy sensible al tamaño de muestra: con muestras grandes puede detectar desviaciones muy pequeñas de la normalidad, mientras que con muestras pequeñas puede no detectar desviaciones importantes.
-]
-
----
-class: animated, fadeIn
-
-#### Test de Shapiro-Wilk en `R`
-
-.pull-left[
-
-
-``` r
-set.seed(10)
-vector_normal &lt;- rnorm(n = 5000, 
-                       mean = 20, sd = 2)
-shapiro.test(vector_normal)
-```
-
-```
-## 
-## 	Shapiro-Wilk normality test
-## 
-## data:  vector_normal
-## W = 0.99967, p-value = 0.6137
-```
-
-&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-9-1.png" width="216" style="display: block; margin: auto;" /&gt;
-
-
-- Datos distribuidos de manera normal
-
+  
+  
+  ``` r
+  set.seed(10)
+  vector_normal &lt;- rnorm(n = 5000, 
+                         mean = 20, sd = 2)
+  ```
+  
+  &lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-9-1.png" width="216" style="display: block; margin: auto;" /&gt;
+  
+  
+  - Datos distribuidos de manera normal
+  
 ]
 
 .pull-right[
-
-
-
-``` r
-set.seed(10)
-vector_exp &lt;- rexp(n = 500, 
-                   rate = 0.5) 
-shapiro.test(vector_exp)
-```
-
-```
-## 
-## 	Shapiro-Wilk normality test
-## 
-## data:  vector_exp
-## W = 0.84433, p-value &lt; 2.2e-16
-```
-
-&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-11-1.png" width="216" style="display: block; margin: auto;" /&gt;
-
-- Datos no distribuidos de manera normal
-
+  
+  
+  
+  ``` r
+  set.seed(10)
+  vector_exp &lt;- rexp(n = 500, 
+                     rate = 0.5) 
+  ```
+  
+  &lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-11-1.png" width="216" style="display: block; margin: auto;" /&gt;
+  
+  - Datos no distribuidos de manera normal
+  
 ]
+
 
 
 ---
 class: animated, fadeIn
-
-#### Test de Shapiro-Wilk en `R`
-
-.pull-left[
-
-
-``` r
-set.seed(10)
-vector_normal &lt;- rnorm(n = 5000, 
-                       mean = 20, sd = 2)
-shapiro.test(vector_normal)
-```
-
-```
-## 
-## 	Shapiro-Wilk normality test
-## 
-## data:  vector_normal
-## W = 0.99967, p-value = 0.6137
-```
-
-
-&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-13-1.png" width="216" style="display: block; margin: auto;" /&gt;
-
-
-- Datos distribuidos de manera normal
-
-]
-
-.pull-right[
-
-
-
-``` r
-set.seed(10)
-vector_exp &lt;- rexp(n = 500, 
-                   rate = 0.5) 
-shapiro.test(vector_exp)
-```
-
-```
-## 
-## 	Shapiro-Wilk normality test
-## 
-## data:  vector_exp
-## W = 0.84433, p-value &lt; 2.2e-16
-```
-
-&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-15-1.png" width="216" style="display: block; margin: auto;" /&gt;
-
-- Datos no distribuidos de manera normal
-
-]
-
-
-
----
 
 ## Resumen
 
@@ -317,6 +219,7 @@ shapiro.test(vector_exp)
 - La distribución gaussiana o normal modela mediciones repetidas de lo mismo y es una distribución continua.
 
 ---
+class: animated, fadeIn
 
 ## Vídeo resumen
 
