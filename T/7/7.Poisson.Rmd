@@ -237,7 +237,7 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-## Distribución de Pisson
+## Distribución de Poisson
 
 
 $$
@@ -308,7 +308,7 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-## Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en infantes
+## Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en niños
 
 La tasa de incidencia de ALL en un año es de 30 por 1,000,000 niños:
 
@@ -338,7 +338,7 @@ $$
 ---
 class: animated, fadeIn
 
-## Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en infantes
+## Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en niños
 
 ¿Cuál es la probabilidad de 8 casos en un periodo de 5 años?
 
@@ -359,7 +359,7 @@ dpois(x = 8, lambda = 2.25)
 ---
 class: animated, fadeIn
 
-## Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en infantes
+## Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en niños
 
 ¿Cuál es la probabilidad de 8 casos o más en un periodo de 5 años?
 

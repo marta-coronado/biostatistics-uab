@@ -407,7 +407,7 @@ class: animated, fadeIn
 
 - Tiene forma de campana simétrica (*bell curve*)
 
--  Aplica el **teorema central del límite**: si muestreas un número suficiente de muestras acabas obteniendo una distribución normal
+-  Aplica el **teorema central del límite**: la distribución de la media de una muestra suficientemente grande tiende a ser normal, aunque la población original no lo sea.
 
 ```{r, echo = F, fig.align='center', fig.height=5, fig.width=6}
 p4 + labs(subtitle="")
