@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title> </title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/rutgers.css" rel="stylesheet" />
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
+    <link href="libs/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v7.0.0/css/all.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# <br>
+]
+.author[
+### 
+]
+
+---
+
+
+
+
+
+
+
+
+class: animated, fadeIn
+# Outline
+
+#### **Distribución de Poisson**
+- Aproximación de la binomial
+- Distribución de Poisson en `R`
+- Ejemplos
+
+
+&lt;style&gt;
+.title-slide {
+  background-image: url('img/1.png');
+  background-size: 100%;
+}
+&lt;/style&gt;
+
+---
+class: animated, fadeIn
+
+## Aproximación de la distribución binomial
+
+**Caso especial**: `\(n\)` muy grande y `\(p\)` pequeña
+
+--
+
+.pull-left[
+- Capturamos 100 ranas en una hora: `\(n\approx100\)`
+- la fracción de ranas de color verde es baja: `\(p=0.02\)`
+]
+.pull-right[
+&lt;center&gt;
+&lt;img src="img/ranas0.png" width=70%&gt;
+&lt;/center&gt;
+]
+
+
+---
+class: animated, fadeIn
+
+## Aproximación de la distribución binomial
+
+**Caso especial**: `\(n\)` muy grande y `\(p\)` pequeña
+
+.pull-left[
+- Capturamos 100 ranas en una hora: `\(n\approx100\)`
+- la fracción de ranas de color verde es baja: `\(p=0.02\)`
+
+Cuántas ranas de color verde claro esperamos capturar en 1h?
+
+]
+.pull-right[
+&lt;center&gt;
+&lt;img src="img/ranas0.png" width=70%&gt;
+&lt;/center&gt;
+]
+
+
+---
+class: animated, fadeIn
+
+## Aproximación de la distribución binomial
+
+**Caso especial**: `\(n\)` muy grande y `\(p\)` pequeña
+
+.pull-left[
+- Capturamos 100 ranas en una hora: `\(n\approx100\)`
+- la fracción de ranas de color verde es baja: `\(p=0.02\)`
+
+Cuántas ranas de color verde claro esperamos capturar en 1h?
+
+- **El número de ranas de color verde claro por hora es**:
+
+$$
+\lambda = n \times p = 100 \times 0.02 = 2
+$$
+
+]
+.pull-right[
+&lt;center&gt;
+&lt;img src="img/ranas.png" width=70%&gt;
+&lt;/center&gt;
+]
+
+
+
+---
+class: animated, fadeIn
+
+## Distribución de Poisson
+
+.pull-left[
+- Contar eventos en un dominio fijado (tiempo, espacio, volumen)
+- Los eventos ocurren de manera independiente con una tasa subyacente constante (`\(\lambda\)`)
+
+
+]
+
+
+---
+class: animated, fadeIn
+
+## Distribución de Poisson
+
+.pull-left[
+- Contar eventos en un dominio fijado (tiempo, espacio, volumen)
+- Los eventos ocurren de manera independiente con una tasa subyacente constante (`\(\lambda\)`)
+
+
+**Ejemplos:**
+- Número de ranas observadas en 1 hora o en una zona específica del lago.
+- Número de células dentro de un volumen determinado.
+- Número de mutaciones en una secuencia de DNA por unidad de tiempo.
+- Número de infecciones por virus en un servidor de archivos de un centro de datos durante 24 horas.
+
+]
+
+--
+
+.pull-right[
+
+$$
+P(X = k) = \frac{ e^{-\lambda} \lambda^k}{k!}
+$$
+
+donde:
+
+- `\(X\)`: número de eventos en un intervalo dado  
+- `\(\lambda\)`: tasa esperada de eventos en ese intervalo  
+- `\(k\)`: número de eventos observados
+
+&lt;img src="7.Poisson_files/figure-html/unnamed-chunk-1-1.png" width="360" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+class: animated, fadeIn
+
+## Pregunta
+
+**De nuevo, estamos en un laboratorio de diagnóstico que recibe muestras de sangre de pacientes hospitalarios y las analiza para detectar alguna enfermedad. ¿Cuál de estos experimentos se puede modelar con una distribución de Poisson?**
+
+1. Contar el número de muestras que dan positivo en el transcurso de una hora.
+2. Contar el número de muestras positivas de entre 50 muestras analizadas sucesivamente. 
+3. Contar el número de muestras que se analizan en el transcurso de una hora. 
+
+---
+class: animated, fadeIn
+
+## Pregunta
+
+**De nuevo, estamos en un laboratorio de diagnóstico que recibe muestras de sangre de pacientes hospitalarios y las analiza para detectar alguna enfermedad. ¿Cuál de estos experimentos se puede modelar con una distribución de Poisson?**
+
+1. Contar el número de muestras que dan positivo en el transcurso de una hora. ✔️
+2. Contar el número de muestras positivas de entre 50 muestras analizadas sucesivamente. ✔️
+3. Contar el número de muestras que se analizan en el transcurso de una hora. ✔️
+
+---
+class: animated, fadeIn
+
+## Distribución de Pisson
+
+
+$$
+P(X = k) = \frac{ e^{-\lambda} \lambda^k}{k!}
+$$
+
+.pull-left[
+La media de la distribución de Poisson es:
+
+$$
+\mu = \lambda
+$$
+
+]
+
+.pull-right[
+La desviación estándard es:
+
+$$
+\sigma = \sqrt{\lambda}
+$$
+]
+
+--
+
+La probabilidad de exáctamente `\(x\)` eventos en `\(t\)` unidades de tiempo es:
+
+$$
+P(X = k) = \frac{e^{-\lambda t} (\lambda t)^k }{k!}
+$$
+
+
+En `\(t\)` unidades de tiempo, la media y desviación estandard son:
+
+.pull-left[
+
+$$
+\mu = \lambda t
+$$
+]
+
+.pull-right[
+$$
+\sigma = \sqrt{\lambda t}
+$$
+]
+
+
+
+---
+class: animated, fadeIn
+
+## Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en niños
+
+- En niños de **0 a 14 años**, la tasa de incidencia de ALL es de  
+  **30 casos diagnosticados por millón de niños al año** en la década **2000–2010**.  
+- Aproximadamente un **20% de la población de EEUU** se encuentra en este rango de edad.  
+
+--
+
+1. ¿Cuál es la incidencia esperada en un período de **5 años**?  
+2. En una población pequeña de **75,000 habitantes**, ¿cuál es la probabilidad de observar  
+   **exactamente 8 casos** en un período de 5 años?  
+3. En esa misma población, ¿cuál es la probabilidad de observar  
+   **8 o más casos** en un período de 5 años?  
+
+
+---
+class: animated, fadeIn
+
+## Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en infantes
+
+La tasa de incidencia de ALL en un año es de 30 por 1,000,000 niños:
+
+$$
+\frac{30}{1000000}=0.000003=3\times10^{-5}
+$$
+
+
+--
+La tasa de incidencia en un periodo de 5 años es (`\(5\times30\)`) por 1,000,000 niños:
+
+$$
+\frac{150}{1000000}=0.000015=1.5\times10^{-4}
+$$
+
+--
+
+En una ciudad de 75,000 habitantes, aproximadamente `\(75,000\times0.2=15,000\)` niños tendrán entre 0-14 años:
+
+La tasa de nuevos casos en 5 años en la ciudad será:
+
+$$
+1.5\times10^{-4} \times 15000 = 2.25 
+$$
+
+
+---
+class: animated, fadeIn
+
+## Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en infantes
+
+¿Cuál es la probabilidad de 8 casos en un periodo de 5 años?
+
+$$
+P(X = 8) = \frac{e^{-\lambda} (\lambda)^k }{k!} = \frac{e^{-2.25}2.25^8 }{8!}=0.0017
+$$
+
+--
+
+En `R`:
+
+Suponiendo que `\(X\)` sigue una distribución de Poisson on parámetro `\(\lambda\)`:
+
+
+``` r
+dpois(x = 8, lambda = 2.25)
+```
+
+```
+## [1] 0.001717027
+```
+
+---
+class: animated, fadeIn
+
+## Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en infantes
+
+¿Cuál es la probabilidad de 8 casos o más en un periodo de 5 años?
+
+
+
+``` r
+ppois(q = 7, lambda = 2.25, lower.tail=FALSE) # P(X &gt; k)
+```
+
+```
+## [1] 0.002267088
+```
+
+---
+class: animated, fadeIn
+
+
+### Función de distribución acumulada de Poisson
+
+| Símbolo      | Significado    | Expresión | R con `ppois`                           |
+| ------------ | -------------- | --------- | --------------------------------------- |
+| `\(P(X \le k)\)` | “como mucho k” | `\(P(X \le k)\)` | `ppois(k, lambda)`                      |
+| `\(P(X &lt; k)\)`   | “menos de k”   | `\(P(X \le k-1)\)` | `ppois(k-1, lambda)`                    |
+| `\(P(X \ge k)\)` | “al menos k”   | `\(1 - P(X \le k-1)\)` | `ppois(k-1, lambda, lower.tail = FALSE)` |
+| `\(P(X &gt; k)\)`   | “más de k”     | `\(1 - P(X \le k)\)` | `ppois(k, lambda, lower.tail = FALSE)`   |
+
+
+
+---
+class: animated, fadeIn
+
+## Tabla resumen de las distribuciones vistas:
+
+|                  | Binomial       | Normal       | Poisson      |
+|:----------------:|:--------------:|:------------:|:------------:|
+| Parámetros       | `\(n\)`, `\(p\)`           | `\(μ\)`, `\(σ\)`         |  `\(λ\)`            |
+| Valores posibles  | `\(0, 1, ..., n\)`   | `\((-∞, ∞)\)`      | `\(0, 1, ..., ∞\)` |
+| Media             | `\(np\)`             | `\(\mu\)`            | `\(\lambda\)`            |
+| Desviación estándard | `\(\sqrt{np(1-p)}\)`   | `\(σ\)`            | `\(\sqrt{\lambda}\)` (`\(\sqrt{\lambda t}\)`)           |
+
+
+---
+class: animated, fadeIn
+
+# Ejercicio
+
+.pull-left[El Lago Pyramid se encuentra en Nevada, en la reserva india Paiute. El lago se describe como una hermosa joya en un precioso entorno desértico. Además de su belleza natural, el lago alberga algunas de las truchas corteza más grandes del mundo. Cada temporada se capturan ejemplares de 5,4 a 6,8 kg como trofeos.
+
+La Nación Paiute emplea biólogos pesqueros altamente capacitados para estudiar y mantener esta famosa pesquería.
+En una de sus publicaciones, Creel Chronicle (Vol. 3, Núm. 2), se proporcionó la siguiente información sobre la captura de noviembre para los pescadores en barco:
+
+**Pesca total por hora = 0,667 peces**
+
+Supongamos que decides pescar en el Lago Pyramid durante 7 horas en el mes de noviembre.
+
+]
+.pull-right[
+&lt;center&gt;
+&lt;img src="img/Yellowstone-CT_Friends-of-the-Teton-River.jpeg" width=70%&gt;
+]
+
+---
+class: animated, fadeIn
+
+# Ejercicio
+
+.pull-left[
+Usa la información proporcionada por los biólogos pesqueros en Creel Chronicle para encontrar una distribución de probabilidad para `\(r\)`, el número de peces (de todos los tamaños) que capturas en un período de 7 horas. 
+
+1. ¿Cuál es la probabilidad de que en 7 horas pescarás al menos 3 peces de cualquier tamaño?
+
+2. ¿Cuál es la probabilidad de pescar 4 o más peces en 7 horas?
+]
+.pull-right[
+&lt;center&gt;
+&lt;img src="img/Yellowstone-CT_Friends-of-the-Teton-River.jpeg" width=70%&gt;
+]
+
+
+---
+class: animated, fadeIn
+
+## Contacto
+
+&lt;div style="margin-top: 20vh; text-align:center;"&gt;
+
+| Marta Coronado Zamora | David Castellano | 
+|:-:|:-:|
+| &lt;a href="mailto:marta.coronado@uab.cat"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt; marta.coronado@uab.cat&lt;/a&gt; | &lt;a href="mailto:david.castellano@uab.cat"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt;&amp;nbsp; david.castellano@uab.cat&lt;/a&gt; | 
+| &lt;a href="https://bsky.app/profile/geneticament.bsky.social"&gt;&lt;i class="fab fa-bluesky fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @geneticament.bsky.social&lt;/a&gt; |                 &lt;a href="https://bsky.app/profile/castellanoed.bsky.social"&gt;&lt;i class="fab fa-bluesky fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @castellanoed.bsky.social&lt;/a&gt; |
+| &lt;a href="https://www.uab.cat"&gt;&lt;i class="fa fa-map-marker fa-fw"&gt;&lt;/i&gt;&amp;nbsp; Universitat Autònoma de Barcelona&lt;/a&gt; |    &lt;a href="https://gutengroup.mcb.arizona.edu/"&gt; &lt;i class="fa fa-map-marker fa-fw"&gt;&lt;/i&gt;&amp;nbsp; University of Arizona&lt;/a&gt; |
+
+---
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+### Créditos
+#### Adaptado de: CSDA tutorial - Probability distributions (EMBL, Sarah Kaspar, PhD)
+#### Dr. Hafid Laayouni por compartir sus materiales
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+  "mathjax": "default",
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
