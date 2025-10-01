@@ -51,9 +51,6 @@ class: animated, fadeIn
 - Estandarización
 - Cálculo de probabilidad entre dos puntos
 - Regla empírica
-- Aproximación de la normal a la binomial
-- Corrección de continuidad
-
 
 &lt;style&gt;
 .title-slide {
@@ -1517,14 +1514,14 @@ $$
 Sustituyendo los valores (`\(\mu = 3500 \, \text{g}\)`, `\(\sigma = 500 \, \text{g}\)`):
 
 $$
-X = 500 \times 2.326 + 3500
+X = 500 \times 2.32 + 3500
 $$
 
 $$
-X \approx 1163 + 3500 = 4663 \, \text{g}
+X \approx 1160 + 3500 = 4660 \, \text{g}
 $$
 
-Por lo tanto, un bebé en el percentil 99 pesaría aproximadamente **4663 g**.
+Por lo tanto, un bebé en el percentil 99 pesaría aproximadamente **4660 g**.
 
 ---
 class: animated, fadeIn
@@ -1535,11 +1532,11 @@ La función `qnorm` se usa para calcular el cuantil o valor de la variable corre
 
 
 ``` r
-qnorm(p = 0.99, mean = 3500, sd = 300)
+qnorm(p = 0.99, mean = 3500, sd = 500)
 ```
 
 ```
-## [1] 4197.904
+## [1] 4663.174
 ```
 
 ---
@@ -1548,11 +1545,14 @@ class: animated, fadeIn
 ## Reto: demuestra por qué JPelirrojo está equivocado
 
 &lt;center&gt;
-
-&lt;video controls width="250"&gt;
+&lt;video  width="250" controls &gt;
   &lt;source src="img/iq80.mp4" type="video/mp4" /&gt;
+  Tu navegador no soporta la etiqueta de video.
+&lt;/video&gt;
 
-  &lt;source src="img/iq80.mp4" type="video/mp4" /&gt;
+&lt;/center&gt;
+
+
   
 Las pruebas modernas de CI están calibradas de manera que el promedio se establece en 100, con una desviación estándar, generalmente de 15 puntos. **¿Es verdad que la mayoría de la población tiene un IQ menor de 80?**
 
@@ -1728,119 +1728,6 @@ Para **distribuciones normales “perfectas”**, es decir, distribuciones simé
 .pull-right[
 Si la media es 10 y la SD es 2, el 95% de los valores estarán entre 6 y 14.
 ]
-
----
-class: animated, fadeIn
-
-## La aproximación normal a la binomial
-
-Bajo algunas condiciones, podemos utilizar la distribución normal para aproximarnos a la distribución binomial.
-
-
-&lt;img src="6.Normal_files/figure-html/unnamed-chunk-30-1.png" width="396" style="display: block; margin: auto;" /&gt;
-
---
-
-En general, si `\(X \sim Bin(n,p)\)`, entonces:
-- `\(\mu = np\)`
-- `\(\sigma^2=npq\)` donde `\(q=1-p\)`
-
-Para `\(n\)` grandes y `\(p\)` muy pequeñas o muy grandes:
-- `\(X \sim N(np,npq)\)`
-`\(n&gt;10\)` y `\(p\approx1/2\)` o `\(n&gt;30\)` y `\(p\)` lejos de `\(1/2\)`
-
----
-class: animated, fadeIn
-
-### Ejemplo de aproximación normal a la binomial
-
-Queremos calcular la probabilidad de obtener **60 caras o más** al lanzar una moneda 100 veces, asumiendo que la moneda es **balanceada**.
-
-
---
-- Si la moneda es balanzeada significa que la probabilidad de sacar cara es `\(p = 1/2\)`
-
-- `\(X\)` sigue una distribución binomial: `\(X \sim \text{Binomial}(n = 100, p = 0.5)\)`
-
-- Si `\(X \sim Bin(n,p)\)` entonces `\(X \sim N(np,npq)\)` (`\(n\)` es grande)
-- Utilizamos la aproximación a la distribución normal:
-
-$$
-P(X \ge 60)=P(Z \ge 2)
-$$
-
---
-&gt; Falta algo más...
-
----
-class: animated, fadeIn
-
-### Corrección de continuidad
-
-La distribución binomial es discreta, mientras que la distribución normal es continua. La corrección de continuidad es un ajuste que se aplica cuando se aproxima una distribución discreta mediante una continua.
-
-&lt;img src="6.Normal_files/figure-html/unnamed-chunk-31-1.png" width="252" /&gt;&lt;img src="6.Normal_files/figure-html/unnamed-chunk-31-2.png" width="252" /&gt;&lt;img src="6.Normal_files/figure-html/unnamed-chunk-31-3.png" width="252" /&gt;&lt;img src="6.Normal_files/figure-html/unnamed-chunk-31-4.png" width="252" /&gt;
-
-
----
-class: animated, fadeIn
-
-### Corrección de continuidad
-
-- Número de lanzamientos: `\(n = 100\)`  
-- Probabilidad de cara: `\(p = 0.5\)`  
-- Número de caras: `\(X \sim \text{Binomial}(n = 100, p = 0.5)\)`  
-- Media y desviación estándar de la binomial:  
-$$
-\mu = n p = 50, \quad \sigma = \sqrt{n p (1-p)} = \sqrt{100 \times 0.5 \times 0.5} = 5
-$$
---
-
-Para usar la **aproximación normal**, aplicamos la **corrección de continuidad**:
-
-$$
-P(X \ge 60) \approx P\left(Z \ge \frac{59.5 - \mu}{\sigma}\right)= P\left(Z \ge \frac{59.5 - 50}{5}\right)
-= P(Z \ge 1.9)
-$$
---
-
-Si usamos la tabla de la normal, `\(P(X \ge 60) = P(Z \ge 1.9) \approx 0.0287\)`
-
----
-class: animated, fadeIn
-
-### Corrección de continuidad
-
-- Número de lanzamientos: `\(n = 100\)`  
-- Probabilidad de cara: `\(p = 0.5\)`  
-- Número de caras: `\(X \sim \text{Binomial}(n = 100, p = 0.5)\)`  
-- Media y desviación estándar de la binomial:  
-$$
-\mu = n p = 50, \quad \sigma = \sqrt{n p (1-p)} = \sqrt{100 \times 0.5 \times 0.5} = 5
-$$
-
-En `R`:
-
-``` r
-# Parámetros
-mu &lt;- 50; sigma &lt;- 5; x &lt;- 60
-
-# Z con corrección de continuidad
-z &lt;- (x - 0.5 - mu) / sigma; z
-```
-
-```
-## [1] 1.9
-```
-
-``` r
-# Probabilidad usando la aproximación normal
-pnorm(z, lower.tail = FALSE)
-```
-
-```
-## [1] 0.02871656
-```
 
 
 ---

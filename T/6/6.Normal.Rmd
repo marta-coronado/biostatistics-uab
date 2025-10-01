@@ -68,9 +68,6 @@ class: animated, fadeIn
 - Estandarización
 - Cálculo de probabilidad entre dos puntos
 - Regla empírica
-- Aproximación de la normal a la binomial
-- Corrección de continuidad
-
 
 <style>
 .title-slide {
@@ -1534,14 +1531,14 @@ $$
 Sustituyendo los valores ($\mu = 3500 \, \text{g}$, $\sigma = 500 \, \text{g}$):
 
 $$
-X = 500 \times 2.326 + 3500
+X = 500 \times 2.32 + 3500
 $$
 
 $$
-X \approx 1163 + 3500 = 4663 \, \text{g}
+X \approx 1160 + 3500 = 4660 \, \text{g}
 $$
 
-Por lo tanto, un bebé en el percentil 99 pesaría aproximadamente **4663 g**.
+Por lo tanto, un bebé en el percentil 99 pesaría aproximadamente **4660 g**.
 
 ---
 class: animated, fadeIn
@@ -1551,7 +1548,7 @@ class: animated, fadeIn
 La función `qnorm` se usa para calcular el cuantil o valor de la variable correspondiente a una probabilidad acumulada en una distribución normal.
 
 ```{r}
-qnorm(p = 0.99, mean = 3500, sd = 300)
+qnorm(p = 0.99, mean = 3500, sd = 500)
 ```
 
 ---
@@ -1560,12 +1557,13 @@ class: animated, fadeIn
 ## Reto: demuestra por qué JPelirrojo está equivocado
 
 <center>
-
-<video controls width="250">
+<video  width="250" controls >
   <source src="img/iq80.mp4" type="video/mp4" />
+  Tu navegador no soporta la etiqueta de video.
+</video>
 
-  <source src="img/iq80.mp4" type="video/mp4" />
-  
+</center>
+
 Las pruebas modernas de CI están calibradas de manera que el promedio se establece en 100, con una desviación estándar, generalmente de 15 puntos. **¿Es verdad que la mayoría de la población tiene un IQ menor de 80?**
 
 ---
@@ -1931,240 +1929,6 @@ ggplot() +
 .pull-right[
 Si la media es 10 y la SD es 2, el 95% de los valores estarán entre 6 y 14.
 ]
-
----
-class: animated, fadeIn
-
-## La aproximación normal a la binomial
-
-Bajo algunas condiciones, podemos utilizar la distribución normal para aproximarnos a la distribución binomial.
-
-
-```{r, echo = F, fig.height=3, fig.width=5.5, fig.align='center'}
-library(ggplot2)
-library(dplyr)
-library(patchwork)  # Para combinarlos (opcional)
-
-# Parámetros coherentes con la diapositiva
-n <- 300
-p <- 0.5
-mu <- n * p                   # media = 150
-sigma <- sqrt(n * p * (1 - p)) # desviación típica = sqrt(75)
-
-# ---- Distribución binomial ----
-x_binom <- seq(100,200,2)   # rango de interés
-binom_df <- data.frame(
-  x = x_binom,
-  prob = dbinom(x_binom, size = n, prob = p)
-)
-
-p_binom <- ggplot(binom_df, aes(x = x, y = prob)) +
-  geom_col(fill = "cadetblue3", color = "cadetblue3", width = 1) +
-  labs(
-    title = "Bin(300, 0.5)",
-    x = "X",
-    y = "P(X = x)"
-  )  +
-  ggthemes::theme_base(base_size = 18) +
-  theme(panel.grid = element_blank(),
-        axis.text = element_text(color = "black"),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        panel.background = element_rect(fill = "white"))
-
-# ---- Distribución normal ----
-x_norm <- seq(100, 200, by = 0.1)
-norm_df <- data.frame(
-  x = x_norm,
-  y = dnorm(x_norm, mean = mu, sd = sigma)
-)
-
-p_norm <- ggplot(norm_df, aes(x = x, y = y)) +
-  geom_line(color = "firebrick3", linewidth = 1) +
-  labs(
-    title = "N(150, 75)",
-    x = "X",
-    y = "Density"
-  ) +
-  ggthemes::theme_base(base_size = 18) +
-  theme(panel.grid = element_blank(),
-        axis.text = element_text(color = "black"),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        panel.background = element_rect(fill = "white"))
-
-# ---- Mostrar por separado ----
-p_binom +     # gráfico 1: binomial
-p_norm       # gráfico 2: normal
-
-```
-
---
-
-En general, si $X \sim Bin(n,p)$, entonces:
-- $\mu = np$
-- $\sigma^2=npq$ donde $q=1-p$
-
-Para $n$ grandes y $p$ muy pequeñas o muy grandes:
-- $X \sim N(np,npq)$
-$n>10$ y $p\approx1/2$ o $n>30$ y $p$ lejos de $1/2$
-
----
-class: animated, fadeIn
-
-### Ejemplo de aproximación normal a la binomial
-
-Queremos calcular la probabilidad de obtener **60 caras o más** al lanzar una moneda 100 veces, asumiendo que la moneda es **balanceada**.
-
-
---
-- Si la moneda es balanzeada significa que la probabilidad de sacar cara es $p = 1/2$
-
-- $X$ sigue una distribución binomial: $X \sim \text{Binomial}(n = 100, p = 0.5)$
-
-- Si $X \sim Bin(n,p)$ entonces $X \sim N(np,npq)$ ($n$ es grande)
-- Utilizamos la aproximación a la distribución normal:
-
-$$
-P(X \ge 60)=P(Z \ge 2)
-$$
-
---
-> Falta algo más...
-
----
-class: animated, fadeIn
-
-### Corrección de continuidad
-
-La distribución binomial es discreta, mientras que la distribución normal es continua. La corrección de continuidad es un ajuste que se aplica cuando se aproxima una distribución discreta mediante una continua.
-
-```{r, echo = F, fig.height=3.5,fig.width=3.5}
-library(ggplot2)
-
-# Parámetros de la distribución
-mu <- 10
-sigma <- 2
-a <- 8
-b <- 12
-
-# Crear un rango de valores para la curva
-x <- seq(mu - 4*sigma, mu + 4*sigma, length.out = 1000)
-df <- data.frame(x = x, y = dnorm(x, mean = mu, sd = sigma))
-
-# Gráfico 1: P(a <= X <= b)
-ggplot(df, aes(x, y)) +
-  geom_line(size = 1, color="cadetblue") +
-  geom_ribbon(data = subset(df, x >= a-0.5 & x <= b+0.5), 
-              aes(ymin = 0, ymax = y), fill = "cadetblue4", alpha = 0.5) +
-  scale_x_continuous(breaks = c(a, b), labels = c("a", "b")) +
-  labs(title = "P(a ≤ X ≤ b)",x="",y="",
-       subtitle = "Área entre a-0.5 y b+0.5") +
-  ggthemes::theme_base(base_size = 18) +
-  theme(panel.grid = element_blank(),
-        axis.text = element_text(color = "black"),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        panel.background = element_rect(fill = "white"))
-
-# Gráfico 2: P(X <= b)
-ggplot(df, aes(x, y)) +
-  geom_line(size = 1, color="cadetblue") +
-  geom_ribbon(data = subset(df, x <= b+0.5), 
-              aes(ymin = 0, ymax = y), fill = "cadetblue4", alpha = 0.5) +
-  scale_x_continuous(breaks = b, labels = "b") +
-  labs(title = "P(X ≤ b)",x="",y="",
-       subtitle = "Área a la izquierda de b+0.5") +
-  ggthemes::theme_base(base_size = 18) +
-  theme(panel.grid = element_blank(),
-        axis.text = element_text(color = "black"),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        panel.background = element_rect(fill = "white"))
-
-# Gráfico 3: P(X >= a)
-ggplot(df, aes(x, y)) +
-  geom_line(size = 1, color="cadetblue") +
-  geom_ribbon(data = subset(df, x >= a-0.5), 
-              aes(ymin = 0, ymax = y), fill = "cadetblue4", alpha = 0.5) +
-  scale_x_continuous(breaks = a, labels = "a") +
-  labs(title ="(P(X ≥ a)",x="",y="",
-       subtitle = "Área a la derecha de a-0.5") +
-  ggthemes::theme_base(base_size = 18) +
-  theme(panel.grid = element_blank(),
-        axis.text = element_text(color = "black"),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        panel.background = element_rect(fill = "white"))
-
-# Gráfico 4: P(X = a)
-ggplot(df, aes(x, y)) +
-  geom_line(size = 1, color="cadetblue") +
-  geom_ribbon(data = subset(df, x >= a-0.5 & x <= a+0.5), 
-              aes(ymin = 0, ymax = y), fill = "cadetblue4", alpha = 0.5) +
-  scale_x_continuous(breaks = a, labels = "a") +
-  labs(title = "P(X = a)",x="",y="",
-       subtitle = "Área entre a-0.5 y a+0.5") +
-  ggthemes::theme_base(base_size = 18) +
-  theme(panel.grid = element_blank(),
-        axis.text = element_text(color = "black"),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        panel.background = element_rect(fill = "white"))
-
-```
-
-
----
-class: animated, fadeIn
-
-### Corrección de continuidad
-
-- Número de lanzamientos: $n = 100$  
-- Probabilidad de cara: $p = 0.5$  
-- Número de caras: $X \sim \text{Binomial}(n = 100, p = 0.5)$  
-- Media y desviación estándar de la binomial:  
-$$
-\mu = n p = 50, \quad \sigma = \sqrt{n p (1-p)} = \sqrt{100 \times 0.5 \times 0.5} = 5
-$$
---
-
-Para usar la **aproximación normal**, aplicamos la **corrección de continuidad**:
-
-$$
-P(X \ge 60) \approx P\left(Z \ge \frac{59.5 - \mu}{\sigma}\right)= P\left(Z \ge \frac{59.5 - 50}{5}\right)
-= P(Z \ge 1.9)
-$$
---
-
-Si usamos la tabla de la normal, $P(X \ge 60) = P(Z \ge 1.9) \approx 0.0287$
-
----
-class: animated, fadeIn
-
-### Corrección de continuidad
-
-- Número de lanzamientos: $n = 100$  
-- Probabilidad de cara: $p = 0.5$  
-- Número de caras: $X \sim \text{Binomial}(n = 100, p = 0.5)$  
-- Media y desviación estándar de la binomial:  
-$$
-\mu = n p = 50, \quad \sigma = \sqrt{n p (1-p)} = \sqrt{100 \times 0.5 \times 0.5} = 5
-$$
-
-En `R`:
-```{r}
-# Parámetros
-mu <- 50; sigma <- 5; x <- 60
-
-# Z con corrección de continuidad
-z <- (x - 0.5 - mu) / sigma; z
-
-
-# Probabilidad usando la aproximación normal
-pnorm(z, lower.tail = FALSE)
-
-```
 
 
 ---
