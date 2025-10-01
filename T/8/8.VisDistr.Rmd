@@ -1,0 +1,606 @@
+---
+title: "<br>"
+subtitle: ""
+author: ""
+date: ""
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, rutgers, "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css", "https://use.fontawesome.com/releases/v7.0.0/css/all.css"]
+    lib_dir: libs
+    self_contained: true
+    nature:
+      mathjax: "default"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+      
+---
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+#knitr::include_graphics()
+knitr::opts_chunk$set(
+  cache = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  fig.retina = 5
+)
+library(ggplot2)
+library(readr)
+library(knitr)
+#pagedown::chrome_print(".html")
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_accent(
+  base_color = "#1c5253", link_color =  "#DE1144", code_inline_color = "#DE1144",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "400", "400i"),
+  code_font_google   = google_font("Roboto Mono"),
+    
+)
+```
+
+```{r xaringanExtra-clipboard, echo=FALSE}
+library(xaringanExtra)
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #90BE6D\"></i>",
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
+
+
+class: animated, fadeIn
+# Outline
+
+#### **Visualizaciones**
+- Histogramas
+- Curvas acumulativas
+- QQ-plots
+
+#### **Comprobar normalidad**
+- Test de Shapiro–Wilk
+
+
+<style>
+.title-slide {
+  background-image: url('img/1.png');
+  background-size: 100%;
+}
+</style>
+
+---
+class: animated, fadeIn
+
+## Herramientas para comparar distribuciones visualmente
+
+Normalmente, tenemos datos y queremos encontrar la distribución “adecuada” para ellos. Eso significa que queremos hallar una distribución que **modele** los datos de manera apropiada. El flujo de trabajo debería ser algo así:
+
+1. Ajusta tus datos a una distribución que consideres plausible. Veremos cómo hacer esto en `R`. El ajuste te dará los mejores parámetros para esa distribución, dados tus datos.
+2. Compara visualmente la distribución teórica con tus datos. La teórica, en este caso, es el ajuste que acabas de obtener. En la visualización, un buen ajuste no muestra desviaciones sistemáticas de los puntos de datos respecto a la teórica.
+3. Haz lo mismo con otras distribuciones plausibles.
+4. Decide cuál ajuste te parece el mejor.
+
+---
+class: animated, fadeIn
+
+### Herramientas para comparar distribuciones visualmente
+
+- **Histograma**.  Cuando se dispone de una muestra suficientemente grande, el histograma permite aproximar la forma de la distribución de probabilidad subyacente. 
+
+```{r, echo  = F, fig.height=5, fig.width=5.5, fig.align='center'}
+library(ggplot2)
+library(ggthemes)
+
+# Simular datos
+set.seed(123)
+n <- 200
+mean_size <- 5
+sd_size <- 1
+frog_size <- rnorm(n, mean = mean_size, sd = sd_size)
+data <- data.frame(frog_size = frog_size)
+
+# Definir el ancho del bin
+binwidth <- 0.5
+
+# Crear histograma con curva de densidad ajustada (counts)
+ggplot(data, aes(x = frog_size)) +
+  geom_histogram(color = "black", fill = "cadetblue4",
+                 binwidth = binwidth) +
+  labs(
+    title = "Histograma",
+    x = "Tamaño de la rana (cm)",
+    y = "Conteo"
+  ) +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+
+```
+
+
+---
+class: animated, fadeIn
+
+### Herramientas para comparar distribuciones visualmente
+
+- **Histograma**.  Cuando se dispone de una muestra suficientemente grande, el histograma permite aproximar la forma de la distribución de probabilidad subyacente. 
+
+```{r, echo  = F, fig.height=5, fig.width=5.5, fig.align='center'}
+library(ggplot2)
+library(ggthemes)
+
+# Simular datos
+set.seed(123)
+n <- 200
+mean_size <- 5
+sd_size <- 1
+frog_size <- rnorm(n, mean = mean_size, sd = sd_size)
+data <- data.frame(frog_size = frog_size)
+
+# Definir el ancho del bin
+binwidth <- 0.5
+
+# Crear histograma con curva de densidad ajustada (counts)
+ggplot(data, aes(x = frog_size)) +
+  geom_histogram(color = "black", fill = "cadetblue4",
+                 binwidth = binwidth) +
+  stat_function(fun = function(x) dnorm(x, mean = mean_size, sd = sd_size) * n * binwidth,
+                color = "firebrick4", size = 1) +
+  labs(
+    title = "Histograma",
+    x = "Tamaño de la rana (cm)",
+    y = "Conteo"
+  ) +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+
+```
+
+--
+- Podríamos mirar si sigue una distribución normal (*gaussiana*) 
+- El problema es que muchas distribuciones siguen una forma de campana (normal)
+- Una solución es mirar la **distribución acumulativa**
+
+
+---
+class: animated, fadeIn
+
+### Herramientas para comparar distribuciones visualmente
+
+- **Distribucion acumulativa empírica**. Para cada valor, indica la probabilidad de que una observación sea menor o igual a ese valor.
+
+```{r, echo  = F, fig.height=5, fig.width=5.5, fig.align='center'}
+library(ggplot2)
+library(ggthemes)
+
+# Simular datos
+set.seed(123)
+n <- 200
+mean_size <- 5
+sd_size <- 1
+frog_size <- rnorm(n, mean = mean_size, sd = sd_size)
+data <- data.frame(frog_size = frog_size)
+
+# Calcular la función de distribución acumulativa (CDF) teórica
+cdf_fun <- function(x) pnorm(x, mean = mean_size, sd = sd_size)
+
+# Valor a marcar
+x_mark <- 6
+#y_mark <- cdf_fun(x_mark)
+y_mark <- mean(frog_size <= x_mark)
+
+# Crear gráfico de distribución acumulativa
+ggplot(data, aes(x = frog_size)) +
+  stat_ecdf(geom = "step", color = "cadetblue4", size = 1) +
+  geom_vline(xintercept = x_mark, linetype = "dashed", color = "firebrick4") +
+  geom_hline(yintercept = y_mark, linetype = "dashed", color = "firebrick4") +
+  annotate("text", x = x_mark + 0.5, y = 0.05, label = paste0(x_mark, " cm"), color = "firebrick4") +
+  annotate("text", x = min(frog_size)+0.5, y = y_mark + 0.05, 
+           label = paste0("P = ", round(y_mark, 3)), color = "firebrick4") +
+  labs(
+    title = "Distribución acumulativa empírica",
+    x = "Tamaño de la rana (cm)",
+    y = "Probabilidad acumulada"
+  ) +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+
+
+```
+
+--
+- La distribución empírica se calcula a partir de los datos y muestra pequeños "saltos" en cada observación.
+
+
+---
+class: animated, fadeIn
+
+### Herramientas para comparar distribuciones visualmente
+
+- **Distribución acumulativa teórica**: Para cada valor, muestra la probabilidad que esperaríamos de que una observación sea menor o igual a ese valor.
+
+```{r, echo  = F, fig.height=5, fig.width=5.5, fig.align='center'}
+library(ggplot2)
+library(ggthemes)
+
+# Simular datos
+set.seed(123)
+n <- 200
+mean_size <- 5
+sd_size <- 1
+frog_size <- rnorm(n, mean = mean_size, sd = sd_size)
+data <- data.frame(frog_size = frog_size)
+
+# Valor a marcar
+x_mark <- 6
+#y_mark <- cdf_fun(x_mark)
+y_mark <- mean(frog_size <= x_mark)
+y_mark_t <- cdf_fun(x_mark)
+
+# Crear gráfico con CDF empírica y teórica
+ggplot(data, aes(x = frog_size)) +
+  # CDF empírica
+  stat_ecdf(geom = "step", color = "cadetblue4", size = 1, alpha = 0.8) +
+  # CDF teórica
+  stat_function(fun = function(x) pnorm(x, mean = mean_size, sd = sd_size),
+                color = "firebrick4", size = 1, linetype = "dashed") +
+  # Líneas para el valor marcado
+  geom_vline(xintercept = x_mark, linetype = "dashed", color = "firebrick4") +
+  geom_hline(yintercept = y_mark, linetype = "dashed", color = "firebrick4") +
+    geom_hline(yintercept = y_mark_t, linetype = "dashed", color = "orange3") +
+
+  # Anotaciones
+  annotate("text", x = x_mark + 0.5, y = 0.05, label = paste0(x_mark, " cm"), color = "gray30") +
+  annotate("text", x = min(frog_size)+0.5, y = y_mark + 0.05, 
+           label = paste0("P = ", round(y_mark, 3)), color = "firebrick4") +
+   annotate("text", x = min(frog_size)+1.7, y = y_mark_t + 0.05, 
+           label = paste0("P = ", round(y_mark_t, 3)), color = "orange3") +
+  
+  labs(
+    title = "Distribución acumulativa teórica",
+    x = "Tamaño de la rana (cm)",
+    y = "Probabilidad acumulada"
+  ) +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+
+```
+
+
+- Al usar este tipo de gráficos para comparar distribuciones, es más fácil identificar desviaciones respecto a lo esperado.
+
+---
+
+class: animated, fadeIn
+
+### Herramientas para comparar distribuciones visualmente
+
+- **QQ-plot**: gráfico que compara los cuantiles de un conjunto de datos observados con los cuantiles de una distribución teórica. Evaluar visualmente si los datos siguen una distribución específica. Por defecto, asume la distribución normal estándard.
+
+```{r, echo  = F, fig.height=5, fig.width=5.5, fig.align='center'}
+
+library(ggplot2)
+library(ggthemes)
+
+# Simular datos (los mismos de antes)
+set.seed(123)
+n <- 200
+mean_size <- 5
+sd_size <- 1
+frog_size <- rnorm(n, mean = mean_size, sd = sd_size)
+data <- data.frame(frog_size = frog_size)
+
+# Crear QQ-plot
+ggplot(data, aes(sample = frog_size)) +
+  stat_qq(color = "cadetblue4") +
+  stat_qq_line(distribution = qnorm, dparams = list(mean = 0, sd = 1), color = "firebrick4", linetype = "dashed", size = 1) +
+  labs(
+    title = "QQ-plot",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+
+```
+
+- El cuantil 25 indica el valor $k$ por debajo del cual se encuentra el 25% de los datos.
+- Cuando la distribución teórica y los datos muestreados son similares, los puntos del QQ-plot se alinean sobre la línea de referencia.
+
+---
+
+class: animated, fadeIn
+
+#### QQ-plot: comprobar si una distribución sigue la normal
+
+.pull-left[
+```{r, eval = F, fig.height=5, fig.width=5.5, fig.align='center'}
+# Simular datos
+set.seed(123)
+n <- 200
+mean_size <- 5
+sd_size <- 1
+frog_size <- rnorm(n, 
+                   mean = mean_size, 
+                   sd = sd_size)
+data <- data.frame(frog_size = frog_size)
+
+# Crear QQ-plot
+ggplot(data, aes(sample = frog_size)) +
+  stat_qq(distribution = qnorm, color = "cadetblue4") +
+  stat_qq_line(distribution = qnorm, 
+               dparams = list(mean = 0, sd = 1), 
+               color = "firebrick4", 
+               linetype = "dashed", size = 1) + 
+  labs(
+    title = "QQ-plot",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) 
+
+```
+]
+.pull-right[
+```{r, echo = F, fig.height=5.5, fig.width=6, fig.align='center'}
+
+library(ggplot2)
+library(ggthemes)
+
+# Simular datos (los mismos de antes)
+set.seed(123)
+n <- 200
+mean_size <- 5
+sd_size <- 1
+frog_size <- rnorm(n, 
+                   mean = mean_size, 
+                   sd = sd_size)
+data <- data.frame(frog_size = frog_size)
+
+# Crear QQ-plot
+ggplot(data, aes(sample = frog_size)) +
+  stat_qq(distribution = qnorm, color = "cadetblue4") +
+  stat_qq_line(distribution = qnorm, 
+               dparams = list(mean = 0, sd = 1), 
+               color = "firebrick4", 
+               linetype = "dashed", size = 1) +
+  labs(
+    title = "QQ-plot",
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales"
+  ) + theme_gray(base_size = 18)
+
+```
+]
+
+
+
+---
+class: animated, fadeIn
+
+### Comprobar si los datos siguen una distribución normal
+
+.pull-left[
+**QQ-plot**
+- Método gráfico para comparar dos distribuciones de probabilidad a través de sus cuantiles.  
+- Si las distribuciones son similares, los puntos caen cerca de la línea $y=x$.  
+- Se utiliza principalmente para comprobar si los datos siguen una distribución normal.
+
+]
+.pull-right[
+**Test de Shapiro–Wilk**
+- Suposición base (hipótesis nula): los datos se distribuyen de manera normal.  
+- Si el test es significativo (*p* < 0.05), los datos no siguen una distribución normal.  
+- Muy sensible al tamaño de muestra: con muestras grandes puede detectar desviaciones muy pequeñas de la normalidad, mientras que con muestras pequeñas puede no detectar desviaciones importantes.
+]
+
+---
+class: animated, fadeIn
+
+#### Test de Shapiro-Wilk en `R`
+
+.pull-left[
+
+```{r}
+set.seed(10)
+vector_normal <- rnorm(n = 5000, 
+                       mean = 20, sd = 2)
+shapiro.test(vector_normal)
+```
+
+```{r, echo = F, fig.height=3, fig.width=3, fig.align='center'}
+ggplot(data.frame(x=vector_normal), aes(sample=x)) +
+  stat_qq(color="cadetblue4") +
+  stat_qq_line(color="firebrick4") +
+  labs(title="QQ-plot",
+       x="Cuantiles teóricos",
+       y="Cuantiles muestrales") +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+
+```
+
+
+- Datos distribuidos de manera normal
+
+]
+
+.pull-right[
+
+
+```{r}
+set.seed(10)
+vector_exp <- rexp(n = 500, 
+                   rate = 0.5) 
+shapiro.test(vector_exp)
+```
+
+```{r, echo = F, fig.height=3, fig.width=3, fig.align='center'}
+
+ggplot(data.frame(x=vector_exp), aes(sample=x)) +
+  stat_qq(color="cadetblue4") +
+  stat_qq_line(color="firebrick4") +
+  labs(title="QQ-plot",
+       x="Cuantiles teóricos",
+       y="Cuantiles muestrales") +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+
+
+```
+
+- Datos no distribuidos de manera normal
+
+]
+
+
+---
+class: animated, fadeIn
+
+#### Test de Shapiro-Wilk en `R`
+
+.pull-left[
+
+```{r}
+set.seed(10)
+vector_normal <- rnorm(n = 5000, 
+                       mean = 20, sd = 2)
+shapiro.test(vector_normal)
+```
+
+
+```{r, echo = F, fig.height=3, fig.width=3, fig.align='center'}
+
+data <- data.frame(norm = vector_normal)
+
+# Definir el ancho del bin
+binwidth <- 0.5
+
+# Crear histograma con curva de densidad ajustada (counts)
+ggplot(data, aes(x = norm)) +
+  geom_histogram(color = "black", fill = "cadetblue4",
+                 binwidth = binwidth, bins = 10) +
+  labs(
+    x = "x",
+    y = "Counts"
+  ) +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+
+```
+
+
+- Datos distribuidos de manera normal
+
+]
+
+.pull-right[
+
+
+```{r}
+set.seed(10)
+vector_exp <- rexp(n = 500, 
+                   rate = 0.5) 
+shapiro.test(vector_exp)
+```
+
+```{r, echo = F, fig.height=3, fig.width=3, fig.align='center'}
+
+data <- data.frame(exp = vector_exp)
+
+# Crear histograma con curva de densidad ajustada (counts)
+ggplot(data, aes(x = exp)) +
+  geom_histogram(color = "black", fill = "cadetblue4",
+                 binwidth = binwidth, bins = 10) +
+  labs(
+    x = "x",
+    y = "Counts"
+  ) +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+```
+
+- Datos no distribuidos de manera normal
+
+]
+
+
+
+---
+
+## Resumen
+
+### Muestreo y distribuciones
+- En estadística, los experimentos se consideran como procesos de muestreo. Muestrear significa “extraer eventos” de una población de interés. Si los eventos se extraen de manera aleatoria e independiente, los resultados tienen más probabilidades de representar adecuadamente la realidad.
+- Una distribución de probabilidad asigna probabilidades a los posibles resultados (en distribuciones continuas: a intervalos de resultados).
+- Las distribuciones discretas dan probabilidades para resultados discretos, por ejemplo, conteos. En las distribuciones continuas, a cada valor se le asigna una densidad, y las probabilidades se calculan integrando la densidad en el intervalo de interés.
+
+### Distribuciones comunes en datos biológicos
+- La distribución binomial modela el número de éxitos en una serie de ensayos.
+- La distribución de Poisson se utiliza a menudo para modelar datos de conteo. Supone que los conteos ocurren sobre un volumen o periodo de tiempo fijo. Es una aproximación de la distribución binomial.
+- La distribución gaussiana o normal modela mediciones repetidas de lo mismo y es una distribución continua.
+
+---
+
+## Vídeo resumen
+
+<center>
+
+<iframe width="740" height="420" 
+        src="https://www.youtube.com/embed/u9onO78hDlw" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+</iframe>
+
+---
+class: animated, fadeIn
+
+## Contacto
+
+<div style="margin-top: 20vh; text-align:center;">
+
+| Marta Coronado Zamora | David Castellano | 
+|:-:|:-:|
+| <a href="mailto:marta.coronado@uab.cat"><i class="fa fa-paper-plane fa-fw"></i> marta.coronado@uab.cat</a> | <a href="mailto:david.castellano@uab.cat"><i class="fa fa-paper-plane fa-fw"></i>&nbsp; david.castellano@uab.cat</a> | 
+| <a href="https://bsky.app/profile/geneticament.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @geneticament.bsky.social</a> |                 <a href="https://bsky.app/profile/castellanoed.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @castellanoed.bsky.social</a> |
+| <a href="https://www.uab.cat"><i class="fa fa-map-marker fa-fw"></i>&nbsp; Universitat Autònoma de Barcelona</a> |    <a href="https://gutengroup.mcb.arizona.edu/"> <i class="fa fa-map-marker fa-fw"></i>&nbsp; University of Arizona</a> |
+
+---
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+### Créditos
+#### Adaptado de: CSDA tutorial - Probability distributions (EMBL, Sarah Kaspar, PhD)
+#### Dr. Hafid Laayouni por compartir sus materiales
