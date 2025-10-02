@@ -1558,7 +1558,7 @@ class: animated, fadeIn
 
 <center>
 <video  width="250" controls >
-  <source src="img/iq80.mp4" type="video/mp4" />
+  <source src="https://github.com/marta-coronado/biostatistics-uab/raw/refs/heads/main/T/6/img/iq80.mp4" type="video/mp4" />
   Tu navegador no soporta la etiqueta de video.
 </video>
 
