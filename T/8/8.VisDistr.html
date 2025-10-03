@@ -201,6 +201,42 @@ class: animated, fadeIn
   
 ]
 
+---
+class: animated, fadeIn
+
+#### QQ-plot: comprobar si una distribución sigue la normal
+
+.pull-left[
+  
+
+``` r
+  set.seed(10)
+  vector_normal &lt;- rnorm(n = 50, 
+                         mean = 20, sd = 2)
+```
+  
+&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-13-1.png" width="216" style="display: block; margin: auto;" /&gt;
+  
+  
+- Desviaciones aparentes de la normalidad pueden ser debidas a un tamaño de muestra muy pequeño.
+  
+]
+
+.pull-right[
+  
+  
+
+``` r
+set.seed(10)
+vector_exp &lt;- rnorm(n = 5000, 
+                         mean = 20, sd = 2)
+```
+
+&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-15-1.png" width="216" style="display: block; margin: auto;" /&gt;
+  
+- A tamaños más grandes, apenas hay desviaciones.
+  
+]
 
 
 ---

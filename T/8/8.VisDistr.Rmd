@@ -452,6 +452,68 @@ class: animated, fadeIn
   
 ]
 
+---
+class: animated, fadeIn
+
+#### QQ-plot: comprobar si una distribución sigue la normal
+
+.pull-left[
+  
+```{r}
+  set.seed(10)
+  vector_normal <- rnorm(n = 50, 
+                         mean = 20, sd = 2)
+```
+  
+```{r, echo = F, fig.height=3, fig.width=3, fig.align='center'}
+  ggplot(data.frame(x=vector_normal), aes(sample=x)) +
+    stat_qq(color="cadetblue4") +
+    stat_qq_line(color="firebrick4") +
+    labs(title="QQ-plot",
+         x="Cuantiles teóricos",
+         y="Cuantiles muestrales") +
+    ggthemes::theme_base(base_size = 13) +
+    theme(panel.grid=element_blank(),
+          axis.text=element_text(color="black"),
+          panel.background = element_rect(fill = "white"))
+  
+
+```
+  
+  
+- Desviaciones aparentes de la normalidad pueden ser debidas a un tamaño de muestra muy pequeño.
+  
+]
+
+.pull-right[
+  
+  
+```{r}
+set.seed(10)
+vector_exp <- rnorm(n = 5000, 
+                         mean = 20, sd = 2)
+```
+
+```{r, echo = F, fig.height=3, fig.width=3, fig.align='center'}
+  
+  ggplot(data.frame(x=vector_exp), aes(sample=x)) +
+    stat_qq(color="cadetblue4") +
+    stat_qq_line(color="firebrick4") +
+    labs(title="QQ-plot",
+         x="Cuantiles teóricos",
+         y="Cuantiles muestrales") +
+    ggthemes::theme_base(base_size = 13) +
+    theme(panel.grid=element_blank(),
+          axis.text=element_text(color="black"),
+          panel.background = element_rect(fill = "white"))
+  
+  
+  
+```
+  
+- A tamaños más grandes, apenas hay desviaciones.
+  
+]
 
 
 ---
