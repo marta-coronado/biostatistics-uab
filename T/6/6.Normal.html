@@ -1727,6 +1727,24 @@ Para **distribuciones normales “perfectas”**, es decir, distribuciones simé
 Si la media es 10 y la SD es 2, el 95% de los valores estarán entre 6 y 14.
 ]
 
+---
+class: animated, fadeIn
+
+### Función de distribución acumulada de la normal
+
+| Símbolo              | Significado        | Expresión                                   | R con `pnorm`                                         |
+|----------------------|-------------------|----------------------------------------------|------------------------------------------------------|
+| `\(P(X \le x)\)`         | “como mucho x”    | `\(P(X \le x)\)`                                 | `pnorm(x, mean = mu, sd = sigma)`                    |
+| `\(P(X &lt; x)\)`           | “menos de x”      | `\(P(X \le x)\)` (igual, continua)               | `pnorm(x, mean = mu, sd = sigma)`                    |
+| `\(P(X \ge x)\)`         | “al menos x”      | `\(1 - P(X \le x)\)`                             | `pnorm(x, mean = mu, sd = sigma, lower.tail = FALSE)`|
+| `\(P(X &gt; x)\)`           | “más de x”        | `\(1 - P(X \le x)\)`                             | `pnorm(x, mean = mu, sd = sigma, lower.tail = FALSE)`|
+| `\(P(a \le X \le b)\)`   | “entre a y b”     | `\(P(X \le b) - P(X \le a)\)`                    | `pnorm(b, mu, sigma) - pnorm(a, mu, sigma)`          |
+| `\(P(a &lt; X &lt; b)\)`       | “entre a y b”     | `\(P(X \le b) - P(X \le a)\)` (igual, continua) | `pnorm(b, mu, sigma) - pnorm(a, mu, sigma)`          |
+
+**Notas:**
+- En la normal no importa la diferencia entre `\(&lt;\)` y `\(\le\)` porque es continua.  
+- Si es la normal estándar `\(N(0,1)\)` basta con `pnorm(x)` sin `mean` ni `sd`.  
+- `pnorm` acepta valores negativos directamente, ej: `pnorm(-1.5)`.  
 
 ---
 class: animated, fadeIn
