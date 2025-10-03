@@ -161,7 +161,7 @@ Sea $Y$ la **variable número de semillas germinadas por estudiante**.
 
 ### b) Si queremos entender la variación en $Y$ (diferentes resultados entre estudiantes), ¿cuál sería la explicación principal de esta variación?
 
-### c) Los resultados de la clase al séptimo día fueron los siguientes. Calcula el promedio (media) de semillas germinadas.  
+### c) Los resultados de la clase al séptimo día fueron los siguientes. Calcula la proporción de semillas germinadas en toda la clase (esto es, una estimación de la probabilidad de germinación).
 
 | Número de semillas germinadas (Y) | Número de estudiantes |
 |-----------------------------------|--------------------:|
