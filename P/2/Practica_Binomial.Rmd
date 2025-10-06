@@ -1,0 +1,460 @@
+---
+title: "**Distribución binomial:**<br><font color='#A8A8A8' size='5'>práctica en  `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
+author: "Marta Coronado Zamora"
+date: "Octubre 2025"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5)
+library(dplyr)
+library(tibble)
+library(ggplot2)
+# install.packages("prettydoc")
+library(prettydoc)
+```
+
+
+<style>
+  @import url(https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,500,500i,700,700i);
+  @import url(https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css);
+  @import url("https://use.fontawesome.com/releases/v5.10.1/css/all.css");
+  
+  body {
+    font-family: 'Fira Sans','Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Microsoft YaHei', 'Songti SC', serif;
+  }
+  
+  /* Make bold syntax compile to RU-red */
+  strong {
+    color: #DE1144;
+  }
+
+</style>
+
+
+# La distribución binomial
+
+## Distribución binomial en `R`
+
+`R` tiene varias funciones para trabajar con la distribución binomial. En la siguiente tabla, se describen las tres principales:
+
+| Función binomial | Lo que hace |
+|:----------------:|:------------|
+|`dbinom(x, size, prob)`| $P(X=k)$, la probabilidad de que $X=k$|
+|`pbinom(k, size, prob, lower.tail = TRUE)` | $P(X<=k)$, la probabilidad de que X tome un valor más pequeño o igual a `k`
+|`pbinom(k, size, prob, lower.tail = FALSE)` | $P(X>k)$, la probabilidad de que X tome un valor más grande a `k`
+| `rbinom(n, size, prob)` | Genera `n` números que siguen unna distribución binomial dados los parámetros (`size` y `prob`) |
+
+Vamos a aplicar estas funciones para ver cómo funcionan en `R`.
+
+### 1. Generación de números aleatorios
+
+Vamos a empezar con `rbinom()`, una función que genera números aleatorios que siguen una distribución binomial dados los parámetros. Para probarla, vamos a generar una observación (`n=1`) de una muestra con un tamaño 100 (`size=100`) y una probabilidad de éxito de 0.3 (`prob=0.3`).
+
+**Ejecuta la función `rbinom()` con los parámetros indicados`.**
+
+<i class="fa fa-key"></i> `set.seed(numero)` permite que, aunque estemos ejecutando una función que genera números aleatorios, todo el mundo obtenga el mismo resultado.
+
+
+```{r}
+
+```
+
+El resultado mostrado arriba es el número de éxitos en una única muestra de tamaño 100. La proporción de éxitos no es exactamente igual a la que usamos para generar los datos (`prob=0.3`), pero es cercana, y cuanto mayor sea el tamaño de la muestra, más se aproximará esa proporción real a la proporción teórica. Si quieres, puedes hacer pruebas variando el tamaño (`size`) para comprobarlo.
+
+Ahora hagamos algo un poco más interesante. ¿Cómo es, visualmente, la distribución binomial? Podemos generar más datos usando `rbinom()` y representarlos con `ggplot2` para averiguarlo. Vamos a usar el mismo tamaño de muestra y la misma probabilidad de éxito que antes, pero generaremos muchos más datos, en vez de 1 simularemos 1000 (`n=1000`), para hacernos una buena idea de cómo debería verse esta distribución.
+
+
+**Primer paso: Genera 1000 números aleatorios.** Guarda el vector numérico resultante en un objeto que se llame `binomial_data`.
+
+```{r}
+
+```
+
+**Segundo paso: transforma el vector numérico a un `data.frame`.** Recuerda que `ggplot2` trabaja con tablas (`data.frame`), por lo que transformaremos el vector en una tabla con una única columna, los 1000 valores simulados. Ejecuta el siguiente código:
+
+```{r, eval = F}
+# suponiendo que el vector numerico se llama binomial_data
+
+binomial_data_df <- data.frame(data = binomial_data) # transforma el vector a un data frame con una unica columna llamada "data"
+
+head(binomial_data_df) # mira el resultado
+```
+
+**Genera un histograma con ** `ggplot2`. El dataframe que contiene los datos se llama `binomial_data_df` y la columna con los números simulados se llama `data`. La [diapositiva 24](https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#26) del tema de Visualización de datos de teoría te puede ayudar. 
+
+```{r}
+
+```
+
+Vemos que la distribución binomial es aproximadamente normal. 
+
+El eje `y` por defecto en el histograma es el número de conteos (`count`), por eso no es necesario indicarle nada. `count` no es una variable presente en nuestro dataframe, sino que `ggplot2` la calcula internamente por nosotros cuando hacemos un histograma. Podemos pedirle a `ggplot2` que represente la proporción, en vez del conteo, indicando `y=stat(count / sum(count))`. **Modifica el código anterior**.  
+
+
+```{r}
+
+```
+
+Algo que nos puede ayudar es añadirle más precisión a los ejes del gráfico. Por defecto, el eje `x` e `y` muestra emtre tres y cuatro valores. Podemos pedir que el eje `x` vaya de 1 a 50 de 1 en 1, y el eje `y` que nos muestre más valores, por ejemplo de 0 a 0.1 de 0.01 en 0.01. Pásale al argumento `breaks` un vector numérico con esos valores. Ayúdate de la función `seq()` para generarlo:
+
+<i class="fas fa-search"></i> Ejemplo: comprueba qué hace `seq(0, 20, by = 2)`
+
+```{r}
+# +
+#  scale_x_continuous(breaks = ) +
+#  scale_y_continuous(breaks = )
+
+
+```
+
+Puedes modificar el gráfico, por ejemplo añadirle un tema al gráfico (`theme_?`, puedes consultar los temas disponibles [aquí](https://ggplot2.tidyverse.org/reference/ggtheme.html)).
+
+```{r}
+
+```
+
+
+Vamos a añadirle una línea vertical (`vline`) que represente el promedio de nuestra distribución. Para ello podemos añadir el siguiente `geom`: `+ geom_vline(xintercept = valor)`. **¿Cuál es el valor de la media de una distribución binomial con nuestros parámetros?**
+
+```{r}
+
+
+```
+
+Por defecto la línea de `geom_vline` es negra y continua, pero puedes modificarla con los argumentos `linetype =` (`dashed`, `dotted`, `longdash`, `twodash`, `dotdash`), y `color =` (puedes consultar colores [aquí](https://r-charts.com/colors/)).
+
+
+```{r}
+
+
+```
+
+Si quieres, puedes añadir cualquier modificación más al gráfico de las que hemos visto, como cambiar el nombre de los ejes, añadir un título, ...
+
+```{r}
+
+
+```
+
+<hr>
+
+### 2. Cálculo de probabilidad
+
+La siguiente función que vamos a aplicar es `dbinom()`, que nos da la probabilidad de que una variable binomial con unos parámetros concretos de un valor determinado. **Vamos a calcular la probabilidad de que la variable que estamos utilizando tome el valor 30:**
+
+```{r}
+
+```
+
+La probabilidad de que ocurra este evento es **8.67%**. Podemos colorear en el gráfico anterior exactamente esta probabilidad para visualizarlo. Para ello, podemos indicar dentro de la función `aes()` el siguiente argumento `fill = data == 30`. Si lo necesitas, elimina la línea vertical para poder ver mejor el gráfico.
+
+
+```{r}
+
+```
+
+El gráfico anterior debería hacer un poco más clara la probabilidad que acabamos de calcular con `dbinom()`. Básicamente, esta probabilidad está representada por el área dentro de la barra turquesa. Esa barra representa todas las muestras en `binomial_data` en las que hubo 30 éxitos. En otras palabras, representa todas las veces que nuestra variable aleatoria tomó el valor 30.
+
+Sin embargo, es importante señalar que la probabilidad que calculamos con `dbinom()` es una **probabilidad teórica** que no necesariamente es igual a la **proporción real de observaciones en nuestros datos** (los simulados) que son iguales a 30. Calcularemos ese valor empírico.
+
+Para ello, podemos utilizar la función `summarize` del paquete `dplyr`. Para ello, tendrás que contar todas las filas donde `data` sea igual a 30, y dividirlo entre el total de observaciones (función `n()`). [Esta diapositiva](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#65) te puede ayudar.
+
+```{r}
+
+
+```
+
+**¿Son parecidas las proporciones teórica y empírica?**
+
+<div style="background-color:#F0F0F0">
+##### &emsp;<i class="fas fa-comment-dots"></i> Respuesta:
+&emsp;
+
+
+</div>
+
+<hr>
+
+### 3. Cálculo de probabilidad acumulada
+
+La siguiente función que vamos a aprender es `pbinom()`, que es una **función de probabilidad acumulada**. Por defecto, devuelve la probabilidad de que una variable aleatoria distribuida binomialmente tome un valor **menor o igual** a un cierto valor. Vamos a probarla:
+
+```{r}
+
+```
+
+La probabilidad de que nuestra variable aleatoria tome un valor menor o igual al valor dado, en un tamaño de muestra dado y con una probabilidad de éxito dada, es aproximadamente 55%.
+
+**¿Cómo modificiarías el gráfico de `ggplot2` anterior para visualizar la nueva probabildad acumulada calculada?**
+
+```{r}
+
+
+```
+
+**Compara ahora la probabilidad teórica vs. la empírica:**
+
+```{r}
+
+```
+
+<div style="background-color:#F0F0F0">
+##### &emsp;<i class="fas fa-comment-dots"></i> Respuesta:
+
+&emsp;
+
+</div>
+
+Todavía no hemos terminado con la función `pbinom()`. Hasta ahora, solo la hemos considerado para calcular una probabilidad de la cola izquierda. ¿Qué pasa con una probabilidad de la cola derecha?
+
+`pbinom()` tiene un argumento opcional llamado `lower.tail`, cuyo valor por defecto es `TRUE`, que podemos usar para calcular probabilidades de la cola izquierda (`TRUE`) y derecha (`FALSE`). También es posible calcular probabilidades de cola derecha usando `1 - pbinom(q, size, prob)`, Sin embargo, cambiar el argumento `lower.tail = FALSE` suele ser más claro, ya que deja explícito que estamos calculando la probabilidad de obtener un valor mayor que `q`.
+
+Ahora vamos a calcular la probabilidad complementaria de la cola derecha, es decir, el complemento de la probabilidad de cola izquierda que obtuvimos antes. Luego, compararemos este valor teórico con la proporción observada en nuestros datos y visualizaremos el resultado.  
+
+
+```{r}
+
+
+```
+
+**Modifica la función de `dplyr` para calcular la proporción observada.**
+
+```{r}
+
+```
+
+**¿Se parecen las probabilidades teórica y empírica?**
+
+<div style="background-color:#F0F0F0">
+##### &emsp;<i class="fas fa-comment-dots"></i> Respuesta:
+
+&emsp;
+
+</div> 
+
+**Modifica el gráfico de `ggplot2` para representar la nueva probabilidad.**
+
+```{r}
+
+```
+
+
+Hay algo que vale la pena enfatizar: el valor de `lower.tail` no solo controla si estás realizando un **test de cola izquierda o derecha**, sino también si estás calculando la probabilidad de que una variable distribuida binomialmente tome un valor **menor o igual a un cierto valor** (`P(X <= x)`), o si estás calculando la probabilidad de que tome un valor **mayor, pero NO igual a ese valor** (`P(X > x)`), respectivamente.
+
+Es un detalle sutil, pero es muy importante recordarlo para poder usar estas funciones correctamente.
+
+<hr>
+
+## Distribución binomial en la detección de inserciones de transposones
+
+### Introducción
+
+Los elementos transponibles (TEs) son secuencias de ADN capaces de moverse dentro del genoma. Estamos estudiando una población de *Drosophila* para detectar la presencia de una inserción específica de un TE. 
+
+![](https://scx2.b-cdn.net/gfx/news/2020/5fd8c57a85b79.jpg)
+
+Investigaciones previas muestran que este TE tiene una **frecuencia del 15%** en la naturaleza.
+
+Se secuencian 90 genomas independientes de *Drosophila* de distintas regiones de Europa y se evalúa experimentalmente la presencia del TE en cada uno de ellos.
+
+**¿Cuál es la probabilidad de observar al menos 20 inserciones?**
+
+```{r}
+
+
+```
+
+**¿Es raro observar ≥20 inserciones?**
+
+<div style="background-color:#F0F0F0">
+##### &emsp;<i class="fas fa-comment-dots"></i> Respuesta:
+&emsp;
+
+</div>
+
+
+**Simulación de muestreos**
+
+Simulemos el número de genomas con la inserción del TE en **10,000 experimentos independientes**, cada uno con 90 genomas.
+
+```{r}
+
+
+```
+
+**Calcula la proporción empírica de simulaciones con ≥20 inserciones.**
+
+Recuerda hacer un `data.frame` si quieres responder la pregunta con `dplyr()`.
+
+```{r}
+
+```
+
+
+<div style="background-color:#F0F0F0">
+##### &emsp;<i class="fas fa-comment-dots"></i> Respuesta:
+&emsp;
+
+</div>
+
+**¿Cómo se compara esta proporción empírica con la probabilidad teórica calculada previamente?**
+
+<div style="background-color:#F0F0F0">
+##### &emsp;<i class="fas fa-comment-dots"></i> Respuesta:
+&emsp;
+
+</div>
+
+
+#### Visualización de la distribución
+
+Genera un histograma de los resultados simulados y resalta las probabilidades con ≥20 inserciones.
+
+```{r}
+
+
+```
+
+
+**¿Qué pasa si la frecuencia del TE es mayor?** Supongamos que en otra población americana la frecuencia del TE es $p = 0.25$.  
+
+**¿Cómo cambia la probabilidad de observar ≥20 inserciones?**
+
+```{r}
+
+```
+
+
+<div style="background-color:#F0F0F0">
+##### &emsp;<i class="fas fa-comment-dots"></i> Respuesta:
+&emsp;
+
+</div>
+
+**¿Qué pasa si el tamaño de muestra es mayor?**
+
+Calcula la probabilidad de tener almenos 20 si en vez de 90 moscas, muestreamos 5, 50, 200 y 500. Considera la frecuencia inicial de 0.15.
+
+```{r}
+
+```
+
+**¿Cómo afecta el tamaño de muestra a la probabilidad?**
+
+
+<div style="background-color:#F0F0F0">
+##### &emsp;<i class="fas fa-comment-dots"></i> Respuesta:
+&emsp;
+
+</div>
+
+La secuenciación de genomas es muy cara, y lo que nos interesa es minimizar el numero de genomas a secuenciar para detectar al menos **1 inserción** en **1 genoma** con un 95% de probabilidad. Es decir:
+
+$$
+P(X\ge1) \ge 0.95
+$$
+
+**¿Cuántos genomas necesitamos muestrear para tener un 95% de probabilidad de detectar al menos un genoma con el TE?**
+
+Queremos calcular cuántos genomas necesitamos muestrear para detectar **al menos un genoma con un TE** con un **95% de probabilidad**.  
+
+Sea $p = 0.15$ la frecuencia del TE en la población.
+
+#### Paso 1: Probabilidad de no observar el TE en un solo genoma
+
+Si la frecuencia es $p$, la probabilidad de **no ver el TE** en un genoma es:
+
+$$
+P(\text{no TE}) = 1 - p
+$$
+
+
+####  Paso 2: Probabilidad de no observar el TE en n genomas
+
+Si muestreamos $n$ genomas independientes, la probabilidad de no observar el TE en ninguno es:
+
+$$
+P(\text{ningún TE en n genomas}) = (1-p)^n
+$$
+
+Cada genoma “falla” en mostrar el TE con probabilidad $1-p$, y todas las fallas juntas tienen probabilidad $(1-p)^n$.
+
+####  Paso 3: Probabilidad de observar al menos un genoma con TE
+
+La probabilidad de **ver al menos uno** es el complemento:
+
+$$
+P(\text{al menos uno}) = 1 - (1-p)^n
+$$
+
+Queremos que esta probabilidad sea ≥0.95:
+
+$$
+1 - (1-p)^n \ge 0.95
+$$
+
+Esto es equivalente a:
+
+$$
+(1-p)^n \le 0.05
+$$
+
+
+#### Paso 4: Resolver para n
+
+Tomamos logaritmos:
+
+$$
+n \ge \frac{\log(0.05)}{\log(1-p)}
+$$
+Resolvemos. La función `ceiling()` en R redondea hacia arriba un número al entero más cercano.
+
+```{r}
+# Cálculo de n mínimo
+p<-0.15
+ceiling(log(0.05) / log(1 - p))
+
+```
+
+
+**Interpreta el resultado.**
+
+
+<div style="background-color:#F0F0F0">
+##### &emsp;<i class="fas fa-comment-dots"></i> Respuesta:
+&emsp;
+
+</div>
+
+**¿Qué pasa si queremos un 99% de probabilidad?**
+
+<div style="background-color:#F0F0F0">
+##### &emsp;<i class="fas fa-comment-dots"></i> Respuesta:
+&emsp;
+
+</div>
+
+La secuenciación de cada genoma de *Drosophila* cuesta 700€. Un laboratorio dispone de un presupuesto de 15000€. El laboratorio quiere detectar la inserción de un TE cuya frecuencia en la población es del 8%. Quieren tener al menos un 95% de probabilidad de observar al menos una inserción.
+
+**¿Cuál es el número mínimo de genomas que necesitan secuenciar?**
+
+```{r}
+
+```
+
+**¿El laboratorio puede permitirse la secuenciación con su presupuesto?**
+
+```{r}
+
+```
+
+<i class="fas fa-rocket"></i> **Dado el presupuesto disponible, ¿cuál es la frecuencia mínima de inserción del TE que se podría detectar con al menos un 95% de probabilidad?**
+
+```{r}
+
+```
