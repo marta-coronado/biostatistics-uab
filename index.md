@@ -20,7 +20,9 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Tema 6: Distribución normal](T/6/6.Normal.html)
 - [Tema 7: Distribución de Poisson](T/7/7.Poisson.html)
 - [Tema 8: Visualización de distribuciones](T/8/8.VisDistr.html)
-
+- [Tema 9: Intervalos de confianza](T/9/9.Intervalosconfianza.html)
+- [Tema 10: Inferencia estadística](T/10/10.Inferencia.html)
+- 
 ---
 
 ## 🗣️ Seminarios
