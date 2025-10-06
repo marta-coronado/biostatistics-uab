@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title> </title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/rutgers.css" rel="stylesheet" />
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
+    <link href="libs/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v7.0.0/css/all.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# <br>
+]
+.author[
+### 
+]
+
+---
+
+
+
+
+
+
+
+
+class: animated, fadeIn
+# Outline
+
+#### **Inferencia estadística**
+- Motivación
+-
+-
+
+&lt;style&gt;
+.title-slide {
+  background-image: url('img/1.png');
+  background-size: 100%;
+}
+&lt;/style&gt;
+
+
+---
+class: animated, fadeIn
+
+## Motivación
+
+¿Qué es un test de hipotesis? ¿por qué lo necesitmaos?
+
+&lt;center&gt;
+&lt;img src="img/rats.png" width=70%&gt;
+
+---
+class: animated, fadeIn
+
+#### Ejemplo: peso de ratones
+
+.pull-left[
+&lt;img src="10.Inferencia_files/figure-html/unnamed-chunk-1-1.png" width="360" /&gt;
+
+**Modelo estadístico**
+$$
+peso = dieta + residuos
+$$
+- `\(dieta\)`: promedio de los grupos
+- `\(residuos\)`: siguen una distribución estadística
+
+]
+
+.pull-right[
+**Pregunta**: hay diferencia en el peso en ratones control *vs.* con una dieta alta en grasas?
+
+**Problema**: la diferencia en las medias puede deberse al azar:
+- Sólo tenemos una muestra de ratones en cada muestra
+- Hay variación en los pesos
+
+Saber las reglas de la aleatoriedad/variación nos dirá cuán probable es que estas diferencias se deban al azar.
+]
+
+
+
+---
+class: animated, fadeIn
+
+#### Ejemplo: peso de ratones
+
+.pull-left[
+&lt;img src="10.Inferencia_files/figure-html/unnamed-chunk-2-1.png" width="360" /&gt;
+
+**Modelo estadístico**
+$$
+peso = dieta + residuos
+$$
+- `\(dieta\)`: promedio de los grupos
+- `\(residuos\)`: siguen una distribución estadística (no siempre siguen una distribución Gaussiana...)
+
+]
+
+.pull-right[
+**Pregunta**: hay diferencia en el peso en ratones control *vs.* con una dieta alta en grasas?
+
+**Problema**: la diferencia en las medias puede deberse al azar:
+- Sólo tenemos una muestra de ratones en cada muestra
+- Hay variación en los pesos
+
+Saber las reglas de la aleatoriedad/variación nos dirá cuán probable es que estas diferencias se deban al azar.
+]
+
+---
+class: animated, fadeIn
+
+
+## Hipótesis nula y alternativa
+
+#### Hipótesis nula (H₀)
+- No hay diferencia entre los dos grupos de dieta. 
+- Modelo nulo:  
+
+$$
+\text{peso} = \text{media general} + \text{residuos}
+$$
+- La media general representa promedio de todos los ratones, sin importar el grupo de dieta
+
+--
+
+#### Hipótesis alternativa (H₁)
+- Existe una diferencia entre los dos grupos de dieta.  
+- Modelo alternativo: 
+
+$$
+\text{peso} = \text{efecto de la dieta} + \text{residuos}
+$$
+
+#### Rechazo de H₀
+
+- Rechazamos la hipótesis nula cuando, **asumiendo que H₀ es verdadera**, es muy poco probable observar una diferencia tan extrema como la que muestran nuestros datos **por azar**.
+
+---
+
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+## Proceso de inferencia estadística
+
+
+---
+class: animated, fadeIn
+
+## Introducción
+
+&gt; La estadística inferencial se utiliza para **extraer conclusiones a partir de una muestra**.
+
+- **Objetivo:** formular hipótesis y testarlas para hacer **generalizaciones sobre una población** a partir de una muestra.  
+- **Procedimiento:** usar **muestreo aleatorio** y **pruebas de hipótesis** para evaluar la validez de hipótesis previamente establecidas.
+
+&gt; La estadística inferencial suele invocar **medidas de significancia estadística**.
+
+&lt;center&gt;
+&lt;img src="img/inf.png" width=60%&gt;
+
+---
+class: animated, fadeIn
+
+## Introducción
+
+&lt;center&gt;
+&lt;img src="img/mapa.png" width=80%&gt;
+
+
+---
+class: animated, fadeIn
+
+## Introducción
+
+
+&lt;center&gt;
+&lt;img src="img/pasos.png" width=90%&gt;
+
+
+---
+class: animated, fadeIn
+
+## 1. Hipótesis
+
+#### ¿Qué es una hipótesis?
+
+Una hipótesis es una **afirmación** sobre **cómo se comportan los datos** o el **fenómeno que estudiamos**, que **podemos poner a prueba usando métodos estadísticos**.
+
+#### ¿Por qué son importantes?
+
+- Las hipótesis son **simplificaciones de posibles normas de procesos naturales** y permiten que las afirmaciones sean **testables**.  
+
+- Formular la hipótesis correcta es esencial para **obtener las respuestas correctas**.  
+
+
+--
+
+**Ejemplo**:
+.pull-left[
+&gt; Queremos saber si un medicamento tiene un efecto positivo sobre la presión arterial en personas con hipertensión.
+]
+.pull-right[
+&lt;center&gt;
+&lt;img src="img/hipotesis.png" width=95%&gt;
+]
+
+---
+
+class: animated, fadeIn
+
+## 2. Muestra
+
+- La población de estudio serán todas las personas con hipertensión de Catlunya
+- Muestreamos un subconjunto 
+&lt;center&gt;
+&lt;img src="img/muestreo.png" width=80%&gt;
+
+
+---
+
+class: animated, fadeIn
+
+## 3. Prueba de hipótesis
+
+&gt; La **prueba de hipótesis** es un método para evaluar una afirmación sobre un **parámetro poblacional** utilizando datos **obtenidos de una muestra**.
+
+--
+
+- Hay muchísimas pruebas de hipótesis:
+  - T-test
+  - ANOVA
+  - Prueba de  `\(\chi^2\)`
+  - Pruebas de regresión y correlación
+  - ...
+  
+- La elección de la prueba depende de:
+  - El tipo de variable (numérica, categórica)
+  - El número de grupos o comparaciones
+  - Supuestos sobre la distribución de los datos (normalidad)
+  - El tamaño de la muestra
+
+En general, cada prueba está diseñada para responder una pregunta específica sobre los datos, garantizando que la inferencia sea válida.
+
+---
+
+
+class: animated, fadeIn
+
+## 3. Prueba de hipótesis
+
+&gt; ¿Cómo funciona un test de hipótesis? 
+
+Cuando llevamos a cabo una pruebad de hipótesis, empezamos con una **hipótesis** de investigación, también llamada **hipótesis alternativa**.
+
+- La hipótesis alternativa es por la que intentamos encontrar evidencia a favor.
+
+--
+
+Nuestra hipótesis alternativa es que **el medicamento tiene un efecto en la presión arterial**.
+
+&lt;center&gt;
+&lt;img src="img/hipotesis.png" width=50%&gt;
+&lt;/center&gt;
+
+- Pero, no podemos comprobar esta hipotesis directamente, comprobamos lo contrario:
+
+---
+
+
+class: animated, fadeIn
+
+## 3. Prueba de hipótesis
+
+&gt; ¿Cómo funciona un test de hipótesis? 
+
+Cuando llevamos a cabo una pruebad de hipótesis, empezamos con una **hipótesis** de investigación, también llamada **hipótesis alternativa**.
+
+- La hipótesis alternativa es por la que intentamos encontrar evidencia a favor.
+
+
+**Comprobamos que el medicamento NO tiene un efecto sobre la presión arterial**:
+
+&lt;center&gt;
+&lt;img src="img/hipotesis0.png" width=50%&gt;
+&lt;/center&gt;
+
+---
+
+class: animated, fadeIn
+
+## 3. Prueba de hipótesis
+
+&lt;center&gt;
+&lt;img src="img/h0.png" width=80%&gt;
+&lt;/center&gt;
+
+---
+
+class: animated, fadeIn
+
+## 3. Prueba de hipótesis
+
+- Asumimos que el medicamento no tiene un efecto sobre la población.
+- Asumimos que las personas que toman el medicamento y las que no tienen en promedio una presión sanguinea similar.
+
+&lt;center&gt;
+&lt;img src="img/h0.png" width=75%&gt;
+&lt;/center&gt;
+
+---
+
+class: animated, fadeIn
+
+## 3. Prueba de hipótesis
+
+- Si cogemos una muestra al azar y observamos un efecto grande, podemos preguntarnos qué tan probable sería obtener una muestra así si el medicamento realmente no tuviera efecto.
+
+&lt;center&gt;
+&lt;img src="img/h1.png" width=80%&gt;
+&lt;/center&gt;
+
+---
+
+class: animated, fadeIn
+
+## 3. Prueba de hipótesis
+
+- Si esa probabilidad es muy baja, entonces sí tenemos suficiente evidencia de que el medicamento tiene un efecto sobre la población. Rechazamos la hipótesis nula. Esta probabilidad es el P-valor.
+
+&lt;center&gt;
+&lt;img src="img/h2.png" width=80%&gt;
+&lt;/center&gt;
+
+---
+class: animated, fadeIn
+
+## 3. Prueba de hipótesis
+
+1. La hipótesis nula dice que **no** hay diferencia en la población.
+
+2. La prueba de hipótesis mide cuánto se desvía la evidencia de la muestra respecto a lo que predice la hipótesis nula.
+
+3. El p-valor indica la probabilidad de obtener un resultado tan extremo (o más) que el observado bajo el supuesto de que la hipótesis nula es verdadera.
+
+&lt;center&gt;
+&lt;img src="img/h1.png" width=60%&gt;
+&lt;/center&gt;
+
+
+---
+class: animated, fadeIn
+
+## 4. Significancia y p-valor
+
+- Si el p-valor es más pequeño que un umbral predefinido (p &lt; 0.05) el resultado se considera estadísticamente significativo
+
+- El resultado observado sería muy poco probable que ocurriera por azar si la hipótesis nula fuera cierta.
+
+- Tenemos suficiente evidencia para rechazar la hipótesis nula.
+
+.pull-left[
+- Un p-valor pequeño (&lt; 0.05) sugiere que:
+  - Los datos observados, nuestra muestra, es incompatible con la hipótesis nula
+  - Rechazamos la hipótesis nula a favor de la hipótesis alternativa
+]
+
+.pull-right[
+- Un p-valor grande (&gt; 0.05) sugiere que:
+  - Los datos observados son consistentes con la hipótesis nula 
+  - Rechazamos la hipótesis alternativa
+]
+
+--
+
+&gt; Siempre hay un riesgo de cometer un error!
+
+- Un p-valor pequeño NO demuestra que la hipotesis alternativa sea verdadera 
+- Solo nos dice que es muy improbable obtener un resultado como el que hemos obtenido (o más extremo) en nuestra muestra 
+- Un p-valor grande NO demuestra que la hipótesis nula sea verdadera
+- Solo nos dice que es probable obtener un resultado como el que hemos obtenido (o más extremo) en nuestra muestra 
+
+
+---
+class: animated, fadeIn
+
+## 5. Tipos de errores
+
+Si realizamos un test y decidimos **rechazar o no H₀**, existen cuatro posibles resultados:
+
+| Realidad / Decisión | Rechazamos H₀ | No rechazamos H₀ |
+|--------------------|---------------|-----------------|
+| **H₀ verdadera**   | Error Tipo I   | Correcto        |
+| **H₀ falsa**       | Correcto      | Error Tipo II   |
+
+- **Error tipo I (`\(\alpha\)`)**:
+rechazamos la H₀ cuando es verdadera  
+- **Error tipo II (`\(\beta\)`)**: no rechazamos H₀ cuando es falsa
+
+**Ejemplo:**
+
+- El medicamento no tiene un efecto y por lo tanto no hay diferencias en la presión arterial, pero en nuestra muestra los valores están tan alejados que por error pensamos que sí hay un efecto del medicamento.
+
+- El medicamento sí tiene un efecto, y por lo tanto sí hay diferencias en la presión arterial, pero nuestra muestra no muestra diferencias, pensamos erróneamente que no tiene un efecto  
+
+
+---
+class: animated, fadeIn
+
+## 5. Tipos de errores
+
+### Clasificaciones incorrectas
+
+- **Falso positivo (Error tipo I)**: rechazamos H₀ cuando es verdadera  
+  - Ocurre por azar en un cierto porcentaje de casos (por ejemplo, 5% si α = 0.05)  
+
+- **Falso negativo (error tipo II)**: no rechazamos H₀ aunque H₀ sea falsa  
+  - Suele ocurrir si hay **muy pocos datos** o métodos poco sensibles  
+  - Se evita usando **métodos con alta potencia estadística**
+
+
+---
+class: animated, fadeIn
+
+### Proceso para probar hipótesis
+
+#### 1. Establecer la hipótesis
+- Definir la **hipótesis nula (H₀)** y la **hipótesis alternativa (H₁)**.  
+
+#### 2. Planificación del estudio y recolección de datos
+- Diseñar la **estrategia de muestreo** (aleatorio, estratificado, etc.).  
+- Determinar el **tamaño de muestra** necesario según precisión deseada.  
+- Recolectar los datos siguiendo **protocolos consistentes y confiables**.
+
+#### 3. Prueba de hipótesis
+- **Verificación de supuestos:** normalidad, homogeneidad de varianzas, independencia, etc.  
+- **Análisis exploratorio de datos:** inspección de distribuciones, outliers y tendencias.  
+- **Visualización de datos:** histogramas, boxplots, gráficos de dispersión.  
+- **Análisis final:** aplicar la prueba estadística adecuada y calcular p-valores o intervalos de confianza.
+
+#### 4. Interpretación y comunicación de resultados
+- Determinar si se **rechaza o no H₀** basándose en los resultados.  
+- Presentar los resultados de manera clara, incluyendo **gráficos finales** y **resumen de hallazgos**.  
+- Documentar **limitaciones** y posibles sesgos.
+
+
+---
+class: animated, fadeIn
+
+## Importancia de un buen diseño de estudio
+
+.pull-left[*“To call in the statistician after the experiment is done may be no more than asking them to perform a post mortem examination: they may be able to say what the experiment died of.”*
+
+— Ronald A. Fisher 
+]
+.pull-right[
+&lt;center&gt;
+&lt;img src="img/fisher_ronald.jpg" width=50%&gt;
+]
+
+--
+
+Al recolectar datos, asegúrate de:  
+
+- Utilizar **estándares relevantes** y **esquemas de medición estandarizados y consistentes**.
+
+- Asegurar **réplicas** suficientes, y un  tamaño de muestra (**N**) adecuado
+
+
+---
+class: animated, fadeIn
+
+## Importancia de un buen diseño de estudio
+
+Dependiendo de cómo esté estructurado tu proyecto, necesitarás **extraer muestras** de tus datos. Los métodos de muestreo más comunes son:
+
+.pull-left[
+#### 1. Muestreo aleatorio (random sampling)
+- El más utilizado.  
+- Aplicable cuando se desea **verdadera aleatoriedad**.
+]
+
+.pull-right[
+#### 2. Muestreo estratificado (*stratified sampling*)
+- Se usa para asegurarse de que **subgrupos específicos de la población estén bien representados** en la muestra.  
+- Procedimiento:  
+  1. Dividir la población en **estratos** (grupos).  
+  2. Realizar **muestreo aleatorio dentro de cada estrato**.  
+  3. Combinar las muestras de todos los estratos para obtener la muestra final.  
+- Útil cuando se desea **pseudo-aleatoriedad controlada**.
+]
+
+---
+class: animated, fadeIn
+
+&lt;center&gt;
+&lt;img src="img/gru.png"&gt;
+
+---
+class: animated, fadeIn
+
+## Importancia de un buen diseño de estudio
+
+### Supuestos de las pruebas de hipótesis
+
+.pull-left[
+Los tests estadísticos se basan en **supuestos específicos** sobre los datos. Los más importantes son:
+
+- **Normalidad:** los datos siguen una **distribución normal**  
+- **Aleatoriedad:** los datos son **verdaderamente aleatorios**  
+- **Independencia:** los datos son **independientes** entre sí.  
+- **Homogeneidad de varianzas:** los datos de distintos grupos tienen **la misma varianza**.  
+- **Linealidad:** los datos presentan una **relación lineal** cuando corresponde.
+]
+
+.pull-right[
+&lt;center&gt;
+&lt;img src="img/lisa.png"&gt;
+]
+
+---
+class: animated, fadeIn
+
+
+## Visión general de las pruebas estadísticas
+
+&lt;center&gt;
+&lt;img src="img/tests.png"&gt;
+
+---
+class: animated, fadeIn
+
+
+## Visión general de las pruebas estadísticas
+
+.pull-left[
+#### 1. Pruebas Paramétricas
+
+**Definición:** Requieren supuestos estrictos sobre la distribución de los datos (por ejemplo, normalidad) y generalmente comparan medias o varianzas.
+
+- Más restrictivas.  
+- Requieren **supuestos estrictos** sobre la distribución de los datos.  
+- Fácil de interpretar.  
+- Requieren **menos datos**.
+]
+
+.pull-right[
+#### 2. Pruebas No Paramétricas
+**Definición:** No requieren supuestos fuertes sobre la distribución. Suelen basarse en **rangos** o **medianas**.
+
+- Menos restrictivas.  
+- Hacen **pocos o ningún supuesto** sobre la distribución.  
+- A veces funcionan como una "caja negra".  
+- Requieren **más datos**.
+]
+
+---
+class: animated, fadeIn
+
+## El p-valor
+
+- El **p-valor** es la medida de **significancia estadística** más utilizada en la ciencia actual.  
+- Un p-valor por debajo del **nivel de significancia** (`\(\alpha\)`, normalmente 0.05) indica que la prueba es **estadísticamente significativa**.  
+- Los p-valores son objeto de **debate** porque:  
+  - Todos buscan resultados significativos.  
+  - El concepto de p-valor suele **malinterpretarse**.  
+
+&gt; Un p-valor **no mide la probabilidad de que la hipótesis nula sea verdadera**, sino la probabilidad de observar datos tan extremos como los obtenidos **asumiendo que H₀ es cierta**.
+
+.pull-left[
+#### Conceptos erróneos:
+- “El p-valor es la probabilidad de que la hipótesis nula sea verdadera.”  
+- “El p-valor es la probabilidad de que los efectos observados se hayan producido únicamente por azar.”  
+- “El p-valor indica el tamaño o la importancia del efecto observado.”
+]
+
+.pull-right[
+#### Concepto correcto:
+-  “El p-valor es la probabilidad de obtener, de manera aleatoria, un efecto al menos tan extremo como el observado en tus datos muestrales, **asumiendo que la hipótesis nula es verdadera**.”
+]
+
+&gt; El nivel de significancia de 0.05 es una **convención arbitraria**, no una regla absoluta.
+
+
+
+---
+class: animated, fadeIn
+
+## *Data Snooping / HARKing*
+
+- Decidir **qué hipótesis investigar** después de **ver los resultados**.
+- El nivel de significancia (`\(\alpha\)`) ya **no es válido**, porque los datos influyen en la elección de la hipótesis. 
+- Esto puede **inflar la probabilidad de obtener resultados “significativos” falsamente**.  
+
+&gt; HARKing: *Hypothesizing After the Results are Known*
+
+--
+
+.pull-left[
+**Ejemplos:**
+
+- Cambiar la hipótesis original después de ver los datos.
+- Analizar subgrupos solo porque muestran un efecto “significativo”.
+- Ajustar la dirección del efecto para que coincida con los resultados.
+
+**Consecuencias:**
+
+- Resultados engañosos o irreproducibles.
+- Inflación de la tasa de falsos positivos.
+- Pérdida de confianza en la investigación.
+]
+.pull-right[
+&lt;center&gt;
+&lt;img src="img/crisis.png" width=70%&gt;&lt;br&gt;
+&lt;small&gt;[Baker et al. 2016](https://www.nature.com/articles/533452a)
+]
+
+---
+
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+## Relación entre las pruebas de hipótesis y los IC
+
+---
+class: animated, fadeIn
+
+## Relación entre pruebas de hipótesis  y los IC
+
+- La relación entre un test de hipótesis y el intervalo de confianza correspondiente se define por el **nivel de significancia `\(\alpha\)`**. 
+
+- Ambos enfoques se basan en la misma lógica inferencial y difieren únicamente en la **perspectiva**.
+
+  - El test de hipótesis evalúa si un valor específico es plausible.
+  - El intervalo de confianza muestra el rango de valores plausibles para el parámetro.
+
+---
+class: animated, fadeIn
+
+## Test de dos colas y CI
+
+- Si queremos probar:  
+$$
+  H_0: \mu = \mu_0 \quad \text{vs.} \quad H_A: \mu \neq \mu_0
+$$
+
+- Entonces, **rechazamos H₀** al nivel de significancia `\(\alpha\)` **si el intervalo de confianza del `\(100(1-\alpha)\%\)` para `\(\mu\)`  no contiene `\(\mu_0\)`**.
+
+--
+
+Supongamos que queremos probar si la altura media de la clase difiere de 170cm.
+
+- Hipótesis: `\(H_0: \mu = 170 \quad \text{vs.} \quad H_A: \mu \neq 170\)`
+
+- Tomamos una muestra de 50 estudiantes y obtenemos una media muestral `\(\bar{x}=166.5\text{ cm}\)` y un error estándard `\(SE = 2\text{ cm}\)`.
+
+- Calculamos el IC del 95%:
+$$
+IC_{95\%} = \bar{x} \pm 1.96 \times SE = 166.5 \pm 1.96 \times 2 = (162.58, 170.42)
+$$
+- Como `\(\mu_0 = 170\)` **queda dentro del intervalo**, **no rechazamos `\(H_0\)`** al nivel `\(\alpha = 0.05\)`.
+
+&gt; Conclusión: la muestra **no proporciona evidencia suficiente** para afirmar que la altura media difiere de 170cm.
+
+
+---
+class: animated, fadeIn
+
+## Test de una cola y CI
+
+Queremos probar
+$$
+  H_0: \mu = \mu_0 \quad \text{vs.} \quad H_A: \mu \lt \mu_0
+$$
+
+
+- Rechazamos H₀ al nivel `\(\alpha\)` **si el límite superior del IC unilateral** es menor que `\(\mu_0\)`:  
+  
+$$
+(-\infty, \bar{x} + m)
+$$ 
+
+--
+
+Supongamos que queremos probar si la altura media de la clase es menor a 170cm.
+
+- Hipótesis: `\(H_0: \mu = 170 \quad \text{vs.} \quad H_A: \mu \lt 170\)`
+
+- Tomamos una muestra de 50 estudiantes y obtenemos una media muestral `\(\bar{x}=166.5\text{ cm}\)` y un error estándard `\(SE = 2\text{ cm}\)`.
+
+- Calculamos el IC del 95% (límite superior):
+
+$$
+IC_{95\%} = (-\infty, \bar{x} + 1.645 \times SE) = (-\infty, 166.5 + 1.645 \times 2) \approx (-\infty, 169.79)
+$$
+- Observa que `\(\mu_0 = 170\)` **no queda dentro del IC**, por lo que **no rechazamos `\(H_0\)`** al nivel `\(\alpha = 0.05\)`.
+
+&gt; Conclusión: la muestra **sí proporciona evidencia** para afirmar que la altura media es menor que 170cm.
+
+---
+class: animated, fadeIn
+
+## Test de una cola y CI
+
+&lt;img src="10.Inferencia_files/figure-html/unnamed-chunk-3-1.png" width="936" style="display: block; margin: auto;" /&gt;
+
+--
+
+Ejemplo de **data snooping o HARKing**, hemos cambiado nuestra hipótesis para que el resultado salga significativo.
+
+---
+class: animated, fadeIn
+
+## Test de una cola y CI
+
+Queremos probar
+$$
+  H_0: \mu = \mu_0 \quad \text{vs.} \quad H_A: \mu \lt \mu_0
+$$
+
+
+- Rechazamos H₀ al nivel `\(\alpha\)` **si el límite superior del IC unilateral** es menor que `\(\mu_0\)`:  
+  
+$$
+(-\infty, \bar{x} + m)
+$$ 
+
+Queremos probar
+$$
+  H_0: \mu = \mu_0 \quad \text{vs.} \quad H_A: \mu \gt \mu_0
+$$
+
+
+- Rechazamos H₀ al nivel `\(\alpha\)` **si el límite inferior del IC unilateral** es mayor que `\(\mu_0\)`:  
+  
+$$
+(\bar{x} - m,\infty)
+$$ 
+
+
+---
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+## Introducción al t-test
+
+---
+class: animated, fadeIn
+
+## ¿Por qué usamos el t-test?
+
+- En la mayoría de los casos no conocemos la desviación estándar poblacional (`\(\sigma\)`) y debemos estimarla a partir de la muestra. 
+- El t-test ajusta la incertidumbre adicional que se introduce al estimar `\(\sigma\)`. 
+- Por eso, en la práctica, el t-test es más usado que el test z para muestras pequeñas o cuando `\(\sigma\)` es desconocida.
+
+&lt;center&gt;
+&lt;img src="img/t-test.png" width=60%&gt;
+
+---
+
+class: animated, fadeIn
+
+## Tipos de t-test
+
+&lt;center&gt;
+&lt;img src="img/tipos.png"&gt;
+
+---
+class: animated, fadeIn
+
+## Contacto
+
+&lt;div style="margin-top: 20vh; text-align:center;"&gt;
+
+| Marta Coronado Zamora | David Castellano | 
+|:-:|:-:|
+| &lt;a href="mailto:marta.coronado@uab.cat"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt; marta.coronado@uab.cat&lt;/a&gt; | &lt;a href="mailto:david.castellano@uab.cat"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt;&amp;nbsp; david.castellano@uab.cat&lt;/a&gt; | 
+| &lt;a href="https://bsky.app/profile/geneticament.bsky.social"&gt;&lt;i class="fab fa-bluesky fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @geneticament.bsky.social&lt;/a&gt; |                 &lt;a href="https://bsky.app/profile/castellanoed.bsky.social"&gt;&lt;i class="fab fa-bluesky fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @castellanoed.bsky.social&lt;/a&gt; |
+| &lt;a href="https://www.uab.cat"&gt;&lt;i class="fa fa-map-marker fa-fw"&gt;&lt;/i&gt;&amp;nbsp; Universitat Autònoma de Barcelona&lt;/a&gt; |    &lt;a href="https://gutengroup.mcb.arizona.edu/"&gt; &lt;i class="fa fa-map-marker fa-fw"&gt;&lt;/i&gt;&amp;nbsp; University of Arizona&lt;/a&gt; |
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+  "mathjax": "default",
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
