@@ -22,19 +22,22 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Tema 8: Visualización de distribuciones](T/8/8.VisDistr.html)
 - [Tema 9: Intervalos de confianza](T/9/9.Intervaloconfianza.html)
 - [Tema 10: Inferencia estadística](T/10/10.Inferencia.html)
-- 
+  
 ---
 
 ## 🗣️ Seminarios
 - [Seminario 1: La importancia de mostrar los datos](S/1/S1.html)
 - [Seminario 2: Problemas de estadística descriptiva](S/2/Problemas_Estadistica_Descriptiva.html)
 - [Seminario 3: Problemas distribución binomial](S/3/Problemas_Binomial.html)
-  
+- [Seminario 4: Problemas distribución normal](S/4/Problemas_Normal.html)
+
 ---
 
 ## 💻 Prácticas de ordenador
 - [Práctica 1: Estadística descriptiva y visualización de datos - Introducción a `R` y `ggplot2`](P/1/PracticaR.html)
 - <a href="P/1/PracticaR.Rmd" download>Descarga el documento `Rmd` de la Práctica 1 aquí</a>.
+- [Práctica 2: Distribución binomial - Práctica en `R`](P/2/Practica_Binomial.html)
+- <a href="P/2/Practica_Binomial.Rmd" download>Descarga el documento `Rmd` de la Práctica 2 aquí</a>.
 
 ---
 
