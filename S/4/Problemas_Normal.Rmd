@@ -1,0 +1,240 @@
+---
+title: "Problemas de distribución binomial"
+author: "Bioestadística"
+date: "Octubre 2025"
+output:
+  html_document:
+    self_contained: true  
+    theme: simplex
+    css: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css
+    toc: yes
+    toc_float:
+      collapsed: true
+fontsize: 14pt
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+# Load useful packages
+library(rmdformats)   # for extra formatting if needed
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5)
+library(ggplot2)
+```
+
+```{=html}
+<style>
+body {
+  font-size: 14px;   /* un poco más grande */
+  color: black;      /* asegura texto en negro */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #D9230F;        /* títulos en rojo */
+}
+
+h3, h4, h5, h6 {
+  color: black;        /* títulos en rojo */
+}
+
+h3 {
+  font-size: 1em;   /* tamaño igual al texto normal */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+
+.handwritten {
+  font-family: 'Handlee', monospace;
+  font-size: 1.1em;
+}
+
+.respuesta {
+  background-color: #F0F0F0;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  line-height: 1.2;
+}
+</style>
+```
+
+## Problema 1
+
+Se midió la presión arterial (promedio de las mediciones sistólica y diastólica) de 38 personas. El promedio fue 94,5 mm Hg. Se muestra un histograma de los datos.
+
+```{r, echo = F, fig.align='center', fig.height=3, fig.width=5}
+library(ggplot2)
+
+# Definir intervalos y frecuencias
+intervalos <- c("75-80", "80-85", "85-90", "90-95", "95-100", "100-105", "105-110", "110-115")
+frecuencias <- c(1, 3, 6, 10, 7, 6, 4, 1)
+
+# Calcular puntos medios de cada intervalo
+midpoints <- c(77.5, 82.5, 87.5, 92.5, 97.5, 102.5, 107.5, 112.5)
+
+# Generar datos individuales simulados a partir de las frecuencias
+valores <- rep(midpoints, frecuencias)
+
+# Crear data frame
+df <- data.frame(valores)
+
+# Histograma
+ggplot(df, aes(x = valores)) +
+    geom_histogram(binwidth = 5, fill = "cadetblue4", color = "black", boundary = 75, closed = "left") +
+      scale_x_continuous(breaks = seq(70, 120, by = 10)) +
+  scale_y_continuous(breaks = seq(1, 10, by = 1)) +
+    labs(x = "Presión sanguínea (mmHg)", y = "Frecuencia") +
+  ggthemes::theme_base(base_size = 16) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+```
+
+Asumiendo que la variable sigue razonablemente bien una distribución normal, proporciona una estimación aproximada de la desviación estándar de la presión arterial en estos datos.
+
+<details>
+<summary>Respuestas</summary>
+
+Aproximadamente 7.5-7.75.
+
+</details>
+
+
+## Problema 2
+
+Usando la tabla de la distribución normal estándar, encuentra la proporción de observaciones que cumplen cada uno de los siguientes enunciados. En cada caso, dibuja una curva normal estándar e indica el área bajo la curva que corresponde a la respuesta.
+
+```{r, echo = F}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+# Valores de las filas (0.0 a 3.0 por 0.1)
+rows <- seq(0, 3.0, by = 0.1)
+
+# Valores de las columnas (0.00 a 0.09 por 0.01)
+cols <- seq(0, 0.09, by = 0.01)
+
+# Generar tabla
+z_table <- sapply(cols, function(c){
+  sapply(rows, function(r){
+    pnorm(r + c)
+  })
+})
+
+# Convertir a data frame y agregar columna de fila
+z_table_df <- as.data.frame(z_table)
+z_table_df <- cbind(Z = rows, z_table_df)
+
+# Nombres de columnas tipo tabla Z
+colnames(z_table_df) <- c("Z", paste0("0.0", 0:9))
+
+# Mostrar tabla
+# --- Tabla bonita ---
+kable(z_table_df, digits = 4, align = "c",
+      caption = "Tabla: Probabilidades acumuladas P(Z ≤ z)") %>%
+  kable_styling(
+    full_width = FALSE,   # evita que ocupe todo el ancho
+    position = "center",  # centra la tabla
+    font_size = 14
+  ) %>%
+  row_spec(0, bold = TRUE, background = "#e6f2ff") %>%  # encabezado en gris claro
+  column_spec(1, bold = TRUE, background = "#e6f2ff") 
+
+```
+
+### a) $P(Z > 0.62)$  
+### b) $P(Z \le 0.93)$    
+### c) $P(0.56 < Z \le 2.80 ))$  
+
+
+<details>
+<summary>Respuestas</summary>
+
+| Caso                              | Probabilidad |
+|------------------------------------|--------------|
+| (a) $P(Z > 0.62)$            | 0.2676    |
+| (b) $P(Z \le 0.93)$                    | 0.8238    |
+| (c) $P(0.56 < Z \le 2.80)$               | 0.2851    |
+
+</details>
+
+
+## Problema 3
+
+Da una respuesta aproximada a las siguientes preguntas. No necesitas consultar la tabla de la distribución Normal, puedes usar en su lugar la regla empírica. Puedes comprobar tu respuesta con la tabla de la Normal si quieres.
+
+### a) $P(-2 < Z < 2)$   
+### b) $P(Z > 2)$    
+### c) $P(Z < -2)$  
+### d) $P(-1 < Z < 1)$
+### e) $P(Z > 1)$   
+### f) $P(Z < -1)$    
+### g) $P(Z > 0)$  
+### h) $P(Z < 0)$
+### i) $P(0 < Z < 1)$  
+### j) $P(0 < Z < 2)$
+### k) $P(1 <Z< 2)$  
+### l) $P(-2 < Z < -1)$
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Caso | Probabilidad |
+|------------------------------------|--------------|
+| (a) $P(-2 < Z < 2)$ | 0.95 |
+| (b) $P(Z > 2)$ | 0.025 |
+| (c) $P(Z < -2)$ | 0.025 |
+| (d) $P(-1 < Z < 1)$ | 0.68 |
+| (e) $P(Z > 1)$ | 0.16 |
+| (f) $P(Z < -1)$ | 0.16 |
+| (g) $P(Z > 0)$ | 0.50 |
+| (h) $P(Z < 0)$ | 0.50 |
+| (i) $P(0 < Z < 1) = P(Z>0) - P(Z>1) = 0.50 - 0.16$ | 0.34 |
+| (j) $P(0 < Z < 2) = P(Z>0) - P(Z>2) = 0.50 - 0.025$ | 0.475 |
+| (k) $P(1 < Z < 2) = P(Z>1) - P(Z>2) = 0.16 - 0.025$ | 0.135 |
+| (l) $P(-2 < Z < -1) = P(1 < Z < 2)$ | 0.135 |
+</details>
+
+## Problema 4
+
+La duración de los embarazos humanos, desde la concepción hasta el nacimiento, varía según una distribución que es aproximadamente Normal con media $\mu = 266$ días y desviación estándar $\sigma = 16$ días.
+
+### a. ¿Qué porcentaje de embarazos dura menos de 240 días (aprox. 8 meses)?  
+### b. ¿Qué porcentaje de embarazos dura entre 240 y 270 días (aprox. entre 8 y 9 meses)? 
+### c. ¿Cuánto duran como mínimo el 20% de los embarazos más largos (es decir, el percentil 80)?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Pregunta | Respuesta aproximada |
+|:--------:|:---------|:---------------------:|
+| a) $P(X < 240)$ | **0.0521** |
+| b) $P(240 < X < 270)$ | **0.5466**  |
+| c) Longitud mínima del 20% más largo (percentil 80) | **≈ 279.47 días**  |
+</details>
+
+## Problema 5
+
+El colesterol HDL se suele presentar en mg/dL. Supongamos que en la población española tiene una distribución $N(38,25)$.
+
+### a) ¿Qué porcentaje de la población tiene más de 38 mg/dL?  
+### b) ¿Qué porcentaje de la población tiene entre 33 y 43 mg/dL?
+### c) ¿Qué valor HDL tiene el percentil 70 de la población? 
+### d) Se decide considerar HDL bajo cuando esté por debajo del percentil 10. ¿Por debajo de qué valor de HDL se considerará que es bajo? 
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Caso | Resultado |
+|------|-----------|
+| a) P(X > 38) | 0.5000 |
+| b) P(33 < X < 43) | 0.6826 |
+| c) Percentil 70 (X) | 40.6 |
+| d) Percentil 10 (X) | 31.6 |
+</details>
