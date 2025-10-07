@@ -1,5 +1,5 @@
 ---
-title: "Problemas de distribución binomial"
+title: "Problemas de distribución normal"
 author: "Bioestadística"
 date: "Octubre 2025"
 output:
