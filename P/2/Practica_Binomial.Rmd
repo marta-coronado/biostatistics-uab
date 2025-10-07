@@ -93,53 +93,6 @@ head(binomial_data_df) # mira el resultado
 
 Vemos que la distribución binomial es aproximadamente normal. 
 
-El eje `y` por defecto en el histograma es el número de conteos (`count`), por eso no es necesario indicarle nada. `count` no es una variable presente en nuestro dataframe, sino que `ggplot2` la calcula internamente por nosotros cuando hacemos un histograma. Podemos pedirle a `ggplot2` que represente la proporción, en vez del conteo, indicando `y=stat(count / sum(count))`. **Modifica el código anterior**.  
-
-
-```{r}
-
-```
-
-Algo que nos puede ayudar es añadirle más precisión a los ejes del gráfico. Por defecto, el eje `x` e `y` muestra emtre tres y cuatro valores. Podemos pedir que el eje `x` vaya de 1 a 50 de 1 en 1, y el eje `y` que nos muestre más valores, por ejemplo de 0 a 0.1 de 0.01 en 0.01. Pásale al argumento `breaks` un vector numérico con esos valores. Ayúdate de la función `seq()` para generarlo:
-
-<i class="fas fa-search"></i> Ejemplo: comprueba qué hace `seq(0, 20, by = 2)`
-
-```{r}
-# +
-#  scale_x_continuous(breaks = ) +
-#  scale_y_continuous(breaks = )
-
-
-```
-
-Puedes modificar el gráfico, por ejemplo añadirle un tema al gráfico (`theme_?`, puedes consultar los temas disponibles [aquí](https://ggplot2.tidyverse.org/reference/ggtheme.html)).
-
-```{r}
-
-```
-
-
-Vamos a añadirle una línea vertical (`vline`) que represente el promedio de nuestra distribución. Para ello podemos añadir el siguiente `geom`: `+ geom_vline(xintercept = valor)`. **¿Cuál es el valor de la media de una distribución binomial con nuestros parámetros?**
-
-```{r}
-
-
-```
-
-Por defecto la línea de `geom_vline` es negra y continua, pero puedes modificarla con los argumentos `linetype =` (`dashed`, `dotted`, `longdash`, `twodash`, `dotdash`), y `color =` (puedes consultar colores [aquí](https://r-charts.com/colors/)).
-
-
-```{r}
-
-
-```
-
-Si quieres, puedes añadir cualquier modificación más al gráfico de las que hemos visto, como cambiar el nombre de los ejes, añadir un título, ...
-
-```{r}
-
-
-```
 
 <hr>
 
@@ -151,7 +104,7 @@ La siguiente función que vamos a aplicar es `dbinom()`, que nos da la probabili
 
 ```
 
-La probabilidad de que ocurra este evento es **8.67%**. Podemos colorear en el gráfico anterior exactamente esta probabilidad para visualizarlo. Para ello, podemos indicar dentro de la función `aes()` el siguiente argumento `fill = data == 30`. Si lo necesitas, elimina la línea vertical para poder ver mejor el gráfico.
+La probabilidad de que ocurra este evento es **8.67%**. Podemos colorear en el gráfico anterior exactamente esta probabilidad para visualizarlo. Para ello, podemos indicar dentro de la función `aes()` el siguiente argumento `fill = data == 30`.
 
 
 ```{r}
@@ -162,10 +115,10 @@ El gráfico anterior debería hacer un poco más clara la probabilidad que acaba
 
 Sin embargo, es importante señalar que la probabilidad que calculamos con `dbinom()` es una **probabilidad teórica** que no necesariamente es igual a la **proporción real de observaciones en nuestros datos** (los simulados) que son iguales a 30. Calcularemos ese valor empírico.
 
-Para ello, podemos utilizar la función `summarize` del paquete `dplyr`. Para ello, tendrás que contar todas las filas donde `data` sea igual a 30, y dividirlo entre el total de observaciones (función `n()`). [Esta diapositiva](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#65) te puede ayudar.
+Para ello, podemos utilizar la función `sum()` del paquete `dplyr`. Le pedimos a `sum()` que cuente los casos en los que `data` sea igual a 30, y ese valor lo dividimos entre el total de filas de la tabla, que podemos obtener con `nrow(binomial_data )`. Tienes un ejemplo de la función `sum()`:
 
 ```{r}
-
+# df %>% sum(data == 10) # cuenta las veces que data contiene "10"
 
 ```
 
@@ -182,7 +135,7 @@ Para ello, podemos utilizar la función `summarize` del paquete `dplyr`. Para el
 
 ### 3. Cálculo de probabilidad acumulada
 
-La siguiente función que vamos a aprender es `pbinom()`, que es una **función de probabilidad acumulada**. Por defecto, devuelve la probabilidad de que una variable aleatoria distribuida binomialmente tome un valor **menor o igual** a un cierto valor. Vamos a probarla:
+La siguiente función que vamos a aprender es `pbinom()`, que es una **función de probabilidad acumulada**. Por defecto, devuelve la probabilidad de que una variable aleatoria distribuida binomialmente tome un valor **menor o igual** a un cierto valor. Vamos a probarla con `q=30, size=100, prob=0.3`:
 
 ```{r}
 
@@ -190,7 +143,7 @@ La siguiente función que vamos a aprender es `pbinom()`, que es una **función 
 
 La probabilidad de que nuestra variable aleatoria tome un valor menor o igual al valor dado, en un tamaño de muestra dado y con una probabilidad de éxito dada, es aproximadamente 55%.
 
-**¿Cómo modificiarías el gráfico de `ggplot2` anterior para visualizar la nueva probabildad acumulada calculada?**
+(OPCIONAL) **¿Cómo modificiarías el gráfico de `ggplot2` anterior para visualizar la nueva probabildad acumulada calculada?**
 
 ```{r}
 
@@ -214,32 +167,18 @@ Todavía no hemos terminado con la función `pbinom()`. Hasta ahora, solo la hem
 
 `pbinom()` tiene un argumento opcional llamado `lower.tail`, cuyo valor por defecto es `TRUE`, que podemos usar para calcular probabilidades de la cola izquierda (`TRUE`) y derecha (`FALSE`). También es posible calcular probabilidades de cola derecha usando `1 - pbinom(q, size, prob)`, Sin embargo, cambiar el argumento `lower.tail = FALSE` suele ser más claro, ya que deja explícito que estamos calculando la probabilidad de obtener un valor mayor que `q`.
 
-Ahora vamos a calcular la probabilidad complementaria de la cola derecha, es decir, el complemento de la probabilidad de cola izquierda que obtuvimos antes. Luego, compararemos este valor teórico con la proporción observada en nuestros datos y visualizaremos el resultado.  
-
+Ahora vamos a calcular la probabilidad complementaria de la cola derecha, es decir, el complemento de la probabilidad de cola izquierda que obtuvimos antes.
 
 ```{r}
 
 
 ```
 
-**Modifica la función de `dplyr` para calcular la proporción observada.**
+Comprueba que la suma de la probabilidad anterior y la que acabas de calcular suma 100% (1).
+
 
 ```{r}
 
-```
-
-**¿Se parecen las probabilidades teórica y empírica?**
-
-<div style="background-color:#F0F0F0">
-##### &emsp;<i class="fas fa-comment-dots"></i> Respuesta:
-
-&emsp;
-
-</div> 
-
-**Modifica el gráfico de `ggplot2` para representar la nueva probabilidad.**
-
-```{r}
 
 ```
 
@@ -277,53 +216,9 @@ Se secuencian 90 genomas independientes de *Drosophila* de distintas regiones de
 
 </div>
 
-
-**Simulación de muestreos**
-
-Simulemos el número de genomas con la inserción del TE en **10,000 experimentos independientes**, cada uno con 90 genomas.
-
-```{r}
-
-
-```
-
-**Calcula la proporción empírica de simulaciones con ≥20 inserciones.**
-
-Recuerda hacer un `data.frame` si quieres responder la pregunta con `dplyr()`.
-
-```{r}
-
-```
-
-
-<div style="background-color:#F0F0F0">
-##### &emsp;<i class="fas fa-comment-dots"></i> Respuesta:
-&emsp;
-
-</div>
-
-**¿Cómo se compara esta proporción empírica con la probabilidad teórica calculada previamente?**
-
-<div style="background-color:#F0F0F0">
-##### &emsp;<i class="fas fa-comment-dots"></i> Respuesta:
-&emsp;
-
-</div>
-
-
-#### Visualización de la distribución
-
-Genera un histograma de los resultados simulados y resalta las probabilidades con ≥20 inserciones.
-
-```{r}
-
-
-```
-
-
 **¿Qué pasa si la frecuencia del TE es mayor?** Supongamos que en otra población americana la frecuencia del TE es $p = 0.25$.  
 
-**¿Cómo cambia la probabilidad de observar ≥20 inserciones?**
+**¿Cómo cambia la probabilidad de observar ≥20 inserciones ahora?**
 
 ```{r}
 
@@ -453,7 +348,7 @@ La secuenciación de cada genoma de *Drosophila* cuesta 700€. Un laboratorio d
 
 ```
 
-<i class="fas fa-rocket"></i> **Dado el presupuesto disponible, ¿cuál es la frecuencia mínima de inserción del TE que se podría detectar con al menos un 95% de probabilidad?**
+<i class="fas fa-rocket"></i> (OPCIONAL) **Dado el presupuesto disponible, ¿cuál es la frecuencia mínima de inserción del TE que se podría detectar con al menos un 95% de probabilidad?**
 
 ```{r}
 
