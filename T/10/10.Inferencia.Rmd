@@ -60,8 +60,18 @@ class: animated, fadeIn
 
 #### **Inferencia estadística**
 - Motivación
--
--
+- Proceso de inferencia estadística
+- Hipótesis
+- Muestra
+- Pruebas de hipótesis
+- Significancia y p-valor
+- Tipos de errores
+- Importancia diseño de estudio
+- Visión general de las pruebas estadísticas
+- Data snooping/HARKing
+- Relación entre las pruebas de hipótesis y los IC
+- Test de dos colas y de una cola
+- Introducción al t-test
 
 <style>
 .title-slide {
@@ -307,7 +317,7 @@ class: animated, fadeIn
 
 > ¿Cómo funciona un test de hipótesis? 
 
-Cuando llevamos a cabo una pruebad de hipótesis, empezamos con una **hipótesis** de investigación, también llamada **hipótesis alternativa**.
+Cuando llevamos a cabo una prueba de hipótesis, empezamos con una **hipótesis** de investigación, también llamada **hipótesis alternativa**.
 
 - La hipótesis alternativa es por la que intentamos encontrar evidencia a favor.
 
@@ -357,8 +367,7 @@ class: animated, fadeIn
 
 ## 3. Prueba de hipótesis
 
-- Asumimos que el medicamento no tiene un efecto sobre la población.
-- Asumimos que las personas que toman el medicamento y las que no tienen en promedio una presión sanguinea similar.
+- Asumimos que el medicamento no tiene un efecto sobre la población: asumimos que las personas que toman el medicamento y las que no tienen en promedio una presión sanguínea similar.
 
 <center>
 <img src="img/h0.png" width=75%>
@@ -382,7 +391,7 @@ class: animated, fadeIn
 
 ## 3. Prueba de hipótesis
 
-- Si esa probabilidad es muy baja, entonces sí tenemos suficiente evidencia de que el medicamento tiene un efecto sobre la población. Rechazamos la hipótesis nula. Esta probabilidad es el P-valor.
+- Si esa probabilidad es muy baja, entonces sí tenemos suficiente evidencia de que el medicamento tiene un efecto sobre la población. Rechazamos la hipótesis nula. Esta probabilidad es el **p-valor**.
 
 <center>
 <img src="img/h2.png" width=80%>
@@ -409,7 +418,7 @@ class: animated, fadeIn
 
 ## 4. Significancia y p-valor
 
-- Si el p-valor es más pequeño que un umbral predefinido (p < 0.05) el resultado se considera estadísticamente significativo
+- Si el p-valor es más pequeño que un umbral predefinido (p < 0.05) el resultado se considera estadísticamente significativo.
 
 - El resultado observado sería muy poco probable que ocurriera por azar si la hipótesis nula fuera cierta.
 
@@ -429,12 +438,13 @@ class: animated, fadeIn
 
 --
 
-> Siempre hay un riesgo de cometer un error!
+> **Siempre hay un riesgo de cometer un error!**
 
 - Un p-valor pequeño NO demuestra que la hipotesis alternativa sea verdadera 
-- Solo nos dice que es muy improbable obtener un resultado como el que hemos obtenido (o más extremo) en nuestra muestra 
+  - Solo nos dice que es muy improbable obtener un resultado como el que hemos obtenido (o más extremo) en nuestra muestra
+  
 - Un p-valor grande NO demuestra que la hipótesis nula sea verdadera
-- Solo nos dice que es probable obtener un resultado como el que hemos obtenido (o más extremo) en nuestra muestra 
+  - Solo nos dice que es probable obtener un resultado como el que hemos obtenido (o más extremo) en nuestra muestra 
 
 
 ---
@@ -590,9 +600,9 @@ class: animated, fadeIn
 ## Visión general de las pruebas estadísticas
 
 .pull-left[
-#### 1. Pruebas Paramétricas
+#### 1. Pruebas paramétricas
 
-**Definición:** Requieren supuestos estrictos sobre la distribución de los datos (por ejemplo, normalidad) y generalmente comparan medias o varianzas.
+Requieren supuestos estrictos sobre la distribución de los datos (por ejemplo, normalidad) y generalmente comparan medias o varianzas.
 
 - Más restrictivas.  
 - Requieren **supuestos estrictos** sobre la distribución de los datos.  
@@ -601,8 +611,8 @@ class: animated, fadeIn
 ]
 
 .pull-right[
-#### 2. Pruebas No Paramétricas
-**Definición:** No requieren supuestos fuertes sobre la distribución. Suelen basarse en **rangos** o **medianas**.
+#### 2. Pruebas no paramétricas
+No requieren supuestos fuertes sobre la distribución. Suelen basarse en **rangos** o **medianas**.
 
 - Menos restrictivas.  
 - Hacen **pocos o ningún supuesto** sobre la distribución.  
