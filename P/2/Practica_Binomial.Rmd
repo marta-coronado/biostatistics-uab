@@ -115,10 +115,10 @@ El gráfico anterior debería hacer un poco más clara la probabilidad que acaba
 
 Sin embargo, es importante señalar que la probabilidad que calculamos con `dbinom()` es una **probabilidad teórica** que no necesariamente es igual a la **proporción real de observaciones en nuestros datos** (los simulados) que son iguales a 30. Calcularemos ese valor empírico.
 
-Para ello, podemos utilizar la función `sum()` del paquete `dplyr`. Le pedimos a `sum()` que cuente los casos en los que `data` sea igual a 30, y ese valor lo dividimos entre el total de filas de la tabla, que podemos obtener con `nrow(binomial_data )`. Tienes un ejemplo de la función `sum()`:
+Para ello, podemos utilizar la función `sum()` dentro de la función `summarise()` del paquete `dplyr`. Le pedimos a `sum()` que cuente los casos en los que `data` sea igual a 30, y ese valor lo dividimos entre el total de filas de la tabla, que podemos obtener con `nrow(binomial_data_df)`. Tienes un ejemplo de la función `sum()` en [esta diapositiva](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#65) y a continuación:
 
 ```{r}
-# df %>% sum(data == 10) # cuenta las veces que data contiene "10"
+# df %>% summarise(sum(data == 10)) # cuenta las veces que data contiene "10"
 
 ```
 

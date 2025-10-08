@@ -378,13 +378,15 @@ con <code>dbinom()</code> es una <strong>probabilidad teórica</strong>
 que no necesariamente es igual a la <strong>proporción real de
 observaciones en nuestros datos</strong> (los simulados) que son iguales
 a 30. Calcularemos ese valor empírico.</p>
-<p>Para ello, podemos utilizar la función <code>sum()</code> del paquete
-<code>dplyr</code>. Le pedimos a <code>sum()</code> que cuente los casos
-en los que <code>data</code> sea igual a 30, y ese valor lo dividimos
-entre el total de filas de la tabla, que podemos obtener con
-<code>nrow(binomial_data )</code>. Tienes un ejemplo de la función
-<code>sum()</code>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># df %&gt;% sum(data == 10) # cuenta las veces que data contiene &quot;10&quot;</span></span></code></pre></div>
+<p>Para ello, podemos utilizar la función <code>sum()</code> dentro de
+la función <code>summarise()</code> del paquete <code>dplyr</code>. Le
+pedimos a <code>sum()</code> que cuente los casos en los que
+<code>data</code> sea igual a 30, y ese valor lo dividimos entre el
+total de filas de la tabla, que podemos obtener con
+<code>nrow(binomial_data_df)</code>. Tienes un ejemplo de la función
+<code>sum()</code> en <a href="https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#65">esta
+diapositiva</a> y a continuación:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># df %&gt;% summarise(sum(data == 10)) # cuenta las veces que data contiene &quot;10&quot;</span></span></code></pre></div>
 <p><strong>¿Son parecidas las proporciones teórica y
 empírica?</strong></p>
 <div id="respuesta" class="section level5" style="background-color:#F0F0F0">
