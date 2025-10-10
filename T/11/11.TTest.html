@@ -1,0 +1,2383 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title> </title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/rutgers.css" rel="stylesheet" />
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
+    <link href="libs/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v7.0.0/css/all.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# <br>
+]
+.author[
+### 
+]
+
+---
+
+
+
+
+
+
+
+
+class: animated, fadeIn
+# Outline
+
+#### **Pruebas de t-test**
+- **T-test de una muestra**
+
+
+&lt;style&gt;
+.title-slide {
+  background-image: url('img/1.png');
+  background-size: 100%;
+}
+&lt;/style&gt;
+
+---
+class: animated, fadeIn
+
+## Tipos de t-test
+
+&lt;center&gt;
+&lt;img src="img/tipos.png"&gt;
+
+---
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+## T-test de una muestra
+
+---
+class: animated, fadeIn
+
+## ¿Cuándo usamos el t-test de una muestra?
+
+- Queremos comparar la **media de una muestra** con una **media de referencia conocida**.
+
+&lt;center&gt;
+&lt;img src="img/una_muestra1.png" width=80%&gt;
+
+
+---
+class: animated, fadeIn
+
+## ¿Cuándo usamos el t-test de una muestra?
+
+### Ejemplo
+
+.pull-left[
+- Una compañía de chocolate asegura que sus tabletas pesan 50g.
+]
+.pull-right[
+&lt;img src="img/una_muestra2.png"&gt;
+]
+
+---
+class: animated, fadeIn
+
+## ¿Cuándo usamos el t-test de una muestra?
+
+### Ejemplo
+
+.pull-left[
+- Una compañía de chocolate asegura que sus tabletas pesan 50g.
+
+- Para comprobarlo, cogemos una muestra de 30 tabletas, y las pesamos.
+  - La media de esta muestra es 48g.
+
+]
+.pull-right[
+&lt;img src="img/una_muestra3.png"&gt;
+]
+
+
+---
+class: animated, fadeIn
+
+## ¿Cuándo usamos el t-test de una muestra?
+
+### Ejemplo
+
+.pull-left[
+- Una compañía de chocolate asegura que sus tabletas pesan 50g.
+
+- Para comprobarlo, cogemos una muestra de 30 tabletas, y las pesamos.
+  - La media de esta muestra es 48g.
+
+]
+.pull-right[
+&lt;img src="img/una_muestra4.png"&gt;
+]
+
+
+
+---
+class: animated, fadeIn
+
+## ¿Cuándo usamos el t-test de una muestra?
+
+### Ejemplo
+
+.pull-left[
+- Una compañía de chocolate asegura que sus tabletas pesan 50g.
+
+- Para comprobarlo, cogemos una muestra de 30 tabletas, y las pesamos.
+  - La media de esta muestra es 48g.
+
+- Usamos el t-test de una muestra para saber si la media de 48g es estadísticamente diferente a la media de 50g.
+
+]
+.pull-right[
+&lt;img src="img/una_muestra5.png"&gt;
+]
+
+
+
+---
+class: animated, fadeIn
+
+## Tipos de t-test
+
+&lt;center&gt;
+&lt;img src="img/tipos.png"&gt;
+
+
+
+---
+class: animated, fadeIn
+
+## ¿Cuándo usamos el t-test de muestras independientes?
+
+- Queremos comparar la **media de dos grupos o muestras independientes** y saber si hay una **diferencia significativa** entre las dos medias.
+
+
+&lt;center&gt;
+&lt;img src="img/dos_muestras6.png" width = 60%&gt;
+
+
+---
+class: animated, fadeIn
+
+## ¿Cuándo usamos el t-test de muestras independientes?
+
+### Ejemplo
+
+.pull-left[
+- Queremos comparar la eficacia de dos analgésicos.
+]
+
+.pull-right[
+&lt;center&gt;
+&lt;img src="img/dos_muestras7.png" width = 100%&gt;
+
+]
+
+---
+class: animated, fadeIn
+
+## ¿Cuándo usamos el t-test de muestras independientes?
+
+### Ejemplo
+
+.pull-left[
+- Queremos comparar la eficacia de dos analgésicos.
+
+- Dividimos de manera aleatoria dos grupos:
+  - El primer grupo recibe el analgésico A
+  - El segundo grupo recibe el analgésico B
+  
+- Utilizando un t-test de dos muestras independientes, podemos saber si hay una diferencia significativa del alivio al dolor entre los dos analgésicos.
+
+]
+
+.pull-right[
+&lt;center&gt;
+&lt;img src="img/dos_muestras8.png" width = 100%&gt;
+
+]
+
+
+---
+class: animated, fadeIn
+
+## Tipos de t-test
+
+&lt;center&gt;
+&lt;img src="img/tipos.png"&gt;
+
+
+---
+class: animated, fadeIn
+
+## T-test para muestras pareadas
+
+- Utilizamos el t-test pareado para **comparar las medias de dos grupos o muestras dependientes**.
+
+&lt;center&gt;
+&lt;img src="img/paired9.png" width=80%&gt;
+
+
+
+---
+class: animated, fadeIn
+
+## T-test para muestras pareadas
+
+### Ejemplo
+
+.pull-left[
+- Queremos saber la eficacia de un programa de mindfulness para reducir el estrés.
+
+- El grupo cuantifica su nivel de estrés antes y después de realizar el programa.
+]
+
+.pull-right[
+&lt;center&gt;
+&lt;img src="img/paired10.png" width=100%&gt;
+
+
+]
+
+
+---
+class: animated, fadeIn
+
+## T-test para muestras pareadas
+
+### Ejemplo
+
+.pull-left[
+- Queremos saber la eficacia de un programa de mindfulness para reducir el estrés.
+
+- El grupo cuantifica su nivel de estrés antes y después de realizar el programa.
+
+- Medimos las diferencias en el nivel de estrés para cada sujeto.
+
+- Podemos correr un t-test pareado para saber si hay una diferencia significativa.
+
+]
+
+.pull-right[
+&lt;center&gt;
+&lt;img src="img/paired11.png" width=100%&gt;
+
+
+]
+
+
+---
+class: animated, fadeIn
+
+## T-test pareado vs. t-test muestras independientes
+
+.pull-left[
+- En un t-test pareado las medidas estan disponibles a pares  (mismas observaciones/sujetos antes y después)
+]
+
+.pull-right[
+- En un t-test de muestras independientes, las observaciones son independientes entre los grupos
+
+]
+
+&lt;center&gt;
+&lt;img src="img/paired12.png" width=750&gt;
+
+---
+class: animated, fadeIn
+
+## T-test pareado vs. t-test de una muestra
+
+-  El t-test pareado es muy similar al t-test de una muestra.
+
+&lt;center&gt;
+&lt;img src="img/paired13.png" width=750&gt;
+
+---
+class: animated, fadeIn
+
+## T-test pareado vs. t-test de una muestra
+
+-  El t-test pareado es muy similar al t-test de una muestra.
+
+- El valor de referencia en un t-test pareado es 0 (no hay diferencias).
+
+&lt;center&gt;
+&lt;img src="img/paired14.png" width=750&gt;
+
+
+---
+class: animated, fadeIn
+
+## Suposiciones y requisitos del t-test
+
+- **T test de una muestra**: necesitamos **una muestra** y un **valor de referencia** con el que comparar la media de esa muestra.  
+
+- **T test de muestras independientes**: necesitamos **dos grupos independientes** (ej: tratamiento vs. control).  
+
+- **T test de muestras pareadas**: necesitamos **muestras pareadas**, por ejemplo, medidas tomadas sobre los mismos individuos antes y después de un tratamiento
+
+
+- En todos los casos, la variable que queremos testar ha de ser **numérica cuantitativa** y **seguir una distribución normal** (*test de Shapiro, QQ-plots*)
+
+-  En el caso de un t-test de muestras independientes, las **varianzas** de los dos grupos deben ser **equivalentes (homogéneas)** (*test de Levene*)
+
+&lt;center&gt;
+&lt;img src="img/tipos.png" width=50%&gt;
+
+---
+class: animated, fadeIn
+
+## Hipótesis de los t-test
+
+#### T-test de una muestra
+
+.pull-left[
+**Hipótesis nula**
+
+- La media de la muestra es igual al valor de referencia
+
+  $$
+  H_0: \ \bar{x} = \mu_0
+  $$
+  
+]
+
+&lt;center&gt;
+&lt;img src="img/paired15.png" width=60%&gt;
+
+---
+class: animated, fadeIn
+
+## Hipótesis de los t-test
+
+#### T-test de una muestra
+
+.pull-left[
+**Hipótesis nula**
+
+- La media de la muestra es igual al valor de referencia
+
+  $$
+  H_0: \ \bar{x} = \mu_0
+  $$
+  
+]
+
+.pull-left[
+**Hipótesis alternativa**
+
+- La media de la muestra es igual al valor de referencia
+
+  $$
+  H_1: \ \bar{x} \neq \mu_0
+  $$
+  
+]
+
+&lt;center&gt;
+&lt;img src="img/paired16.png" width=60%&gt;
+
+
+
+---
+class: animated, fadeIn
+
+
+## Hipótesis de los t-test
+
+#### T-test de muestras independientes 
+
+.pull-left[
+**Hipótesis nula**
+
+- La media de los dos grupos son iguales
+
+  $$
+  H_0: \ \bar{x}_1 = \bar{x}_2
+  $$
+
+]
+
+&lt;center&gt;
+&lt;img src="img/indep9.png" width=60%&gt;
+
+
+
+---
+class: animated, fadeIn
+
+
+## Hipótesis de los t-test
+
+#### T-test de muestras independientes 
+
+.pull-left[
+**Hipótesis nula**
+
+- La media de los dos grupos son iguales
+
+  $$
+  H_0: \ \bar{x}_1 = \bar{x}_2
+  $$
+  
+]
+
+.pull-left[
+**Hipótesis alternativa**
+
+- La media de los grupos no son iguales
+
+  $$
+  H_1: \ \bar{x}_1 \neq \bar{x}_2
+  $$
+
+]
+
+&lt;center&gt;
+&lt;img src="img/indep10.png" width=60%&gt;
+
+
+
+
+---
+class: animated, fadeIn
+
+
+## Hipótesis de los t-test
+
+#### T-test de muestras pareadas 
+
+.pull-left[
+**Hipótesis nula**
+
+- La media de la diferencia entre los pares es 0
+
+$$
+  H_0: \ \bar{x} = 0
+$$
+
+]
+
+&lt;center&gt;
+&lt;img src="img/paired17.png" width=60%&gt;
+
+
+
+---
+class: animated, fadeIn
+
+
+## Hipótesis de los t-test
+
+#### T-test de muestras pareadas 
+
+.pull-left[
+**Hipótesis nula**
+
+- La media de la diferencia entre los pares es 0
+
+$$
+  H_0: \ \bar{x} = 0
+$$
+
+]
+
+.pull-left[
+**Hipótesis alternativa**
+
+- La media de la diferencia entre los pares no es 0
+
+$$
+  H_1: \ \bar{x} \neq 0
+$$
+
+]
+
+
+&lt;center&gt;
+&lt;img src="img/paired18.png" width=60%&gt;
+
+---
+class: animated, fadeIn
+
+## Hipótesis de los t-test
+
+En los tres tipos de t-test, las hipótesis pueden ser de dos tipos:
+
+- Las hipótesis pueden ser **indirectas**, o de dos colas, cuando la **hipótesis alternativa no especifica dirección**, sólo indica que hay **diferencia**
+
+$$
+  H_1: \ \bar{x} \neq \mu_0 \quad \quad \quad H_1: \ \bar{x}_1 \neq \bar{x}_2 \quad \quad \quad H_1: \bar{x} \neq 0
+$$
+
+&gt; Las usamos cuando **no sabemos, a priori, si el efecto será positivo o negativo** 
+
+&lt;br&gt; 
+
+- Las hipótesis son **dirigidas**, o unilaterales, cuando **sí se especifica dirección** (mayor o menor)
+
+$$
+  H_1: \ \bar{x} &gt; \mu_0 \quad \quad \quad H_1: \ \bar{x}_1 &gt; \bar{x}_2 \quad \quad \quad H_1: \bar{x} &gt; 0
+$$
+
+$$
+  H_1: \ \bar{x} &lt; \mu_0 \quad \quad \quad H_1: \ \bar{x}_1 &lt; \bar{x}_2 \quad \quad \quad H_1: \bar{x} &lt; 0
+$$
+
+&gt; Las usamos cuando tenemos una expectativa clara sobre el efecto
+
+
+---
+class: animated, fadeIn
+
+## ¿Cómo hacemos un t-test? 
+
+- Primero calculamos el valor `t` a partir de:
+  - La **diferencia entre las medias** (o valor de referencia)
+  - La **desviación estándard de la media** (error estándard)
+  
+&lt;center&gt;
+&lt;img src="img/calculo.png" width=60%&gt;
+
+---
+class: animated, fadeIn
+
+## T-test de una muestra
+
+.pull-left[
+$$
+t=\frac{\bar{x}-\mu}{\frac{s}{\sqrt{n}}}
+$$
+
+
+donde:
+- `\(\bar{x}\)`: media de la muestra
+
+- `\(\mu\)`: valor de referencia
+
+- `\(s\)`: desviación estándard de la muestra
+
+- `\(\sqrt{n}\)`: tamaño de la muestra
+
+- `\(\frac{s}{\sqrt{n}}\)` es el error estándard
+
+]
+
+.pull-right[
+&lt;img src="img/one_sample.png"&gt;
+]
+
+---
+class: animated, fadeIn
+
+## T-test de una muestra
+
+### Ejemplo 🐁
+
+
+.pull-left[
+
+- Registramos el peso de 20 ratones que han recibido una dieta especial. Queremos **comparar la media de la muestra** (`\(\bar{x}\)`) con la **media de referencia del peso de los ratones** &lt;br&gt;(`\(\mu_0\)`).
+
+  - **Hipótesis nula `\(H_0\)`**: **los ratones alimentados con la dieta especial no difieren en el peso respecto otros ratones** - la muestra se obtuvo de una muestra con un peso promedio `\(\mu_0\)`
+
+  -  **Hipótesis alternativa `\(H_1\)`**: **la dieta tiene un efecto** - la muestra se obtuvo de una muestra donde el peso promedio es diferente a `\(\mu_0\)`
+
+]
+
+.pull-right[
+&lt;img src="11.TTest_files/figure-html/unnamed-chunk-1-1.png" width="432" /&gt;
+
+]
+
+
+---
+class: animated, fadeIn
+
+## T-test de una muestra
+
+### Ejemplo 🐁
+
+
+.pull-left[
+
+- Compara la media de la muestra (`\(\bar{x}\)`) a la referencia `\(\mu_0\)`
+
+$$
+t=\frac{\bar{x}-\mu}{\frac{s}{\sqrt{n}}}
+$$
+
+
+]
+
+.pull-right[
+&lt;img src="11.TTest_files/figure-html/unnamed-chunk-2-1.png" width="432" /&gt;
+
+]
+
+
+
+---
+class: animated, fadeIn
+
+## T-test de una muestra
+
+.pull-left[
+
+#### Por qué es `t` un estadístico útil?
+
+$$
+t=\frac{\bar{x}-\mu}{\frac{s}{\sqrt{n}}}
+$$
+
+- Evidencia contra la hipótesis nula: `t` será **próximo a 0** cuando haya **poca evidencia** contra `\(H_0\)`, y tomará **valores grandes (en valor absoluto)** cuando exista **mucha evidencia** contra `\(H_0\)`.
+
+- El valor de `t` tiene en cuenta el **tamaño del efecto**, el **tamaño de la muestra** y la **varianza**:
+
+  - **Tamaño del efecto:** diferencia entre la media de la muestra y la media de referencia (`\(\bar{x} - \mu_0\)`). Cuanto **mayor sea esta diferencia**, **mayor será el valor absoluto de `t`**.
+
+
+
+]
+
+.pull-right[
+&lt;img src="img/balanza.png" width=80%&gt;
+]
+
+
+---
+class: animated, fadeIn
+
+## T-test de una muestra
+
+.pull-left[
+
+#### Por qué es `t` un estadístico útil?
+
+$$
+t=\frac{\bar{x}-\mu}{\frac{s}{\sqrt{n}}}
+$$
+
+- Evidencia contra la hipótesis nula: `t` será **próximo a 0** cuando haya **poca evidencia** contra `\(H_0\)`, y tomará **valores grandes (en valor absoluto)** cuando exista **mucha evidencia** contra `\(H_0\)`.
+
+- El valor de `t` tiene en cuenta el **tamaño del efecto**, el **tamaño de la muestra** y la **varianza**:
+
+  - **Tamaño de la muestra:** si el tamaño del efecto se calcula a partir de una **muestra grande**, es **menos probable** que las diferencias observadas se deban al azar.  **A mayor tamaño de muestra**, **mayor será el valor  de `t`**, ya que la estimación de la media es más precisa.
+
+]
+
+.pull-right[
+&lt;img src="img/balanza.png" width=80%&gt;
+]
+
+---
+class: animated, fadeIn
+
+## T-test de una muestra
+
+.pull-left[
+
+#### Por qué es `t` un estadístico útil?
+
+$$
+t=\frac{\bar{x}-\mu}{\frac{s}{\sqrt{n}}}
+$$
+
+- Evidencia contra la hipótesis nula: `t` será **próximo a 0** cuando haya **poca evidencia** contra `\(H_0\)`, y tomará **valores grandes (en valor absoluto)** cuando exista **mucha evidencia** contra `\(H_0\)`.
+
+- El valor de `t` tiene en cuenta el **tamaño del efecto**, el **tamaño de la muestra** y la **varianza**:
+
+  - **Varianza**:  si la muestra presenta una **varianza grande** en comparación con el tamaño del efecto, es más probable que las diferencias observadas se deban al azar. **A mayor varianza**, **menor será el valor absoluto de `t`**.
+
+]
+
+.pull-right[
+&lt;img src="img/balanza.png" width=80%&gt;
+]
+
+
+
+---
+class: animated, fadeIn
+
+## T-test de una muestra
+
+### Ejemplo 🐁
+
+.pull-left[
+$$
+t=\frac{\bar{x}-\mu}{\frac{s}{\sqrt{n}}}=2.57
+$$
+
+- ¿Es 2.57 un valor esperado según la distribución nula?
+
+- ¿Respecto a qué distribución?
+
+]
+
+.pull-right[
+&lt;img src="11.TTest_files/figure-html/unnamed-chunk-3-1.png" width="360" /&gt;
+
+]
+
+
+---
+class: animated, fadeIn
+
+### ¿Por qué usamos la distribución de `t` y no una normal?
+
+Distribución normal:
+
+$$
+\frac{\bar{x}-\mu}{\frac{\sigma}{sqrt{n}}}
+$$
+
+¿Qué problema tiene?
+
+--
+
+- Requiere dos medidas poblacionales: `\(\mu\)` y `\(\sigma\)` 
+
+- La varianza poblacional (`\(\sigma\)`) la reemplazamos por la de la muestra (`\(s\)`) 
+
+---
+class: animated, fadeIn
+
+## T-test de una muestra
+
+### Ejemplo 🐁
+
+.pull-left[
+$$
+t=\frac{\bar{x}-\mu}{\frac{s}{\sqrt{n}}}=2.57
+$$
+
+- ¿Es 2.57 un valor esperado según la distribución nula?
+
+- Utilizaremos la tabla de la distribución `t` 
+
+]
+
+.pull-right[
+&lt;img src="11.TTest_files/figure-html/unnamed-chunk-4-1.png" width="360" /&gt;
+
+]
+
+---
+class: animated, fadeIn
+
+.pull-left[
+
+## La tabla de la distribución `t`
+
+- **Grados de libertad**: se calculan como `\(n-1\)`
+
+- **Significancia**: valor `\(\alpha\)` - típicamente 0.05
+
+]
+
+.pull-right[
+&lt;table class="table" style="font-size: 14px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption style="font-size: initial !important;"&gt;Valores críticos de la distribución t (cola superior)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.25 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.1 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.05 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.025 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.01 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.005 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.0000 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0777 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.3138 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 12.7062 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 31.8205 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 63.6567 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8165 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8856 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9200 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.3027 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.9646 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 9.9248 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7649 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.6377 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3534 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1824 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.5407 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.8409 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7407 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.5332 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1318 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7764 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.7469 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.6041 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7267 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.4759 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.0150 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5706 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3649 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.0321 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7176 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.4398 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.9432 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4469 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1427 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.7074 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7111 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.4149 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8946 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3646 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9980 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.4995 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7064 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3968 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8595 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3060 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8965 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3554 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7027 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3830 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8331 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2622 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8214 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2498 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6998 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3722 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8125 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2281 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7638 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1693 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6974 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3634 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7959 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2010 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7181 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1058 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 12 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6955 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3562 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7823 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1788 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6810 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0545 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6938 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3502 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7709 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1604 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6503 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0123 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6924 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3450 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7613 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1448 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6245 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9768 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6912 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3406 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7531 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1314 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6025 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9467 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 16 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6901 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3368 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7459 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1199 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5835 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9208 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6892 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3334 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7396 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1098 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5669 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8982 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6884 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3304 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7341 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1009 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5524 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8784 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6876 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3277 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7291 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.0930 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5395 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8609 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 20 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6870 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3253 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7247 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.0860 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5280 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8453 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+
+
+---
+class: animated, fadeIn
+
+.pull-left[
+
+## La tabla de la distribución `t`
+
+- **Grados de libertad**: se calculan como `\(n-1\)`: 19
+
+- **Significancia**: valor `\(\alpha\)` - típicamente 0.05
+
+-  Como la hipótesis es **bilateral** (`\(H_1: \bar{x} \ne \mu_0\)`), tenemos que tener en cuenta que el **nivel de significancia `\(\alpha\)` se reparte entre las dos colas** de la distribución `t`.  Por lo tanto, para un `\(\alpha = 0.05\)` bilateral, cada cola tendrá `\(\alpha/2 = 0.025\)`.
+
+&lt;center&gt;
+&lt;img src="11.TTest_files/figure-html/unnamed-chunk-6-1.png" width="288" /&gt;
+
+]
+
+.pull-right[
+&lt;table class="table" style="font-size: 14px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption style="font-size: initial !important;"&gt;Valores críticos de la distribución t (cola superior)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.25 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.1 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.05 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.025 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.01 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.005 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.0000 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0777 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.3138 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 12.7062 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 31.8205 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 63.6567 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8165 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8856 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9200 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.3027 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.9646 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 9.9248 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7649 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.6377 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3534 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1824 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.5407 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.8409 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7407 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.5332 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1318 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7764 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.7469 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.6041 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7267 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.4759 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.0150 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5706 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3649 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.0321 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7176 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.4398 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.9432 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4469 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1427 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.7074 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7111 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.4149 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8946 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3646 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9980 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.4995 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7064 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3968 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8595 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3060 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8965 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3554 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7027 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3830 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8331 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2622 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8214 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2498 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6998 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3722 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8125 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2281 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7638 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1693 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6974 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3634 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7959 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2010 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7181 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1058 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 12 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6955 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3562 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7823 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1788 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6810 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0545 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6938 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3502 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7709 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1604 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6503 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0123 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6924 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3450 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7613 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1448 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6245 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9768 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6912 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3406 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7531 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1314 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6025 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9467 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 16 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6901 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3368 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7459 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1199 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5835 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9208 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6892 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3334 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7396 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1098 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5669 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8982 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6884 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3304 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7341 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1009 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5524 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8784 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6876 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3277 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7291 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.0930 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5395 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8609 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 20 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6870 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3253 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7247 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.0860 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5280 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8453 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+
+---
+class: animated, fadeIn
+
+.pull-left[
+
+## La tabla de la distribución `t`
+
+- **Grados de libertad**: se calculan como `\(n-1\)`: 19
+
+- **Significancia**: valor `\(\alpha\)` - típicamente 0.05
+
+El valor crítico `t` para 19 grados de libertad y `\(\alpha\)` de 0.05 es `\(t_{19,0.05}=2.0930\)`
+
+&gt; Como `\(t_{19,0.05}=2.0930\)` es **más pequeño** que nuestro valor `t` (`\(2.57\)`), rechazamos la hipótesis nula `\(H_0\)`
+
+&lt;center&gt;
+&lt;img src="11.TTest_files/figure-html/unnamed-chunk-8-1.png" width="288" /&gt;
+
+]
+
+.pull-right[
+&lt;table class="table" style="font-size: 14px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption style="font-size: initial !important;"&gt;Valores críticos de la distribución t (cola superior)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.25 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.1 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.05 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.025 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.01 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.005 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.0000 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0777 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.3138 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 12.7062 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 31.8205 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 63.6567 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8165 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8856 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9200 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.3027 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.9646 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 9.9248 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7649 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.6377 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3534 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1824 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.5407 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.8409 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7407 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.5332 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1318 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7764 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.7469 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.6041 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7267 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.4759 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.0150 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5706 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3649 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.0321 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7176 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.4398 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.9432 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4469 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1427 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.7074 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7111 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.4149 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8946 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3646 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9980 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.4995 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7064 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3968 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8595 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3060 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8965 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3554 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7027 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3830 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8331 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2622 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8214 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2498 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6998 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3722 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8125 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2281 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7638 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1693 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6974 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3634 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7959 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2010 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7181 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1058 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 12 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6955 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3562 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7823 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1788 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6810 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0545 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6938 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3502 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7709 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1604 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6503 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0123 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6924 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3450 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7613 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1448 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6245 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9768 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6912 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3406 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7531 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1314 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6025 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9467 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 16 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6901 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3368 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7459 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1199 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5835 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9208 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6892 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3334 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7396 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1098 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5669 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8982 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6884 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3304 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7341 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1009 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5524 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8784 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6876 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3277 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7291 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.0930 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5395 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8609 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 20 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6870 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3253 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7247 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.0860 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5280 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8453 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+
+
+
+---
+class: animated, fadeIn
+
+.pull-left[
+
+## La tabla de la distribución `t`
+
+Si nuestra hipótesis alternativa hubier sido direccional (**una cola**), el resultado sería diferente:
+
+$$
+H_0: \ \bar{x} = \mu_0 \qquad H_1: \ \bar{x} &gt; \mu_0
+$$
+
+El valor crítico `t` para 19 grados de libertad y `\(\alpha\)` de 0.05 es `\(t_{19,0.05}=1.7291\)`
+
+&gt; Como `\(t_{19,0.05}=1.7291\)` es **más pequeño** que nuestro valor `t` (`\(2.57\)`), rechazamos la hipótesis nula `\(H_0\)`
+
+&lt;center&gt;
+&lt;img src="11.TTest_files/figure-html/unnamed-chunk-10-1.png" width="288" /&gt;
+
+]
+
+.pull-right[
+&lt;table class="table" style="font-size: 14px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption style="font-size: initial !important;"&gt;Valores críticos de la distribución t (cola superior)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.25 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.1 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.05 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.025 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.01 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.005 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.0000 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0777 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.3138 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 12.7062 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 31.8205 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 63.6567 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8165 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8856 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9200 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.3027 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.9646 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 9.9248 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7649 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.6377 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3534 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1824 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.5407 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.8409 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7407 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.5332 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1318 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7764 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.7469 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.6041 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7267 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.4759 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.0150 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5706 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3649 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.0321 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7176 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.4398 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.9432 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4469 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1427 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.7074 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7111 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.4149 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8946 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3646 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9980 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.4995 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7064 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3968 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8595 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3060 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8965 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3554 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.7027 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3830 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8331 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2622 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8214 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2498 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6998 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3722 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.8125 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2281 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7638 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1693 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6974 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3634 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7959 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2010 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7181 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1058 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 12 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6955 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3562 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7823 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1788 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6810 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0545 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6938 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3502 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7709 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1604 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6503 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0123 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6924 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3450 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7613 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1448 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6245 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9768 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6912 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3406 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7531 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1314 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6025 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9467 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 16 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6901 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3368 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7459 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1199 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5835 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9208 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6892 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3334 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7396 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1098 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5669 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8982 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6884 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3304 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7341 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1009 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5524 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8784 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6876 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3277 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7291 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.0930 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5395 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8609 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 20 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6870 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.3253 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.7247 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.0860 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5280 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8453 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+
+
+
+
+---
+class: animated, fadeIn
+
+## Cómo hacemos un t-test en `R`
+
+.pull-left[
+
+
+``` r
+# 20 valores
+N=20
+weights &lt;- c(31.41, 28.29, 22.82, 26.07, 31.97, 22.60, 31.47, 29.18, 22.98, 23.26, 23.48, 20.88, 28.44, 30.34, 23.14, 22.80, 24.47, 39.73, 25.71, 22.74)
+
+# Valor de referencia
+mu0 &lt;- 23.89338
+
+# Calcular valor t
+t_stat &lt;- (mean(weights) - mu0) / 
+  (sd(weights)/sqrt(length(weights)));t_stat
+```
+
+```
+## [1] 2.567434
+```
+
+``` r
+# Calcular la probabilidad
+(1-pt(t_stat,df=N-1))*2
+```
+
+```
+## [1] 0.01884821
+```
+
+--
+
+¿Por qué le restamos 1? ¿Por qué multiplicamos el resultado `\(\times\)` 2?
+
+]
+
+.pull-right[
+&lt;img src="img/meme.png"&gt;
+]
+
+---
+class: animated, fadeIn
+
+## Cómo hacemos un t-test en `R`
+
+### La función `pt()`
+
+- `pt()` es la **función de distribución acumulada** de la distribución t
+- Calcula la **probabilidad acumulada** hasta un valor dado de `t`, es decir:
+
+  $$
+  P(T \leq t)
+  $$  
+  
+donde `\(T\)` sigue una distribución t con determinados grados de libertad (`df`).
+
+--
+
+
+``` r
+pt(2.57, df = 19)
+```
+
+```
+## [1] 0.9906272
+```
+
+Devuelve la probabilidad de observar un valor de `t` menor o igual a 2.57 bajo la distribución nula con 19 grados de libertad.
+
+--
+
+&gt; Como nos interesa saber si el valor es igual o más extremo, a 1 le restamos la probabilidad calculada
+
+---
+class: animated, fadeIn
+
+
+## Cómo hacemos un t-test en `R`
+
+### La función `pt()`
+
+- `pt()` es la **función de distribución acumulada** de la distribución t
+- Calcula la **probabilidad acumulada** hasta un valor dado de `t`, es decir:
+
+En un **test bilateral**, nos interesan las dos direcciones (positiva y negativa).  Por eso, **multiplicamos por 2** para incluir ambas colas de la distribución.
+
+
+``` r
+# Calcular la probabilidad
+(1-pt(t_stat,df=N-1))*2
+```
+
+```
+## [1] 0.01884821
+```
+
+--
+
+&gt; Si ese valor es más pequeño que nuestro valor crítico `\(\alpha\)`, rechazamos la hipótesis nula y aceptamos la alternativa.
+
+---
+class: animated, fadeIn
+
+## Cómo hacemos un t-test en `R`
+
+### La función `t.test`
+
+.pull-left[
+
+``` r
+t.test(weights, mu = mu0, 
+       alternative = "two.sided")
+```
+
+```
+## 
+## 	One Sample t-test
+## 
+## data:  weights
+## t = 2.5674, df = 19, p-value = 0.01885
+## alternative hypothesis: true mean is not equal to 23.89338
+## 95 percent confidence interval:
+##  24.39148 28.78652
+## sample estimates:
+## mean of x 
+##    26.589
+```
+]
+
+.pull-right[
+
+
+&lt;img src="11.TTest_files/figure-html/unnamed-chunk-16-1.png" width="360" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+class: animated, fadeIn
+
+## Cómo hacemos un t-test en `R`
+
+### La función `t.test`
+
+.pull-left[
+
+``` r
+t.test(weights, mu = mu0, 
+       alternative = "greater")
+```
+
+```
+## 
+## 	One Sample t-test
+## 
+## data:  weights
+## t = 2.5674, df = 19, p-value = 0.009424
+## alternative hypothesis: true mean is greater than 23.89338
+## 95 percent confidence interval:
+##  24.77354      Inf
+## sample estimates:
+## mean of x 
+##    26.589
+```
+]
+
+.pull-right[
+
+&lt;center&gt;
+&lt;img src="11.TTest_files/figure-html/unnamed-chunk-18-1.png" width="360" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+class: animated, fadeIn
+
+## T-test con dos muestras independientes
+
+- Utilizamos el t-test para comparar **dos muestras**.
+
+--
+
+Por ejemplo, una muestra de ratones con **dieta alta en grasa** se comparó con un grupo de ratones alimentados con una **dieta de control**.
+
+.pull-left[
+&lt;center&gt;
+&lt;img src="11.TTest_files/figure-html/unnamed-chunk-19-1.png" width="360" /&gt;
+]
+
+--
+
+.pull-right[
+
+- Resumimos los datos con el estadístico `t` y calculamos la probabilidad bajo la hipótesis nula.
+
+- **Sólo cambia la fórmula de `t`**, pero no el cálculo de la probabilidad.
+
+$$
+t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}
+$$
+
+
+- Si `\(H_0\)` es cierta, `t` sigue una distribución `t` con `\(n_1 + n_2 - 2\)` grados de libertad.
+
+]
+
+
+
+---
+class: animated, fadeIn
+
+## T-test con dos muestras independientes
+
+.pull-left[
+&lt;center&gt;
+&lt;img src="11.TTest_files/figure-html/unnamed-chunk-20-1.png" width="360" /&gt;
+]
+
+.pull-right[
+
+$$
+t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}} = -7.1932
+$$
+
+Podemos rechazar la hipótesis nula con un valor crítico `t` para 844 grados de libertad y `\(\alpha\)` de 0.05 es `\(t_{\infty,0.05}=1.96\)`
+
+]
+
+--
+
+&gt; ¿De qué te suena el 1.96? Para grados de libertad grandes (&gt;100) la t-distribución y la normal estándar son prácticamente iguales, por eso se puede usar 1.96 como aproximación.
+
+&lt;table class="table" style="font-size: 14px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption style="font-size: initial !important;"&gt;Valores críticos de la distribución t (cola superior)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.25 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.1 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.05 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.025 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.01 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; p = 0.005 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 98 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6770 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.2902 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.6606 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.9845 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3650 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6269 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 99 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6770 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.2902 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.6604 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.9842 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3646 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6264 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; 100 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.6770 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.2901 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.6602 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1.9840 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3642 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6259 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;font-weight: bold;background-color: rgba(255, 230, 230, 255) !important;"&gt; ∞ &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(255, 230, 230, 255) !important;"&gt; 0.6745 &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(255, 230, 230, 255) !important;"&gt; 1.2816 &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(255, 230, 230, 255) !important;"&gt; 1.6449 &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(255, 230, 230, 255) !important;"&gt; 1.9600 &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(255, 230, 230, 255) !important;"&gt; 2.3263 &lt;/td&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(255, 230, 230, 255) !important;"&gt; 2.5758 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+
+---
+class: animated, fadeIn
+
+## T-test con dos muestras independientes en `R`
+
+### La función `t.test`
+
+
+``` r
+colnames(mice)
+```
+
+```
+## [1] "Sex"        "Diet"       "Bodyweight"
+```
+
+``` r
+head(mice)
+```
+
+```
+##   Sex Diet Bodyweight
+## 1   F   hf      31.94
+## 2   F   hf      32.48
+## 3   F   hf      22.82
+## 4   F   hf      19.92
+## 5   F   hf      32.22
+## 6   F   hf      27.50
+```
+
+``` r
+t.test(Bodyweight ~ Diet, 
+       data = mice,
+       alternative = "two.sided")
+```
+
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  Bodyweight by Diet
+## t = -7.1932, df = 735.02, p-value = 1.563e-12
+## alternative hypothesis: true difference in means between group chow and group hf is not equal to 0
+## 95 percent confidence interval:
+##  -3.906857 -2.231533
+## sample estimates:
+## mean in group chow   mean in group hf 
+##           27.41281           30.48201
+```
+
+
+
+
+
+---
+class: animated, fadeIn
+
+## T-test con dos muestras independientes en `R`
+
+### La función `t.test`
+
+
+``` r
+t.test(Bodyweight ~ Diet, 
+       data = mice,
+       alternative = "two.sided")
+```
+
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  Bodyweight by Diet
+## t = -7.1932, df = 735.02, p-value = 1.563e-12
+## alternative hypothesis: true difference in means between group chow and group hf is not equal to 0
+## 95 percent confidence interval:
+##  -3.906857 -2.231533
+## sample estimates:
+## mean in group chow   mean in group hf 
+##           27.41281           30.48201
+```
+
+
+
+---
+class: animated, fadeIn
+
+## T-test con dos muestras independientes en `R`
+
+### La función `t.test`
+
+
+``` r
+diet_hf &lt;- subset(mice, Diet=="hf") %&gt;% pull(Bodyweight)
+
+diet_ctrl &lt;- subset(mice, Diet=="chow") %&gt;% pull(Bodyweight)
+
+t.test(diet_ctrl, diet_hf, 
+       alternative = "two.sided")
+```
+
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  diet_ctrl and diet_hf
+## t = -7.1932, df = 735.02, p-value = 1.563e-12
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -3.906857 -2.231533
+## sample estimates:
+## mean of x mean of y 
+##  27.41281  30.48201
+```
+
+
+
+---
+class: animated, fadeIn
+
+## T-test para muestras pareadas
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+
+---
+class: animated, fadeIn
+
+
+
+---
+class: animated, fadeIn
+
+## Contacto
+
+&lt;div style="margin-top: 20vh; text-align:center;"&gt;
+
+| Marta Coronado Zamora | David Castellano | 
+|:-:|:-:|
+| &lt;a href="mailto:marta.coronado@uab.cat"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt; marta.coronado@uab.cat&lt;/a&gt; | &lt;a href="mailto:david.castellano@uab.cat"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt;&amp;nbsp; david.castellano@uab.cat&lt;/a&gt; | 
+| &lt;a href="https://bsky.app/profile/geneticament.bsky.social"&gt;&lt;i class="fab fa-bluesky fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @geneticament.bsky.social&lt;/a&gt; |                 &lt;a href="https://bsky.app/profile/castellanoed.bsky.social"&gt;&lt;i class="fab fa-bluesky fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @castellanoed.bsky.social&lt;/a&gt; |
+| &lt;a href="https://www.uab.cat"&gt;&lt;i class="fa fa-map-marker fa-fw"&gt;&lt;/i&gt;&amp;nbsp; Universitat Autònoma de Barcelona&lt;/a&gt; |    &lt;a href="https://gutengroup.mcb.arizona.edu/"&gt; &lt;i class="fa fa-map-marker fa-fw"&gt;&lt;/i&gt;&amp;nbsp; University of Arizona&lt;/a&gt; |
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+  "mathjax": "default",
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
