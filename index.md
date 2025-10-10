@@ -22,7 +22,8 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Tema 8: Visualización de distribuciones](T/8/8.VisDistr.html)
 - [Tema 9: Intervalos de confianza](T/9/9.Intervaloconfianza.html)
 - [Tema 10: Inferencia estadística](T/10/10.Inferencia.html)
-  
+- [Tema 11: T-test](T/11/11.TTest.html)
+ 
 ---
 
 ## 🗣️ Seminarios
