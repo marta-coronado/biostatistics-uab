@@ -59,8 +59,18 @@ class: animated, fadeIn
 # Outline
 
 #### **Pruebas de t-test**
-- **T-test de una muestra**
 
+- T-test de una muestra
+
+- T-test de muestras independientes
+
+- T-test de muestras pareadas
+
+- Requisitos y supuestos
+
+- Hipótesis
+
+- Cómo se realiza un t-test
 
 <style>
 .title-slide {
@@ -76,12 +86,6 @@ class: animated, fadeIn
 
 <center>
 <img src="img/tipos.png">
-
----
-layout: false
-class: left, bottom, inverse, animated, bounceInDown
-
-## T-test de una muestra
 
 ---
 class: animated, fadeIn
@@ -245,7 +249,7 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-## T-test para muestras pareadas
+## ¿Cuando usamos el t-test para muestras pareadas?
 
 - Utilizamos el t-test pareado para **comparar las medias de dos grupos o muestras dependientes**.
 
@@ -257,7 +261,7 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-## T-test para muestras pareadas
+## ¿Cuando usamos el t-test para muestras pareadas?
 
 ### Ejemplo
 
@@ -278,7 +282,7 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-## T-test para muestras pareadas
+## ¿Cuando usamos el t-test para muestras pareadas?
 
 ### Ejemplo
 
@@ -486,7 +490,9 @@ class: animated, fadeIn
 .pull-left[
 **Hipótesis nula**
 
-- La media de la diferencia entre los pares es 0
+- La media de la diferencia entre 
+los pares es 0
+
 
 $$
   H_0: \ \bar{x} = 0
@@ -510,7 +516,8 @@ class: animated, fadeIn
 .pull-left[
 **Hipótesis nula**
 
-- La media de la diferencia entre los pares es 0
+- La media de la diferencia entre 
+los pares es 0
 
 $$
   H_0: \ \bar{x} = 0
@@ -521,7 +528,8 @@ $$
 .pull-left[
 **Hipótesis alternativa**
 
-- La media de la diferencia entre los pares no es 0
+- La media de la diferencia entre 
+los pares no es 0
 
 $$
   H_1: \ \bar{x} \neq 0
@@ -550,6 +558,8 @@ $$
 
 <br> 
 
+--
+
 - Las hipótesis son **dirigidas**, o unilaterales, cuando **sí se especifica dirección** (mayor o menor)
 
 $$
@@ -569,7 +579,9 @@ class: animated, fadeIn
 ## ¿Cómo hacemos un t-test? 
 
 - Primero calculamos el valor `t` a partir de:
+
   - La **diferencia entre las medias** (o valor de referencia)
+  
   - La **desviación estándard de la media** (error estándard)
   
 <center>
@@ -615,9 +627,9 @@ class: animated, fadeIn
 
 - Registramos el peso de 20 ratones que han recibido una dieta especial. Queremos **comparar la media de la muestra** ($\bar{x}$) con la **media de referencia del peso de los ratones** <br>($\mu_0$).
 
-  - **Hipótesis nula $H_0$**: **los ratones alimentados con la dieta especial no difieren en el peso respecto otros ratones** - la muestra se obtuvo de una muestra con un peso promedio $\mu_0$
+  - **Hipótesis nula ($H_0$)**:  los ratones alimentados con la dieta especial **no difieren en peso** respecto a otros ratones; la muestra proviene de una población con media $\mu_0$.
 
-  -  **Hipótesis alternativa $H_1$**: **la dieta tiene un efecto** - la muestra se obtuvo de una muestra donde el peso promedio es diferente a $\mu_0$
+  - **Hipótesis alternativa ($H_1$)**: la dieta **tiene un efecto sobre el peso**;  la muestra proviene de una población con media diferente a $\mu_0$.
 
 ]
 
@@ -821,7 +833,7 @@ class: animated, fadeIn
 Distribución normal:
 
 $$
-\frac{\bar{x}-\mu}{\frac{\sigma}{sqrt{n}}}
+\frac{\bar{x}-\mu}{\frac{\sigma}{\sqrt{n}}}
 $$
 
 ¿Qué problema tiene?
@@ -831,6 +843,14 @@ $$
 - Requiere dos medidas poblacionales: $\mu$ y $\sigma$ 
 
 - La varianza poblacional ($\sigma$) la reemplazamos por la de la muestra ($s$) 
+
+--
+
+<br><br>
+
+Para muestras pequeñas (n<30), la estimación de $s$ es más variable.
+
+- La distribución `t` corrige esta incertidumbre.
 
 ---
 class: animated, fadeIn
@@ -900,9 +920,9 @@ class: animated, fadeIn
 
 .pull-left[
 
-## La tabla de la distribución `t`
+### La tabla de la distribución `t`
 
-- **Grados de libertad**: se calculan como $n-1$
+- **Grados de libertad**: se calculan como $n-1$ (para un t-test de una muestra)
 
 - **Significancia**: valor $\alpha$ - típicamente 0.05
 
@@ -944,9 +964,9 @@ class: animated, fadeIn
 
 .pull-left[
 
-## La tabla de la distribución `t`
+### La tabla de la distribución `t`
 
-- **Grados de libertad**: se calculan como $n-1$: 19
+- **Grados de libertad**: se calculan como $n-1$ (para un t-test de una muestra)
 
 - **Significancia**: valor $\alpha$ - típicamente 0.05
 
@@ -1034,7 +1054,7 @@ class: animated, fadeIn
 
 .pull-left[
 
-## La tabla de la distribución `t`
+### La tabla de la distribución `t`
 
 - **Grados de libertad**: se calculan como $n-1$: 19
 
@@ -1128,7 +1148,7 @@ class: animated, fadeIn
 
 .pull-left[
 
-## La tabla de la distribución `t`
+### La tabla de la distribución `t`
 
 Si nuestra hipótesis alternativa hubier sido direccional (**una cola**), el resultado sería diferente:
 
@@ -1210,92 +1230,13 @@ kable(t_table_df, digits = 4, align = "c",
 ]
 
 
-
-
-
 ---
 class: animated, fadeIn
 
 ## Cómo hacemos un t-test en `R`
+<center>
+<img src="img/meme.png" width=50%>
 
-.pull-left[
-
-```{r}
-# 20 valores
-N=20
-weights <- c(31.41, 28.29, 22.82, 26.07, 31.97, 22.60, 31.47, 29.18, 22.98, 23.26, 23.48, 20.88, 28.44, 30.34, 23.14, 22.80, 24.47, 39.73, 25.71, 22.74)
-
-# Valor de referencia
-mu0 <- 23.89338
-
-# Calcular valor t
-t_stat <- (mean(weights) - mu0) / 
-  (sd(weights)/sqrt(length(weights)));t_stat
-
-# Calcular la probabilidad
-(1-pt(t_stat,df=N-1))*2
-```
-
---
-
-¿Por qué le restamos 1? ¿Por qué multiplicamos el resultado $\times$ 2?
-
-]
-
-.pull-right[
-<img src="img/meme.png">
-]
-
----
-class: animated, fadeIn
-
-## Cómo hacemos un t-test en `R`
-
-### La función `pt()`
-
-- `pt()` es la **función de distribución acumulada** de la distribución t
-- Calcula la **probabilidad acumulada** hasta un valor dado de `t`, es decir:
-
-  $$
-  P(T \leq t)
-  $$  
-  
-donde $T$ sigue una distribución t con determinados grados de libertad (`df`).
-
---
-
-```{r}
-pt(2.57, df = 19)
-```
-
-Devuelve la probabilidad de observar un valor de `t` menor o igual a 2.57 bajo la distribución nula con 19 grados de libertad.
-
---
-
-> Como nos interesa saber si el valor es igual o más extremo, a 1 le restamos la probabilidad calculada
-
----
-class: animated, fadeIn
-
-
-## Cómo hacemos un t-test en `R`
-
-### La función `pt()`
-
-- `pt()` es la **función de distribución acumulada** de la distribución t
-- Calcula la **probabilidad acumulada** hasta un valor dado de `t`, es decir:
-
-En un **test bilateral**, nos interesan las dos direcciones (positiva y negativa).  Por eso, **multiplicamos por 2** para incluir ambas colas de la distribución.
-
-```{r}
-# Calcular la probabilidad
-(1-pt(t_stat,df=N-1))*2
-
-```
-
---
-
-> Si ese valor es más pequeño que nuestro valor crítico $\alpha$, rechazamos la hipótesis nula y aceptamos la alternativa.
 
 ---
 class: animated, fadeIn
@@ -1503,7 +1444,7 @@ Podemos rechazar la hipótesis nula con un valor crítico `t` para 844 grados de
 
 --
 
-> ¿De qué te suena el 1.96? Para grados de libertad grandes (>100) la t-distribución y la normal estándar son prácticamente iguales, por eso se puede usar 1.96 como aproximación.
+> ¿De qué te suena el 1.96? Para grados de libertad grandes (>100) la distribución `t` y la normal estándar son prácticamente iguales, por eso se puede usar 1.96 como aproximación.
 
 ```{r, echo = F}
 library(dplyr)
@@ -1605,6 +1546,101 @@ t.test(diet_ctrl, diet_hf,
 
 ```
 
+---
+class: animated, fadeIn
+
+## T-test con dos muestras independientes en `R`
+
+### La función `t.test`
+
+.pull-left[
+<center>
+```{r, echo = F, fig.height=4, fig.width=5}
+url <- 'https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/mice_pheno.csv'
+mice <- read.csv(url)
+
+ggplot(mice, aes(x=Diet, y =Bodyweight, fill=Diet)) +
+  geom_boxplot(show.legend = F, alpha = 0.3) +
+  geom_jitter(aes(color=Diet), show.legend = F, alpha=0.5) + 
+  ggthemes::theme_base(base_size = 16) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white")) +
+  scale_fill_manual(values=c("cadetblue4", "orange2"))+
+  scale_color_manual(values=c("cadetblue4", "orange2"))  +
+  ggsignif::geom_signif(comparisons = #<<
+                list(c("chow", "hf")),#<<
+              test = "t.test")#<<
+
+```
+]
+
+.pull-right[
+
+```{r, echo = F, fig.height=4, fig.width=5}
+url <- 'https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/mice_pheno.csv'
+mice <- read.csv(url)
+
+ggplot(mice, aes(x=Diet, y =Bodyweight, fill=Diet)) +
+  geom_boxplot(show.legend = F, alpha = 0.3) +
+  geom_jitter(aes(color=Diet), show.legend = F, alpha=0.5) + 
+  ggthemes::theme_base(base_size = 16) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white")) +
+  scale_fill_manual(values=c("cadetblue4", "orange2"))+
+  scale_color_manual(values=c("cadetblue4", "orange2"))  +
+  ggsignif::geom_signif(comparisons = #<<
+                list(c("chow", "hf")),#<<
+              test = "t.test", map_signif_level = T)#<<
+
+```
+
+]
+
+
+---
+class: animated, fadeIn
+
+## T-test con dos muestras independientes en `R`
+
+### La función `t.test`
+
+.pull-left[
+
+<center>
+
+| Símbolo | Nivel de significación |
+|:--------:|:---------------------:|
+| `ns`     | p > 0.05             |
+| `*`      | p ≤ 0.05             |
+| `**`     | p ≤ 0.01             |
+| `***`    | p ≤ 0.001            |
+
+]
+
+.pull-right[
+
+```{r, echo = F, fig.height=4, fig.width=5}
+url <- 'https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/mice_pheno.csv'
+mice <- read.csv(url)
+
+ggplot(mice, aes(x=Diet, y =Bodyweight, fill=Diet)) +
+  geom_boxplot(show.legend = F, alpha = 0.3) +
+  geom_jitter(aes(color=Diet), show.legend = F, alpha=0.5) + 
+  ggthemes::theme_base(base_size = 16) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white")) +
+  scale_fill_manual(values=c("cadetblue4", "orange2"))+
+  scale_color_manual(values=c("cadetblue4", "orange2"))  +
+  ggsignif::geom_signif(comparisons = #<<
+                list(c("chow", "hf")),#<<
+              test = "t.test", map_signif_level = T)#<<
+
+```
+
+]
 
 
 ---
@@ -1612,161 +1648,556 @@ class: animated, fadeIn
 
 ## T-test para muestras pareadas
 
+.pull-left[
+
+**Ejemplo**: el peso de 15 ratones se mide antes y después de 1 mes con dieta alta en grasa 
+
+<img src="img/ratas.png">
+]
+
+
+.pull-right[
+
+```{r echo = F, fig.align='center', fig.height=5, fig.width=5}
+library(ggplot2)
+library(dplyr)
+
+set.seed(123)
+
+# Simular pesos antes y después para 15 ratones
+n <- 15
+before <- rnorm(n, mean = 25, sd = 3)
+
+# Aumentos siempre positivos (entre 0.5 y 3 g)
+increase <- runif(n, min = 0.5, max = 3)
+after <- before + increase
+
+# Crear dataframe largo
+mice_paired <- data.frame(
+    ID = rep(1:n, times = 2),
+    Time = factor(rep(c("antes", "despues"), each = n), levels = c("antes", "despues")),
+    Bodyweight = c(before, after)
+)
+
+# Gráfico
+ggplot(mice_paired, aes(x = Time, y = Bodyweight, group = ID)) +
+    geom_point(aes(color = Time), size = 3,
+             position = position_jitter(width = 0.01, height = 0)) +
+    scale_color_manual(values = c("antes" = "salmon", "despues" = "cadetblue3")) +
+    labs(x = "Tiempo", y = "Peso") +
+    ggthemes::theme_base(base_size = 18) +
+    theme(
+        legend.position = "none",
+        plot.title = element_text(face = "bold", hjust = 0.5)
+    )+
+    theme(panel.grid=element_blank(),
+          axis.text=element_text(color="black"),
+          panel.background = element_rect(fill = "white")) 
+```
+
+
+]
+
+--
+
+- La varianza es muy elevada entre los ratones.
+
+--
+
+- Si  hacemos un t-test de muestras independientes, el resultado es `r round(t.test(Bodyweight~Time, data = mice_paired)$statistic,3)*-1` (p=`r round(t.test(Bodyweight~Time, data = mice_paired)$p.value,3)`)
+
+---
+class: animated, fadeIn
+
+## T-test para muestras pareadas
+
+.pull-left[
+
+**Ejemplo**: el peso de 15 ratones se mide antes y después de 1 mes con dieta alta en grasa 
+
+<img src="img/ratas.png">
+]
+
+
+.pull-right[
+
+```{r echo = F, fig.align='center', fig.height=5, fig.width=5}
+library(ggplot2)
+library(dplyr)
+
+set.seed(123)
+
+# Simular pesos antes y después para 15 ratones
+n <- 15
+before <- rnorm(n, mean = 25, sd = 3)
+
+# Aumentos siempre positivos (entre 0.5 y 3 g)
+increase <- runif(n, min = 0.5, max = 3)
+after <- before + increase
+
+# Crear dataframe largo
+mice_paired <- data.frame(
+    ID = rep(1:n, times = 2),
+    Time = factor(rep(c("antes", "despues"), each = n), levels = c("antes", "despues")),
+    Bodyweight = c(before, after)
+)
+
+# Gráfico
+ggplot(mice_paired, aes(x = Time, y = Bodyweight, group = ID)) +
+    geom_line(color = "gray70", alpha = 0.7) +
+    geom_point(aes(color = Time), size = 3,
+             position = position_jitter(width = 0.01, height = 0)) +
+    scale_color_manual(values = c("antes" = "salmon", "despues" = "cadetblue3")) +
+    labs(x = "Tiempo", y = "Peso") +
+    ggthemes::theme_base(base_size = 18) +
+    theme(
+        legend.position = "none",
+        plot.title = element_text(face = "bold", hjust = 0.5)
+    )+
+    theme(panel.grid=element_blank(),
+          axis.text=element_text(color="black"),
+          panel.background = element_rect(fill = "white")) 
+```
+
+
+]
+
+- Al visualizar los datos pareados (línea gris) vemos que todos los ratones han incrementado de peso.
+
+---
+class: animated, fadeIn
+
+## T-test para muestras pareadas
+
+.pull-left[
+
+```{r echo = F, fig.align='center', fig.height=5, fig.width=5}
+library(ggplot2)
+library(dplyr)
+
+set.seed(123)
+
+# Simular pesos antes y después para 15 ratones
+n <- 15
+before <- rnorm(n, mean = 25, sd = 3)
+
+# Aumentos siempre positivos (entre 0.5 y 3 g)
+increase <- runif(n, min = 0.5, max = 3)
+after <- before + increase
+
+# Crear dataframe largo
+mice_paired <- data.frame(
+    ID = rep(1:n, times = 2),
+    Time = factor(rep(c("antes", "despues"), each = n), levels = c("antes", "despues")),
+    Bodyweight = c(before, after)
+)
+
+# --- Pasar a formato ancho ---
+mice_wide <- mice_paired %>%
+  pivot_wider(
+    names_from = Time,
+    values_from = Bodyweight
+  )
+
+# --- Calcular la diferencia ---
+mice_wide <- mice_wide %>%
+  mutate(diff = despues - antes)
+
+# --- Visualizar la diferencia ---
+ggplot(mice_wide, aes(x = factor(ID), y = diff)) +
+  geom_point(fill = "cadetblue3", color = "black") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey40") +
+  labs(
+    x = "ID",
+    y = "Cambio en peso (después - antes)",
+  ) +
+    ggthemes::theme_base(base_size = 18) +
+    theme(
+        legend.position = "none",
+        plot.title = element_text(face = "bold", hjust = 0.5)
+    )+
+    theme(panel.grid=element_blank(),
+          axis.text=element_text(color="black"),
+          panel.background = element_rect(fill = "white")) +
+  ylim(c(-4,4))
+```
+
+]
+
+
+.pull-right[
+
+```{r echo = F, fig.align='center', fig.height=5, fig.width=5}
+library(ggplot2)
+library(dplyr)
+
+set.seed(123)
+
+# Simular pesos antes y después para 15 ratones
+n <- 15
+before <- rnorm(n, mean = 25, sd = 3)
+
+# Aumentos siempre positivos (entre 0.5 y 3 g)
+increase <- runif(n, min = 0.5, max = 3)
+after <- before + increase
+
+# Crear dataframe largo
+mice_paired <- data.frame(
+    ID = rep(1:n, times = 2),
+    Time = factor(rep(c("antes", "despues"), each = n), levels = c("antes", "despues")),
+    Bodyweight = c(before, after)
+)
+
+# Gráfico
+ggplot(mice_paired, aes(x = Time, y = Bodyweight, group = ID)) +
+    geom_line(color = "gray70", alpha = 0.7) +
+    geom_point(aes(color = Time), size = 3,
+             position = position_jitter(width = 0.01, height = 0)) +
+    scale_color_manual(values = c("antes" = "salmon", "despues" = "cadetblue3")) +
+    labs(x = "Tiempo", y = "Peso") +
+    ggthemes::theme_base(base_size = 18) +
+    theme(
+        legend.position = "none",
+        plot.title = element_text(face = "bold", hjust = 0.5)
+    )+
+    theme(panel.grid=element_blank(),
+          axis.text=element_text(color="black"),
+          panel.background = element_rect(fill = "white")) 
+```
+
+
+]
+
+---
+class: animated, fadeIn
+
+## T-test para muestras pareadas
+
+.pull-left[
+
+```{r echo = F, fig.align='center', fig.height=5, fig.width=5}
+library(ggplot2)
+library(dplyr)
+
+set.seed(123)
+
+# Simular pesos antes y después para 15 ratones
+n <- 15
+before <- rnorm(n, mean = 25, sd = 3)
+
+# Aumentos siempre positivos (entre 0.5 y 3 g)
+increase <- runif(n, min = 0.5, max = 3)
+after <- before + increase
+
+# Crear dataframe largo
+mice_paired <- data.frame(
+    ID = rep(1:n, times = 2),
+    Time = factor(rep(c("antes", "despues"), each = n), levels = c("antes", "despues")),
+    Bodyweight = c(before, after)
+)
+
+# --- Pasar a formato ancho ---
+mice_wide <- mice_paired %>%
+  pivot_wider(
+    names_from = Time,
+    values_from = Bodyweight
+  )
+
+# --- Calcular la diferencia ---
+mice_wide <- mice_wide %>%
+  mutate(diff = despues - antes)
+
+# --- Visualizar la diferencia ---
+ggplot(mice_wide, aes(x = factor(ID), y = diff)) +
+  geom_point(fill = "cadetblue3", color = "black") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey40") +
+  labs(
+    x = "ID",
+    y = "Cambio en peso (después - antes)",
+  ) +
+  annotate("text",y = 0.3, x = 12,  label = "mu[0] == 0", parse = TRUE)+
+    ggthemes::theme_base(base_size = 18) +
+    theme(
+        legend.position = "none",
+        plot.title = element_text(face = "bold", hjust = 0.5)
+    )+
+    theme(panel.grid=element_blank(),
+          axis.text=element_text(color="black"),
+          panel.background = element_rect(fill = "white")) +
+  ylim(c(-4,4))
+```
+
+]
+
+.pull-right[
+
+#### T-test de una muestra
+
+- El valor de referencia es $\mu_0=0$.
+
+- Valor `t` es `r round(t.test(mice_wide$diff,mu = 0)$statistic,3)` por lo que ahora sí es significativo
+
+$$
+t=\frac{\bar{x}-0}{\frac{s}{\sqrt{n}}}
+$$
+
+]
+
+---
+class: animated, fadeIn
+
+## El t-test con datos pareados aumenta la potencia estadística
+
+.pull-left[
+- El t-test pareado incrementa la potencia estadística (ver diferencias significativas) que el t-test de muestras independientes 
+
+- Fuentes de aleatoriedad:
+  - Respuestas individuales de cada tratamiento
+  - El peso inicial de los ratones es diferente
+  
+> El t-test pareado controla por esos factores
+
+]
+
+.pull-right[
+
+```{r echo = F, fig.align='center', fig.height=5, fig.width=5}
+library(ggplot2)
+library(dplyr)
+
+set.seed(123)
+
+# Simular pesos antes y después para 15 ratones
+n <- 15
+before <- rnorm(n, mean = 25, sd = 3)
+
+# Aumentos siempre positivos (entre 0.5 y 3 g)
+increase <- runif(n, min = 0.5, max = 3)
+after <- before + increase
+
+# Crear dataframe largo
+mice_paired <- data.frame(
+    ID = rep(1:n, times = 2),
+    Time = factor(rep(c("antes", "despues"), each = n), levels = c("antes", "despues")),
+    Bodyweight = c(before, after)
+)
+
+# --- Pasar a formato ancho ---
+mice_wide <- mice_paired %>%
+  pivot_wider(
+    names_from = Time,
+    values_from = Bodyweight
+  )
+
+# --- Calcular la diferencia ---
+mice_wide <- mice_wide %>%
+  mutate(diff = despues - antes)
+
+# --- Visualizar la diferencia ---
+ggplot(mice_wide, aes(x = factor(ID), y = diff)) +
+  geom_point(fill = "cadetblue3", color = "black") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey40") +
+  labs(
+    x = "ID",
+    y = "Cambio en peso (después - antes)",
+  ) +
+  annotate("text",y = 0.3, x = 12,  label = "mu[0] == 0", parse = TRUE)+
+    ggthemes::theme_base(base_size = 18) +
+    theme(
+        legend.position = "none",
+        plot.title = element_text(face = "bold", hjust = 0.5)
+    )+
+    theme(panel.grid=element_blank(),
+          axis.text=element_text(color="black"),
+          panel.background = element_rect(fill = "white")) +
+  ylim(c(-4,4))
+```
+
+]
+
+---
+class: animated, fadeIn
+
+## T-test para muestras pareadas en `R`
+
+### La función `t.test`
+
+> La tabla tiene dos columnas con los valores de antes y después pareados
+
+.pull-left[
+```{r echo = F}
+head(mice_wide,8)
+```
+]
+
+.pull-right[
+
+```{r echo = T}
+t.test(mice_wide$antes, mice_wide$despues,
+       paired = TRUE, alternative = "two.sided")
+```
+]
+
+---
+class: animated, fadeIn
+
+## T-test para muestras pareadas en `R`
+
+### La función `t.test`
+
+> La tabla tiene una columna con la condicion y otra con los valores
+
+.pull-left[
+```{r echo = F}
+head(arrange(mice_paired,ID),8)
+```
+]
+
+.pull-right[
+
+```{r echo = T}
+t.test(mice_paired$Bodyweight~mice_paired$Time,
+       paired = TRUE, alternative = "two.sided")
+```
+]
+
+---
+class: animated, fadeIn
+
+## Interpretando p-valores
+
+.pull-left[
+
+- Se comparó las diferencias en la respuesta a dos tratamientos, A y B, para ver si B era mejor que A.
+
+- Si estuvieras en una compañía farmaceutica... continuarias investigando sobre el tratamiento B?
+
+- La diferencia entre las dos respuestas es de solo 0.2
+  - El gráfico puede engañar
+  - El p-valor es significativo
+
+> Hay que tener en cuenta que la **significancia estadística** no es lo mismo que la **relevancia biológica**
+
+]
+
+.pull-right[
+
+```{r echo = F, fig.align='center', fig.height=5, fig.width=5}
+# Cargar librerías
+library(ggplot2)
+library(dplyr)
+
+set.seed(123)  # reproducibilidad
+
+# Generar datos simulados
+# Grupo A y B con diferencia pequeña
+grupo <- rep(c("A", "B"), each = 30)
+valor <- c(rnorm(30, mean = 5, sd = 1),
+           rnorm(30, mean = 5.3, sd = 1))  # diferencia pequeña
+
+datos <- data.frame(grupo, valor)
+
+# Comprobar p-value con t-test pareado (simulamos pareado)
+# Aquí usamos test no pareado como ejemplo
+t_test <- t.test(valor ~ grupo, data = datos)
+
+# Graficar boxplots
+ggplot(datos, aes(x = grupo, y = valor, fill = grupo)) +
+  geom_boxplot(width = 0.6) +
+  geom_jitter(width = 0.1, alpha = 0.5) +
+  theme_minimal() +
+  labs(title = paste("p-value =", round(t_test$p.value, 3)),
+       x = "Grupo", y = "Valor") +
+  scale_fill_manual(values = c("cadetblue4", "orange3")) +
+    ggthemes::theme_base(base_size = 18) +
+    theme(
+        legend.position = "none",
+        plot.title = element_text(face = "bold", hjust = 0.5)
+    )+
+    theme(panel.grid=element_blank(),
+          axis.text=element_text(color="black"),
+          panel.background = element_rect(fill = "white"))
+
+```
+
+]
 
 
 ---
 class: animated, fadeIn
 
+## Interpretando p-valores
 
+.pull-left[
 
+- El p-valor indica la probabilidad de obtener los datos observados suponiendo que la hipótesis nula es cierta, no la probabilidad de que la hipótesis nula sea verdadera.
 
----
-class: animated, fadeIn
+- Ausencia de evidencia no equivale a evidencia de ausencia. No detectar un efecto puede deberse a que los datos son insuficientes para demostrarlo.
 
+- Los niveles de significancia son arbitrarios: un p-valor de 0.049 no es sustancialmente distinto de uno de 0.051.
 
+]
 
+.pull-right[
 
----
-class: animated, fadeIn
+```{r echo = F, fig.align='center', fig.height=5, fig.width=5}
+# Cargar librerías
+library(ggplot2)
+library(dplyr)
 
+set.seed(123)  # reproducibilidad
 
+# Generar datos simulados
+# Grupo A y B con diferencia pequeña
+grupo <- rep(c("A", "B"), each = 30)
+valor <- c(rnorm(30, mean = 5, sd = 1),
+           rnorm(30, mean = 5.3, sd = 1))  # diferencia pequeña
 
+datos <- data.frame(grupo, valor)
 
----
-class: animated, fadeIn
+# Comprobar p-value con t-test pareado (simulamos pareado)
+# Aquí usamos test no pareado como ejemplo
+t_test <- t.test(valor ~ grupo, data = datos)
 
+# Graficar boxplots
+ggplot(datos, aes(x = grupo, y = valor, fill = grupo)) +
+  geom_boxplot(width = 0.6) +
+  geom_jitter(width = 0.1, alpha = 0.5) +
+  theme_minimal() +
+  labs(title = paste("p-value =", round(t_test$p.value, 3)),
+       x = "Grupo", y = "Valor") +
+  scale_fill_manual(values = c("cadetblue4", "orange3")) +
+    ggthemes::theme_base(base_size = 18) +
+    theme(
+        legend.position = "none",
+        plot.title = element_text(face = "bold", hjust = 0.5)
+    )+
+    theme(panel.grid=element_blank(),
+          axis.text=element_text(color="black"),
+          panel.background = element_rect(fill = "white"))
 
+```
 
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
+]
 
 ---
 class: animated, fadeIn
 
+# Resumen
 
+El **manual de instrucciones** para realizar test es el siguiente:
 
+1. Plantear una hipótesis $H_0$ que quieras rechazar.
 
----
-class: animated, fadeIn
+2. Elige un test estadístico que sea sensible a desviaciones de $H_0$. 
 
+3. Determina la distribución nula del test estadístico: la distribución que sigue bajo la hipótesis nula.
 
+4. Calcula el valor real del test estadístico.
 
+5. Calcula el p-valor: la probabilidad de obtener un valor al menos tan extremo como el observado según la distribución nula.
 
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
-
-
-
----
-class: animated, fadeIn
-
+6. Decide (basándote en el nivel de significancia) si  rechazas la hipótesis nula.
 
 
 ---
