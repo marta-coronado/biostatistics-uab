@@ -54,7 +54,9 @@ Muchos tests estadísticos asumen que la variable que se analiza sigue una **dis
 
 Una tipo de gráfico que puede ayudarnos a visualizar si una variable es aproximadamente normal es el **_quantile plot_** (o **QQ-plot**). El QQ-plot muestra nuestros datos en el eje vertical (`y`) ordenados de menor a mayor (“**quantiles de la muestra**”), y en el eje horizontal (`x`) muestra el valor esperado con el mismo cuantil si la distribución fuera normal (“**quantiles teóricos**”). Si los datos provienen de una distribución normal, el QQ-plot debería seguir más o menos una **línea recta** (con cierta tolerancia por variación muestral).
 
-![](QQplot.png)
+<center>
+<img src="https://github.com/marta-coronado/biostatistics-uab/blob/main/P/3/img/QQplot.png?raw=true" width=30%>
+</center>
 
 <i class="fas fa-search"></i> **Ejemplo: ¿sigue la edad de los pasarejos del Titanic una distribución normal?**
 
@@ -62,8 +64,8 @@ Una tipo de gráfico que puede ayudarnos a visualizar si una variable es aproxim
 library(ggplot2)
 
 # leemos un dataframe con informacion de los pasarejos del Titanic
-
-titanicData <- fread("https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/titanic.csv")
+url <- "https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/titanic.csv"
+titanicData <- read.csv(url)
 
 # vemos las primeras filas
 head(titanicData)
@@ -153,7 +155,6 @@ Otro gráfico muy utilizado para visualizar una distribución y saber si sigue u
 
 
 ```
-
 
 ## 4. Propiedades de la distribucion normal
 
@@ -249,7 +250,6 @@ muestreo_vs_poblacion <- function(n_muestras = 100, tam_muestra = 30, media_pob 
 muestreo_vs_poblacion(n_muestras = 500, tam_muestra = 50, media_pob = 50, sd_pob = 10, tam_pob = 1000)
 ```
 
-
 <i class="fa fa-cogs"></i> **Haz pruebas con la función para responder si las siguientes afirmaciones son verdaderas o falsas.**
 
 - _La media de las medias muestrales se aproxima a la media poblacional._
@@ -280,21 +280,19 @@ muestreo_vs_poblacion(n_muestras = 500, tam_muestra = 50, media_pob = 50, sd_pob
 
 Vamos a trabajar con la tabla "`mammals.csv`", disponible en [este enlace](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/mammals.csv). 
 
-<i class="fas fa-info-circle"></i> Podemos leer el contenido de un fichero directamente de un enlace:
+<i class="fa fa-cogs"></i> Lee y guarda en un objeto llamado `mammals` la tabla `mammals.csv` del siguiente enlace (usa el ejemplo del Titanic de más arriba):
 
 ```{r}
 url <- "https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/mammals.csv"
 
-mammals <- read.csv(url)
 ```
 
 El archivo `mammals.csv` contiene información sobre la **masa corporal** de diversas especies de mamíferos. 
 
 <i class="fa fa-cogs"></i> **Representa la distribución de la masa corporal (columna `body_mass_kg`) utilizando un QQ-plot (recuerda usar tu función `QQ_plot()`). Describe la forma de la distribución. ¿Te parece que sigue una distribución normal?**
 
+```{r }
 
-```{r}
-QQ_plot(mammals$body_mass_kg)
 ```
 
 Una manera de acercar los datos a una distribución normal es utilizar una **escala logarítmica**. Con una transformación, aplicamos la misma **función matemática** a cada valor de una variable numérica del conjunto de datos. En el caso de la **transformación logarítmica**, tomamos el **logaritmo** de cada valor individual de la variable numérica.
@@ -333,13 +331,13 @@ Podemos usar `pnorm()` para calcular la **probabilidad de que un animal tenga un
 
 ```
 
-## 7. La función `qnorm()`:obtener valores (cuantiles) a partir de probabilidades acumuladas
+## 7. La función `qnorm()`: obtener valores (cuantiles) a partir de probabilidades acumuladas
 
 Vamos a ver la última función de la práctica, `qnorm()`. La función `qnorm()` nos devuelve el **valor crítico** (o cuantil) de una distribución normal para un determinado **percentil** o **nivel de probabilidad**. En otras palabras, nos dice el valor de *x* tal que la probabilidad acumulada hasta ese punto sea igual a *p*.
 
 <i class="fas fa-search"></i> Por ejemplo:
 
-```{r eval =F}
+```{r eval = F}
 qnorm(0.5, mean = mean(log(mammals$body_mass_kg)), sd = sd(log(mammals$body_mass_kg)))
 ```
 
@@ -356,37 +354,18 @@ exp(valor)
 
 <i class="fa fa-cogs"></i> **¿Cuál es el peso que separa al 1% de los animales más pesados del resto (percentil 99)?**
 
-```{r eval =F}
-qnorm(0.99, mean = mean(log(mammals$body_mass_kg)), sd = sd(log(mammals$body_mass_kg)))
-q99_kg <- exp(8.576701)
-q99_kg
+```{r}
 
 ```
 
-<i class="fa fa-cogs"></i> **Utiliza la función `filter()` para ver si en la tabla `mammals` hay algun animal con un peso superior** (ejemplo en [esta diapositiva](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#25)):
+<i class="fa fa-cogs"></i> **Utiliza la función `filter()` para ver si en la tabla `mammals` hay algun animal con un peso superior al que acabas de obtener** (ejemplo en [esta diapositiva](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#25)):
 
-```{r eval = F}
-
-mammals %>%
-  filter(body_mass_kg > 5306.57)
+```{r}
 
 ```
 
 <i class="fa fa-cogs"></i> **Encuentra qué animales están en el 5% de la cola inferior (los más pequeños).**
 
-```{r eval =F}
+```{r}
 
-# Calcular el percentil 5 en escala logarítmica
-q5_log <- qnorm(0.05, 
-                mean = mean(log(mammals$body_mass_kg)), 
-                sd   = sd(log(mammals$body_mass_kg)))
-
-# Transformar de nuevo a kilogramos
-q5_kg <- exp(q5_log)
-q5_kg
-
-# Filtrar los mamíferos más pequeños (por debajo del percentil 5)
-mammals %>%
-  filter(body_mass_kg < q5_kg)
 ```
-
