@@ -1,0 +1,392 @@
+---
+title: "**Distribución normal:**<br><font color='#A8A8A8' size='5'>práctica en  `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
+author: "Marta Coronado Zamora"
+date: "Octubre 2025"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5)
+library(dplyr)
+library(tibble)
+library(ggplot2)
+# install.packages("prettydoc")
+library(prettydoc)
+library(data.table)
+```
+
+
+<style>
+  @import url(https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,500,500i,700,700i);
+  @import url(https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css);
+  @import url("https://use.fontawesome.com/releases/v5.10.1/css/all.css");
+  
+  body {
+    font-family: 'Fira Sans','Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Microsoft YaHei', 'Songti SC', serif;
+  }
+  
+  /* Make bold syntax compile to RU-red */
+  strong {
+    color: #DE1144;
+  }
+
+</style>
+
+
+# La distribución normal
+
+Muchos tests estadísticos asumen que la variable que se analiza sigue una **distribución normal**. Afortunadamente, muchos de estos tests son bastante robustos frente a esta suposición, es decir, funcionan razonablemente bien incluso cuando esta suposición no se cumple exactamente, especialmente cuando el tamaño de la muestra es grande. Por lo tanto, a menudo es suficiente poder evaluar si los datos provienen de una distribución cuya forma sea aproximadamente normal. Una manera de evaluarlo es a través de la visualizaciones.
+
+**Tabla resumen de las principales funciones de la normal en `R`**
+
+| Función | Qué hace |
+|--------------|--------------|
+| `rnorm(n, mean = 0, sd = 1)` | Genera *n* números aleatorios que siguen una distribución normal con una media y desviación estándar dadas. |
+| `pnorm(q, mean = 0, sd = 1, lower.tail = TRUE)` | Calcula *P(X ≤ x)* para una media y desviación estándar dadas. Calcula *P(X > x)* cuando `lower.tail = FALSE`. |
+| `qnorm(p, mean = 0, sd = 1, lower.tail = TRUE)` | Devuelve los valores críticos (cuantiles) de la distribución normal para un percentil, una media y una desviación estándar dadas. |
+
+
+## 1. Visualización de normalidad con QQ-plots
+
+Una tipo de gráfico que puede ayudarnos a visualizar si una variable es aproximadamente normal es el **_quantile plot_** (o **QQ-plot**). El QQ-plot muestra nuestros datos en el eje vertical (`y`) ordenados de menor a mayor (“**quantiles de la muestra**”), y en el eje horizontal (`x`) muestra el valor esperado con el mismo cuantil si la distribución fuera normal (“**quantiles teóricos**”). Si los datos provienen de una distribución normal, el QQ-plot debería seguir más o menos una **línea recta** (con cierta tolerancia por variación muestral).
+
+![](QQplot.png)
+
+<i class="fas fa-search"></i> **Ejemplo: ¿sigue la edad de los pasarejos del Titanic una distribución normal?**
+
+```{r fig.align='center'}
+library(ggplot2)
+
+# leemos un dataframe con informacion de los pasarejos del Titanic
+
+titanicData <- fread("https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/titanic.csv")
+
+# vemos las primeras filas
+head(titanicData)
+
+# QQ-plot con ggplot2
+ggplot(titanicData, aes(sample = age)) +
+  stat_qq() + # cuantiles
+  stat_qq_line(color = "firebrick4") + # línea de referencia
+  theme_classic()
+
+```
+
+Es difícil interpretar los QQ-plots sin experiencia. Uno de los objetivos de los ejercicios de hoy será **desarrollar cierta experiencia visual** sobre cómo se ven estos gráficos cuando los datos son realmente normales.  
+Para ello, aprovecharemos una función incorporada en R que genera **números aleatorios extraídos de una distribución normal**. Esta función se llama `rnorm()`.
+
+## 2. La función `rnorm` para generar una distribución normal aleatoria 
+
+La función `rnorm()` devuelve un vector de números, todos generados aleatoriamente a partir de una distribución normal, con una media $\mu$ y una desviación estándard $s$. Recibe tres argumentos principales:
+
+`rnorm(n, mean, sd)`
+
+- `n`: cuántos números aleatorios generar  
+- `mean`: la media de la distribución normal de la que se extraen los datos
+- `sd`: la desviación estándar de la distribución normal
+
+<i class="fa fa-cogs"></i> **Prueba la función: genera un vector de 100 números aleatorios extraídos de una distribución normal con media 13 y desviación estándar 4.**
+
+```{r}
+
+```
+
+Vamos a visualizar el QQ-plot de los datos anteriores. Para ello, en vez de reciclar el código anterior, vamos a utilizar algo **nuevo** en `R`: **funciones propias**. 
+
+El siguiente bloque de código genera una nueva función en `R` que llamaremos "`QQ_plot()`", que tomara como argumento un **vector numéricos de datos**.
+
+<i class="fa fa-cogs"></i> **Ejecuta el siguiente bloque de código.**
+
+```{r}
+# Función para crear QQ-plot con ggplot2
+QQ_plot <- function(vector_datos) {
+  # Crear data frame con el vector numerico pasado como argumento
+  df <- data.frame(valor = vector_datos)
+  
+  # QQ-plot con ggplot2
+  ggplot(df, aes(sample = valor)) +
+    stat_qq() +
+    stat_qq_line(color = "firebrick4") +
+    theme_classic() +
+    labs(
+      title = "QQ-plot",
+      x = "Quantiles teóricos",
+      y = "Quantiles de la muestra"
+    )
+}
+
+```
+
+<i class="fas fa-search"></i> **Vamos a probar si funciona:**
+
+```{r}
+# Vector numerico con valores de 1 al 15 cogidos de 0.5 en 0.5
+nums <- seq(1,15,0.5)
+
+# Ejecutamos nuestra función
+QQ_plot(nums)
+```
+
+<i class="fa fa-cogs"></i> **Genera el QQ-plot para visualizar los 100 valores que has simulado antes.**
+
+```{r}
+
+```
+
+<i class="fas fa-info-circle"></i> Estos puntos caen principalmente a lo largo de una línea recta, pero hay cierto **desvío alrededor de esa línea**, incluso cuando estos puntos sabemos que han sido realmente extraídos aleatoriamente de una distribución normal conocida. Por lo tanto, en un QQ-plot, buscamos un **patrón general que sea aproximadamente una línea recta**, pero no esperamos que sea perfecta.
+
+
+## 3. Visualizar distribuciones con histogramas
+
+Otro gráfico muy utilizado para visualizar una distribución y saber si sigue una distribución normal son los **histogramas**, que ya has trabajado en la P2.
+
+<i class="fa fa-cogs"></i> **(Opcional) Genera un histograma con `geom_histogram()`**
+
+```{r}
+# Recuerda que tendrás que generar un dataframe primero
+
+# tu_df <- data.frame(nombre_columna = vector_numeros)
+
+
+```
+
+
+## 4. Propiedades de la distribucion normal
+
+En estadística, normalmente **no trabajamos con toda la población**, sino con **muestras** que extraemos de ella para hacer inferencias.`R` tiene una función, `sample()`, que permite **tomar una muestra aleatoria** de X de observaciones (`size`) a partir de un vector (`x`). La sintaxis es: `sample(x, size)`. 
+
+<i class="fa fa-cogs"></i> **1. Muestrea 10 observaciones de la siguiente poblacion simulada.**
+
+```{r}
+poblacion <- rnorm(1000, mean = 6, sd = 1)
+
+```
+
+<i class="fa fa-cogs"></i> **2. Calcula la media  de la muestra con `mean()`.**
+
+```{r}
+
+```
+
+<i class="fa fa-cogs"></i> **3. Repite los pasos 1-2 1000 veces 😈 **
+
+```{r}
+
+```
+
+¿A mano? ¡No! vamos a generar una nueva función en R.
+
+La función `muestreo_vs_poblacion()` hará los pasos 1-3 por nosotros, ajustándose a cualquier población que queramos simular y al muestreo que queramos. La función hace:
+
+- **Genera una población simulada** (`poblacion`) a partir de una distribución normal con una media (`media_pob`) y desviación estándar (`sd_pob`) especificadas.  
+- **Extrae varias muestras aleatorias** de esa población (según el parámetro `n_muestras`), cada una con un tamaño determinado (`tam_muestra`).  
+- **Calcula la media de cada muestra**, obteniendo así una distribución de medias muestrales.  
+- **Representa dos histogramas**:
+  1. La **distribución original de la población**.  
+  2. La **distribución de las medias muestrales** obtenidas.  
+
+Ambos gráficos se muestran con el **mismo rango en el eje x** para que se pueda comparar visualmente.
+
+<i class="fa fa-cogs"></i> **Ejecuta el siguiente código para cargar la nueva función.**
+
+```{r}
+library(ggplot2)
+library(gridExtra)
+
+# la función recoge como argumentos el numero de muestras que muestreamos, el tamaño de la muestra, la mediay la desviacion estándard poblacional y el tamaño de la población
+muestreo_vs_poblacion <- function(n_muestras = 100, tam_muestra = 30, media_pob = 50, sd_pob = 10, tam_pob = 1000) {
+  
+  # Simular población normal
+  set.seed(123)
+  poblacion <- rnorm(tam_pob, mean = media_pob, sd = sd_pob)
+  
+  # Calcular medias muestrales: calcula la media de una muestra, dado un tamaño de muestra, tantas veces como queramos
+  sample_means <- replicate(n_muestras, mean(sample(poblacion, tam_muestra)))
+  
+  # Creamos los data frames para ggplot
+  df_pob <- data.frame(valor = poblacion)
+  df_means <- data.frame(media = sample_means)
+  
+  # Determinar rango común para eje x
+  rango_x <- range(c(df_pob$valor, df_means$media))
+  
+  # Histograma población
+  g1 <- ggplot(df_pob, aes(x = valor)) +
+    geom_histogram(binwidth = sd_pob/10, fill = "salmon2", color = "black") +
+    xlim(rango_x) +
+    theme_classic() +
+    labs(
+      title = paste0("Población completa de ", tam_pob ," observaciones - N(",media_pob,", ",sd_pob,")"),
+      x = "Valor",
+      y = "Frecuencia"
+    )
+  
+  # Histograma medias muestrales
+  g2 <- ggplot(df_means, aes(x = media)) +
+    geom_histogram(binwidth = sd_pob/10, fill = "cadetblue4", color = "black") +
+    xlim(rango_x) +
+    theme_classic() +
+    labs(
+      title = paste0("Medias muestrales (núm. muestras = ", n_muestras, ", tamaño muestra = ", tam_muestra,"),\nN(",round(mean(df_means$media),3),", ",round(sd(df_means$media),3),")"),
+      x = "Media de la muestra",
+      y = "Frecuencia"
+    )
+  
+  # Mostrar ambos gráficos
+  grid.arrange(g1, g2, ncol = 1)
+}
+
+```
+
+<i class="fa fa-cogs"></i> **Prueba la función:**
+
+```{r}
+# Ejemplo de uso
+muestreo_vs_poblacion(n_muestras = 500, tam_muestra = 50, media_pob = 50, sd_pob = 10, tam_pob = 1000)
+```
+
+
+<i class="fa fa-cogs"></i> **Haz pruebas con la función para responder si las siguientes afirmaciones son verdaderas o falsas.**
+
+- _La media de las medias muestrales se aproxima a la media poblacional._
+
+```{r}
+
+```
+
+- _La distribución de las medias muestrales siempre tiene la misma desviación estándar que la población._ 
+
+```{r}
+
+```
+
+- _Duplicar el tamaño de la muestra reduce a la mitad la desviación estándar de las medias muestrales._
+
+```{r}
+
+```
+
+- _El número de veces que muestreamos afecta la forma de la distribución de medias muestrales._
+
+```{r}
+
+```
+
+## 5. Ejemplo práctico con datos reales
+
+Vamos a trabajar con la tabla "`mammals.csv`", disponible en [este enlace](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/mammals.csv). 
+
+<i class="fas fa-info-circle"></i> Podemos leer el contenido de un fichero directamente de un enlace:
+
+```{r}
+url <- "https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/mammals.csv"
+
+mammals <- read.csv(url)
+```
+
+El archivo `mammals.csv` contiene información sobre la **masa corporal** de diversas especies de mamíferos. 
+
+<i class="fa fa-cogs"></i> **Representa la distribución de la masa corporal (columna `body_mass_kg`) utilizando un QQ-plot (recuerda usar tu función `QQ_plot()`). Describe la forma de la distribución. ¿Te parece que sigue una distribución normal?**
+
+
+```{r}
+QQ_plot(mammals$body_mass_kg)
+```
+
+Una manera de acercar los datos a una distribución normal es utilizar una **escala logarítmica**. Con una transformación, aplicamos la misma **función matemática** a cada valor de una variable numérica del conjunto de datos. En el caso de la **transformación logarítmica**, tomamos el **logaritmo** de cada valor individual de la variable numérica.
+
+Para ello, podemos crear una **nueva columna** que sea el logaritmo de la columna `body_mass_kg`.  
+
+<i class="fas fa-search"></i> En R, aplicar la transformación logarítmica es muy sencillo. En este caso, lo que haremos será **crear una nueva columna** dentro del mismo *dataframe* que contenga el valor transformado (en escala logarítmica).  Así, conservamos la columna original y añadimos una nueva con la transformación.
+  
+```{r eval = F}
+# Ejemplo
+df$nuevo_valor_transformado <- log(df$valor_sin_transformar)
+```
+
+<i class="fa fa-cogs"></i> **Crea la columna con la transformación logarítmica de la columna Comprueba que pasa ahora en el QQ-plot: ¿siguen los datos una distribución normal ahora?**
+
+```{r}
+
+```
+
+<i class="fa fa-cogs"></i> **Calcula la media y la desviación estándard de la columna log.**
+
+```{r}
+
+```
+
+## 6. La función `pnorm()`: probabilidad acumulada
+
+La función `pnorm()` calcula la **probabilidad acumulada** de una distribución normal.  
+Es decir, nos da la **probabilidad de que una variable aleatoria normal tome un valor menor o igual (o mayor) que un determinado número**.
+
+Podemos usar `pnorm()` para calcular la **probabilidad de que un animal tenga una masa inferior (o superior) a X kg**.
+
+<i class="fa fa-cogs"></i> **¿Cuál es la probabilidad de un animal con una masa inferior a 10kg?**
+
+```{r}
+
+```
+
+## 7. La función `qnorm()`:obtener valores (cuantiles) a partir de probabilidades acumuladas
+
+Vamos a ver la última función de la práctica, `qnorm()`. La función `qnorm()` nos devuelve el **valor crítico** (o cuantil) de una distribución normal para un determinado **percentil** o **nivel de probabilidad**. En otras palabras, nos dice el valor de *x* tal que la probabilidad acumulada hasta ese punto sea igual a *p*.
+
+<i class="fas fa-search"></i> Por ejemplo:
+
+```{r eval =F}
+qnorm(0.5, mean = mean(log(mammals$body_mass_kg)), sd = sd(log(mammals$body_mass_kg)))
+```
+
+Devuelve el valor en escala logarítmica que representa el percentil 50 (la mediana) de la distribución del peso de los mamíferos.
+
+<i class="fas fa-search"></i> Si queremos obtener este valor en kilogramos, debemos aplicar la función `exp()` para transformar el valor en escala logarítmica a normal:
+
+```{r}
+# Ejemplo
+valor<-log(10)
+
+exp(valor)
+```
+
+<i class="fa fa-cogs"></i> **¿Cuál es el peso que separa al 1% de los animales más pesados del resto (percentil 99)?**
+
+```{r eval =F}
+qnorm(0.99, mean = mean(log(mammals$body_mass_kg)), sd = sd(log(mammals$body_mass_kg)))
+q99_kg <- exp(8.576701)
+q99_kg
+
+```
+
+<i class="fa fa-cogs"></i> **Utiliza la función `filter()` para ver si en la tabla `mammals` hay algun animal con un peso superior** (ejemplo en [esta diapositiva](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#25)):
+
+```{r eval = F}
+
+mammals %>%
+  filter(body_mass_kg > 5306.57)
+
+```
+
+<i class="fa fa-cogs"></i> **Encuentra qué animales están en el 5% de la cola inferior (los más pequeños).**
+
+```{r eval =F}
+
+# Calcular el percentil 5 en escala logarítmica
+q5_log <- qnorm(0.05, 
+                mean = mean(log(mammals$body_mass_kg)), 
+                sd   = sd(log(mammals$body_mass_kg)))
+
+# Transformar de nuevo a kilogramos
+q5_kg <- exp(q5_log)
+q5_kg
+
+# Filtrar los mamíferos más pequeños (por debajo del percentil 5)
+mammals %>%
+  filter(body_mass_kg < q5_kg)
+```
+
