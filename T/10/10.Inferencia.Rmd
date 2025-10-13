@@ -469,6 +469,14 @@ rechazamos la H₀ cuando es verdadera
 
 - El medicamento sí tiene un efecto, y por lo tanto sí hay diferencias en la presión arterial, pero nuestra muestra no muestra diferencias, pensamos erróneamente que no tiene un efecto  
 
+---
+class: animated, fadeIn
+
+## 5. Tipos de errores
+
+
+<center>
+<img src="img/error.jpg" width=80%>
 
 ---
 class: animated, fadeIn
