@@ -31,6 +31,7 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Seminario 2: Problemas de estadística descriptiva](S/2/Problemas_Estadistica_Descriptiva.html)
 - [Seminario 3: Problemas distribución binomial](S/3/Problemas_Binomial.html)
 - [Seminario 4: Problemas distribución normal](S/4/Problemas_Normal.html)
+- [Seminario 5: Razonamiento estadístico](S/5/S5.html)
 
 ---
 
@@ -39,7 +40,8 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - <a href="P/1/PracticaR.Rmd" download>Descarga el documento `Rmd` de la Práctica 1 aquí</a>.
 - [Práctica 2: Distribución binomial - Práctica en `R`](P/2/Practica_Binomial.html)
 - <a href="P/2/Practica_Binomial.Rmd" download>Descarga el documento `Rmd` de la Práctica 2 aquí</a>.
-
+- [Práctica 3: Distribución normal - Práctica en `R`](P/3/Practica_Normal.html)
+- <a href="P/3/Practica_Normal.Rmd" download>Descarga el documento `Rmd` de la Práctica 3 aquí</a>.
 ---
 
 ✍️ *Última actualización: {{ site.time | date: "%d-%m-%Y" }}*
