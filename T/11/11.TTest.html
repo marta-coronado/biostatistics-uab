@@ -1015,7 +1015,7 @@ class: animated, fadeIn
 .pull-left[
 **Hipótesis alternativa**
 
-- La media de la muestra es igual al valor de referencia
+- La media de la muestra no es igual al valor de referencia
 
   $$
   H_1: \ \bar{x} \neq \mu_0
@@ -1318,7 +1318,7 @@ $$
 - Evidencia contra la hipótesis nula: `t` será **próximo a 0** cuando haya **poca evidencia** contra `\(H_0\)`, y tomará **valores grandes (en valor absoluto)** cuando exista **mucha evidencia** contra `\(H_0\)`.
 
 - El valor de `t` tiene en cuenta el **tamaño del efecto**, el **tamaño de la muestra** y la **varianza**:
-
+&lt;small&gt;
   - **Tamaño de la muestra:** si el tamaño del efecto se calcula a partir de una **muestra grande**, es **menos probable** que las diferencias observadas se deban al azar.  **A mayor tamaño de muestra**, **mayor será el valor  de `t`**, ya que la estimación de la media es más precisa.
 
 ]
@@ -2089,7 +2089,7 @@ class: animated, fadeIn
 
 ### La tabla de la distribución `t`
 
-Si nuestra hipótesis alternativa hubier sido direccional (**una cola**), el resultado sería diferente:
+Si nuestra hipótesis alternativa hubiera sido direccional (**una cola**), el resultado sería también significativo, y el p-valor sería aún menor:
 
 $$
 H_0: \ \bar{x} = \mu_0 \qquad H_1: \ \bar{x} &gt; \mu_0
@@ -2322,6 +2322,8 @@ class: animated, fadeIn
 .pull-left[
 
 ``` r
+mu0 &lt;- 23.89338
+
 t.test(weights, mu = mu0, 
        alternative = &quot;two.sided&quot;)
 ```
@@ -2485,7 +2487,7 @@ Podemos rechazar la hipótesis nula con un valor crítico `t` para 844 grados de
    &lt;td style=&quot;text-align:center;&quot;&gt; 2.6259 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style=&quot;text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;font-weight: bold;background-color: rgba(255, 230, 230, 255) !important;&quot;&gt; ∞ &lt;/td&gt;
+   &lt;td style=&quot;text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;font-weight: bold;background-color: rgba(255, 230, 230, 255) !important;&quot;&gt; 8 &lt;/td&gt;
    &lt;td style=&quot;text-align:center;font-weight: bold;background-color: rgba(255, 230, 230, 255) !important;&quot;&gt; 0.6745 &lt;/td&gt;
    &lt;td style=&quot;text-align:center;font-weight: bold;background-color: rgba(255, 230, 230, 255) !important;&quot;&gt; 1.2816 &lt;/td&gt;
    &lt;td style=&quot;text-align:center;font-weight: bold;background-color: rgba(255, 230, 230, 255) !important;&quot;&gt; 1.6449 &lt;/td&gt;
@@ -2787,7 +2789,7 @@ class: animated, fadeIn
 .pull-left[
 
 ```
-## # A tibble: 8 × 4
+## # A tibble: 8 x 4
 ##      ID antes despues  diff
 ##   &lt;int&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
 ## 1     1  23.3    26.2 2.91 
@@ -2815,12 +2817,12 @@ t.test(mice_wide$antes, mice_wide$despues,
 ## 
 ## data:  mice_wide$antes and mice_wide$despues
 ## t = -8.5893, df = 14, p-value = 5.931e-07
-## alternative hypothesis: true mean difference is not equal to 0
+## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
 ##  -2.055961 -1.234353
 ## sample estimates:
-## mean difference 
-##       -1.645157
+## mean of the differences 
+##               -1.645157
 ```
 ]
 
@@ -2862,12 +2864,12 @@ t.test(mice_paired$Bodyweight~mice_paired$Time,
 ## 
 ## data:  mice_paired$Bodyweight by mice_paired$Time
 ## t = -8.5893, df = 14, p-value = 5.931e-07
-## alternative hypothesis: true mean difference is not equal to 0
+## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
 ##  -2.055961 -1.234353
 ## sample estimates:
-## mean difference 
-##       -1.645157
+## mean of the differences 
+##               -1.645157
 ```
 ]
 

@@ -406,7 +406,7 @@ class: animated, fadeIn
 .pull-left[
 **Hipótesis alternativa**
 
-- La media de la muestra es igual al valor de referencia
+- La media de la muestra no es igual al valor de referencia
 
   $$
   H_1: \ \bar{x} \neq \mu_0
@@ -734,7 +734,7 @@ $$
 - Evidencia contra la hipótesis nula: `t` será **próximo a 0** cuando haya **poca evidencia** contra $H_0$, y tomará **valores grandes (en valor absoluto)** cuando exista **mucha evidencia** contra $H_0$.
 
 - El valor de `t` tiene en cuenta el **tamaño del efecto**, el **tamaño de la muestra** y la **varianza**:
-
+<small>
   - **Tamaño de la muestra:** si el tamaño del efecto se calcula a partir de una **muestra grande**, es **menos probable** que las diferencias observadas se deban al azar.  **A mayor tamaño de muestra**, **mayor será el valor  de `t`**, ya que la estimación de la media es más precisa.
 
 ]
@@ -1150,7 +1150,7 @@ class: animated, fadeIn
 
 ### La tabla de la distribución `t`
 
-Si nuestra hipótesis alternativa hubier sido direccional (**una cola**), el resultado sería diferente:
+Si nuestra hipótesis alternativa hubiera sido direccional (**una cola**), el resultado sería también significativo, y el p-valor sería aún menor:
 
 $$
 H_0: \ \bar{x} = \mu_0 \qquad H_1: \ \bar{x} > \mu_0
@@ -1247,6 +1247,8 @@ class: animated, fadeIn
 
 .pull-left[
 ```{r}
+mu0 <- 23.89338
+
 t.test(weights, mu = mu0, 
        alternative = "two.sided")
 ```
@@ -1774,6 +1776,7 @@ class: animated, fadeIn
 ```{r echo = F, fig.align='center', fig.height=5, fig.width=5}
 library(ggplot2)
 library(dplyr)
+library(tidyr)
 
 set.seed(123)
 
