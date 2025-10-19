@@ -306,13 +306,13 @@ Para ello, podemos crear una **nueva columna** que sea el logaritmo de la column
 df$nuevo_valor_transformado <- log(df$valor_sin_transformar)
 ```
 
-<i class="fa fa-cogs"></i> **Crea la columna con la transformación logarítmica de la columna Comprueba que pasa ahora en el QQ-plot: ¿siguen los datos una distribución normal ahora?**
+<i class="fa fa-cogs"></i> **Crea una nueva columna con el resultado de la transformación logarítmica de la columna `body_mass_kg`. Comprueba qué pasa ahora en el QQ-plot: ¿siguen los datos una distribución normal ahora?**
 
 ```{r}
 
 ```
 
-<i class="fa fa-cogs"></i> **Calcula la media y la desviación estándard de la columna log.**
+<i class="fa fa-cogs"></i> **Calcula la media y la desviación estándard de la columna con el logaritmo de `body_mass_kg`.**
 
 ```{r}
 
@@ -321,13 +321,16 @@ df$nuevo_valor_transformado <- log(df$valor_sin_transformar)
 ## 6. La función `pnorm()`: probabilidad acumulada
 
 La función `pnorm()` calcula la **probabilidad acumulada** de una distribución normal.  
-Es decir, nos da la **probabilidad de que una variable aleatoria normal tome un valor menor o igual (o mayor) que un determinado número**.
+Es decir, nos da la **probabilidad de que una variable aleatoria normal tome un valor menor (o mayor) o igual que un determinado número**.
 
 Podemos usar `pnorm()` para calcular la **probabilidad de que un animal tenga una masa inferior (o superior) a X kg**.
 
-<i class="fa fa-cogs"></i> **¿Cuál es la probabilidad de un animal con una masa inferior a 10kg?**
+<i class="fa fa-cogs"></i> **¿Cuál es la probabilidad de un animal con una masa inferior a 10kg?** 
+
+ Considera la media y al desviación estándard que has calculado antes, es decir, con al transformación logarítmica. Recuerda transformar el 10 a escala logarítmica.
 
 ```{r}
+# log(10)
 
 ```
 
@@ -347,12 +350,16 @@ Devuelve el valor en escala logarítmica que representa el percentil 50 (la medi
 
 ```{r}
 # Ejemplo
-valor<-log(10)
+valor <- log(10)
 
 exp(valor)
 ```
 
+En el ejemplo, obtenemos que 1.343 es el valor que representa la mediana, si lo transformamos a kg, nos da 3.83kg.
+
 <i class="fa fa-cogs"></i> **¿Cuál es el peso que separa al 1% de los animales más pesados del resto (percentil 99)?**
+
+Recuerda transformar el valor a kg.
 
 ```{r}
 
@@ -364,7 +371,7 @@ exp(valor)
 
 ```
 
-<i class="fa fa-cogs"></i> **Encuentra qué animales están en el 5% de la cola inferior (los más pequeños).**
+<i class="fa fa-cogs"></i> (OPCIONAL) **Encuentra qué animales están en el 5% de la cola inferior (los más pequeños).**
 
 ```{r}
 
