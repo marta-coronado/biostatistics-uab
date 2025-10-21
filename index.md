@@ -23,7 +23,9 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Tema 9: Intervalos de confianza](T/9/9.Intervaloconfianza.html)
 - [Tema 10: Inferencia estadística](T/10/10.Inferencia.html)
 - [Tema 11: T-test](T/11/11.TTest.html)
- 
+- [Tema 12: T-test (II)](T/12/12.TTest_pt2.html)
+- [Tema 13: ANOVA (I)](T/13/13.ANOVA.html)
+
 ---
 
 ## 🗣️ Seminarios
@@ -32,6 +34,7 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Seminario 3: Problemas distribución binomial](S/3/Problemas_Binomial.html)
 - [Seminario 4: Problemas distribución normal](S/4/Problemas_Normal.html)
 - [Seminario 5: Razonamiento estadístico](S/5/S5.html)
+- [Seminario 6: Problemas de t-test](S/6/S6.html)
 
 ---
 
