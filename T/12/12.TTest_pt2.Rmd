@@ -118,6 +118,17 @@ $$
 - Para $n$ muy grandes, se puede aproximar a una normal (IC 95% = t = 1.96)
 
 ---
+
+class: animated, fadeIn
+
+## Intervalos de confianza para la media poblacional con la distribución t
+
+<center>
+<img src="img/CriticalRegion.png" width=80%>
+</center>
+
+
+---
 class: animated, fadeIn
 
 ## Intervalos de confianza para la media poblacional con la distribución t
