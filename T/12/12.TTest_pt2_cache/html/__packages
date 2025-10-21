@@ -1,3 +1,4 @@
+dplyr
 ggplot2
 readr
 knitr
@@ -5,7 +6,4 @@ xaringanthemer
 xaringanExtra
 carData
 car
-magick
-pdftools
-dplyr
 kableExtra

@@ -1,0 +1,766 @@
+---
+title: "<br>"
+subtitle: ""
+author: ""
+date: ""
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, rutgers, "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css", "https://use.fontawesome.com/releases/v7.0.0/css/all.css"]
+    lib_dir: libs
+    self_contained: true
+    nature:
+      mathjax: "default"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+      
+---
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+#knitr::include_graphics()
+knitr::opts_chunk$set(
+  cache = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  fig.retina = 5
+)
+library(ggplot2)
+library(readr)
+library(knitr)
+#pagedown::chrome_print(".html")
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_accent(
+  base_color = "#1c5253", link_color =  "#DE1144", code_inline_color = "#DE1144",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "400", "400i"),
+  code_font_google   = google_font("Roboto Mono"),
+    
+)
+```
+
+```{r xaringanExtra-clipboard, echo=FALSE}
+library(xaringanExtra)
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #90BE6D\"></i>",
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
+
+
+class: animated, fadeIn
+# Outline
+
+#### **ANOVA**
+
+- Ejemplo
+- ¿Qué es un ANOVA?
+- ANOVA de una vía
+- ANOVA de dos vías
+- ANOVA en R
+
+<style>
+.title-slide {
+  background-image: url('img/1.png');
+  background-size: 100%;
+}
+</style>
+
+---
+class: animated, fadeIn
+
+## Ejemplo
+
+_It is thought that stress may increase susceptibility to illness through suppression of the immune system. In an experiment to investigate this theory, 48 rats were randomly allocated to four treatment groups: no stress, mild stress, moderate stress, and high stress. The stress conditions involved various amounts of restraint and electric shock. The concentration of lymphocytes (cells/ml × 10<sup>-6</sup>) in the peripheral blood was measured for each rat._ 
+
+_Perform an appropriate statistical analysis of this experiment._
+
+--
+
+- H<sub>0</sub> y H<sub>1</sub>?
+- Variable respuesta?
+- Grupos?
+
+---
+class: animated, fadeIn
+
+## Ejemplo
+
+_It is thought that **stress may increase susceptibility to illness** through suppression of the immune system. In an experiment to investigate this theory, 48 rats were randomly allocated to **four treatment groups**: no stress, mild stress, moderate stress, and high stress. The stress conditions involved various amounts of restraint and electric shock. The **concentration of lymphocytes** (cells/ml × 10<sup>-6</sup>) in the peripheral blood was measured for each rat._ 
+
+_Perform an appropriate statistical analysis of this experiment._
+
+- ¿Por qué no podemos hacer t-tests a pares? (no stress *vs.* mild stress, no stress *vs.* mild stress, ...) 
+
+--
+
+  - Realizar tests múltiples con los mismos datos incrementa el error tipo I
+
+--
+
+> Análisis de la varianza (_Analysis of variance_, ANOVA), utiliza una sola prueba de hipótesis para comparar varios grupos (>2)
+
+---
+class: animated, fadeIn
+
+## ANOVA de una vía
+
+- Prueba de hipótesis que comprueba si hay diferencias significativas entre las **medias** de **tres grupos** o **más**
+
+<center>
+<img src="img/3grupos.png" width=70%>
+
+---
+class: animated, fadeIn
+
+## ANOVA de una vía
+
+- Prueba de hipótesis que comprueba si hay diferencias significativas entre las **medias** de **tres grupos** o **más**
+
+<center>
+<img src="img/p1.png" width=70%>
+
+---
+class: animated, fadeIn
+
+## ANOVA de una vía
+
+- Prueba de hipótesis que comprueba si hay diferencias significativas entre las **medias** de **tres grupos** o **más**
+
+<center>
+<img src="img/p2.png" width=70%>
+
+---
+class: animated, fadeIn
+
+## ANOVA de una vía
+
+- Prueba de hipótesis que comprueba si hay diferencias significativas entre las **medias** de **tres grupos** o **más**
+
+<center>
+<img src="img/p3.png" width=70%>
+
+
+---
+class: animated, fadeIn
+
+## ANOVA de una vía
+
+- Prueba de hipótesis que comprueba si hay diferencias significativas entre las **medias** de **tres grupos** o **más**
+
+<center>
+<img src="img/p2.png" width=70%>
+
+---
+class: animated, fadeIn
+
+## Hipótesis en ANOVA de una vía
+
+--
+
+.pull-left[
+- **Hipótesis nula**: las medias de todos los grupos $k$ son iguales
+
+$$
+H_0 = \mu_1 = \mu_2 = ... = \mu_k
+$$
+<center><br><br>
+<img src="img/igual.png" width=70%>
+
+]
+
+.pull-left[
+- **Hipótesis alternativa**: las medias de los grupos no son iguales.
+
+$$
+H_1=\text{Al menos una } \mu_i \text{ es diferente}
+$$
+<br><br>
+<center>
+<img src="img/dif.png" width=70%>
+
+]
+
+---
+class: animated, fadeIn
+
+## Supuestos del ANOVA de una vía
+
+--
+
+1. Nivel de medición
+2. Independencia
+3. Normalidad
+4. Homogeneidad 
+
+
+---
+class: animated, fadeIn
+
+## Supuestos del ANOVA de una vía
+
+1. **Nivel de medición**
+
+.pull-left[
+
+Variable **independiente** → **Categórica**
+
+_Ejemplos_:
+- Grupo de tratamiento
+- Tipo de fertilizante
+- ...
+
+]
+
+
+.pull-left[
+
+Variable **dependiente** → **Continua**
+
+_Ejemplos_:
+- Concentración en sangre
+- Crecimiento planta
+- ...
+
+]
+
+---
+class: animated, fadeIn
+
+## Supuestos del ANOVA de una vía
+
+1. Nivel de medición
+
+2. **Independencia**
+
+  -   Los valores medidos en un grupo no deben ser influenciados por las medidas de otro grupo
+
+  -   Individuos o unidades experimentales diferentes
+
+
+---
+class: animated, fadeIn
+
+## Supuestos del ANOVA de una vía
+
+1. Nivel de medición
+
+2. Independencia
+
+3. **Normalidad**
+
+  - Los datos han de seguir una **distribución normal** → especialmente si hay pocos
+  
+  - Si no se cumple la normalidad, podemos usar el test "Kruskal-Wallis"
+  
+  
+
+
+---
+class: animated, fadeIn
+
+## Supuestos del ANOVA de una vía
+
+1. Nivel de medición
+
+2. Independencia
+
+3. Normalidad
+
+4. **Homogeneidad**
+
+  - La varianza en cada grupo debería ser parecida entre grupos
+  
+  - Si no se cumple la homogeneidad de varianzas, podemos usar el test "Welch-ANOVA"
+  
+
+
+---
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+.pull-left[
+
+$$
+\frac{\text{Varianza ENTRE grupos}}{\text{Varianza DENTRO de grupos}}
+$$
+
+]
+
+--
+
+.pull-right[
+
+<center>
+<img src="img/varianza_entre.png">
+
+]
+
+
+---
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+.pull-left[
+
+$$
+\frac{\text{Varianza ENTRE grupos}}{\text{Varianza DENTRO de grupos}}
+$$
+
+]
+
+.pull-right[
+
+<center>
+<img src="img/varianza_entre_peq.png">
+
+]
+
+
+
+---
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+.pull-left[
+
+$$
+\frac{\text{Varianza ENTRE grupos}}{\text{Varianza DENTRO de grupos}}
+$$
+
+]
+
+.pull-right[
+
+<center>
+<img src="img/varianza_entre_grande.png">
+
+]
+
+
+---
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+.pull-left[
+
+$$
+\frac{\text{Varianza ENTRE grupos}}{\text{Varianza DENTRO de grupos}}
+$$
+
+]
+
+.pull-right[
+
+<center>
+<img src="img/varianza_dentro.png">
+
+]
+
+
+---
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+.pull-left[
+
+$$
+\frac{\text{Varianza ENTRE grupos}}{\text{Varianza DENTRO de grupos}}
+$$
+
+]
+
+.pull-right[
+
+<center>
+<img src="img/varianza_dentro_g.png">
+
+]
+
+
+---
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+.pull-left[
+
+**Estadístico F**
+
+$$
+\frac{\text{Varianza ENTRE grupos}}{\text{Varianza DENTRO de grupos}}=F
+$$
+
+]
+
+
+---
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+.pull-left[
+
+**Estadístico F**
+
+$$
+\frac{\text{Varianza ENTRE grupos} \downarrow}{\text{Varianza DENTRO de grupos} \uparrow} = F \downarrow
+$$
+
+]
+
+.pull-right[
+
+<center>
+<img src="img/f_bajo.png">
+
+
+]
+
+--
+
+> Muy prorobable que las diferencias que veamos sean debidas al azar
+
+---
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+.pull-left[
+
+**Estadístico F**
+
+$$
+\frac{\text{Varianza ENTRE grupos} \uparrow}{\text{Varianza DENTRO de grupos} \downarrow} = F \uparrow
+$$
+
+]
+
+.pull-right[
+
+<center>
+<img src="img/f_alto.png">
+
+
+]
+
+--
+
+> Poco probable que las diferencias que veamos sean debidas al azar
+
+--
+
+> Para comprobar nuestra hipótesis y responder si hay o no diferencias significativas, necesitamos calcular el p-valor.
+
+
+---
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+**Estadístico F**: pasos para calcularlo:
+
+.pull-left[
+**Paso 1:**. Calcular la media conjunta de todos los grupos
+
+$$
+G=\frac{\sum{x}}{N}
+$$
+
+
+
+**Paso 2:**. Calcular la media de cada grupo ($g$) individual
+
+$$
+M_i=\frac{\sum^{grupo}{x}}{n_g}
+$$
+]
+
+--
+
+.pull-right[
+**Paso 3:** Suma de cuadrados de los ENTRE grupos (SSB): 
+
+$$
+SS_{entre}=\sum^{grupos}n_i(M_i-G)^2
+$$
+
+
+**Paso 4:** Suma de cuadrados de los dentro grupos (SSW): 
+
+$$
+SS_{dentro}=\sum^{grupos}\sum^{grupo}(x_mi-M_i)^2
+$$
+
+]
+
+---
+
+
+
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+.pull-left[
+
+<img src="img/an1.png">
+
+]
+
+.pull-right[
+
+**Media de todos los datos**
+
+$$
+G=\frac{\sum{x}}{N}
+$$
+$$
+G=\frac{3+2+...3+10}{24}=5.333
+$$
+
+]
+
+---
+
+
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+.pull-left[
+
+<img src="img/an1.png">
+
+]
+
+.pull-right[
+
+**Media de cada grupo**
+
+
+$$
+M_i=\frac{\sum^{grupo}{x}}{n_g}
+$$
+
+$$
+M_1=\frac{3+2+...+4+3}{12}=2.5
+$$
+
+
+$$
+M_2=\frac{10+9+...+6+7}{12}=8
+$$
+
+
+$$
+M_3=\frac{7+6+...+3+6}{12}=5.5
+$$
+
+]
+
+
+---
+
+
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+<center>
+<img src="img/an2.png" width=60%>
+
+$$
+SS_{entre}=\sum^{grupos}n_i(M_i-G)^2
+$$
+
+
+---
+
+
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+<center>
+<img src="img/an2.png" width=60%>
+
+$$
+SS_{entre}=8\times((2.5-5.3)^2+(8-5.3)^2+(5.5-5.3)^2)=121.3
+$$
+
+---
+
+
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+<center>
+<img src="img/an2.png" width=60%>
+
+
+$$
+SS_{dentro}=\sum^{grupos}\sum^{grupo}(x_mi-M_i)^2
+$$
+
+---
+
+
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+<center>
+<img src="img/an3.png" width=50%>
+
+
+\begin{align*}
+SS_{\text{dentro}} &= \sum^{grupos}\sum^{grupo}(x_{mi}-M_i)^2 \\
+&= (3-2.5)^2 + (2-2.5)^2 + \ldots \\
+&+ (10-8)^2 + (9-8)^2 + \ldots \\
+&+ (7-5.5)^2 + (6-5.5)^2 + \ldots=36
+\end{align*}
+
+---
+
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+**Media total y por grupo**: $G$, $M_1$, $M_2$, $M_3$
+
+**Suma de los cuadrados entre y dentro de grupos**: $SSB$, $SSW$
+
+
+---
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+**Estadístico F**: pasos para calcularlo:
+
+.pull-left[
+**Paso 1:**. Calcular la media conjunta de todos los grupos
+
+$$
+G=\frac{\sum{x}}{N}
+$$
+
+
+
+**Paso 2:**. Calcular la media de cada grupo ($g$) individual
+
+$$
+M_i=\frac{\sum^{grupo}{x}}{n_g}
+$$
+
+
+
+**Paso 3:** Suma de cuadrados de los ENTRE grupos (SSB): 
+
+$$
+SS_{entre}=\sum^{grupos}n_i(M_i-G)^2
+$$
+
+
+
+]
+
+.pull-right[
+
+**Paso 4:** Suma de cuadrados de los dentro grupos (SSW): 
+
+$$
+SS_{dentro}=\sum^{grupos}\sum^{grupo}(x_mi-M_i)^2
+$$
+
+
+**Paso 5:** Media de los cuadrados entre
+
+<center>
+$MS_{entre}=\frac{SSB}{gl_e}$
+</center>
+
+$gl_{entre}$: número de grupos - 1
+
+**Paso 6:** Media de los cuadrados dentro
+
+$$
+MS_{dentro}=\frac{SSW}{gl_d}
+$$
+
+$gl_{dentro}$: número de observaciones - número de grupos
+
+
+]
+
+---
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+Media de los cuadrados entre:
+
+<center>
+$MS_{entre}=\frac{SSB}{gl_e}=121.3/2=60.67$
+</center>
+
+$gl_{entre}$: número de grupos - 1 = 3-2
+
+
+--
+
+Media de los cuadrados dentro:
+
+$$
+MS_{dentro}=\frac{SSW}{gl_d}=36/21=1.71
+$$
+
+$gl_{dentro}$: número de observaciones - número de grupos = 24 - 3
+
+
+
+---
+
+
+class: animated, fadeIn
+
+## Cómo funciona un ANOVA de una vía
+
+Cálculo del estadístico `F`:
+
+<center>
+$F = \frac{MS_{entre}}{MS_{dentro}}$
+
+--
+
+$F = \frac{MS_{entre}}{MS_{dentro}}=\frac{60.67}{1.71}=35.39$
+
+
+
+---
+class: animated, fadeIn
+
+## Contacto
+
+<div style="margin-top: 20vh; text-align:center;">
+
+| Marta Coronado Zamora | David Castellano | 
+|:-:|:-:|
+| <a href="mailto:marta.coronado@uab.cat"><i class="fa fa-paper-plane fa-fw"></i> marta.coronado@uab.cat</a> | <a href="mailto:david.castellano@uab.cat"><i class="fa fa-paper-plane fa-fw"></i>&nbsp; david.castellano@uab.cat</a> | 
+| <a href="https://bsky.app/profile/geneticament.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @geneticament.bsky.social</a> |                 <a href="https://bsky.app/profile/castellanoed.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @castellanoed.bsky.social</a> |
+| <a href="https://www.uab.cat"><i class="fa fa-map-marker fa-fw"></i>&nbsp; Universitat Autònoma de Barcelona</a> |    <a href="https://gutengroup.mcb.arizona.edu/"> <i class="fa fa-map-marker fa-fw"></i>&nbsp; University of Arizona</a> |
+

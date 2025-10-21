@@ -9,7 +9,7 @@ output:
     lib_dir: libs
     self_contained: true
     nature:
-      mathjax: "default"
+      mathjax: "true"
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -60,6 +60,8 @@ class: animated, fadeIn
 
 #### **Pruebas de t-test**
 
+- Intervalos de confianza del t-test
+
 - Supuestos del T-test de muestras independientes
 
 - Varianzas iguales y desiguales (test de Levene)
@@ -72,6 +74,84 @@ class: animated, fadeIn
   background-size: 100%;
 }
 </style>
+
+---
+class: animated, fadeIn
+
+## Intervalos de confianza para la media poblacional con la distribución t
+
+- Tema 9: IC utilizando la distribución normal (muestras grandes)
+
+$$
+(\bar{x} \pm z \times \frac{s}{\sqrt{n}})
+$$
+
+--
+
+- Intervalos de confianza utilizando la distribución `t` para una sola muestra:
+
+> Para una muestra de tamaño $n$ con una media $\bar{x}$ y desviación estándard $s$, el IC bilateral con un nivel de confianza $100(1-\alpha)$% es:
+
+$$
+(\bar{x} \pm t_{df}\times\frac{s}{\sqrt{n}})
+$$
+
+--
+
+> Un intervalo de confianza de una cola será:
+
+.pull-left[
+**IC superior:**
+$$
+\bar{x} + t_{df}\times\frac{s}{\sqrt{n}}
+$$
+]
+.pull-right[
+**IC inferior:**
+$$
+\bar{x} - t_{df}\times\frac{s}{\sqrt{n}}
+$$
+]
+
+???
+- La diferencia es que utilizamos el valor crítico `t` (en vez del valor z).
+- Para $n$ muy grandes, se puede aproximar a una normal (IC 95% = t = 1.96)
+
+---
+class: animated, fadeIn
+
+## Intervalos de confianza para la media poblacional con la distribución t
+
+- Para muestras pareadas:
+
+<center>
+
+$(\bar{x}_{dif} \pm t_{df} \frac{s_{dif}}{\sqrt{n}})$
+
+--
+
+Grados de libertad: $n-1$ (igual que una muestra)
+
+---
+class: animated, fadeIn
+
+## Intervalos de confianza para la media poblacional con la distribución t
+
+- Para muestras independientes:
+
+<center>
+
+$((\bar{x}_{1}-\bar{x}_2) \pm t_{df}\times SE)$
+
+</center>
+
+donde $SE$:
+
+$$
+SE_{\bar{x}_1 - \bar{x}_2}=\sqrt{\frac{s^2_1}{n_1}+\frac{s^2_2}{n_2}}
+$$
+
+Los grados de libertad se calculan como $n_1+n_2-2$.
 
 ---
 class: animated, fadeIn
@@ -99,7 +179,7 @@ Si el p-valor del test de Levene es mayor a 0.05, se asume que las varianzas son
 
 --
 
-#### Test de Levene en R
+#### Test de Levene en `R`
 
 ```{r}
 url <- 'https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/mice_pheno.csv'
@@ -118,7 +198,7 @@ class: animated, fadeIn
 
 Si el p-valor del test de Levene es mayor a 0.05, se asume que las varianzas son iguales ($H_0$)
 
---
+
 
 #### Test de Levene en R
 
@@ -169,12 +249,17 @@ $$
 
 ]
 
+--
+
+<br>
+> En los problemas "a mano" se calculan los gl como $n_1+n_2-2$, generalmente asumen que la varianza es igual entre muestras (_se cumplen los requisitos para la inferencia_)
+
 ---
 class: animated, fadeIn
 
 ## Calcular t-test para muestras independientes en `R`
 
-- Por defecto, la función `t.test()` asume que las varianzas no son iguales (`var.equal=TRUE`), por lo que ejecuta el **t-test de Welch**.
+- Por defecto, la función `t.test()` asume que las varianzas no son iguales (`var.equal=FALSE`), por lo que ejecuta el **t-test de Welch**.
 
 - Para ejecutar el t-test si las varianzas son iguales (*two sample t-test*):
 
@@ -401,6 +486,19 @@ shapiro.test(datos_normales)
 ```
 
 ]
+
+---
+class: animated, fadeIn
+
+
+## Resumen t-tests y intervalos de confianza
+
+| Tipo de t-test | Estadístico t | Grados de libertad (df) | Intervalo de confianza (IC) |
+|----------------|---------------|-------------------------|-----------------------------|
+| **1 muestra** | $t = \frac{\bar{x}-\mu_0}{s/\sqrt{n}}$ | $n-1$ | $\bar{x} \pm t_{df} \frac{s}{\sqrt{n}}$ |
+| **Pareado** | $t = \frac{\bar{x}_{dif}}{s_{dif}/\sqrt{n}}$ | $n-1$ | $\bar{x}_{dif} \pm t_{df} \frac{s_{dif}}{\sqrt{n}}$ |
+| **2 muestras independientes** | $t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s^2_1/n_1 + s^2_2/n_2}}$ | $n_1 + n_2 - 2$ | $(\bar{x}_1 - \bar{x}_2) \pm t_{df} \, \sqrt{s^2_1/n_1 + s^2_2/n_2}$ |
+
 
 ---
 class: animated, fadeIn
