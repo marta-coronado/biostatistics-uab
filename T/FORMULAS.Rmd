@@ -1,0 +1,790 @@
+---
+title: "Fórmulas Bioestadística"
+author: ""
+date: ""
+output:
+  html_document:
+    self_contained: true  
+    theme: simplex
+    css: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css
+    toc: no
+    toc_float:
+      collapsed: true
+fontsize: 14pt
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+# Load useful packages
+library(rmdformats)   # for extra formatting if needed
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5)
+library(ggplot2)
+```
+
+```{=html}
+<style>
+body {
+  font-size: 14px;   /* un poco más grande */
+  color: black;      /* asegura texto en negro */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #5dc1b9;        /* títulos en rojo */
+  font-size: 16px
+}
+
+h3, h4, h5, h6 {
+  color: black;        /* títulos en rojo */
+}
+
+h3 {
+  font-size: 1em;   /* tamaño igual al texto normal */
+}
+
+</style>
+```
+
+
+## **Estadística descriptiva**
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Media aritmética**
+
+$$
+\bar{x} = \mu = \frac{1}{n} \sum_{i=1}^{n} x_i
+$$
+
+donde:  
+
+- $\bar{x} = \mu$ : media aritmética  
+- $n$ : número de muestras
+- $i$ : índice de los valores de la variable ($i = 1, 2, \dots, n$)  
+- $x_i$ : valor $i$-ésimo de la variable $x$
+
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+
+**Mediana**
+
+- Para un número **impar** de observaciones ($n$):
+
+$$
+\text{mediana}(x) = \left(\frac{n+1}{2}\right)^{\text{th}}
+$$
+
+- Para un número **par** de observaciones:
+
+$$
+\text{mediana}(x) = \frac{\left(
+{\left(\tfrac{n}{2}\right)}^{\text{th}} + {\left(\tfrac{n}{2}+1\right)}^{\text{th}}\right)
+}{2}
+$$
+
+donde:
+
+- $\text{mediana}(x)$: mediana de los valores disponibles de la variable $x$  
+- $n$: número de observaciones disponibles para $x$  
+
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Moda**
+
+$$
+moda(x)=max_{k=1}(I_{i=1}(x_i=x_k))
+$$
+
+donde:
+
+- $\text{moda}(x)$: moda de los valores disponibles de la variable $x$
+- $\max_{k=1}()$: argumento que maximiza sobre $k$ en $1$ a $p$
+- $I_i()$: función indicadora que devuelve 1 si la condición interna es cierta para $i$ en $1$ a $n$
+
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Rango**
+
+Diferencia entre el valor máximo y el mínimo de una variable $x$:
+
+$$
+rango = x_{\text{max}} - x_{\text{min}}
+$$
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Varianza**
+
+$$
+s^2 = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2
+$$
+
+donde:
+
+- $s^2$: varianza  
+- $n$: número de observaciones de la muestra  
+- $i$: índice de los valores de la variable ($i = 1, 2, \dots, n$)  
+- $x_i$: valor $i$-ésimo de la variable $x$  
+- $\bar{x}$: media aritmética 
+
+</div>
+
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Desviación estándard**
+
+$$
+SD = s = \sqrt{s^2}
+$$
+
+donde:
+
+- $SD = s$: desviación estándar  
+- $s^2$: varianza  
+
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+
+**Cuantiles**
+
+| Nombre                        | Símbolo     | Porcentaje de los datos | Interpretación                                           |
+| :---------------------------- | :---------- | :---------------------- | :------------------------------------------------------- |
+| Primer cuartil                | $Q_1$     | 25%                     | El 25% de los datos son menores o iguales que este valor |
+| Segundo cuartil (mediana) | $Q_2$ | 50%                 | El 50% de los datos son menores o iguales que este valor |
+| Tercer cuartil                | $Q_3$     | 75%                     | El 75% de los datos son menores o iguales que este valor |
+
+</div>
+
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Rango intercuartílico**
+
+$$
+IQR=Q_3-Q_1
+$$
+</div>
+
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**_Outliers_**
+
+
+$$
+\text{Cerca inferior} = Q_1 - 1.5 \times IQR
+$$
+
+$$
+\text{Cerca superior} = Q_3 + 1.5 \times IQR
+$$
+
+</div>
+
+<hr>
+
+## **Distribuciones**
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Asimetría**
+
+```{r,  eval=T, echo = F, fig.height=2.8,fig.width=8, fig.align="center", fig.retina=5}
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+
+# Función para simplificar el tema de cada gráfico
+clean_theme <- function() {
+  theme_void() + 
+    theme(
+      plot.title = element_text(hjust = 0.5), # centrar títulos
+      panel.border = element_rect(colour = "black", fill = NA, size = 0.8) # marco exterior
+    )
+}
+
+# Sym
+x_sym <- seq(-4, 4, length.out = 1000)
+data_sym <- data.frame(x = x_sym, y = dnorm(x_sym, mean = 0, sd = 1))
+
+p_norm <- ggplot(data_sym, aes(x, y)) +
+  geom_area(fill = "#0E8A8A", alpha = 0.6) +
+  labs(title = "Simétrica") +
+  clean_theme()
+
+# Asimetría positiva
+x_pos <- seq(0, 10, length.out = 1000)
+data_pos <- data.frame(x = x_pos, y = dgamma(x_pos, shape = 2, scale = 1))
+p_pos <- ggplot(data_pos, aes(x, y)) +
+  geom_col(fill = "#0E8A8A", alpha = 0.6) +
+  labs(title = "Asimetría positiva") +
+  clean_theme()
+
+# Asimetría negativa
+data_neg <- data.frame(x = -x_pos, y = dgamma(x_pos, shape = 2, scale = 1))
+p_neg <- ggplot(data_neg, aes(x, y)) +
+  geom_col(fill = "#0E8A8A", alpha = 0.6) +
+  labs(title = "Asimetría negativa") +
+  clean_theme()
+
+# Organizar en cuadrícula 2x3
+(p_pos | p_norm | p_neg)
+
+```
+
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Curtosis**
+
+```{r echo = F, fig.height=5, fig.width=8,fig.align='center'}
+library(ggplot2)
+library(dplyr)
+
+# Crear secuencia de valores x
+x <- seq(-5, 5, length.out = 1000)
+
+# Distribución mesocúrtica (normal)
+meso <- data.frame(
+  x = x,
+  y = dnorm(x, mean = 0, sd = 1),
+  Tipo = "Mesocúrtica (normal)"
+)
+
+# Distribución leptocúrtica (colas cortas, más alta en el centro)
+lepto <- data.frame(
+  x = x,
+  y = dnorm(x, mean = 0, sd = 0.5),
+  Tipo = "Leptocúrtica (colas cortas)"
+)
+
+# Distribución platicúrtica (colas largas, más baja y ancha)
+plati <- data.frame(
+  x = x,
+  y = dnorm(x, mean = 0, sd = 2),
+  Tipo = "Platicúrtica (colas largas)"
+)
+
+# Unir los datos
+df <- bind_rows(meso, lepto, plati)
+
+# Graficar
+ggplot(df, aes(x = x, y = y, color = Tipo)) +
+  geom_line() +
+  labs(x="",
+       y = "Densidad") +
+  theme_minimal() +
+  scale_color_manual(values = c("cadetblue3", "orange2", "firebrick3")) +
+  ggthemes::theme_base(base_size = 16) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+```
+
+</div>
+
+<hr>
+
+## **Distribución binomial**
+
+<div style="background-color:#fffced; padding:15px;">
+
+
+**Fórmula de la distribución binomial**
+
+$$
+P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}
+$$
+
+donde:
+
+- $n$: número total de ensayos o repeticiones del experimento
+- $k$: número de éxitos observados
+- $p$: probabilidad de éxito en un solo ensayo
+- $1 - p$: probabilidad de fracaso
+
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Coeficiente binomial**
+
+$$
+{n \choose k} \;=\; \frac{n!}{k!\,(n - k)!}
+$$
+
+donde:
+
+- $n = 1, 2, \dots$: número total de ensayos 
+- $k = 0, 1, 2, \dots , n$: número de éxitos posibles
+- Para cualquier número entero $m$, $m! = m \times (m - 1) \times (m - 2) \times \dots \times 1$
+
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Tabla resumen de la binomial**
+
+| Símbolo      | Significado    | Expresión | 
+|:------------ |:-------------- |:-------------------------------- | 
+| $P(X \le k)$ | “como mucho k” | $P(X \le k)$                    | 
+| $P(X < k)$   | “menos de k”   | $P(X \le k-1)$                   | 
+| $P(X \ge k)$ | “al menos k”   | $1 - P(X \le k-1)$               | 
+| $P(X > k)$   | “más de k”     | $1 - P(X \le k)$                 |
+
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+Si la variable aleatoria sigue una distribución $X \sim \text{Binomial}(n, p)$, entonces:
+
+- **Media**  
+$$
+\mu = n \times p
+$$
+
+- **Varianza**  
+$$
+\sigma^2 = n \times p \times (1 - p)
+$$
+
+</div>
+
+<hr>
+
+## **Distribución normal**
+
+<div style="background-color:#fffced; padding:15px;">
+
+Si la variable aleatoria sigue una distribución $X \sim N(\mu, \sigma^2)$, entonces:
+
+- $\mu$ representa la **media**
+- $\sigma$ representa la **desviación estándar**
+
+</div>
+
+<br>
+
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Estandarización**
+
+Si una variable aleatoria $X$ sigue una distribución normal con media $\mu$ y varianza $\sigma^2$, $X \sim N(\mu,\ \sigma^2)$, entonces la variable estandarizada:  
+
+$$
+Z = \frac{X - \mu}{\sigma}
+$$
+
+sigue una distribución normal estándar: $Z \sim N(0,1)$.
+
+
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Tabla resumen de la normal**
+
+| Símbolo              | Significado        | Expresión                                   |
+|:---------------------|:------------------|:---------------------------------------------|
+| $P(X \le x)$         | “como mucho x”    | $P(X \le x)$                                 | 
+| $P(X < x)$           | “menos de x”      | $P(X \le x)$ (igual, continua)               | 
+| $P(X \ge x)$         | “al menos x”      | $1 - P(X \le x)$                             | 
+| $P(X > x)$           | “más de x”        | $1 - P(X \le x)$                             | 
+| $P(a \le X \le b)$   | “entre a y b”     | $P(X \le b) - P(X \le a)$                    | 
+| $P(a < X < b)$       | “entre a y b”     | $P(X \le b) - P(X \le a)$ (igual, continua) | 
+
+</div>
+
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Regla empírica ("68-95-99.7")**:
+
+```{r, echo = F, fig.align='center', fig.height=4.1, fig.width=5}
+library(ggplot2)
+library(dplyr)
+library(ggthemes)
+
+# Parámetros
+mu <- 0
+sigma <- 1
+
+# Secuencia de valores para la curva
+x <- seq(mu - 4*sigma, mu + 4*sigma, length.out = 1000)
+df <- data.frame(x = x, y = dnorm(x, mean = mu, sd = sigma))
+
+# Rellenos para cada rango
+fill_areas <- list(
+  data.frame(x = x[x >= mu - sigma & x <= mu + sigma],
+             y = dnorm(x[x >= mu - sigma & x <= mu + sigma], mu, sigma),
+             area = "±1σ"),
+  data.frame(x = x[x >= mu - 2*sigma & x <= mu + 2*sigma],
+             y = dnorm(x[x >= mu - 2*sigma & x <= mu + 2*sigma], mu, sigma),
+             area = "±2σ"),
+  data.frame(x = x[x >= mu - 3*sigma & x <= mu + 3*sigma],
+             y = dnorm(x[x >= mu - 3*sigma & x <= mu + 3*sigma], mu, sigma),
+             area = "±3σ")
+) %>% bind_rows()
+
+# Valores para las líneas verticales
+sd_lines <- data.frame(
+  x = c(mu - 3*sigma, mu - 2*sigma, mu - sigma, mu,
+        mu + sigma, mu + 2*sigma, mu + 3*sigma),
+  label = c("-3σ", "-2σ", "-1σ", "μ",
+            "+1σ", "+2σ", "+3σ")
+)
+
+# Segmentos horizontales para porcentajes
+segments <- data.frame(
+  y = c(0.09, 0.05, 0),        # altura donde poner el segmento
+  xstart = c(mu - sigma, mu - 2*sigma, mu - 3*sigma),
+  xend   = c(mu + sigma, mu + 2*sigma, mu + 3*sigma),
+  label  = c("68%", "95%", "99.7%")
+)
+
+# Gráfico
+ggplot() +
+  # Áreas rellenas (las más pequeñas encima de las grandes)
+  geom_ribbon(data = filter(fill_areas, area == "±3σ"),
+              aes(x = x, ymin = 0, ymax = y, fill = area), alpha = 0.3, show.legend = F) +
+  geom_ribbon(data = filter(fill_areas, area == "±2σ"),
+              aes(x = x, ymin = 0, ymax = y, fill = area), alpha = 0.4, show.legend = F) +
+  geom_ribbon(data = filter(fill_areas, area == "±1σ"),
+              aes(x = x, ymin = 0, ymax = y, fill = area), alpha = 0.6, show.legend = F) +
+  # Curva
+  geom_line(data = df, aes(x = x, y = y), size = 1, color = "white") +
+  # Líneas verticales
+  geom_vline(data = sd_lines, aes(xintercept = x),
+             linetype = "dashed", color = "gray70") +
+  # Segmentos horizontales
+  geom_segment(
+  data = segments,
+  aes(x = xstart, xend = xend, y = y, yend = y),
+  color = "black",
+  linewidth = 1,
+  arrow = arrow(ends = "both",    # flecha en ambos extremos <--->
+                type = "closed",  # estilo "cerrado" para que sea triangular
+                length = unit(0.05, "inches")) # tamaño de las puntas
+) +
+  geom_text(data = segments,
+            aes(x = mu, y = y + 0.02, label = label),
+            color = "black") +
+  # Personalizar eje x
+  scale_x_continuous(
+    breaks = sd_lines$x,
+    labels = sd_lines$label
+  ) +
+  scale_fill_manual(values = c("±1σ" = "orange2",
+                               "±2σ" = "gold",
+                               "±3σ" = "cadetblue3")) +
+  labs(
+    x = "Desviaciones estándar",
+    y = "",
+    fill = "Área"
+  ) +
+  ggthemes::theme_base(base_size = 18) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "white"))
+
+
+```
+
+- ~68% de los valores dentro de 1 desviación estándar de la media
+- ~95% dentro de 2 desviaciones estándar
+- ~99.7% dentro de 3 desviaciones estándar
+
+</div>
+
+<hr>
+
+
+## **Distribución de Poisson**
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Fórmula de la distribución de Poisson**
+
+$$
+P(X = k) = \frac{ e^{-\lambda} \lambda^k}{k!}
+$$
+
+donde:
+
+- $X$: número de eventos en un intervalo dado  
+- $\lambda$: tasa esperada de eventos en ese intervalo  ($n \times p$)
+- $k$: número de eventos observados
+
+
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+Si la variable aleatoria sigue una distribución de Poisson $X \sim \text{Poisson}(\lambda)$, entonces:
+
+- $\lambda$ representa tanto la media como el parámetro de la distribución: $\mu = \lambda$
+
+- La desviación estándar es: $\sigma = \sqrt{\lambda}$
+
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+
+La probabilidad de exáctamente $x$ eventos en $t$ unidades de tiempo es:
+
+$$
+P(X = k) = \frac{e^{-\lambda t} (\lambda t)^k }{k!}
+$$
+
+En $t$ unidades de tiempo, la media es $\mu = \lambda t$ y desviación estandard $\sigma = \sqrt{\lambda t}$.
+
+
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Tabla resumen de la distribución de Poisson**
+
+| Símbolo      | Significado    | Expresión |
+|:------------ |:-------------- |:--------- | 
+| $P(X \le k)$ | “como mucho k” | $P(X \le k)$ | 
+| $P(X < k)$   | “menos de k”   | $P(X \le k-1)$ |
+| $P(X \ge k)$ | “al menos k”   | $1 - P(X \le k-1)$ |
+| $P(X > k)$   | “más de k”     | $1 - P(X \le k)$ | 
+
+</div>
+
+<br>
+
+
+## **Tabla resumen de las distribuciones**
+
+<div style="background-color:#fffced; padding:15px;">
+
+|                  | Binomial       | Normal       | Poisson      |
+|:----------------:|:--------------:|:------------:|:------------:|
+| Parámetros       | $n$, $p$           | $μ$, $σ$         |  $λ$            |
+| Valores posibles  | $0, 1, ..., n$   | $(-∞, ∞)$      | $0, 1, ..., ∞$ |
+| Media             | $np$             | $\mu$            | $\lambda$            |
+| Desviación estándard | $\sqrt{np(1-p)}$   | $σ$            | $\sqrt{\lambda}$ ($\sqrt{\lambda t}$)           |
+
+</div>
+
+</hr>
+
+
+## **Intervalos de confianza**
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Desviación estándar de la distribución muestral [error estándar (SE)]**
+
+$$
+\sigma_{\bar{X}} = SE = \frac{\sigma}{\sqrt{n}}
+$$
+
+Si solo tienes la desviación estándar muestral, entonces:
+
+$$
+SE = \frac{s}{\sqrt{n}}
+$$
+
+
+</div>
+
+<hr>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Intervalo de confianza (CI)** 
+
+$$
+CI = \bar{x} \pm z \times \frac{\sigma}{\sqrt{n}}
+$$
+
+donde:
+
+  - $\bar{x}$ = media muestral  
+  - $z$ = valor crítico según el nivel de confianza (por ejemplo, 1.96 para 95%)
+  - $\sigma/\sqrt{n}$ = error estándar de la media  
+  
+
+Cuando estimamos una media poblacional $\mu$, un intervalo de confianza tiene la forma general:
+
+$$
+(\bar{x} - m, \bar{x} + m) = \bar{x} \pm m
+$$
+
+donde:
+
+- $m$: **margen de error**
+
+El margen de error $m$ se define como:
+
+$$
+m=z_{\alpha/2}\times\frac{\sigma}{\sqrt{n}}
+$$
+
+
+A partir de la **media muestral $\bar{x}$** y el **error**, podemos calcular:
+
+$$
+IC = (\bar{x} - \text{error}, \bar{x} + \text{error})
+$$
+
+donde el error se calcula como:
+
+$$
+\text{error} = z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{N}}
+$$
+
+- $z_{\alpha/2}$: valor crítico según el nivel de confianza deseado  
+- $\sigma$: desviación estándar poblacional  
+- $N$: tamaño de la muestra  
+
+Por lo tanto, los límites del IC son:
+
+$$
+x_1 = \bar{x} - z_{\alpha/2} \frac{\sigma}{\sqrt{N}}, \quad
+x_2 = \bar{x} + z_{\alpha/2} \frac{\sigma}{\sqrt{N}}
+$$
+
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Fórmula para el tamaño de la muestra**
+
+$$
+N = \left(\frac{z_{\alpha/2} \times \sigma}{\text{error deseado}}\right)^2
+$$
+
+</div>
+
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Intervalos de confianza unilaterales (*one-sided*)**
+
+- Proporcionan **un límite inferior o un límite superior**, pero **no ambos**.
+
+- Forma general:  
+
+$$
+(-\infty, \bar{x} + \text{error}) \quad \text{o} \quad (\bar{x} - \text{error}, \infty)
+$$
+
+- Se utiliza **el error estándar (SE)** y un valor $z$ crítico, pero el $z$ **es distinto** que para intervalos bilaterales.  
+
+</div>
+
+<br>
+
+<div style="background-color:#fffced; padding:15px;">
+
+**Estadístico z para una media muestral**
+
+$$
+z = \frac{\bar{x} - \mu}{\sigma / \sqrt{n}}
+$$
+
+donde:  
+
+- $\bar{x}$ = media muestral  
+- $\mu$ = media poblacional bajo $H_0$  
+- $\sigma$ = desviación estándar poblacional  
+- $n$ = tamaño de la muestra  
+
+</div>
+
+<hr>
+
+## **T-test**
+
+<div style="background-color:#fffced; padding:15px;">
+
+
+**Tablas resumen para t-test**
+
+| Tipo de t-test | Estadístico t | Grados de libertad (df) | Intervalo de confianza (IC) |
+|----------------|---------------|-------------------------|-----------------------------|
+| **1 muestra** | $t = \frac{\bar{x}-\mu_0}{s/\sqrt{n}}$ | $n-1$ | $\bar{x} \pm t_{df} \frac{s}{\sqrt{n}}$ |
+| **Pareado** | $t = \frac{\bar{x}_{dif}}{s_{dif}/\sqrt{n}}$ | $n-1$ | $\bar{x}_{dif} \pm t_{df} \frac{s_{dif}}{\sqrt{n}}$ |
+| **2 muestras independientes** | $t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s^2_1/n_1 + s^2_2/n_2}}$ | $n_1 + n_2 - 2$ | $(\bar{x}_1 - \bar{x}_2) \pm t_{df} \sqrt{s^2_1/n_1 + s^2_2/n_2}$ |
+
+</div>
+<br>
+<div style="background-color:#fffced; padding:15px;">
+
+| Tipo de t-test                  | Hipótesis nula ($H_0$) | Hipótesis alternativa ($H_A$) |
+|---------------------------------|------------------------|-------------------------------|
+| **1 muestra**                    | $\mu = \mu_0$          | $\mu \ne \mu_0$               |
+| **Pareado**                      | $\mu_{dif} = 0$        | $\mu_{dif} \ne 0$             |
+| **2 muestras independientes**    | $\mu_1 = \mu_2$        | $\mu_1 \ne \mu_2$             |
+
+
+</div>
+<br>
+<div style="background-color:#fffced; padding:15px;">
+
+
+| Tipo de test                    | Hipótesis                                    | IC / Zona crítica | Interpretación                                                                                   |
+|---------------------------------|---------------------------------------------|-----------------|-------------------------------------------------------------------------------------------------|
+| **Bilateral (dos colas)**       | $H_0: \mu = \mu_0$ <br> $H_A: \mu \ne \mu_0$ | $IC = \bar{x} \pm |t_{crit}| \times SE$ | IC simétrico alrededor de $\bar{x}$. Si $\mu_0$ **no está dentro**, se rechaza $H_0$.         |
+| **Unilateral (cola derecha)**   | $H_0: \mu = \mu_0$ <br> $H_A: \mu > \mu_0$   | $IC = (\bar{x} - |t_{crit}| \times SE, +\infty)$ | Si límite inferior > $\mu_0$, se rechaza $H_0$.                                                |
+| **Unilateral (cola izquierda)** | $H_0: \mu = \mu_0$ <br> $H_A: \mu < \mu_0$   | $IC = (-\infty, \bar{x} + |t_{crit}| \times SE)$ | Si límite superior < $\mu_0$, se rechaza $H_0$.                                                |
+</div>
