@@ -542,7 +542,7 @@ $$
 
  
 $$
-Q3 = \frac{3(n+1)}{2}
+Q3 = \frac{3(n+1)}{4}
 $$
 
  
@@ -551,3 +551,7 @@ Si la posición obtenida no es un número entero, se interpola entre los valores
 *Nota: si calculas Q1 y Q3 en R, es probable que los valores difieran ligeramente de los que obtienes “a mano”. No te preocupes: R utiliza algoritmos de interpolación diferentes a los que usamos manualmente.*
 
 ### d) ¿Qué valor tendría que tener una observación en este conjunto de datos para considerarse un valor atípico?
+
+<div class="respuesta handwritten">
+
+</div>

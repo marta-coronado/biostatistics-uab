@@ -3,3 +3,15 @@ readr
 knitr
 xaringanthemer
 xaringanExtra
+dplyr
+kableExtra
+data.table
+carData
+car
+ggstatsplot
+tidyr
+mvtnorm
+survival
+MASS
+TH.data
+multcomp
