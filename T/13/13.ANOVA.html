@@ -1856,16 +1856,10 @@ head(resid(aov1), 20)
 ```
 
 ```
-##           1           2           3           4 
-## -0.85625404  0.97537067  1.85713458 -0.46843137 
-##           5           6           7           8 
-##  0.33589637 -0.46411427  1.25271053  1.12666011 
-##           9          10          11          12 
-## -2.18693480  1.88854964 -1.17269926 -0.44893205 
-##          13          14          15          16 
-##  0.27959245 -0.39517533 -1.02983599  0.33879384 
-##          17          18          19          20 
-## -0.51210580 -1.16693290 -0.06183505 -1.22816339
+##           1           2           3           4           5           6           7           8           9          10 
+## -0.85625404  0.97537067  1.85713458 -0.46843137  0.33589637 -0.46411427  1.25271053  1.12666011 -2.18693480  1.88854964 
+##          11          12          13          14          15          16          17          18          19          20 
+## -1.17269926 -0.44893205  0.27959245 -0.39517533 -1.02983599  0.33879384 -0.51210580 -1.16693290 -0.06183505 -1.22816339
 ```
 
 - Cada valor es una observación de la tabla (54 en total)
@@ -1920,8 +1914,7 @@ leveneTest(aov1)
 ## group  4  2.3493 0.06717 .
 ##       49                  
 ## ---
-## Signif. codes:  
-## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
 --
@@ -1946,8 +1939,7 @@ summary(aov1)
 ## Diet         4  27.07   6.768   2.836 0.0341 *
 ## Residuals   49 116.92   2.386                 
 ## ---
-## Signif. codes:  
-## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
 ---
@@ -1961,8 +1953,7 @@ class: animated, fadeIn
 ## Diet         4  27.07   6.768   2.836 0.0341 *
 ## Residuals   49 116.92   2.386                 
 ## ---
-## Signif. codes:  
-## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
 - `Df` (grados de libertad): número de niveles del factor y residuales.
@@ -2146,12 +2137,32 @@ plot(tuk, las = 1)
 &lt;img src="13.ANOVA_files/figure-html/unnamed-chunk-19-1.png" width="504" /&gt;
 ]
 
+
+---
+class: animated, fadeIn
+
+### Visualizar el resultado del ANOVA
+
+Figura creada con el paquete `ggstatsplot`.
+
+&lt;img src="13.ANOVA_files/figure-html/unnamed-chunk-20-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+
+
 ---
 class: animated, fadeIn
 
 ## Alternativas al ANOVA
 
 Si no se cumplen los supuestos del ANOVA (normalidad o homogeneidad de varianzas), existen dos estrategias principales:
+
+#### Transformación de los datos
+
+- Aplicar logaritmo (`y_transf &lt;- log(y)`): datos sesgados
+- Inversa (`y_transf &lt;- 1/y`): datos pequeños
+- ...
+
+--
 
 #### Test no paramétrico: Kruskal-Wallis
 
@@ -2163,9 +2174,9 @@ kruskal.test(y ~ grupo, data = datos)
 ```
 
 
-- No requiere normalidad ni homogeneidad de varianzas.
+- No requiere normalidad ni homogeneidad de varianzas
 
-- Compara las medianas de los grupos en lugar de las medias.
+- Compara las medianas de los grupos en lugar de las medias
 
 
 ---
@@ -2173,8 +2184,8 @@ class: animated, fadeIn
 
 ## Actividad de ANOVA
 
-Un investigador desea conocer la efectividad de varios suplementos alimenticios (feed) sobre la tasa de crecimiento (weight) de los pollos. Carga los datos `chickwts` de `R`. Usa ANOVA para examinar la efectividad de los suplementos alimenticios. La línea de comando para cargar la tabla `chickwts` es `data("chickwts")`. Ejercicio tomado de: Biostatistics with R. Shahbaba (2012). Springer.&lt;br&gt;
-**RETO**: haz la actividad en `R`.
+Una investigadora desea conocer la efectividad de varios suplementos alimenticios (_feed_) sobre la tasa de crecimiento (_weight_) de los pollos. Los datos están disponibles en la tabla `chickwts` de `R` y se muestran a continuación. Usa ANOVA para examinar la efectividad de los suplementos alimenticios. Ejercicio tomado de: Biostatistics with R. Shahbaba (2012). Springer.&lt;br&gt;
+**RETO**: haz la actividad en `R`. La línea de comando para cargar la tabla `chickwts` es `data("chickwts")`.
 
 &lt;table class="table table-condensed table-striped table-hover" style="font-size: 9px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
 &lt;caption style="font-size: initial !important;"&gt;Pesos de pollos por tipo de alimentación&lt;/caption&gt;
@@ -2304,10 +2315,11 @@ Un investigador desea conocer la efectividad de varios suplementos alimenticios 
 &lt;/tbody&gt;
 &lt;/table&gt;
 
+
 ---
 class: animated, fadeIn
 
-## Primer paso: comprobar supuestos
+## Primer paso: comprobar supuestos del ANOVA
 
 
 
@@ -2315,7 +2327,7 @@ class: animated, fadeIn
 aov1 &lt;- aov(weight ~ feed, data = chickwts)
 
 library(car)
-leveneTest(weight ~ feed, data = chickwts)
+leveneTest(aov1)
 ```
 
 ```
@@ -2337,22 +2349,14 @@ shapiro.test(residuals(aov1))
 ## W = 0.98616, p-value = 0.6272
 ```
 
----
-class: animated, fadeIn
-
-## Resultado del ANOVA:
-
-&lt;img src="13.ANOVA_files/figure-html/unnamed-chunk-23-1.png" width="504" style="display: block; margin: auto;" /&gt;
-
-Figura creada con el paquete `ggstatsplot`.
 
 ---
 class: animated, fadeIn
 
 ## Calculadora de la F crítica de Fisher
 
-- Podemos utilizar calculadoras online como:  https://www.danielsoper.com/statcalc/calculator.aspx?id=4 para obtener rápidamente la F crítica
-- Mirar la tabla
+- Podemos utilizar calculadoras online como:  https://www.danielsoper.com/statcalc/calculator.aspx?id=4 para obtener rápidamente la F crítica.
+- Podemos utilizar la tabla:
 
 
 
@@ -2671,13 +2675,21 @@ class: animated, fadeIn
 &lt;/table&gt;
 
   
+  
+---
+class: animated, fadeIn
+
+## Resultado del ANOVA
+
+&lt;img src="13.ANOVA_files/figure-html/unnamed-chunk-25-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
 ---
 class: animated, fadeIn
 
 ## Resultado del test de Tukey
 
 &lt;div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; "&gt;&lt;table class="table table-condensed table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;"&gt;
-&lt;caption&gt;Resultados del test de Tukey para el factor Diet&lt;/caption&gt;
+&lt;caption&gt;Resultados del test de Tukey&lt;/caption&gt;
  &lt;thead&gt;
   &lt;tr&gt;
    &lt;th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"&gt;  &lt;/th&gt;
@@ -2809,7 +2821,7 @@ alpha &lt;- 0.05      # nivel de significancia
 df1 &lt;- 5           # grados de libertad del numerador (número de grupos - 1)
 df2 &lt;- 65          # grados de libertad del denominador (total muestras - número de grupos)
 
-F_critical &lt;- qf(1 - alpha, df1, df2)
+F_critical &lt;- qf(1 - alpha, df1, df2, lower.tail = TRUE)
 F_critical
 ```
 
@@ -2826,6 +2838,8 @@ class: animated, fadeIn
 
 ## La F crítica y p-valor en `R`
 
+- **P-valor**: probabilidad de obtener un valor de F igual o mayor que el observado, `\(F_{obs}\)`.
+
 
 ``` r
 df1 &lt;- 5
@@ -2840,27 +2854,1674 @@ p_value
 ## [1] 5.967948e-10
 ```
 
-La función `pf` devuelve la probabilidad de obtener un F mayor o igual que `\(F_{obs}\)`.
+La función `pf` calcula directamente esta probabilidad.
 
-Si `\(p-valor &lt; \alpha\)` → el ANOVA es significativo.
 
-&gt; `lower.tail=FALSE` porque ANOVA siempre mira la cola superior.
+&gt; Si `\(p-valor &lt; \alpha\)` → el ANOVA es significativo.
+
+&gt; `lower.tail=FALSE` porque ANOVA siempre mira la cola superior!
 
 ---
 layout: false
 class: left, bottom, inverse, animated, bounceInDown
 
 
-## ANOVA DE DOS VÍAS
+## ANOVA de DOS VÍAS
 
 ---
+class: animated, fadeIn
 
 ## ANOVA de dos vías
 
-- Método estadístico para probar el efecto de **dos variables categóricas** sobre una **variable continua**
+- Método estadístico para probar el efecto de **dos variables categóricas** sobre una **variable continua**.
 
   - La **variables categóricas** son las **variables independientes**
+  
   - las **variables continuas** son las **variables respuesta**
+
+--
+
+- Es una extensión del ANOVA de una vía
+
+
+---
+class: animated, fadeIn
+
+### ¿Cuándo usamos el ANOVA de dos vías?
+
+- Usamos un ANOVA de dos vías cuando queremos evaluar el efecto de **dos factores independientes** sobre una variable dependiente.
+
+&lt;center&gt;
+&lt;img src="img/una_via.png" width=70%&gt;
+
+---
+class: animated, fadeIn
+
+### ¿Cuándo usamos el ANOVA de dos vías?
+
+- Usamos un ANOVA de dos vías cuando queremos evaluar el efecto de **dos factores independientes** sobre una variable dependiente.
+
+&lt;center&gt;
+&lt;img src="img/dos_vias.png" width=70%&gt;
+
+---
+class: animated, fadeIn
+
+### Ejemplo de ANOVA de dos vías
+
+- **Variable dependiente**: crecimiento de una planta
+
+- **Factor 1**: tipo de fertilizante (orgánico vs. químico)
+
+- **Factor 2**: cantidad de luz (alta vs. baja)
+
+--
+
+¿El fertilizante y/o la luz afectan al crecimiento? ¿Depende el efecto del fertilizante del nivel de luz?
+
+&lt;center&gt;
+&lt;img src="img/ejemplo.png" width=70%&gt;
+
+---
+
+class: animated, fadeIn
+
+### ¿Qué afirmaciones podemos hacer con un ANOVA de dos vías?
+
+Posibles escenarios de un ANOVA: **efectos principales** e **interacción**
+
+&lt;center&gt;
+
+&lt;img src="13.ANOVA_files/figure-html/unnamed-chunk-29-1.png" width="720" /&gt;
+
+---
+class: animated, fadeIn
+
+### ¿Qué afirmaciones podemos hacer con un ANOVA de dos vías?
+
+1. ¿El factor 1 tiene un efecto en la variable dependiente?
+
+2. ¿El factor 2 tiene un efecto en la variable dependiente?
+
+3. ¿Hay interacción entre los dos factores?
+
+---
+class: animated, fadeIn
+
+## Hipotesis del ANOVA de dos vías
+
+.pull-left[
+Hay **3 hipótesis nulas**:
+
+1. No hay diferencia significativa entre los grupos del primer factor.
+
+2. No hay diferencia significativa entre los grupos del segundo factor.
+
+3. Un factor no influye en el efecto del otro factor (no hay interacción).
+
+]
+
+.pull-right[
+Hay **3 hipotesis alternativas**
+
+1. Hay diferencias significativas entre los grupos del primer factor.
+
+2. Hay diferencias significativas entre los grupos del segundo factor.
+
+3. Un factor influye en el efecto del otro factor (sí hay interacción).
+]
+
+--
+
+- No tienen que cumplirse (ni rechazarse) las tres hipótesis simultáneamente.
+
+---
+class: animated, fadeIn
+
+## Requisitos del ANOVA
+
+--
+
+1. **Normalidad**  
+   - Los residuos deben seguir una distribución normal.  
+   - Se puede comprobar mediante:
+     - Gráfico QQ-plot  
+     - Test de Shapiro–Wilk  
+
+2. **Homogeneidad de varianzas**  
+   - Los grupos deben tener varianzas similares.  
+   - Se verifica con el test de Levene.  
+
+3. **Independencia**  
+   - Las observaciones deben ser independientes entre sí.  
+   - Las medidas de un grupo no deben influir en las de otro.  
+
+4. **Nivel de medida adecuado**  
+   - La variable dependiente debe estar en una escala métrica (cuantitativa).  
+   - Los factores deben ser categóricos (niveles o grupos definidos).  
+
+
+---
+class: animated, fadeIn
+
+## ¿Cómo se calcula el ANOVA de dos vías?
+
+&gt; Queremos saber si el tipo de fertilizante (químico u orgánico) y las condiciones de luz (alta o baja) tienen un efecto sobre el crecimiento de las plantas.
+
+--
+
+&lt;div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:100%; "&gt;&lt;table class="table table-condensed table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"&gt; Fertilizante &lt;/th&gt;
+   &lt;th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"&gt; Luz &lt;/th&gt;
+   &lt;th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;"&gt; Crecimiento &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Orgánico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7.305293 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Químico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7.792083 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Orgánico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Alta &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11.957130 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Químico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Alta &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13.368602 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Orgánico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.207962 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Químico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6.876891 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Orgánico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Alta &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.451247 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Químico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Alta &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12.584614 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Orgánico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8.779965 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Químico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7.916631 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Orgánico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Alta &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12.253319 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Químico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Alta &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11.971453 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Orgánico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6.734604 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Químico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.168956 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Orgánico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Alta &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11.774229 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Químico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Alta &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13.516471 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Orgánico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7.597115 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Químico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Baja &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7.533345 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Orgánico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Alta &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12.123854 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Químico &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Alta &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12.215942 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;&lt;/div&gt;
+
+
+---
+class: animated, fadeIn
+
+## Preguntas posibles
+
+1. ¿El tipo de fertilizante (orgánico o químico) influye en el crecimiento de las plantas?
+
+2. ¿Las condiciones de luz (alta o baja) afectan al crecimiento de las plantas?
+
+3. ¿Existe una interacción entre la luz y el tipo de fertilizante que modifique el crecimiento de las plantas?
+
+&lt;center&gt;
+&lt;img src="img/ejemplo.png" width=50%&gt;
+
+---
+class: animated, fadeIn
+
+## ¿Qué hace el análisis de varianza?
+
+En un analisis de ANOVA de dos vías, la varianza total (suma de cuadrados totales, `\(SS_{total}\)`) de la variable dependiente se descompone en:
+
+&lt;center&gt;
+&lt;br&gt;
+
+`\(SS_{total}=SS_{A}+SS_{B}+SS_{AB}+SS_{error}\)`
+
+&lt;/center&gt;
+
+- `\(SS_A\)`: varianza explicada por el factor A
+
+- `\(SS_B\)`: varianza explicada por el factor B
+
+- `\(SS_{AB}\)`: varianza debida a la interacción entre A y B
+
+- `\(SS_{error}\)`: varianza no explicada (residual)
+
+--
+
+&gt; Queremos evaluar si la variabilidad en el crecimiento de las plantas puede explicarse por los factores luz, fertilizante, o por la interacción entre ambos.
+
+---
+class: animated, fadeIn
+
+## ¿Qué hace el análisis de varianza?
+
+&lt;center&gt;
+&lt;br&gt;
+
+`\(SS_{total} = SS_{A} + SS_{B} + SS_{AB} + SS_{error}\)`
+
+&lt;br&gt;
+
+&lt;img src="img/varianza.png" width=52%&gt;
+&lt;/center&gt;
+
+- La mayor parte de la varianza en el crecimiento se explica por los factores A y B, y su interacción.
+- Solo una pequeña proporción de la variabilidad queda sin explicar (error residual).
+
+&gt; Podemos describir muy bien el crecimiento a partir de los factores considerados en el modelo.
+
+---
+class: animated, fadeIn
+
+## ¿Qué hace el análisis de varianza?
+
+&lt;center&gt;
+&lt;br&gt;
+
+`\(SS_{total} = SS_{A} + SS_{B} + SS_{AB} + SS_{error}\)`
+
+&lt;br&gt;
+
+&lt;img src="img/varianza2.png" width=52%&gt;
+&lt;/center&gt;
+
+
+---
+class: animated, fadeIn
+
+## Cómo se calcula el ANOVA de dos vías?
+
+.pull-left[
+
+Calcular todas las medias:
+- Media global (`\(\bar{G}\)`): media de todas las observaciones.
+
+- Medias marginales de los factores:
+
+  - `\(\bar{A}_i\)` → media de cada nivel del factor A.
+
+  - `\(\bar{B}_j\)` → media de cada nivel del factor B.
+
+  - Medias de celda (`\(\bar{AB}_{ij}\)`): media de cada combinación de niveles de A × B.
+]
+
+.pull-right[
+&lt;img src="img/tabla.png"&gt;
+]
+
+---
+class: animated, fadeIn
+
+## Cómo se calcula el ANOVA de dos vías?
+
+.pull-left[
+
+Suma de cuadrados totales
+
+
+`\(SS_{total}=\sum\sum\sum(x_{mij}-\bar{G})^2=\)`
+`\((13.37-10.11)^2+(12.58-10.11)^2+...\)`
+`\(...+(6.74-10.11)^+(7.6-10.11)^2=106.63\)`
+
+
+
+&lt;br&gt;
+Grados de libertad:
+
+$$
+df_{total}=n\times p \times q-1=
+5\times2\times2-1
+=19
+$$
+donde:
+- `\(n\)`: total de observaciones (plantas)
+- `\(p\)`: número de grupos en el factor 1 (fertilizante)
+- `\(q\)`: número de grupos en el factor 2 (luz)
+
+]
+
+.pull-right[
+&lt;img src="img/tabla.png"&gt;
+]
+ 
+---
+class: animated, fadeIn
+
+
+## Cómo se calcula el ANOVA de dos vías?
+
+
+.pull-left[
+
+Suma de cuadrados totales
+
+
+`\(SS_{total}=\sum\sum\sum(x_{mij}-\bar{G})^2=\)`
+`\((13.37-10.11)^2+(12.58-10.11)^2+...\)`
+`\(...+(6.74-10.11)^+(7.6-10.11)^2=106.63\)`
+
+
+
+&lt;br&gt;
+Grados de libertad:
+
+$$
+df_{total}=n\times p \times q-1=
+5\times2\times2-1
+=19
+$$
+donde:
+- `\(n\)`: total de observaciones (plantas)
+- `\(p\)`: número de grupos en el factor 1 (fertilizante)
+- `\(q\)`: número de grupos en el factor 2 (luz)
+
+**Varianza total**:
+
+`\(\sigma^2_{total}=\frac{SS_{total}}{df_{total}}=\frac{106.63}{19}=5.612\)`
+
+]
+
+.pull-right[
+&lt;img src="img/tabla.png"&gt;
+]
+
+---
+class: animated, fadeIn
+
+
+## Cómo se calcula el ANOVA de dos vías?
+
+
+.pull-left[
+
+Suma de cuadrados entre grupos
+
+`\(SS_{btw}=n\times\sum\sum(\bar{X}_{ij}-\bar{G})^2=\)`
+
+`\(5\times((12.731-10.10)^2)+(11.71-10.10)^2)+\)`
+`\((8.058-10.10)^2)+(7.925-10.10)^2)=92.12\)`
+
+
+
+&lt;br&gt;
+
+Grados de libertad:
+
+`\(df_{btw}=p\times q-1=\)`
+`\(2\times2-1=3\)`
+
+]
+
+.pull-right[
+&lt;img src="img/tabla.png"&gt;
+]
+
+---
+class: animated, fadeIn
+
+
+## Cómo se calcula el ANOVA de dos vías?
+
+.pull-left[
+
+Suma de cuadrados entre grupos
+
+`\(SS_{btw}=n\times\sum\sum(\bar{X}_{ij}-\bar{G})^2=\)`
+
+`\(5\times((12.731-10.10)^2)+(11.71-10.10)^2)+\)`
+`\((8.058-10.10)^2)+(7.925-10.10)^2)=92.12\)`
+
+
+
+&lt;br&gt;
+
+Grados de libertad:
+
+`\(df_{btw}=p\times q-1=\)`
+`\(2\times2-1=3\)`
+
+**Varianza entre**
+
+`\(\sigma^2_{btw}=\frac{SS_{btw}}{df_{btw}}=\frac{92.12}{3}=30.71\)`
+
+]
+
+.pull-right[
+&lt;img src="img/tabla.png"&gt;
+]
+
+---
+class: animated, fadeIn
+
+
+## Cómo se calcula el ANOVA de dos vías?
+
+
+.pull-left[
+
+Suma de cuadrados del factor A (fertilizante)
+
+
+`\(SS_{A}=n\times q\times \sum(\bar{A}_i-\bar{G})^2=\)`
+
+`\(5 \times 2\times((10.39-10.11)^2+(9.82-10.11)^2)=1.659\)`
+
+
+
+&lt;br&gt;
+
+Grados de libertad
+
+`\(df_{A}=p-1=2-1=1\)`
+
+]
+
+.pull-right[
+&lt;img src="img/tabla.png"&gt;
+]
+
+---
+class: animated, fadeIn
+
+
+## Cómo se calcula el ANOVA de dos vías?
+
+.pull-left[
+
+Suma de cuadrados del factor A (fertilizante)
+
+`\(SS_{A}=n\times q\times \sum(\bar{A}_i-\bar{G})^2=\)`
+
+`\(5 \times 2\times((10.39-10.11)^2+(9.82-10.11)^2)=1.659\)`
+
+
+
+&lt;br&gt;
+
+Grados de libertad
+
+`\(df_{A}=p-1=2-1=1\)`
+
+**Varianza del factor A (fertilizante)**
+
+`\(\sigma^2_{A}=\frac{SS_A}{df_A}=\frac{1.659}{1}=1.659\)`
+
+]
+
+.pull-right[
+&lt;img src="img/tabla.png"&gt;
+]
+
+
+---
+class: animated, fadeIn
+
+
+## Cómo se calcula el ANOVA de dos vías?
+
+.pull-left[
+
+Suma de cuadrados del factor B (luz)
+
+`\(SS_{B}=n\times q\times \sum(\bar{B}_i-\bar{G})^2=\)`
+
+`\(5 \times 2\times((12.22-10.11)^2+(7.99-10.11)^2)=89.465\)`
+
+
+
+&lt;br&gt;
+
+Grados de libertad
+
+`\(df_{B}=p-1=2-1=1\)`
+
+]
+
+.pull-right[
+&lt;img src="img/tabla.png"&gt;
+]
+
+---
+class: animated, fadeIn
+
+
+## Cómo se calcula el ANOVA de dos vías?
+
+.pull-left[
+
+Suma de cuadrados del factor B (luz)
+
+`\(SS_{B}=n\times q\times \sum(\bar{B}_i-\bar{G})^2=\)`
+
+`\(5 \times 2\times((12.22-10.11)^2+(7.99-10.11)^2)=89.481\)`
+
+
+
+&lt;br&gt;
+
+Grados de libertad
+
+`\(df_{B}=p-1=2-1=1\)`
+
+**Varianza del factor B (luz)**
+
+`\(\sigma^2_{B}=\frac{SS_B}{df_B}=\frac{89.481}{1}=89.481\)`
+
+]
+
+.pull-right[
+&lt;img src="img/tabla.png"&gt;
+]
+
+---
+class: animated, fadeIn
+
+## Cómo se calcula el ANOVA de dos vías?
+
+
+.pull-left[
+
+Suma de cuadrados de la interacción
+
+`\(SS_{AB}=SS_{btw}-SS_{A}-SS_{B}=\)`
+
+`\(= 92.123 - 1.659 - 89.481 = 0.983\)`
+
+&lt;br&gt;
+
+Grados de libertad:
+
+`\(df_{AB}=(p-1)\times(q-1)=\)`
+
+`\(df_{AB}=1\times1=1\)`
+
+
+]
+
+.pull-right[
+&lt;img src="img/tabla.png"&gt;
+]
+
+
+
+---
+class: animated, fadeIn
+
+## Cómo se calcula el ANOVA de dos vías?
+
+
+.pull-left[
+
+Suma de cuadrados de la interacción
+
+`\(SS_{AB}=SS_{btw}-SS_{A}-SS_{B}=\)`
+
+`\(= 92.123 - 1.659 - 89.481 = 0.983\)`
+
+&lt;br&gt;
+
+Grados de libertad:
+
+`\(df_{AB}=(p-1)\times(q-1)=\)`
+
+`\(df_{AB}=1\times1=1\)`
+
+**Varianza**
+
+`\(\sigma^2_{AB}=\frac{SS_{AB}}{df_{AB}}=\frac{0.983}{1}=0.983\)`
+
+]
+
+.pull-right[
+&lt;img src="img/tabla.png"&gt;
+]
+
+
+
+---
+class: animated, fadeIn
+
+## Cómo se calcula el ANOVA de dos vías?
+
+
+.pull-left[
+
+Suma de cuadrados del error
+
+`\(SS_{error}=\sum\sum\sum(x_{mij}-\bar{AB}_{ij})^2\)`
+
+`\(= (13.37-12.73)^2+(11.96-11.71)^2+...\)`
+`\(...+(7.79-8.058)^2+(7.30-7.925)^2=14.51\)`
+
+
+
+&lt;br&gt;
+
+Grados de libertad:
+
+`\(df_{error}=(n-1)\times p \times q=\)`
+
+`\(4\times2\times2=16\)`
+
+
+]
+
+.pull-right[
+&lt;img src="img/tabla.png"&gt;
+]
+
+---
+class: animated, fadeIn
+
+## Cómo se calcula el ANOVA de dos vías?
+
+
+.pull-left[
+
+Suma de cuadrados del error
+
+`\(SS_{error}=\sum\sum\sum(x_{mij}-\bar{AB}_{ij})^2\)`
+
+`\(= (13.37-12.73)^2+(11.96-11.71)^2+...\)`
+`\(...+(7.79-8.058)^2+(7.30-7.925)^2=14.51\)`
+
+
+
+&lt;br&gt;
+
+Grados de libertad:
+
+`\(df_{error}=(n-1)\times p \times q=\)`
+
+`\(4\times2\times2=16\)`
+
+**Varianza**
+
+`\(\sigma^2_{error}=\frac{SS_{error}}{df_{error}}=14.51/16=0.907\)`
+
+]
+
+.pull-right[
+&lt;img src="img/tabla.png"&gt;
+]
+
+---
+class: animated, fadeIn
+
+# Cálculo de la F
+
+Se obtienen dividiendo cada varianza (A, B y la interacción) por la varianza del error:
+
+.pull-left[
+Cálculo de F:
+
+`\(F_A = \frac{\sigma^2_A}{\sigma^2_{error}}=\frac{1.659}{0.907}=1.829\)`
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+`\(F_B = \frac{\sigma^2_B}{\sigma^2_{error}}=\frac{89.481}{0.907}=98.656\)`
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+`\(F_{AB} = \frac{\sigma^2_{AB}}{\sigma^2_{error}}=\frac{0.983}{0.907}=1.084\)`
+
+
+
+]
+
+.pull-right[
+
+Grados de libertad factor A:
+- `\(df_{A}\)`=1
+- `\(df_{error}\)`=16
+
+Grados de libertad factor B:
+- `\(df_{B}\)`=1
+- `\(df_{error}\)`=16
+
+Grados de libertad interacción:
+- `\(df_{B}\)`=1
+- `\(df_{error}\)`=16
+
+]
+---
+class: animated, fadeIn
+
+## Tabla de la distribución de F
+
+&lt;table class="table table-condensed" style="font-size: 9px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption style="font-size: initial !important;"&gt;Valores críticos de la distribución F (cola superior, α = 0.05)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt;  &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 1 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 2 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 3 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 4 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 5 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 6 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 7 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 8 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 9 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 10 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 11 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 12 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 13 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 14 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl1 = 15 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 161.4476 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 199.5000 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 215.7073 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 224.5832 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 230.1619 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 233.9860 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 236.7684 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 238.8827 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 240.5433 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 241.8817 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 242.9835 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 243.9060 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 244.6898 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 245.3640 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 245.9499 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 18.5128 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 19.0000 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 19.1643 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 19.2468 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 19.2964 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 19.3295 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 19.3532 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 19.3710 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 19.3848 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 19.3959 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 19.4050 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 19.4125 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 19.4189 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 19.4244 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 19.4291 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 10.1280 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 9.5521 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 9.2766 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 9.1172 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 9.0135 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 8.9406 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 8.8867 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 8.8452 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 8.8123 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 8.7855 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 8.7633 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 8.7446 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 8.7287 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 8.7149 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 8.7029 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 4 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 7.7086 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.9443 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.5914 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.3882 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.2561 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.1631 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.0942 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.0410 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.9988 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.9644 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.9358 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.9117 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.8911 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.8733 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.8578 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 5 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 6.6079 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.7861 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.4095 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.1922 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.0503 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.9503 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.8759 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.8183 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.7725 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.7351 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.7040 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.6777 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.6552 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.6358 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.6188 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 6 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.9874 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.1433 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.7571 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.5337 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.3874 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.2839 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.2067 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.1468 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.0990 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.0600 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.0274 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.9999 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.9764 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.9559 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.9381 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 7 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.5914 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.7374 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.3468 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.1203 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.9715 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.8660 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.7870 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.7257 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.6767 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.6365 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.6030 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.5747 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.5503 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.5292 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.5107 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 8 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.3177 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.4590 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.0662 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.8379 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.6875 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.5806 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.5005 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.4381 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3881 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3472 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3130 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2839 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2590 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2374 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2184 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 9 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 5.1174 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.2565 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.8625 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.6331 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.4817 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3738 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2927 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2296 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1789 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1373 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1025 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0729 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0475 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0255 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0061 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 10 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.9646 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.1028 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.7083 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.4780 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3258 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2172 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1355 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0717 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0204 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9782 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9430 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9130 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8872 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8647 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8450 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 11 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.8443 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.9823 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.5874 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3567 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2039 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0946 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0123 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9480 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8962 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8536 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8179 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7876 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7614 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7386 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7186 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 12 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.7472 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.8853 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.4903 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2592 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1059 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9961 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9134 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8486 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7964 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7534 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7173 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6866 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6602 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6371 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6169 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 13 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.6672 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.8056 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.4105 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1791 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0254 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9153 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8321 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7669 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7144 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6710 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6347 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6037 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5769 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5536 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5331 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 14 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.6001 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.7389 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.3439 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1122 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9582 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8477 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7642 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6987 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6458 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6022 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5655 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5342 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5073 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4837 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4630 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 15 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.5431 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.6823 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2874 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0556 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9013 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7905 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7066 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6408 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5876 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5437 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5068 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4753 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4481 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4244 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4034 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 16 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.4940 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.6337 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.2389 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0069 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8524 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7413 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6572 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5911 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5377 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4935 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4564 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4247 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3973 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3733 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3522 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 17 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.4513 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.5915 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1968 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9647 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8100 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6987 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6143 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5480 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4943 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4499 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4126 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3807 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3531 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3290 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3077 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 18 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.4139 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.5546 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1599 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.9277 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7729 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6613 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5767 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5102 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4563 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4117 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3742 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3421 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3143 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2900 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2686 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 19 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.3807 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.5219 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.1274 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8951 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7401 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6283 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5435 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4768 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4227 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3779 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3402 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3080 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2800 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2556 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2341 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 20 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.3512 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.4928 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0984 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8661 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.7109 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5990 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5140 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4471 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3928 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3479 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3100 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2776 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2495 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2250 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2033 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-weight: bold;background-color: rgba(230, 242, 255, 255) !important;"&gt; gl2 = 21 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 4.3248 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.4668 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3.0725 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.8401 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.6848 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.5727 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4876 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.4205 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3660 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.3210 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2829 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2504 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.2222 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1975 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.1757 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+---
+
+## ANOVA de dos vías en `R`
+
+
+``` r
+modelo &lt;- aov(Crecimiento ~ Fertilizante * Luz, data = datos_luz)
+summary(modelo)
+```
+
+```
+##                  Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## Fertilizante      1   1.66    1.66   1.830    0.195    
+## Luz               1  89.48   89.48  98.698 3.01e-08 ***
+## Fertilizante:Luz  1   0.98    0.98   1.084    0.313    
+## Residuals        16  14.51    0.91                     
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+- **Fertilizante**: efecto principal del tipo de fertilizante.
+
+- **Luz**: efecto principal del nivel de luz.
+
+- **Fertilizante:Luz**: interacción entre ambos factores.
+
+- **Residuals**: variabilidad no explicada por el modelo, incluye diferencias individuales o ruido experimental.
+
+
+---
+
+class: animated, fadeIn
+
+## ANOVA de dos vías en `R`
+
+.pull-left[
+
+``` r
+ggplot(datos_luz, aes(x = Luz, y = Crecimiento, color = Fertilizante, group = Fertilizante)) +
+  stat_summary(fun = mean, geom = "point", size = 3) +
+  stat_summary(fun = mean, geom = "line", linewidth = 1) +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.1) +
+  labs(
+    title = "Efecto del fertilizante y la luz sobre el crecimiento",
+    y = "Crecimiento medio",
+    x = "Nivel de luz"
+  ) +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+```
+]
+
+.pull-right[
+&lt;img src="13.ANOVA_files/figure-html/unnamed-chunk-44-1.png" width="504" /&gt;
+]
+
+  
+---
+class: animated, fadeIn
+
+## ANOVA de dos vías en `R`
+
+.pull-left[
+
+#### Comprobar los supuestos
+
+**Normalidad**
+
+``` r
+shapiro.test(resid(modelo))
+```
+
+```
+## 
+## 	Shapiro-Wilk normality test
+## 
+## data:  resid(modelo)
+## W = 0.96299, p-value = 0.6051
+```
+
+``` r
+modelo &lt;- aov(Crecimiento ~ Fertilizante * Luz, data = datos_luz)
+```
+]
+
+.pull-right[
+
+``` r
+# QQ-plot
+qqnorm(resid(modelo))
+qqline(resid(modelo), col = "red", lwd = 2)
+```
+
+&lt;img src="13.ANOVA_files/figure-html/unnamed-chunk-46-1.png" width="360" /&gt;
+]
+
+---
+class: animated, fadeIn
+
+## ANOVA de dos vías en `R`
+
+#### Comprobar los supuestos
+
+**Homogeneidad de varianzas**
+
+
+``` r
+library(car)
+leveneTest(Crecimiento ~ Fertilizante * Luz, data = datos_luz)
+```
+
+```
+## Levene's Test for Homogeneity of Variance (center = median)
+##       Df F value Pr(&gt;F)
+## group  3   0.296 0.8277
+##       16
+```
+
+---
+class: animated, fadeIn
+
+### Conecta resultado de ANOVA con su tabla
+
+.pull-left[
+
+
+```
+## $Caso1
+##                  Df Sum Sq Mean Sq F value  Pr(&gt;F)    
+## Fertilizante      1   1.32    1.32   1.753  0.2041    
+## Luz               1   4.12    4.12   5.469  0.0327 *  
+## Fertilizante:Luz  1  34.93   34.93  46.365 4.2e-06 ***
+## Residuals        16  12.05    0.75                    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## $Caso2
+##                  Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Fertilizante      1  0.615  0.6150   0.619  0.443
+## Luz               1  1.203  1.2028   1.211  0.287
+## Fertilizante:Luz  1  0.267  0.2674   0.269  0.611
+## Residuals        16 15.890  0.9931
+```
+
+]
+---
+
+class: animated, fadeIn
+
+### Conecta resultado de ANOVA con su tabla
+
+.pull-left[
+
+
+```
+## $Caso3
+##                  Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## Fertilizante      1   1.66    1.66   1.830    0.195    
+## Luz               1  89.48   89.48  98.698 3.01e-08 ***
+## Fertilizante:Luz  1   0.98    0.98   1.084    0.313    
+## Residuals        16  14.51    0.91                     
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## $Caso4
+##                  Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## Fertilizante      1  52.17   52.17   101.8 2.43e-08 ***
+## Luz               1   0.00    0.00     0.0        1    
+## Fertilizante:Luz  1   0.00    0.00     0.0        1    
+## Residuals        16   8.20    0.51                     
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+]
+
+---
+class: animated, fadeIn
+
+## Casos
+
+&lt;center&gt;
+
+&lt;img src="13.ANOVA_files/figure-html/unnamed-chunk-50-1.png" width="720" /&gt;
+
+
+---
+class: animated, fadeIn
+
+## Coeficiente de determinacion de ANOVA (R²)
+
+
+- Mide qué proporción de la variabilidad total de la variable dependiente es explicada por los factores incluidos en el modelo.
+- Es una medida de bondad de ajuste del modelo ANOVA.
+- Va de 0 a 1 (o de 0 a 100%)
+
+--
+
+En cualquier ANOVA, la variabilidad se puede descomponer como:
+
+&lt;center&gt;
+
+`\(SS_{total} = SS_{modelo} + SS_{error}\)`
+
+&lt;/center&gt;
+
+- `\(SS_{total}\)`: suma de cuadrados total
+- `\(SS_{modelo}\)`: suma de cuadrados explicada por los factores (efectos principales + interacción, si la hay)
+- `\(SS_{error}\)`: suma de cuadrados de los residuos (error)
+
+--
+
+&lt;center&gt;
+
+`\(R^2=\frac{SS_{modelo}}{SS_{total}} = 1 - \frac{SS_{error}}{SS_{total}}\)`
+
+---
+class: animated, fadeIn
+
+## Coeficiente de determinacion de ANOVA (R²)
+
+.pull-left[
+En ANOVA de una vía:
+
+`\(SS_{total} = SS_{entre} + SS_{dentro}\)`
+
+`\(R^2=\frac{SS_{entre}}{SS_{total}} = 1 - \frac{SS_{dentro}}{SS_{total}}\)`
+
+&gt; ¿Qué porcentaje de la varianza total explica el factor A?
+]
+
+--
+
+.pull-right[
+En ANOVA de dos vías:
+
+`\(SS_{total} = SS_{A} + SS_{B} + SS_{AB} + SS_{error}\)`
+
+`\(R^2=\frac{SS_{A}+SS_{B}+SS_{AB}}{SS_{total}} = 1 - \frac{SS_{error}}{SS_{total}}\)`
+
+&gt; ¿Qué porcentaje de la varianza total explican ambos factores y su interacción?
+]
+
+--
+
+| Tipo de ANOVA | Descomposición                                     | Componentes              | R²                                            |
+| ------------- | -------------------------------------------------- | ------------------------ | --------------------------------------------- |
+| **Una vía**   | `\(SS_{total} = SS_{entre} + SS_{dentro}\)`                   | 1 factor                 | `\(R^2 = SS_{entre} / SS_{total}\)`                      |
+| **Dos vías**  | `\(SS_{total} = SS_A + SS_B + SS_{A:B} + SS_{error}\)` | 2 factores + interacción | `\(R^2 = (SS_A + SS_B + SS_{A:B}) / SS_{total}\)` |
+
+
+---
+class: animated, fadeIn
+
+## Coeficiente de determinacion de ANOVA (R²)
+ 
+ | Valor de (`\(R^2\)`) | Significado                                                    |
+| -------------- | -------------------------------------------------------------- |
+| **0**          | El modelo **no explica nada** de la variabilidad de los datos. |
+| **1**          | El modelo **explica toda** la variabilidad observada.          |
+| **0.3–0.6**    | El modelo explica **una parte moderada** de la variabilidad.   |
+| **&gt; 0.7**      | El modelo tiene **buena capacidad explicativa**.               |
+
+---
+class: animated, fadeIn
+
+## Coeficiente de determinacion de ANOVA (R²) en `R`
+
+La función `lm()`: ajusta una recta que explica una variable dependiente (respuesta) en función de una o más variables independientes (factores).
+
+&gt; En ANOVA, `lm()` estima efectos medios de los factores y de sus interacciones
+
+
+``` r
+summary(lm(Crecimiento ~ Fertilizante * Luz, data = datos_luz))
+```
+
+--
+
+&lt;br&gt;
+
+&gt; También lo podríamos calcular directamente con SS_{AB}, SS_{A}, SS_{B} y SS_{total} que hemos calculado previamente.
+
+
+``` r
+1.659 + 89.481 + 0.983 # SS modelo (SS dentro): SS_A + SS_B + SS_AB
+```
+
+```
+## [1] 92.123
+```
+
+``` r
+92.123/106.63 ## SS_modelo / SS_total
+```
+
+```
+## [1] 0.8639501
+```
+
+
+---
+class: animated, fadeIn
+
+## Coeficiente de determinacion de ANOVA (R²) en `R`
+
+
+
+```
+## 
+## Call:
+## lm(formula = Crecimiento ~ Fertilizante * Luz, data = datos_luz)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.2607 -0.5481 -0.1439  0.5653  2.1114 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                   7.9250     0.4258  18.611 2.89e-12 ***
+## FertilizanteQuímico           0.1326     0.6022   0.220    0.829    
+## LuzAlta                       3.7870     0.6022   6.289 1.08e-05 ***
+## FertilizanteQuímico:LuzAlta   0.8869     0.8516   1.041    0.313    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.9522 on 16 degrees of freedom
+## Multiple R-squared:  0.864,	Adjusted R-squared:  0.8385 
+## F-statistic: 33.87 on 3 and 16 DF,  p-value: 3.672e-07
+```
+
+---
+class: animated, fadeIn
+
+## _Batch effect_
+
+- Variación sistemática no biológica entre grupos de muestras que fueron procesadas en momentos o condiciones distintas.
+
+Por ejemplo:
+
+- Las plantas del fertilizante orgánico se midieron en un día distinto que las del químico.
+
+- Las muestras de RNA-seq fueron secuenciadas en distintos "batches".
+
+- Se usaron distintos experimentadores o cámaras de luz.
+
+Este factor no es de interés biológico, pero puede introducir ruido o confusión si no se controla.
+
+---
+class: animated, fadeIn
+
+## _Batch effect_
+
+
+```
+##    Fertilizante  Luz Rep Crecimiento             Escenario  Lote
+## 1      Orgánico Baja   1    7.305293 Solo efecto de la luz Lote1
+## 2       Químico Baja   1    7.792083 Solo efecto de la luz Lote1
+## 3      Orgánico Alta   1   11.957130 Solo efecto de la luz Lote1
+## 4       Químico Alta   1   13.368602 Solo efecto de la luz Lote1
+## 5      Orgánico Baja   2    9.207962 Solo efecto de la luz Lote1
+## 6       Químico Baja   2    6.876891 Solo efecto de la luz Lote1
+## 7      Orgánico Alta   2   10.451247 Solo efecto de la luz Lote1
+## 8       Químico Alta   2   12.584614 Solo efecto de la luz Lote1
+## 9      Orgánico Baja   3    8.779965 Solo efecto de la luz Lote1
+## 10      Químico Baja   3    7.916631 Solo efecto de la luz Lote1
+## 11     Orgánico Alta   3   12.253319 Solo efecto de la luz Lote2
+## 12      Químico Alta   3   11.971453 Solo efecto de la luz Lote2
+## 13     Orgánico Baja   4    6.734604 Solo efecto de la luz Lote2
+## 14      Químico Baja   4   10.168956 Solo efecto de la luz Lote2
+## 15     Orgánico Alta   4   11.774229 Solo efecto de la luz Lote2
+## 16      Químico Alta   4   13.516471 Solo efecto de la luz Lote2
+## 17     Orgánico Baja   5    7.597115 Solo efecto de la luz Lote2
+## 18      Químico Baja   5    7.533345 Solo efecto de la luz Lote2
+## 19     Orgánico Alta   5   12.123854 Solo efecto de la luz Lote2
+## 20      Químico Alta   5   12.215942 Solo efecto de la luz Lote2
+```
+
+
+---
+class: animated, fadeIn
+
+## Cómo controlamos por el _batch effect_ en ANOVA
+
+
+``` r
+modelo_batch &lt;- aov(Crecimiento ~ Fertilizante * Luz + Lote, data = datos)
+summary(modelo_batch)
+```
+
+```
+##                  Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## Fertilizante      1   7.76    7.76   3.121 0.081343 .  
+## Luz               1  39.60   39.60  15.937 0.000151 ***
+## Lote              1   6.43    6.43   2.588 0.111845    
+## Fertilizante:Luz  1  10.19   10.19   4.101 0.046418 *  
+## Residuals        75 186.37    2.48                     
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+- `Lote` añadido como **covariable**
+
+- Los efectos de `Fertilizante` y `Luz` se estiman independientemente de las diferencias entre lotes.
+
+  - Si el efecto de Lote es significativo → el batch effect está influyendo en el crecimiento
+  - Si no lo es → las diferencias entre lotes no tienen un impacto relevante
+
+
+---
+class: animated, fadeIn
+
+## Cómo controlamos por el _batch effect_ en ANOVA
+
+Verificación visual de si hay efecto:
+
+&lt;img src="13.ANOVA_files/figure-html/unnamed-chunk-56-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+class: animated, fadeIn
+
+## Cómo controlamos por el _batch effect_ en ANOVA
+
+
+``` r
+anova(aov(Crecimiento ~ Fertilizante * Luz, data = datos_luz),
+      aov(Crecimiento ~ Fertilizante * Luz + Lote, data = datos_luz))
+```
+
+```
+## Analysis of Variance Table
+## 
+## Model 1: Crecimiento ~ Fertilizante * Luz
+## Model 2: Crecimiento ~ Fertilizante * Luz + Lote
+##   Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+## 1     16 14.506                           
+## 2     15 14.432  1  0.073516 0.0764  0.786
+```
+
+
+- Añadir el batch efecto  no implica ningun cambio (el modelo no mejora)
+
+--
+
+- El RSS (_Residual Sum of Squares_batch_) mide la variación no explicada por el modelo:
+  - Cuanto menor sea el RSS → mejor explica el modelo la variación de los datos
+  - Pero cuidado: añadir más variables siempre reduce el RSS, aunque no sean realmente relevantes
+
+- &lt; 0.05 → el modelo más complejo (con más términos) mejora significativamente el ajuste
+
+- \&gt; 0.05 → la mejora del ajuste no es significativa → conviene quedarse con el modelo más simple (principio de parsimonia)
 
 ---
 class: animated, fadeIn

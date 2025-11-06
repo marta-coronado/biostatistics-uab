@@ -1238,12 +1238,43 @@ plot(tuk, las = 1)
 ```
 ]
 
+
+---
+class: animated, fadeIn
+
+### Visualizar el resultado del ANOVA
+
+Figura creada con el paquete `ggstatsplot`.
+
+```{r echo = F, fig.align='center', fig.height=6.5}
+library(ggstatsplot)
+bird$logMaxAbund<-log(bird$MaxAbund)
+ggbetweenstats(
+    data = bird,
+    x = Diet,
+    y = logMaxAbund,
+    type = "parametric",
+    var.equal = TRUE,bf.message = F,pairwise.display = "none") +
+  theme(text = element_text(size = 18)) 
+    
+```
+
+
+
 ---
 class: animated, fadeIn
 
 ## Alternativas al ANOVA
 
 Si no se cumplen los supuestos del ANOVA (normalidad o homogeneidad de varianzas), existen dos estrategias principales:
+
+#### Transformación de los datos
+
+- Aplicar logaritmo (`y_transf <- log(y)`): datos sesgados
+- Inversa (`y_transf <- 1/y`): datos pequeños
+- ...
+
+--
 
 #### Test no paramétrico: Kruskal-Wallis
 
@@ -1254,9 +1285,9 @@ kruskal.test(y ~ grupo, data = datos)
 ```
 
 
-- No requiere normalidad ni homogeneidad de varianzas.
+- No requiere normalidad ni homogeneidad de varianzas
 
-- Compara las medianas de los grupos en lugar de las medias.
+- Compara las medianas de los grupos en lugar de las medias
 
 
 ---
@@ -1264,8 +1295,8 @@ class: animated, fadeIn
 
 ## Actividad de ANOVA
 
-Un investigador desea conocer la efectividad de varios suplementos alimenticios (feed) sobre la tasa de crecimiento (weight) de los pollos. Carga los datos `chickwts` de `R`. Usa ANOVA para examinar la efectividad de los suplementos alimenticios. La línea de comando para cargar la tabla `chickwts` es `data("chickwts")`. Ejercicio tomado de: Biostatistics with R. Shahbaba (2012). Springer.<br>
-**RETO**: haz la actividad en `R`.
+Una investigadora desea conocer la efectividad de varios suplementos alimenticios (_feed_) sobre la tasa de crecimiento (_weight_) de los pollos. Los datos están disponibles en la tabla `chickwts` de `R` y se muestran a continuación. Usa ANOVA para examinar la efectividad de los suplementos alimenticios. Ejercicio tomado de: Biostatistics with R. Shahbaba (2012). Springer.<br>
+**RETO**: haz la actividad en `R`. La línea de comando para cargar la tabla `chickwts` es `data("chickwts")`.
 
 ```{r, echo = F}
 library(dplyr)
@@ -1294,47 +1325,30 @@ chickwts %>%
   )
 ```
 
+
 ---
 class: animated, fadeIn
 
-## Primer paso: comprobar supuestos
+## Primer paso: comprobar supuestos del ANOVA
 
 
 ```{r }
 aov1 <- aov(weight ~ feed, data = chickwts)
 
 library(car)
-leveneTest(weight ~ feed, data = chickwts)
+leveneTest(aov1)
 
 shapiro.test(residuals(aov1))
 ```
 
----
-class: animated, fadeIn
-
-## Resultado del ANOVA:
-
-```{r echo = F, fig.align='center'}
-library(ggstatsplot)
-
-ggbetweenstats(
-    data = chickwts,
-    x = feed,
-    y = weight,
-    type = "parametric",
-    var.equal = TRUE,bf.message = F,pairwise.display = "none")
-    
-```
-
-Figura creada con el paquete `ggstatsplot`.
 
 ---
 class: animated, fadeIn
 
 ## Calculadora de la F crítica de Fisher
 
-- Podemos utilizar calculadoras online como:  https://www.danielsoper.com/statcalc/calculator.aspx?id=4 para obtener rápidamente la F crítica
-- Mirar la tabla
+- Podemos utilizar calculadoras online como:  https://www.danielsoper.com/statcalc/calculator.aspx?id=4 para obtener rápidamente la F crítica.
+- Podemos utilizar la tabla:
 
 
 
@@ -1373,6 +1387,25 @@ kable(F_table_df, row.names = TRUE, align = "c",
 ```
 
   
+  
+---
+class: animated, fadeIn
+
+## Resultado del ANOVA
+
+```{r echo = F, fig.align='center', fig.height=6.5}
+library(ggstatsplot)
+
+ggbetweenstats(
+    data = chickwts,
+    x = feed,
+    y = weight,
+    type = "parametric",
+    var.equal = TRUE,bf.message = F,pairwise.display = "none") +
+  theme(text = element_text(size = 18)) 
+    
+```
+
 ---
 class: animated, fadeIn
 
@@ -1389,7 +1422,7 @@ tuk_diet <- as.data.frame(tuk$feed)
 library(knitr)
 library(kableExtra)
 
-kable(tuk_diet, digits = 4, caption = "Resultados del test de Tukey para el factor Diet") %>%
+kable(tuk_diet, digits = 4, caption = "Resultados del test de Tukey") %>%
   kable_styling(full_width = FALSE, bootstrap_options = c("condensed", "striped")) %>%
   scroll_box(width = "100%", height = "400px")
 ```
@@ -1406,7 +1439,7 @@ alpha <- 0.05      # nivel de significancia
 df1 <- 5           # grados de libertad del numerador (número de grupos - 1)
 df2 <- 65          # grados de libertad del denominador (total muestras - número de grupos)
 
-F_critical <- qf(1 - alpha, df1, df2)
+F_critical <- qf(1 - alpha, df1, df2, lower.tail = TRUE)
 F_critical
 ```
 
@@ -1419,6 +1452,8 @@ class: animated, fadeIn
 
 ## La F crítica y p-valor en `R`
 
+- **P-valor**: probabilidad de obtener un valor de F igual o mayor que el observado, $F_{obs}$.
+
 ```{r}
 df1 <- 5
 df2 <- 65
@@ -1428,27 +1463,1532 @@ p_value <- pf(F_obs, df1, df2, lower.tail = FALSE)
 p_value
 ```
 
-La función `pf` devuelve la probabilidad de obtener un F mayor o igual que $F_{obs}$.
+La función `pf` calcula directamente esta probabilidad.
 
-Si $p-valor < \alpha$ → el ANOVA es significativo.
 
-> `lower.tail=FALSE` porque ANOVA siempre mira la cola superior.
+> Si $p-valor < \alpha$ → el ANOVA es significativo.
+
+> `lower.tail=FALSE` porque ANOVA siempre mira la cola superior!
 
 ---
 layout: false
 class: left, bottom, inverse, animated, bounceInDown
 
 
-## ANOVA DE DOS VÍAS
+## ANOVA de DOS VÍAS
 
 ---
+class: animated, fadeIn
 
 ## ANOVA de dos vías
 
-- Método estadístico para probar el efecto de **dos variables categóricas** sobre una **variable continua**
+- Método estadístico para probar el efecto de **dos variables categóricas** sobre una **variable continua**.
 
   - La **variables categóricas** son las **variables independientes**
+  
   - las **variables continuas** son las **variables respuesta**
+
+--
+
+- Es una extensión del ANOVA de una vía
+
+
+---
+class: animated, fadeIn
+
+### ¿Cuándo usamos el ANOVA de dos vías?
+
+- Usamos un ANOVA de dos vías cuando queremos evaluar el efecto de **dos factores independientes** sobre una variable dependiente.
+
+<center>
+<img src="img/una_via.png" width=70%>
+
+---
+class: animated, fadeIn
+
+### ¿Cuándo usamos el ANOVA de dos vías?
+
+- Usamos un ANOVA de dos vías cuando queremos evaluar el efecto de **dos factores independientes** sobre una variable dependiente.
+
+<center>
+<img src="img/dos_vias.png" width=70%>
+
+---
+class: animated, fadeIn
+
+### Ejemplo de ANOVA de dos vías
+
+- **Variable dependiente**: crecimiento de una planta
+
+- **Factor 1**: tipo de fertilizante (orgánico vs. químico)
+
+- **Factor 2**: cantidad de luz (alta vs. baja)
+
+--
+
+¿El fertilizante y/o la luz afectan al crecimiento? ¿Depende el efecto del fertilizante del nivel de luz?
+
+<center>
+<img src="img/ejemplo.png" width=70%>
+
+---
+
+class: animated, fadeIn
+
+### ¿Qué afirmaciones podemos hacer con un ANOVA de dos vías?
+
+Posibles escenarios de un ANOVA: **efectos principales** e **interacción**
+
+<center>
+
+```{r echo = F, fig.width=10}
+library(ggplot2)
+library(dplyr)
+
+set.seed(123)
+rep <- 5  # réplicas por combinación
+
+# ---- 1. Sin efecto de ningún factor ----
+data1 <- expand.grid(
+  Fertilizante = c("Orgánico", "Químico"),
+  Luz = c("Baja", "Alta"),
+  Rep = 1:rep
+)
+data1$Crecimiento <- rnorm(nrow(data1), mean = 10, sd = 1)
+data1$Escenario <- "Sin efecto de ningún factor"
+
+# ---- 2. Solo efecto del fertilizante ----
+data2 <- expand.grid(
+  Fertilizante = c("Orgánico", "Químico"),
+  Luz = c("Baja", "Alta"),
+  Rep = 1:rep
+)
+data2$Crecimiento <- with(data2,
+  ifelse(Fertilizante == "Orgánico", rnorm(rep * 2, mean = 12, sd = 1),
+                                rnorm(rep * 2, mean = 8, sd = 1)))
+data2$Escenario <- "Solo efecto del fertilizante"
+
+# ---- 3. Solo efecto de la luz ----
+data3 <- expand.grid(
+  Fertilizante = c("Orgánico", "Químico"),
+  Luz = c("Baja", "Alta"),
+  Rep = 1:rep
+)
+data3$Crecimiento <- with(data3,
+  ifelse(Luz == "Baja", rnorm(rep * 2, mean = 8, sd = 1),
+                      rnorm(rep * 2, mean = 12, sd = 1)))
+data3$Escenario <- "Solo efecto de la luz"
+
+# ---- 4. Con interacción significativa ----
+data4 <- expand.grid(
+  Fertilizante = c("Orgánico", "Químico"),
+  Luz = c("Baja", "Alta"),
+  Rep = 1:rep
+)
+data4$Crecimiento <- with(data4,
+  ifelse(Fertilizante == "Orgánico" & Luz == "Baja", rnorm(rep, 12, 1),
+  ifelse(Fertilizante == "Orgánico" & Luz == "Alta", rnorm(rep, 9, 1),
+  ifelse(Fertilizante == "Químico" & Luz == "Baja", rnorm(rep, 10, 1),
+                                rnorm(rep, 13, 1)))))
+data4$Escenario <- "Con interacción significativa"
+
+# ---- Unir los datasets ----
+datos <- bind_rows(data1, data2, data3, data4)
+
+# ---- Graficar ----
+ggplot(datos, aes(x = Luz, y = Crecimiento, color = Fertilizante, group = Fertilizante)) +
+  stat_summary(fun = mean, geom = "point", size = 3) +
+  stat_summary(fun = mean, geom = "line", linewidth = 1) +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.1) + 
+  facet_wrap(~Escenario, scales = "free_y", ncol = 2) +
+  theme_minimal(base_size = 15) +
+  labs(
+    y = "Crecimiento medio",
+    x = "Nivel de luz",
+    color = "Fertilizante"
+  )  +
+  scale_color_manual(values=c("cadetblue4", "firebrick3")) + 
+  ggthemes::theme_base(base_size = 18) + 
+  theme(
+    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),
+    strip.text = element_text(size = 13, face = "bold"),
+    legend.position = "bottom", 
+    panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white") 
+  )+
+      coord_cartesian(ylim=c(7.5,14))
+
+```
+
+---
+class: animated, fadeIn
+
+### ¿Qué afirmaciones podemos hacer con un ANOVA de dos vías?
+
+1. ¿El factor 1 tiene un efecto en la variable dependiente?
+
+2. ¿El factor 2 tiene un efecto en la variable dependiente?
+
+3. ¿Hay interacción entre los dos factores?
+
+---
+class: animated, fadeIn
+
+## Hipotesis del ANOVA de dos vías
+
+.pull-left[
+Hay **3 hipótesis nulas**:
+
+1. No hay diferencia significativa entre los grupos del primer factor.
+
+2. No hay diferencia significativa entre los grupos del segundo factor.
+
+3. Un factor no influye en el efecto del otro factor (no hay interacción).
+
+]
+
+.pull-right[
+Hay **3 hipotesis alternativas**
+
+1. Hay diferencias significativas entre los grupos del primer factor.
+
+2. Hay diferencias significativas entre los grupos del segundo factor.
+
+3. Un factor influye en el efecto del otro factor (sí hay interacción).
+]
+
+--
+
+- No tienen que cumplirse (ni rechazarse) las tres hipótesis simultáneamente.
+
+---
+class: animated, fadeIn
+
+## Requisitos del ANOVA
+
+--
+
+1. **Normalidad**  
+   - Los residuos deben seguir una distribución normal.  
+   - Se puede comprobar mediante:
+     - Gráfico QQ-plot  
+     - Test de Shapiro–Wilk  
+
+2. **Homogeneidad de varianzas**  
+   - Los grupos deben tener varianzas similares.  
+   - Se verifica con el test de Levene.  
+
+3. **Independencia**  
+   - Las observaciones deben ser independientes entre sí.  
+   - Las medidas de un grupo no deben influir en las de otro.  
+
+4. **Nivel de medida adecuado**  
+   - La variable dependiente debe estar en una escala métrica (cuantitativa).  
+   - Los factores deben ser categóricos (niveles o grupos definidos).  
+
+
+---
+class: animated, fadeIn
+
+## ¿Cómo se calcula el ANOVA de dos vías?
+
+> Queremos saber si el tipo de fertilizante (químico u orgánico) y las condiciones de luz (alta o baja) tienen un efecto sobre el crecimiento de las plantas.
+
+--
+
+```{r echo = F}
+datos[datos$Escenario=="Solo efecto de la luz",c("Fertilizante", "Luz", "Crecimiento")] %>%
+  knitr::kable(row.names = FALSE) %>%
+  kable_styling(full_width = FALSE, bootstrap_options = c("condensed", "striped")) %>%
+  scroll_box(width = "100%", height = "300px")
+```
+
+
+---
+class: animated, fadeIn
+
+## Preguntas posibles
+
+1. ¿El tipo de fertilizante (orgánico o químico) influye en el crecimiento de las plantas?
+
+2. ¿Las condiciones de luz (alta o baja) afectan al crecimiento de las plantas?
+
+3. ¿Existe una interacción entre la luz y el tipo de fertilizante que modifique el crecimiento de las plantas?
+
+<center>
+<img src="img/ejemplo.png" width=50%>
+
+---
+class: animated, fadeIn
+
+## ¿Qué hace el análisis de varianza?
+
+En un analisis de ANOVA de dos vías, la varianza total (suma de cuadrados totales, $SS_{total}$) de la variable dependiente se descompone en:
+
+<center>
+<br>
+
+$SS_{total}=SS_{A}+SS_{B}+SS_{AB}+SS_{error}$
+
+</center>
+
+- $SS_A$: varianza explicada por el factor A
+
+- $SS_B$: varianza explicada por el factor B
+
+- $SS_{AB}$: varianza debida a la interacción entre A y B
+
+- $SS_{error}$: varianza no explicada (residual)
+
+--
+
+> Queremos evaluar si la variabilidad en el crecimiento de las plantas puede explicarse por los factores luz, fertilizante, o por la interacción entre ambos.
+
+---
+class: animated, fadeIn
+
+## ¿Qué hace el análisis de varianza?
+
+<center>
+<br>
+
+$SS_{total} = SS_{A} + SS_{B} + SS_{AB} + SS_{error}$
+
+<br>
+
+<img src="img/varianza.png" width=52%>
+</center>
+
+- La mayor parte de la varianza en el crecimiento se explica por los factores A y B, y su interacción.
+- Solo una pequeña proporción de la variabilidad queda sin explicar (error residual).
+
+> Podemos describir muy bien el crecimiento a partir de los factores considerados en el modelo.
+
+---
+class: animated, fadeIn
+
+## ¿Qué hace el análisis de varianza?
+
+<center>
+<br>
+
+$SS_{total} = SS_{A} + SS_{B} + SS_{AB} + SS_{error}$
+
+<br>
+
+<img src="img/varianza2.png" width=52%>
+</center>
+
+
+---
+class: animated, fadeIn
+
+## Cómo se calcula el ANOVA de dos vías?
+
+.pull-left[
+
+Calcular todas las medias:
+- Media global ($\bar{G}$): media de todas las observaciones.
+
+- Medias marginales de los factores:
+
+  - $\bar{A}_i$ → media de cada nivel del factor A.
+
+  - $\bar{B}_j$ → media de cada nivel del factor B.
+
+  - Medias de celda ($\bar{AB}_{ij}$): media de cada combinación de niveles de A × B.
+]
+
+.pull-right[
+<img src="img/tabla.png">
+]
+
+---
+class: animated, fadeIn
+
+## Cómo se calcula el ANOVA de dos vías?
+
+.pull-left[
+
+Suma de cuadrados totales
+
+
+$SS_{total}=\sum\sum\sum(x_{mij}-\bar{G})^2=$
+$(13.37-10.11)^2+(12.58-10.11)^2+...$
+$...+(6.74-10.11)^+(7.6-10.11)^2=106.63$
+
+```{r echo = F, eval = F}
+library(dplyr)
+
+# Filtramos el escenario
+datos_luz <- datos %>%
+  filter(Escenario == "Solo efecto de la luz")
+
+# Media general
+media_global <- mean(datos_luz$Crecimiento)
+
+# Suma de cuadrados total
+SS_tot <- sum((datos_luz$Crecimiento - media_global)^2)
+
+SS_tot
+
+```
+
+<br>
+Grados de libertad:
+
+$$
+df_{total}=n\times p \times q-1=
+5\times2\times2-1
+=19
+$$
+donde:
+- $n$: total de observaciones (plantas)
+- $p$: número de grupos en el factor 1 (fertilizante)
+- $q$: número de grupos en el factor 2 (luz)
+
+]
+
+.pull-right[
+<img src="img/tabla.png">
+]
+ 
+---
+class: animated, fadeIn
+
+
+## Cómo se calcula el ANOVA de dos vías?
+
+
+.pull-left[
+
+Suma de cuadrados totales
+
+
+$SS_{total}=\sum\sum\sum(x_{mij}-\bar{G})^2=$
+$(13.37-10.11)^2+(12.58-10.11)^2+...$
+$...+(6.74-10.11)^+(7.6-10.11)^2=106.63$
+
+```{r echo = F, eval = F}
+library(dplyr)
+
+# Filtramos el escenario
+datos_luz <- datos %>%
+  filter(Escenario == "Solo efecto de la luz")
+
+# Media general
+media_global <- mean(datos_luz$Crecimiento)
+
+# Suma de cuadrados total
+SS_tot <- sum((datos_luz$Crecimiento - media_global)^2)
+
+SS_tot
+
+```
+
+<br>
+Grados de libertad:
+
+$$
+df_{total}=n\times p \times q-1=
+5\times2\times2-1
+=19
+$$
+donde:
+- $n$: total de observaciones (plantas)
+- $p$: número de grupos en el factor 1 (fertilizante)
+- $q$: número de grupos en el factor 2 (luz)
+
+**Varianza total**:
+
+$\sigma^2_{total}=\frac{SS_{total}}{df_{total}}=\frac{106.63}{19}=5.612$
+
+]
+
+.pull-right[
+<img src="img/tabla.png">
+]
+
+---
+class: animated, fadeIn
+
+
+## Cómo se calcula el ANOVA de dos vías?
+
+
+.pull-left[
+
+Suma de cuadrados entre grupos
+
+$SS_{btw}=n\times\sum\sum(\bar{X}_{ij}-\bar{G})^2=$
+
+$5\times((12.731-10.10)^2)+(11.71-10.10)^2)+$
+$(8.058-10.10)^2)+(7.925-10.10)^2)=92.12$
+
+```{r echo = F, eval =F}
+library(dplyr)
+
+# Filtrar escenario
+datos_luz <- datos %>%
+  filter(Escenario == "Solo efecto de la luz")
+
+# Calcular media general
+media_global <- mean(datos_luz$Crecimiento)
+
+# Calcular medias por combinación Fertilizante:Luz
+medias_grupo <- datos_luz %>%
+  group_by(Fertilizante, Luz) %>%
+  summarise(media = mean(Crecimiento), .groups = "drop")
+
+# Número de réplicas por combinación
+n <- datos_luz %>%
+  count(Fertilizante, Luz) %>%
+  summarise(n = unique(n)) %>%
+  pull()
+
+# Suma de cuadrados entre grupos
+SS_btw <- n * sum((medias_grupo$media - media_global)^2)
+SS_btw
+
+```
+
+<br>
+
+Grados de libertad:
+
+$df_{btw}=p\times q-1=$
+$2\times2-1=3$
+
+]
+
+.pull-right[
+<img src="img/tabla.png">
+]
+
+---
+class: animated, fadeIn
+
+
+## Cómo se calcula el ANOVA de dos vías?
+
+.pull-left[
+
+Suma de cuadrados entre grupos
+
+$SS_{btw}=n\times\sum\sum(\bar{X}_{ij}-\bar{G})^2=$
+
+$5\times((12.731-10.10)^2)+(11.71-10.10)^2)+$
+$(8.058-10.10)^2)+(7.925-10.10)^2)=92.12$
+
+```{r echo = F, eval =F}
+library(dplyr)
+
+# Filtrar escenario
+datos_luz <- datos %>%
+  filter(Escenario == "Solo efecto de la luz")
+
+# Calcular media general
+media_global <- mean(datos_luz$Crecimiento)
+
+# Calcular medias por combinación Fertilizante:Luz
+medias_grupo <- datos_luz %>%
+  group_by(Fertilizante, Luz) %>%
+  summarise(media = mean(Crecimiento), .groups = "drop")
+
+# Número de réplicas por combinación
+n <- datos_luz %>%
+  count(Fertilizante, Luz) %>%
+  summarise(n = unique(n)) %>%
+  pull()
+
+# Suma de cuadrados entre grupos
+SS_btw <- n * sum((medias_grupo$media - media_global)^2)
+SS_btw
+
+```
+
+<br>
+
+Grados de libertad:
+
+$df_{btw}=p\times q-1=$
+$2\times2-1=3$
+
+**Varianza entre**
+
+$\sigma^2_{btw}=\frac{SS_{btw}}{df_{btw}}=\frac{92.12}{3}=30.71$
+
+]
+
+.pull-right[
+<img src="img/tabla.png">
+]
+
+---
+class: animated, fadeIn
+
+
+## Cómo se calcula el ANOVA de dos vías?
+
+
+.pull-left[
+
+Suma de cuadrados del factor A (fertilizante)
+
+
+$SS_{A}=n\times q\times \sum(\bar{A}_i-\bar{G})^2=$
+
+$5 \times 2\times((10.39-10.11)^2+(9.82-10.11)^2)=1.659$
+
+```{r echo =F , eval = F}
+
+library(dplyr)
+
+# Filtrar escenario
+datos_luz <- datos %>%
+  filter(Escenario == "Solo efecto de la luz")
+
+# Media global
+media_global <- mean(datos_luz$Crecimiento)
+
+# Medias por Fertilizante (factor A)
+medias_A <- datos_luz %>%
+  group_by(Fertilizante) %>%
+  summarise(media = mean(Crecimiento), .groups = "drop")
+
+# Número de réplicas por combinación de factores (A×B)
+n <- datos_luz %>%
+  count(Fertilizante, Luz) %>%
+  summarise(n = unique(n)) %>%
+  pull()
+
+# Número de niveles del otro factor (B = Luz)
+q <- datos_luz %>%
+  summarise(q = n_distinct(Luz)) %>%
+  pull()
+
+# Suma de cuadrados del factor A
+SS_A <- n * q * sum((medias_A$media - media_global)^2)
+SS_A
+
+
+```
+
+<br>
+
+Grados de libertad
+
+$df_{A}=p-1=2-1=1$
+
+]
+
+.pull-right[
+<img src="img/tabla.png">
+]
+
+---
+class: animated, fadeIn
+
+
+## Cómo se calcula el ANOVA de dos vías?
+
+.pull-left[
+
+Suma de cuadrados del factor A (fertilizante)
+
+$SS_{A}=n\times q\times \sum(\bar{A}_i-\bar{G})^2=$
+
+$5 \times 2\times((10.39-10.11)^2+(9.82-10.11)^2)=1.659$
+
+```{r echo =F , eval = F}
+
+library(dplyr)
+
+# Filtrar escenario
+datos_luz <- datos %>%
+  filter(Escenario == "Solo efecto de la luz")
+
+# Media global
+media_global <- mean(datos_luz$Crecimiento)
+
+# Medias por Fertilizante (factor A)
+medias_A <- datos_luz %>%
+  group_by(Fertilizante) %>%
+  summarise(media = mean(Crecimiento), .groups = "drop")
+
+# Número de réplicas por combinación de factores (A×B)
+n <- datos_luz %>%
+  count(Fertilizante, Luz) %>%
+  summarise(n = unique(n)) %>%
+  pull()
+
+# Número de niveles del otro factor (B = Luz)
+q <- datos_luz %>%
+  summarise(q = n_distinct(Luz)) %>%
+  pull()
+
+# Suma de cuadrados del factor A
+SS_A <- n * q * sum((medias_A$media - media_global)^2)
+SS_A
+
+
+```
+
+<br>
+
+Grados de libertad
+
+$df_{A}=p-1=2-1=1$
+
+**Varianza del factor A (fertilizante)**
+
+$\sigma^2_{A}=\frac{SS_A}{df_A}=\frac{1.659}{1}=1.659$
+
+]
+
+.pull-right[
+<img src="img/tabla.png">
+]
+
+
+---
+class: animated, fadeIn
+
+
+## Cómo se calcula el ANOVA de dos vías?
+
+.pull-left[
+
+Suma de cuadrados del factor B (luz)
+
+$SS_{B}=n\times q\times \sum(\bar{B}_i-\bar{G})^2=$
+
+$5 \times 2\times((12.22-10.11)^2+(7.99-10.11)^2)=89.465$
+
+```{r echo =F , eval = F}
+
+library(dplyr)
+
+# Filtramos el escenario
+datos_luz <- datos %>%
+  filter(Escenario == "Solo efecto de la luz")
+
+# Media global
+media_global <- mean(datos_luz$Crecimiento)
+
+# Medias por nivel de Luz
+medias_B <- datos_luz %>%
+  group_by(Luz) %>%
+  summarise(media = mean(Crecimiento), .groups = "drop")
+
+# Número de réplicas por combinación A×B
+n <- datos_luz %>%
+  count(Fertilizante, Luz) %>%
+  summarise(n = unique(n)) %>%
+  pull()
+
+# Número de niveles del otro factor (p = Fertilizante)
+p <- datos_luz %>%
+  summarise(p = n_distinct(Fertilizante)) %>%
+  pull()
+
+# Suma de cuadrados del factor B (Luz)
+SS_B <- n * p * sum((medias_B$media - media_global)^2)
+SS_B
+
+
+```
+
+<br>
+
+Grados de libertad
+
+$df_{B}=p-1=2-1=1$
+
+]
+
+.pull-right[
+<img src="img/tabla.png">
+]
+
+---
+class: animated, fadeIn
+
+
+## Cómo se calcula el ANOVA de dos vías?
+
+.pull-left[
+
+Suma de cuadrados del factor B (luz)
+
+$SS_{B}=n\times q\times \sum(\bar{B}_i-\bar{G})^2=$
+
+$5 \times 2\times((12.22-10.11)^2+(7.99-10.11)^2)=89.481$
+
+```{r echo =F , eval = F}
+
+library(dplyr)
+
+# Filtramos el escenario
+datos_luz <- datos %>%
+  filter(Escenario == "Solo efecto de la luz")
+
+# Media global
+media_global <- mean(datos_luz$Crecimiento)
+
+# Medias por nivel de Luz
+medias_B <- datos_luz %>%
+  group_by(Luz) %>%
+  summarise(media = mean(Crecimiento), .groups = "drop")
+
+# Número de réplicas por combinación A×B
+n <- datos_luz %>%
+  count(Fertilizante, Luz) %>%
+  summarise(n = unique(n)) %>%
+  pull()
+
+# Número de niveles del otro factor (p = Fertilizante)
+p <- datos_luz %>%
+  summarise(p = n_distinct(Fertilizante)) %>%
+  pull()
+
+# Suma de cuadrados del factor B (Luz)
+SS_B <- n * p * sum((medias_B$media - media_global)^2)
+SS_B
+
+
+```
+
+<br>
+
+Grados de libertad
+
+$df_{B}=p-1=2-1=1$
+
+**Varianza del factor B (luz)**
+
+$\sigma^2_{B}=\frac{SS_B}{df_B}=\frac{89.481}{1}=89.481$
+
+]
+
+.pull-right[
+<img src="img/tabla.png">
+]
+
+---
+class: animated, fadeIn
+
+## Cómo se calcula el ANOVA de dos vías?
+
+
+.pull-left[
+
+Suma de cuadrados de la interacción
+
+$SS_{AB}=SS_{btw}-SS_{A}-SS_{B}=$
+
+$= 92.123 - 1.659 - 89.481 = 0.983$
+
+<br>
+
+Grados de libertad:
+
+$df_{AB}=(p-1)\times(q-1)=$
+
+$df_{AB}=1\times1=1$
+
+
+]
+
+.pull-right[
+<img src="img/tabla.png">
+]
+
+
+
+---
+class: animated, fadeIn
+
+## Cómo se calcula el ANOVA de dos vías?
+
+
+.pull-left[
+
+Suma de cuadrados de la interacción
+
+$SS_{AB}=SS_{btw}-SS_{A}-SS_{B}=$
+
+$= 92.123 - 1.659 - 89.481 = 0.983$
+
+<br>
+
+Grados de libertad:
+
+$df_{AB}=(p-1)\times(q-1)=$
+
+$df_{AB}=1\times1=1$
+
+**Varianza**
+
+$\sigma^2_{AB}=\frac{SS_{AB}}{df_{AB}}=\frac{0.983}{1}=0.983$
+
+]
+
+.pull-right[
+<img src="img/tabla.png">
+]
+
+
+
+---
+class: animated, fadeIn
+
+## Cómo se calcula el ANOVA de dos vías?
+
+
+.pull-left[
+
+Suma de cuadrados del error
+
+$SS_{error}=\sum\sum\sum(x_{mij}-\bar{AB}_{ij})^2$
+
+$= (13.37-12.73)^2+(11.96-11.71)^2+...$
+$...+(7.79-8.058)^2+(7.30-7.925)^2=14.51$
+
+```{r eval=F, echo = F}
+
+library(dplyr)
+
+# Filtramos el escenario de interés
+datos_error <- datos %>%
+  filter(Escenario == "Solo efecto de la luz")
+
+# Calculamos la media por combinación (A × B)
+medias_AB <- datos_error %>%
+  group_by(Fertilizante, Luz) %>%
+  summarise(media_AB = mean(Crecimiento), .groups = "drop")
+
+# Añadimos esa media al dataset original
+datos_error <- left_join(datos_error, medias_AB, by = c("Fertilizante", "Luz"))
+
+# Calculamos el SS_error
+SS_error <- sum((datos_error$Crecimiento - datos_error$media_AB)^2)
+SS_error
+
+
+```
+
+<br>
+
+Grados de libertad:
+
+$df_{error}=(n-1)\times p \times q=$
+
+$4\times2\times2=16$
+
+
+]
+
+.pull-right[
+<img src="img/tabla.png">
+]
+
+---
+class: animated, fadeIn
+
+## Cómo se calcula el ANOVA de dos vías?
+
+
+.pull-left[
+
+Suma de cuadrados del error
+
+$SS_{error}=\sum\sum\sum(x_{mij}-\bar{AB}_{ij})^2$
+
+$= (13.37-12.73)^2+(11.96-11.71)^2+...$
+$...+(7.79-8.058)^2+(7.30-7.925)^2=14.51$
+
+```{r eval=F, echo = F}
+
+library(dplyr)
+
+# Filtramos el escenario de interés
+datos_error <- datos %>%
+  filter(Escenario == "Solo efecto de la luz")
+
+# Calculamos la media por combinación (A × B)
+medias_AB <- datos_error %>%
+  group_by(Fertilizante, Luz) %>%
+  summarise(media_AB = mean(Crecimiento), .groups = "drop")
+
+# Añadimos esa media al dataset original
+datos_error <- left_join(datos_error, medias_AB, by = c("Fertilizante", "Luz"))
+
+# Calculamos el SS_error
+SS_error <- sum((datos_error$Crecimiento - datos_error$media_AB)^2)
+SS_error
+
+
+```
+
+<br>
+
+Grados de libertad:
+
+$df_{error}=(n-1)\times p \times q=$
+
+$4\times2\times2=16$
+
+**Varianza**
+
+$\sigma^2_{error}=\frac{SS_{error}}{df_{error}}=14.51/16=0.907$
+
+]
+
+.pull-right[
+<img src="img/tabla.png">
+]
+
+---
+class: animated, fadeIn
+
+# Cálculo de la F
+
+Se obtienen dividiendo cada varianza (A, B y la interacción) por la varianza del error:
+
+.pull-left[
+Cálculo de F:
+
+$F_A = \frac{\sigma^2_A}{\sigma^2_{error}}=\frac{1.659}{0.907}=1.829$
+<br>
+<br>
+<br>
+$F_B = \frac{\sigma^2_B}{\sigma^2_{error}}=\frac{89.481}{0.907}=98.656$
+<br>
+<br>
+<br>
+$F_{AB} = \frac{\sigma^2_{AB}}{\sigma^2_{error}}=\frac{0.983}{0.907}=1.084$
+
+
+
+]
+
+.pull-right[
+
+Grados de libertad factor A:
+- $df_{A}$=1
+- $df_{error}$=16
+
+Grados de libertad factor B:
+- $df_{B}$=1
+- $df_{error}$=16
+
+Grados de libertad interacción:
+- $df_{B}$=1
+- $df_{error}$=16
+
+]
+---
+class: animated, fadeIn
+
+## Tabla de la distribución de F
+
+```{r echo = F}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+# --- Parámetros ---
+df1_vals <- 1:15      # grados de libertad del numerador
+df2_vals <- 1:21     # grados de libertad del denominador
+alpha <- 0.05        # nivel de significación (cola superior)
+
+# --- Calcular valores críticos F ---
+F_table <- sapply(df1_vals, function(df1) qf(1 - alpha, df1 = df1, df2 = df2_vals))
+
+# --- Convertir en data frame ---
+F_table_df <- data.frame(df2 = df2_vals, round(F_table, 4))
+colnames(F_table_df) <- c("df2", paste0("gl1 = ", df1_vals))
+rownames(F_table_df) <- paste0("gl2 = ",rownames(F_table_df))
+F_table_df$df2<-NULL
+
+# --- Mostrar tabla ---
+kable(F_table_df, row.names = TRUE, align = "c",
+      caption = "Valores críticos de la distribución F (cola superior, α = 0.05)") %>%
+  kable_styling(
+    full_width = FALSE,
+    position = "center",
+    font_size = 9,  # letra pequeña
+    bootstrap_options = c("condensed")
+  ) %>%
+  row_spec(0, bold = TRUE, background = "#e6f2ff") %>%
+  column_spec(1, bold = TRUE, background = "#e6f2ff")
+
+
+```
+
+
+---
+
+## ANOVA de dos vías en `R`
+
+```{r}
+modelo <- aov(Crecimiento ~ Fertilizante * Luz, data = datos_luz)
+summary(modelo)
+
+```
+
+- **Fertilizante**: efecto principal del tipo de fertilizante.
+
+- **Luz**: efecto principal del nivel de luz.
+
+- **Fertilizante:Luz**: interacción entre ambos factores.
+
+- **Residuals**: variabilidad no explicada por el modelo, incluye diferencias individuales o ruido experimental.
+
+
+---
+
+class: animated, fadeIn
+
+## ANOVA de dos vías en `R`
+
+.pull-left[
+```{r eval=F}
+ggplot(datos_luz, aes(x = Luz, y = Crecimiento, color = Fertilizante, group = Fertilizante)) +
+  stat_summary(fun = mean, geom = "point", size = 3) +
+  stat_summary(fun = mean, geom = "line", linewidth = 1) +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.1) +
+  labs(
+    title = "Efecto del fertilizante y la luz sobre el crecimiento",
+    y = "Crecimiento medio",
+    x = "Nivel de luz"
+  ) +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+  
+```
+]
+
+.pull-right[
+```{r echo = F}
+ggplot(datos_luz, aes(x = Luz, y = Crecimiento, color = Fertilizante, group = Fertilizante)) +
+  stat_summary(fun = mean, geom = "point", size = 3) +
+  stat_summary(fun = mean, geom = "line", linewidth = 1) +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.1) +
+  labs(
+    title = "Efecto del fertilizante y la luz sobre el crecimiento",
+    y = "Crecimiento medio",
+    x = "Nivel de luz"
+  ) +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+  
+```
+]
+
+  
+---
+class: animated, fadeIn
+
+## ANOVA de dos vías en `R`
+
+.pull-left[
+
+#### Comprobar los supuestos
+
+**Normalidad**
+```{r}
+shapiro.test(resid(modelo))
+
+modelo <- aov(Crecimiento ~ Fertilizante * Luz, data = datos_luz)
+```
+]
+
+.pull-right[
+```{r fig.height=5, fig.width=5}
+# QQ-plot
+qqnorm(resid(modelo))
+qqline(resid(modelo), col = "red", lwd = 2)
+```
+]
+
+---
+class: animated, fadeIn
+
+## ANOVA de dos vías en `R`
+
+#### Comprobar los supuestos
+
+**Homogeneidad de varianzas**
+
+```{r}
+library(car)
+leveneTest(Crecimiento ~ Fertilizante * Luz, data = datos_luz)
+```  
+
+---
+class: animated, fadeIn
+
+### Conecta resultado de ANOVA con su tabla
+
+.pull-left[
+
+```{r echo = F, size='small'}
+library(dplyr)
+
+# Dividimos el dataset por escenario
+escenarios <- split(datos, datos$Escenario)
+
+# Función para hacer ANOVA de dos vías y resumir resultados
+run_anova <- function(df) {
+  modelo <- aov(Crecimiento ~ Fertilizante * Luz, data = df)
+  summary(modelo)
+}
+
+# Aplicamos a cada escenario
+resultados <- lapply(escenarios, run_anova)
+
+# Mostramos resultados
+names(resultados) <- c("Caso1", "Caso2", "Caso3", "Caso4")
+
+resultados[1:2]
+
+#graficos de antes
+```
+
+]
+---
+
+class: animated, fadeIn
+
+### Conecta resultado de ANOVA con su tabla
+
+.pull-left[
+
+```{r echo = F, size='small'}
+library(dplyr)
+
+# Dividimos el dataset por escenario
+escenarios <- split(datos, datos$Escenario)
+
+# Función para hacer ANOVA de dos vías y resumir resultados
+run_anova <- function(df) {
+  modelo <- aov(Crecimiento ~ Fertilizante * Luz, data = df)
+  summary(modelo)
+}
+
+# Aplicamos a cada escenario
+resultados <- lapply(escenarios, run_anova)
+
+# Mostramos resultados
+names(resultados) <- c("Caso1", "Caso2", "Caso3", "Caso4")
+
+resultados[3:4]
+
+#graficos de antes
+```
+
+]
+
+---
+class: animated, fadeIn
+
+## Casos
+
+<center>
+
+```{r echo = F, fig.width=10}
+library(ggplot2)
+library(dplyr)
+
+set.seed(123)
+rep <- 5  # réplicas por combinación
+
+# ---- 1. Sin efecto de ningún factor ----
+data1 <- expand.grid(
+  Fertilizante = c("Orgánico", "Químico"),
+  Luz = c("Baja", "Alta"),
+  Rep = 1:rep
+)
+data1$Crecimiento <- rnorm(nrow(data1), mean = 10, sd = 1)
+data1$Escenario <- "Sin efecto de ningún factor"
+
+# ---- 2. Solo efecto del fertilizante ----
+data2 <- expand.grid(
+  Fertilizante = c("Orgánico", "Químico"),
+  Luz = c("Baja", "Alta"),
+  Rep = 1:rep
+)
+data2$Crecimiento <- with(data2,
+  ifelse(Fertilizante == "Orgánico", rnorm(rep * 2, mean = 12, sd = 1),
+                                rnorm(rep * 2, mean = 8, sd = 1)))
+data2$Escenario <- "Solo efecto del fertilizante"
+
+# ---- 3. Solo efecto de la luz ----
+data3 <- expand.grid(
+  Fertilizante = c("Orgánico", "Químico"),
+  Luz = c("Baja", "Alta"),
+  Rep = 1:rep
+)
+data3$Crecimiento <- with(data3,
+  ifelse(Luz == "Baja", rnorm(rep * 2, mean = 8, sd = 1),
+                      rnorm(rep * 2, mean = 12, sd = 1)))
+data3$Escenario <- "Solo efecto de la luz"
+
+# ---- 4. Con interacción significativa ----
+data4 <- expand.grid(
+  Fertilizante = c("Orgánico", "Químico"),
+  Luz = c("Baja", "Alta"),
+  Rep = 1:rep
+)
+data4$Crecimiento <- with(data4,
+  ifelse(Fertilizante == "Orgánico" & Luz == "Baja", rnorm(rep, 12, 1),
+  ifelse(Fertilizante == "Orgánico" & Luz == "Alta", rnorm(rep, 9, 1),
+  ifelse(Fertilizante == "Químico" & Luz == "Baja", rnorm(rep, 10, 1),
+                                rnorm(rep, 13, 1)))))
+data4$Escenario <- "Con interacción significativa"
+
+# ---- Unir los datasets ----
+datos <- bind_rows(data4, data1, data3, data2)
+
+# ---- Graficar ----
+ggplot(datos, aes(x = Luz, y = Crecimiento, color = Fertilizante, group = Fertilizante)) +
+  stat_summary(fun = mean, geom = "point", size = 3) +
+  stat_summary(fun = mean, geom = "line", linewidth = 1) +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.1) + 
+  facet_wrap(~Escenario, scales = "free_y", ncol = 2) +
+  theme_minimal(base_size = 15) +
+  labs(
+    y = "Crecimiento medio",
+    x = "Nivel de luz",
+    color = "Fertilizante"
+  )  +
+  scale_color_manual(values=c("cadetblue4", "firebrick3")) + 
+  ggthemes::theme_base(base_size = 18) + 
+  theme(
+    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),
+    strip.text = element_text(size = 13, face = "bold"),
+    legend.position = "bottom", 
+    panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white") 
+  )+
+      coord_cartesian(ylim=c(7.5,14))
+
+```
+
+
+---
+class: animated, fadeIn
+
+## Coeficiente de determinacion de ANOVA (R²)
+
+
+- Mide qué proporción de la variabilidad total de la variable dependiente es explicada por los factores incluidos en el modelo.
+- Es una medida de bondad de ajuste del modelo ANOVA.
+- Va de 0 a 1 (o de 0 a 100%)
+
+--
+
+En cualquier ANOVA, la variabilidad se puede descomponer como:
+
+<center>
+
+$SS_{total} = SS_{modelo} + SS_{error}$
+
+</center>
+
+- $SS_{total}$: suma de cuadrados total
+- $SS_{modelo}$: suma de cuadrados explicada por los factores (efectos principales + interacción, si la hay)
+- $SS_{error}$: suma de cuadrados de los residuos (error)
+
+--
+
+<center>
+
+$R^2=\frac{SS_{modelo}}{SS_{total}} = 1 - \frac{SS_{error}}{SS_{total}}$
+
+---
+class: animated, fadeIn
+
+## Coeficiente de determinacion de ANOVA (R²)
+
+.pull-left[
+En ANOVA de una vía:
+
+$SS_{total} = SS_{entre} + SS_{dentro}$
+
+$R^2=\frac{SS_{entre}}{SS_{total}} = 1 - \frac{SS_{dentro}}{SS_{total}}$
+
+> ¿Qué porcentaje de la varianza total explica el factor A?
+]
+
+--
+
+.pull-right[
+En ANOVA de dos vías:
+
+$SS_{total} = SS_{A} + SS_{B} + SS_{AB} + SS_{error}$
+
+$R^2=\frac{SS_{A}+SS_{B}+SS_{AB}}{SS_{total}} = 1 - \frac{SS_{error}}{SS_{total}}$
+
+> ¿Qué porcentaje de la varianza total explican ambos factores y su interacción?
+]
+
+--
+
+| Tipo de ANOVA | Descomposición                                     | Componentes              | R²                                            |
+| ------------- | -------------------------------------------------- | ------------------------ | --------------------------------------------- |
+| **Una vía**   | $SS_{total} = SS_{entre} + SS_{dentro}$                   | 1 factor                 | $R^2 = SS_{entre} / SS_{total}$                      |
+| **Dos vías**  | $SS_{total} = SS_A + SS_B + SS_{A:B} + SS_{error}$ | 2 factores + interacción | $R^2 = (SS_A + SS_B + SS_{A:B}) / SS_{total}$ |
+
+
+---
+class: animated, fadeIn
+
+## Coeficiente de determinacion de ANOVA (R²)
+ 
+ | Valor de ($R^2$) | Significado                                                    |
+| -------------- | -------------------------------------------------------------- |
+| **0**          | El modelo **no explica nada** de la variabilidad de los datos. |
+| **1**          | El modelo **explica toda** la variabilidad observada.          |
+| **0.3–0.6**    | El modelo explica **una parte moderada** de la variabilidad.   |
+| **> 0.7**      | El modelo tiene **buena capacidad explicativa**.               |
+
+---
+class: animated, fadeIn
+
+## Coeficiente de determinacion de ANOVA (R²) en `R`
+
+La función `lm()`: ajusta una recta que explica una variable dependiente (respuesta) en función de una o más variables independientes (factores).
+
+> En ANOVA, `lm()` estima efectos medios de los factores y de sus interacciones
+
+```{r eval = F}
+summary(lm(Crecimiento ~ Fertilizante * Luz, data = datos_luz))
+```
+
+--
+
+<br>
+
+> También lo podríamos calcular directamente con SS_{AB}, SS_{A}, SS_{B} y SS_{total} que hemos calculado previamente.
+
+```{r}
+1.659 + 89.481 + 0.983 # SS modelo (SS dentro): SS_A + SS_B + SS_AB
+92.123/106.63 ## SS_modelo / SS_total
+```
+
+
+---
+class: animated, fadeIn
+
+## Coeficiente de determinacion de ANOVA (R²) en `R`
+
+
+```{r echo = F}
+summary(lm(Crecimiento ~ Fertilizante * Luz, data = datos_luz))
+```
+
+---
+class: animated, fadeIn
+
+## _Batch effect_
+
+- Variación sistemática no biológica entre grupos de muestras que fueron procesadas en momentos o condiciones distintas.
+
+Por ejemplo:
+
+- Las plantas del fertilizante orgánico se midieron en un día distinto que las del químico.
+
+- Las muestras de RNA-seq fueron secuenciadas en distintos "batches".
+
+- Se usaron distintos experimentadores o cámaras de luz.
+
+Este factor no es de interés biológico, pero puede introducir ruido o confusión si no se controla.
+
+---
+class: animated, fadeIn
+
+## _Batch effect_
+
+```{r echo = F}
+datos_luz$Lote <- rep(c("Lote1", "Lote2"), each = nrow(datos_luz)/2)
+
+head(datos_luz,20)
+```
+
+
+---
+class: animated, fadeIn
+
+## Cómo controlamos por el _batch effect_ en ANOVA
+
+```{r}
+modelo_batch <- aov(Crecimiento ~ Fertilizante * Luz + Lote, data = datos)
+summary(modelo_batch)
+```
+
+- `Lote` añadido como **covariable**
+
+- Los efectos de `Fertilizante` y `Luz` se estiman independientemente de las diferencias entre lotes.
+
+  - Si el efecto de Lote es significativo → el batch effect está influyendo en el crecimiento
+  - Si no lo es → las diferencias entre lotes no tienen un impacto relevante
+
+
+---
+class: animated, fadeIn
+
+## Cómo controlamos por el _batch effect_ en ANOVA
+
+Verificación visual de si hay efecto:
+
+```{r echo = F, fig.align='center'}
+library(ggplot2)
+
+ggplot(datos_luz, aes(x = Lote, y = Crecimiento, fill = Lote)) +
+  geom_violin(trim = FALSE, alpha = 0.7, show.legend = F) +
+  geom_boxplot(width = 0.1, color = "black", alpha = 0.5, show.legend = F) +
+  labs(title = "Efecto de lote (batch effect) sobre el crecimiento") +
+  ggthemes::theme_base(base_size = 13) +
+  scale_fill_brewer(palette="Set2") + 
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+  
+```
+
+
+
+---
+class: animated, fadeIn
+
+## Cómo controlamos por el _batch effect_ en ANOVA
+
+```{r}
+anova(aov(Crecimiento ~ Fertilizante * Luz, data = datos_luz),
+      aov(Crecimiento ~ Fertilizante * Luz + Lote, data = datos_luz))
+```
+
+
+- Añadir el batch efecto  no implica ningun cambio (el modelo no mejora)
+
+--
+
+- El RSS (_Residual Sum of Squares_batch_) mide la variación no explicada por el modelo:
+  - Cuanto menor sea el RSS → mejor explica el modelo la variación de los datos
+  - Pero cuidado: añadir más variables siempre reduce el RSS, aunque no sean realmente relevantes
+
+- < 0.05 → el modelo más complejo (con más términos) mejora significativamente el ajuste
+
+- \> 0.05 → la mejora del ajuste no es significativa → conviene quedarse con el modelo más simple (principio de parsimonia)
 
 ---
 class: animated, fadeIn
