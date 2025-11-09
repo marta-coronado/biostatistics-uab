@@ -24,7 +24,7 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Tema 10: Inferencia estadística](T/10/10.Inferencia.html)
 - [Tema 11: T-test](T/11/11.TTest.html)
 - [Tema 12: T-test (II)](T/12/12.TTest_pt2.html)
-- [Tema 13: ANOVA (I)](T/13/13.ANOVA.html)
+- [Tema 13: ANOVA)](T/13/13.ANOVA.html)
 - [FÓRMULAS](T/FORMULAS.html)
 
 ---
