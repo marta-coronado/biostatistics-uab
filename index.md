@@ -46,7 +46,8 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - <a href="P/2/Practica_Binomial.Rmd" download>Descarga el documento `Rmd` de la Práctica 2 aquí</a>.
 - [Práctica 3: Distribución normal - Práctica en `R`](P/3/Practica_Normal.html)
 - <a href="P/3/Practica_Normal.Rmd" download>Descarga el documento `Rmd` de la Práctica 3 aquí</a>.
-  
+- [Práctica 4: Pruebas de la distribución t - Práctica en `R`](P/4/Practica_T.html)
+- <a href="P/4/Practica_T.Rmd" download>Descarga el documento `Rmd` de la Práctica 4 aquí</a>.  
 ---
 
 ✍️ *Última actualización: {{ site.time | date: "%d-%m-%Y" }}*
