@@ -2164,7 +2164,7 @@ Suma de cuadrados del factor B (luz)
 
 $SS_{B}=n\times q\times \sum(\bar{B}_i-\bar{G})^2=$
 
-$5 \times 2\times((12.22-10.11)^2+(7.99-10.11)^2)=89.465$
+$5 \times 2\times((12.22-10.11)^2+(7.99-10.11)^2)=89.481$
 
 ```{r echo =F , eval = F}
 
