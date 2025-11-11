@@ -2485,7 +2485,7 @@ Grados de libertad factor B:
 - $df_{error}$=16
 
 Grados de libertad interacción:
-- $df_{B}$=1
+- $df_{AB}$=1
 - $df_{error}$=16
 
 ]
