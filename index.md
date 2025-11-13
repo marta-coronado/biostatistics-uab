@@ -25,7 +25,7 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Tema 11: T-test](T/11/11.TTest.html)
 - [Tema 12: T-test (II)](T/12/12.TTest_pt2.html)
 - [Tema 13: ANOVA](T/13/13.ANOVA.html)
-- [Tema 14: ANOVA](T/14/14.Correlacion.html)
+- [Tema 14: Correlación](T/14/14.Correlacion.html)
 - [FÓRMULAS](T/FORMULAS.html)
 
 ---
