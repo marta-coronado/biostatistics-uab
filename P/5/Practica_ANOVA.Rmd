@@ -155,10 +155,10 @@ ANOVA funciona correctamente cuando se cumplen los siguientes supuestos:
 
 ## Comprobación de supuestos
 
-En este ejemplo usaremos el data frame `titanic` para evaluar los supuestos del ANOVA. Está disponible aquí: XXXXXX
+En este ejemplo usaremos el data frame `titanic` para evaluar los supuestos del ANOVA. Está disponible aquí: "https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/5/titanic.csv"
 
 ```{r}
-titanic <- read.csv("titanic.csv")
+titanic <- read.csv("https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/5/titanic.csv")
 head(titanic)
 class(titanic)
 ```
@@ -168,47 +168,38 @@ Agruparemos a los pasajeros según la clase en la que viajaban (`passenger_class
 1. **Comprobación de variables**: función `str()`. La función recibe un vector (recuerda que accedemos al vector como `data.frame$nombre_columna`) Comprueba de qué tipo son las columnas `passenger_class` y `age`:
 
 ```{r}
-str(titanic$passenger_class)
-str(titanic$age)
-```
-
-2. **Normalidad**. La normalidad se comprueba sobre los residuos del ANOVA. Debemos ajustar los datos al modelo `variable_numerica ~ variable categorica, data = data.frame` dentro de la función `aov()`. Guarda el modelo en un objeto llamado `titanic_aov`.
-
-```{r eval = F}
-aov(variable_numerica ~ variable_categorica, data = data.frame)
-
-titanic_aov <- aov(age ~ passenger_class, data = titanic)
 
 ```
 
-Accedemos a los residuos del modelo con la función `resid`:
-
-```{r eval = F}
-titanic_aov <- aov(age ~ passenger_class, data = titanic)
-resid(titanic_aov)
-```
-
-Comprobamos si los residuos siguen normalidad con la función de `shapiro_test`:
+2. **Normalidad**. La normalidad se comprueba sobre los residuos del ANOVA. Debemos ajustar los datos al modelo `variable_numerica ~ variable categorica, data = data.frame` dentro de la función `aov()`. Guarda el modelo en un objeto llamado `titanic_aov` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/13/13.ANOVA.html#59)).
 
 ```{r}
-titanic_aov <- aov(age ~ passenger_class, data = titanic)
 
-shapiro.test(resid(titanic_aov))
+```
+
+Accedemos a los residuos del modelo con la función `resid()` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/13/13.ANOVA.html#60)):
+
+```{r}
+
+```
+
+Comprobamos si los residuos siguen normalidad con la función de `shapiro.test` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/13/13.ANOVA.html#61)):
+
+```{r}
 
 ```
 
 **¿Cuál es la conclusión del test?**
 
 
-2. **Homogeneidad de varianzas**. La homogeneidad de varianzas se comprueba directamente sobre el modelo con un test de Levene: `leveneTest(variable_numerica ~ variable_categorica, data = data.frame)`.
+2. **Homogeneidad de varianzas**. La homogeneidad de varianzas se comprueba directamente sobre el modelo con un test de Levene: `leveneTest(variable_numerica ~ variable_categorica, data = data.frame)` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/13/13.ANOVA.html#64)).
 
-```{r eval = F}
-leveneTest(variable_numerica ~ variable_categorica, data = data.frame)
+```{r}
 
-leveneTest(age ~ passenger_class, data = titanic)
 ```
 
 **¿Cuál es la conclusión del test?**
+
 
 3. Test de **ANOVA**:
 
@@ -222,12 +213,12 @@ Según las conclusiones de los test, tenemos distintas opciones para hacer el te
 
 En todos los casos, el modelo se especifica como `variable_numerica ~ variable_categorica, data = data.frame`. La función `oneway.test` tiene el parámetro `var.equal=TRUE` y `var.equal=FALSE` (como el `t.test`). Hacer un `oneway.test` con `var.equal=TRUE` es equivalente a hacer el test con `aov()`.
 
-<i class="fa fa-info-circle"></i> Para `aov()` necesitamos utilizar la función `summary` para ver el resultado del test (el `p-valor`). Las funciones `oneway.test` y `kruskal.test` lo hacen directamente.
+<i class="fa fa-info-circle"></i> Para `aov()` necesitamos utilizar la función `summary` para ver el resultado del test (el `p-valor`) ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/13/13.ANOVA.html#65)). Las funciones `oneway.test()` y `kruskal.test()` lo hacen directamente.
 
-**Segun los resultados de los supuestos anteriores, ¿cuál sería el mejor test? Comprueba que resultado da.**
+**Segun los resultados de los supuestos anteriores, ¿cuál sería el mejor test? Comprueba qué resultado da.**
 
 ```{r}
-oneway.test(age ~ passenger_class, data = titanic, var.equal = FALSE)
+
 ```
 
 
@@ -235,13 +226,13 @@ oneway.test(age ~ passenger_class, data = titanic, var.equal = FALSE)
 
 Un ANOVA de un solo factor puede indicarnos que al menos un grupo tiene una media diferente de otro grupo, pero no nos dice qué grupos difieren entre sí. El test de Tukey nos permite probar la hipótesis nula de que no hay diferencia entre las medias poblacionales para todos los pares de grupos. Este test, también conocido como **Tukey Honest Significance Test (Tukey HSD)**, se implementa en R con la función `TukeyHSD()`.
 
-Para hacer un test de Tukey sobre nuestros datos, primero debemos aplicar la función `aov()` al modelo, y luego aplicar `TukeyHSD()` al resultado. Esto se puede hacer en un solo comando:
+Para hacer un test de Tukey sobre nuestros datos, primero debemos aplicar la función `aov()` al modelo, y luego aplicar `TukeyHSD()` al resultado ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/13/13.ANOVA.html#69)):
 
-```{r eval = F}
-TukeyHSD(aov(variable_numerica ~ variable_categorica, data = data.frame))
+```{r}
+
 ```
 
-<i class="fa fa-exclamation-triangle"></i> Con estos datos, no podemos utilizar directamente el test de Tukey, ya que asume que las varianzas son iguales y hemos visto que no lo son. La alternativa que tenemos es realizar un `t.test` a pares (`pairwise.t.test`), con corrección de `p-valor` por comparaciones múltiples (`fdr`) y considerando varianzas desiguales (`pool.sd=FALSE`). En el caso de que los datos no fueran normales, podríamos utilizar `pairwise.wilcox.test()`.
+<i class="fa fa-exclamation-triangle"></i> Con estos datos, no podemos utilizar directamente el test de Tukey, ya que asume que las varianzas son iguales y hemos visto que no lo son. La alternativa que tenemos es realizar un `t.test` a pares (`pairwise.t.test`), con corrección de `p-valor` por comparaciones múltiples (`fdr`) y considerando varianzas desiguales (`pool.sd=FALSE`). En el caso de que los datos no fueran normales, podríamos utilizar `pairwise.wilcox.test()`:
 
 
 ```{r}
@@ -259,12 +250,11 @@ De esta manera, podemos identificar qué pares de grupos difieren significativam
 | ✘          | ✔ o ✘        | **Pairwise Wilcoxon** o  | `pairwise.wilcox.test(vector_resp, vector_grupos, p.adjust.method="fdr")`  |
 
 
-
 5. **Visualización**
-Podemos visualizar los datos con un boxplot en `ggplot2`:
+Podemos visualizar los datos (edad  y clase de los pasajeros) con un boxplot en `ggplot2`:
 
 ```{r}
-ggplot(titanic, aes(x=passenger_class, y = age)) + geom_boxplot()
+
 ```
 
 
@@ -282,18 +272,16 @@ Para evaluar el impacto urbano sobre los insectos, [Adams et al. (2019)](https:/
 
 El ANOVA será útil para examinar la riqueza de especies de insectos a lo largo de un gradiente urbano en Los Ángeles.
 
-1. **Leer los datos** "urban_data.tsv" (link: ). Utiliza la función `read.table` con el parámetro `sep = "\t"` para indicar que este fichero esta separado por tabulado, y con `header = TRUE` para indicar que tiene encabezado:
+1. **Leer los datos** "urban_data.tsv" (link: https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/5/urban_data_filter.tsv). Utiliza la función `read.table` con el parámetro `sep = "\t"` para indicar que este fichero esta separado por tabulado, y con `header = TRUE` para indicar que tiene encabezado ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#18)):
 
 ```{r}
-datI <- read.table("urban_data_filter.tsv", sep = "\t", header = TRUE)
-head(datI)
+
 ```
 
 2. **Comprueba el tipo de las variables**. Comprueba de que tipo son las variables `Richness` y `Urban.Type`. ¿Qué variable es la respuesta (numérica) y cuál es la categórica?
 
 ```{r}
-str(datI$Richness)
-str(datI$Urban.Type)
+
 ```
 
 3. **Recodificación de variables**. La variable categórica `Urban.Type`, es considerada variable numérica (`int`). Podemos utilizar el paquete `dplyr` para transformarla a categórica y con algun nombre más autoexplciativo que no los numeros presentes ahora.  Lo podemos hacer con la función `mutate` y `recode_factor`. [Ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#45). La nueva columna se llamará `Urban.Name`.
@@ -306,42 +294,30 @@ Recodifica:
 
 Primero pasaremos la columna a factor, para que la función pueda trabajar. Después, utiliza las funciones autoexplciativo que no los numeros presentes ahora.  Lo podemos hacer con la función `mutate` y `recode_factor`. ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#45)) para poder recodificar la variable:
 
-```{r}
-# data.frame$Urban.Type <- as.factor(data.frame$Urban.Type)
-datI$Urban.Type <- as.factor(datI$Urban.Type)
+```{r eval = F}
+data.frame$Urban.Type <- as.factor(data.frame$Urban.Type)
 
-datI <- datI %>%
-  mutate(Urban.Name = recode_factor(Urban.Type,
-                              "1" = "Natural",
-                              "3" = "Suburbano",
-                              "8" = "Desarrollado",
-                              "9" = "Denso"))
 
 ```
 
-4. **Comprobación de supuestos**. Comprueba los resultados del test de Shapiro y el de Levene. Recuerda que en nuestro modelo vamos a evaluar la riqueza de especies (`Richness`) respecto el los niveles de urbanización (`Urban.Name`). 
+4. **Comprobación de supuestos**. Comprueba los resultados del test de Shapiro y el de Levene. Recuerda que en nuestro modelo vamos a evaluar la riqueza de especies (`Richness`) respecto el los niveles de urbanización (`Urban.Name`). Recuerda también que el test de Shapiro lo hacemos sobre los residuos.
 
-```{r eval = F}
-
-mod <- aov(Richness ~ Urban.Name, data = datI)
-shapiro.test(resid(mod))
-
-leveneTest(Richness ~ Urban.Name, data = datI)
+```{r eval}
 
 ```
 
 5. **ANOVA**. Según los resultados de las pruebas anteriores, evalúa que test es más apropiado y ejecútalo. ¿Cuál es el resultado del test?
 
-```{r eval = F}
-kruskal.test(Richness ~ Urban.Name, data = datI)
+```{r}
+
 ```
 
-6. **Post-hoc**. La prueba más apropiada para realizar el test de post-hoc es `pairwise.wilcox.test`, ya que los datos no son normales (si no, usaríamos el pairwise.t.test`, como en el ejemplo)
+6. **Post-hoc**. La prueba más apropiada para realizar el test de post-hoc es `pairwise.wilcox.test`, ya que los datos no son normales (si no, usaríamos el `pairwise.t.test`, como en el ejemplo)
 
 
-```{r eval = F}
-pairwise.wilcox.test(datI$Richness, datI$Urban.Name, 
-                     p.adjust.method = "fdr")
+```{r}
+
+
 ```
 
 **¿Qué comparaciones han salido significativas?**
@@ -350,7 +326,7 @@ pairwise.wilcox.test(datI$Richness, datI$Urban.Name,
 7. **Visualización**. Haz un boxplot para visualizar la riqueda de especies respecto el nivel de urbanización.
 
 ```{r}
-ggplot(datI, aes(x=Urban.Name, y = Richness)) + geom_boxplot()
+
 ```
 
 
@@ -366,7 +342,7 @@ Explica qué estamos haciendo en estos pasos:
 1. ???
  
 ```{r}
-wolf <- read.csv("chap16e2InbreedingWolves.csv")
+wolf <- read.csv("https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/5/chap16e2InbreedingWolves.csv")
 
 head(wolf)
 ```
@@ -394,33 +370,16 @@ ggplot(wolf, aes(x=inbreedCoef, y =nPups)) +
   stat_cor(method = "pearson", label.x = 0.1, label.y = 10) 
 ```
 
-¿Cuál es la conclusión?
+**¿Cuál es la conclusión de la correlación?**
+
 
 ## Datos de biodiversidad
 
-Con las variables cuantitativas que tienes en el dataset de biodiversidad (`Temp.Mean`, `Rh.Mean` y `Photoperiod`, comprueba si hay alguna correlación significativa. Recuerda comprobar el supuesto de normalidad y haz el gráfico con `ggplot`.
+Con las variables cuantitativas que tienes en el dataset de biodiversidad (`Temp.Mean`, `Rh.Mean` y `Photoperiod`), comprueba si hay alguna correlación significativa. Recuerda comprobar el supuesto de normalidad y haz el gráfico con `ggplot` siguiendo el código anterior de los lobos.
 
 
 ```{r}
-shapiro.test(datI$Temp.Mean)
-shapiro.test(datI$Rh.Mean)
-shapiro.test(datI$Photoperiod)
 
-cor.test(~ Temp.Mean + Rh.Mean, data = datI, method = "spearman")
-cor.test(~ Temp.Mean + Photoperiod, data = datI, method = "spearman")
-cor.test(~ Rh.Mean + Photoperiod, data = datI, method = "spearman")
-
-ggplot(datI, aes(x=Temp.Mean, y =Rh.Mean)) +
-  geom_point() +
-  geom_smooth(method="lm", se = F, color = "firebrick4") +
-  theme_classic() +
-  stat_cor(method = "spearman", label.x = 0.1, label.y = 10) 
-
-ggplot(datI, aes(x=Temp.Mean, y =Photoperiod)) +
-  geom_point() +
-  geom_smooth(method="lm", se = F, color = "firebrick4") +
-  theme_classic() +
-  stat_cor(method = "spearman", label.x = 0.1, label.y = 10) 
 ```
 
 Tabla resumen de las correlaciones:
