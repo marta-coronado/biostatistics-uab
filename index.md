@@ -49,7 +49,7 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - <a href="P/3/Practica_Normal.Rmd" download>Descarga el documento `Rmd` de la Práctica 3 aquí</a>.
 - [Práctica 4: Pruebas de la distribución t - Práctica en `R`](P/4/Practica_T.html)
 - <a href="P/4/Practica_T.Rmd" download>Descarga el documento `Rmd` de la Práctica 4 aquí</a>.
-- - [Práctica 5: ANOVA - Práctica en `R`](P/5/Practica_ANOVA.html)
+- [Práctica 5: ANOVA - Práctica en `R`](P/5/Practica_ANOVA.html)
 - <a href="P/5/Practica_ANOVA.Rmd" download>Descarga el documento `Rmd` de la Práctica 5 aquí</a>.
    
 ---
