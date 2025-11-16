@@ -1,0 +1,431 @@
+---
+title: "**ANOVA y correlación:**<br><font color='#A8A8A8' size='5'>práctica en  `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
+author: "Marta Coronado Zamora"
+date: "Noviembre 2025"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5, fig.align = 'center', fig.height = 3, fig.width = 3)
+library(dplyr)
+library(tibble)
+library(ggplot2)
+library(prettydoc)
+library(data.table)
+library(ggpubr)
+library(car)
+```
+
+<style>
+  @import url(https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,500,500i,700,700i);
+  @import url(https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css);
+  @import url("https://use.fontawesome.com/releases/v5.10.1/css/all.css");
+  
+  body {
+    font-family: 'Fira Sans','Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Microsoft YaHei', 'Songti SC', serif;
+  }
+  
+  /* Make bold syntax compile to RU-red */
+  strong {
+    color: #DE1144;
+  }
+
+</style>
+
+
+# Análisis de la varianza (ANOVA): teoría y supuestos
+
+El análisis de la varianza (ANOVA) es una prueba estadística común utilizada para comparar las medias de múltiples grupos. Una prueba *t* solo puede comparar las medias de **dos** grupos. ANOVA puede comparar **muchos** grupos, lo que hace que sea mucho más útil en la práctica.
+
+Echemos un vistazo a la teoría que hay detrás de ANOVA.
+
+```{r, fig.align='center', fig.height=5, fig.width=5, echo = F}
+library(ggplot2)
+library(dplyr)
+
+# Datos ficticios para tres grupos
+set.seed(123)
+df <- data.frame(
+  value = c(rnorm(1000, 5, 0.7),
+            rnorm(1000, 7.5, 0.7),
+            rnorm(1000, 10, 0.7)),
+  group = factor(rep(c("A", "B", "C"), each = 1000))
+)
+
+# Colores
+cols <- c("A" = "#A3C4F3", 
+          "B" = "#F7D9C4",  
+          "C" = "#D8E2DC")  
+
+##############################################
+### PANEL A: Between-group variation
+##############################################
+
+pA <- ggplot(df, aes(value, fill = group, color = group)) +
+  geom_density(alpha = 0.15, linewidth = 1.1) +
+  scale_fill_manual(values = cols) +
+  scale_color_manual(values = cols) +
+  theme_classic(base_size = 14) +
+  labs(title = "A. Variación entre grupos",
+       subtitle = "",
+       x = "", y = "") +
+  theme(legend.position = "none")
+
+# Añadir medias
+means <- df %>% group_by(group) %>% summarize(mu = mean(value))
+
+pA <- pA +
+  geom_vline(data = means, aes(xintercept = mu, color = group),
+             linetype = "dashed", linewidth = 1)
+
+# Añadir flechas entre medias (entre-group)
+pA <- pA +
+  geom_segment(aes(x = means$mu[1], xend = means$mu[2], 
+                   y = 0.12, yend = 0.12),
+               arrow = arrow(ends = "both", length = unit(0.20, "cm")),
+               color = "black") +
+  geom_segment(aes(x = means$mu[2], xend = means$mu[3], 
+                   y = 0.15, yend = 0.15),
+               arrow = arrow(ends = "both", length = unit(0.20, "cm")),
+               color = "black") +
+  geom_segment(aes(x = means$mu[1], xend = means$mu[3], 
+                   y = 0.18, yend = 0.18),
+               arrow = arrow(ends = "both", length = unit(0.20, "cm")),
+               color = "black")
+
+##############################################
+### PANEL B: Within-group variation
+##############################################
+pB <- ggplot(df, aes(value, fill = group, color = group)) +
+  geom_density(alpha = 0.15, linewidth = 1.1) +
+  scale_fill_manual(values = cols) +
+  scale_color_manual(values = cols) +
+  theme_classic(base_size = 14) +
+  labs(title = "B. Variación dentro de grupo",
+       x = "", y = "") +
+  theme(legend.position = "none")
+
+# Flechas dentro de cada grupo
+dens_positions <- data.frame(
+  x1 = means$mu - 0.7,
+  x2 = means$mu + 0.7,
+  y  = c(0.31, 0.36, 0.31)
+)
+pB <- pB +
+  geom_vline(data = means, aes(xintercept = mu, color = group),
+             linetype = "dashed", linewidth = 1)
+pB <- pB +
+  geom_segment(data = dens_positions,
+               aes(x = x1, xend = x2, y = y, yend = y),
+               arrow = arrow(ends = "both", length = unit(0.20, "cm")),
+               inherit.aes = FALSE,
+               color = "black")
+
+pA
+pB
+
+```
+
+Esta figura muestra **3 grupos**. Las **líneas verticales discontinuas** representan las medias de cada grupo.  Las **líneas continuas** muestran la distribución de cada grupo, es decir, la **variación dentro de cada grupo**. Esta variación interna se llama **varianza residual** (Panel B). El objetivo de ANOVA es comparar medias para ver si difieren entre sí. ¿Cómo lo hace? Comparando:
+
+- La **varianza entre grupos** (Panel A)  
+- La **varianza dentro de los grupos** (varianza residual; Panel B)
+
+Si la varianza **entre** grupos es suficientemente grande en comparación con la varianza **dentro** de los grupos, entonces podemos concluir que **al menos una de las medias difiere**.
+
+ANOVA es, en esencia, una **comparación de dos estimaciones de varianza**. Por eso se llama **análisis de la varianza**, aunque realmente estamos evaluando **diferencias entre medias**.
+
+
+ANOVA funciona correctamente cuando se cumplen los siguientes supuestos:
+
+1. **Independencia de las observaciones**. Cada sujeto u observación pertenece a un único grupo y es independiente de las demás. No debe existir relación, dependencia ni correlación entre las observaciones dentro de cada grupo.
+
+2. **Tipo de variables**  
+   - La **variable dependiente** debe ser **cuantitativa y continua** 
+   - La **variable independiente** debe ser **categórica** con 2 o más niveles
+
+3. **Normalidad**.  Los datos dentro de cada grupo deben seguir aproximadamente una **distribución normal**. ANOVA es bastante robusto a desviaciones moderadas de la normalidad, especialmente con tamaños muestrales grandes.
+
+4. **Homogeneidad de varianzas** La varianza de la variable respuesta debe ser **similar entre los grupos**.  
+
+
+## Comprobación de supuestos
+
+En este ejemplo usaremos el data frame `titanic` para evaluar los supuestos del ANOVA. Está disponible aquí: XXXXXX
+
+```{r}
+titanic <- read.csv("titanic.csv")
+head(titanic)
+class(titanic)
+```
+
+Agruparemos a los pasajeros según la clase en la que viajaban (`passenger_class`) y evaluaremos si las distintas clases de pasajeros diferían en su edad media (`age`).
+
+1. **Comprobación de variables**: función `str()`. La función recibe un vector (recuerda que accedemos al vector como `data.frame$nombre_columna`) Comprueba de qué tipo son las columnas `passenger_class` y `age`:
+
+```{r}
+str(titanic$passenger_class)
+str(titanic$age)
+```
+
+2. **Normalidad**. La normalidad se comprueba sobre los residuos del ANOVA. Debemos ajustar los datos al modelo `variable_numerica ~ variable categorica, data = data.frame` dentro de la función `aov()`. Guarda el modelo en un objeto llamado `titanic_aov`.
+
+```{r eval = F}
+aov(variable_numerica ~ variable_categorica, data = data.frame)
+
+titanic_aov <- aov(age ~ passenger_class, data = titanic)
+
+```
+
+Accedemos a los residuos del modelo con la función `resid`:
+
+```{r eval = F}
+titanic_aov <- aov(age ~ passenger_class, data = titanic)
+resid(titanic_aov)
+```
+
+Comprobamos si los residuos siguen normalidad con la función de `shapiro_test`:
+
+```{r}
+titanic_aov <- aov(age ~ passenger_class, data = titanic)
+
+shapiro.test(resid(titanic_aov))
+
+```
+
+**¿Cuál es la conclusión del test?**
+
+
+2. **Homogeneidad de varianzas**. La homogeneidad de varianzas se comprueba directamente sobre el modelo con un test de Levene: `leveneTest(variable_numerica ~ variable_categorica, data = data.frame)`.
+
+```{r eval = F}
+leveneTest(variable_numerica ~ variable_categorica, data = data.frame)
+
+leveneTest(age ~ passenger_class, data = titanic)
+```
+
+**¿Cuál es la conclusión del test?**
+
+3. Test de **ANOVA**:
+
+Según las conclusiones de los test, tenemos distintas opciones para hacer el test:
+
+| Normalidad | Homogeneidad | Test recomendado                | Ejemplo | 
+| ---------- | ------------ | ------------------------------- |--------------- |
+| ✔          | ✔            | **ANOVA**                       | `aov(modelo)` |
+| ✔          | ✘            | **Welch ANOVA**               |  `oneway.test(modelo, var.equal=FALSE)` |
+| ✘          | ✔ o ✘        | **Kruskal–Wallis**              | `kruskal.test(modelo)` |
+
+En todos los casos, el modelo se especifica como `variable_numerica ~ variable_categorica, data = data.frame`. La función `oneway.test` tiene el parámetro `var.equal=TRUE` y `var.equal=FALSE` (como el `t.test`). Hacer un `oneway.test` con `var.equal=TRUE` es equivalente a hacer el test con `aov()`.
+
+<i class="fa fa-info-circle"></i> Para `aov()` necesitamos utilizar la función `summary` para ver el resultado del test (el `p-valor`). Las funciones `oneway.test` y `kruskal.test` lo hacen directamente.
+
+**Segun los resultados de los supuestos anteriores, ¿cuál sería el mejor test? Comprueba que resultado da.**
+
+```{r}
+oneway.test(age ~ passenger_class, data = titanic, var.equal = FALSE)
+```
+
+
+4. **Post-hoc**
+
+Un ANOVA de un solo factor puede indicarnos que al menos un grupo tiene una media diferente de otro grupo, pero no nos dice qué grupos difieren entre sí. El test de Tukey nos permite probar la hipótesis nula de que no hay diferencia entre las medias poblacionales para todos los pares de grupos. Este test, también conocido como **Tukey Honest Significance Test (Tukey HSD)**, se implementa en R con la función `TukeyHSD()`.
+
+Para hacer un test de Tukey sobre nuestros datos, primero debemos aplicar la función `aov()` al modelo, y luego aplicar `TukeyHSD()` al resultado. Esto se puede hacer en un solo comando:
+
+```{r eval = F}
+TukeyHSD(aov(variable_numerica ~ variable_categorica, data = data.frame))
+```
+
+<i class="fa fa-exclamation-triangle"></i> Con estos datos, no podemos utilizar directamente el test de Tukey, ya que asume que las varianzas son iguales y hemos visto que no lo son. La alternativa que tenemos es realizar un `t.test` a pares (`pairwise.t.test`), con corrección de `p-valor` por comparaciones múltiples (`fdr`) y considerando varianzas desiguales (`pool.sd=FALSE`). En el caso de que los datos no fueran normales, podríamos utilizar `pairwise.wilcox.test()`.
+
+
+```{r}
+pairwise.t.test(titanic$age, titanic$passenger_class,
+                p.adjust.method = "fdr",
+                pool.sd = FALSE)
+```
+
+De esta manera, podemos identificar qué pares de grupos difieren significativamente de forma más fiable.
+
+| Normalidad | Homogeneidad | Test post-hoc recomendado               | Ejemplo                                                                                                                                              |
+| ---------- | ------------ | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ✔          | ✔            | **Tukey HSD**                           | `TukeyHSD(aov(modelo))`                                                                                                    |
+| ✔          | ✘            | **Pairwise t-test** con `pool.sd=FALSE` | `pairwise.t.test(vector_resp, vector_grupos, pool.sd=FALSE, p.adjust.method="fdr")`                                                              |
+| ✘          | ✔ o ✘        | **Pairwise Wilcoxon** o  | `pairwise.wilcox.test(vector_resp, vector_grupos, p.adjust.method="fdr")`  |
+
+
+
+5. **Visualización**
+Podemos visualizar los datos con un boxplot en `ggplot2`:
+
+```{r}
+ggplot(titanic, aes(x=passenger_class, y = age)) + geom_boxplot()
+```
+
+
+# Problema: Midiendo la biodiversidad
+Un declive en la biodiversidad es una preocupación ambiental común. La biodiversidad se relaciona con la cantidad de especies (plantas, hongos y animales) y la abundancia de sus poblaciones. Los impactos antropogénicos sobre el ambiente, como la pérdida de hábitat, el aumento de la temperatura global y la contaminación, pueden afectar negativamente la abundancia de los organismos. La extinción de especies como resultado de estos impactos disminuye la biodiversidad.
+
+Existen varias formas de medir la biodiversidad:
+
+1. Riqueza de especies: número de especies diferentes presentes en un lugar, generalmente contado como presencia/ausencia.
+2. Índices de diversidad: consideran tanto el número de especies como la uniformidad de individuos dentro de cada especie.
+
+El ambiente urbano puede afectar la supervivencia y reproducción de algunos insectos. Las ciudades son más cálidas y suelen tener menos disponibilidad de agua, especialmente en regiones secas como California. Las áreas residenciales pueden tener más vegetación, pero esta suele no ser nativa y dominada por un solo tipo de planta (por ejemplo, césped). Algunos insectos no sobreviven bien en estos entornos urbanos, por lo que existe preocupación de que la urbanización reduzca la diversidad de insectos, afectando procesos esenciales como la polinización, la cadena trófica y la descomposición de materia vegetal.
+
+Para evaluar el impacto urbano sobre los insectos, [Adams et al. (2019)](https://esajournals.onlinelibrary.wiley.com/doi/10.1002/eap.2089) capturaron insectos en diferentes lugares de Los Ángeles y examinaron el número de especies en cada sitio. La figura siguiente muestra un mapa de las ubicaciones de muestreo con distintos niveles de urbanización.
+
+El ANOVA será útil para examinar la riqueza de especies de insectos a lo largo de un gradiente urbano en Los Ángeles.
+
+1. **Leer los datos** "urban_data.tsv" (link: ). Utiliza la función `read.table` con el parámetro `sep = "\t"` para indicar que este fichero esta separado por tabulado, y con `header = TRUE` para indicar que tiene encabezado:
+
+```{r}
+datI <- read.table("urban_data_filter.tsv", sep = "\t", header = TRUE)
+head(datI)
+```
+
+2. **Comprueba el tipo de las variables**. Comprueba de que tipo son las variables `Richness` y `Urban.Type`. ¿Qué variable es la respuesta (numérica) y cuál es la categórica?
+
+```{r}
+str(datI$Richness)
+str(datI$Urban.Type)
+```
+
+3. **Recodificación de variables**. La variable categórica `Urban.Type`, es considerada variable numérica (`int`). Podemos utilizar el paquete `dplyr` para transformarla a categórica y con algun nombre más autoexplciativo que no los numeros presentes ahora.  Lo podemos hacer con la función `mutate` y `recode_factor`. [Ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#45). La nueva columna se llamará `Urban.Name`.
+
+Recodifica:
+1: Natural
+3: Suburbano
+8: Desarrollado
+9: Denso
+
+Primero pasaremos la columna a factor, para que la función pueda trabajar. Después, utiliza las funciones autoexplciativo que no los numeros presentes ahora.  Lo podemos hacer con la función `mutate` y `recode_factor`. ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#45)) para poder recodificar la variable:
+
+```{r}
+# data.frame$Urban.Type <- as.factor(data.frame$Urban.Type)
+datI$Urban.Type <- as.factor(datI$Urban.Type)
+
+datI <- datI %>%
+  mutate(Urban.Name = recode_factor(Urban.Type,
+                              "1" = "Natural",
+                              "3" = "Suburbano",
+                              "8" = "Desarrollado",
+                              "9" = "Denso"))
+
+```
+
+4. **Comprobación de supuestos**. Comprueba los resultados del test de Shapiro y el de Levene. Recuerda que en nuestro modelo vamos a evaluar la riqueza de especies (`Richness`) respecto el los niveles de urbanización (`Urban.Name`). 
+
+```{r eval = F}
+
+mod <- aov(Richness ~ Urban.Name, data = datI)
+shapiro.test(resid(mod))
+
+leveneTest(Richness ~ Urban.Name, data = datI)
+
+```
+
+5. **ANOVA**. Según los resultados de las pruebas anteriores, evalúa que test es más apropiado y ejecútalo. ¿Cuál es el resultado del test?
+
+```{r eval = F}
+kruskal.test(Richness ~ Urban.Name, data = datI)
+```
+
+6. **Post-hoc**. La prueba más apropiada para realizar el test de post-hoc es `pairwise.wilcox.test`, ya que los datos no son normales (si no, usaríamos el pairwise.t.test`, como en el ejemplo)
+
+
+```{r eval = F}
+pairwise.wilcox.test(datI$Richness, datI$Urban.Name, 
+                     p.adjust.method = "fdr")
+```
+
+**¿Qué comparaciones han salido significativas?**
+
+
+7. **Visualización**. Haz un boxplot para visualizar la riqueda de especies respecto el nivel de urbanización.
+
+```{r}
+ggplot(datI, aes(x=Urban.Name, y = Richness)) + geom_boxplot()
+```
+
+
+# Correlación
+
+Comprobar la correlación entre dos variables es muy sencillo y muy útil para ver si existe una relación lineal entre ellas.
+Por ejemplo, podemos analizar si mayores niveles de endogamia en lobos están relacionados con menos crías que sobreviven su primer invierno.
+
+En R, la correlación se puede calcular con funciones como `cor.test()` para obtener el coeficiente de correlación y el valor p que indica si la relación es estadísticamente significativa.
+
+Explica qué estamos haciendo en estos pasos:
+
+1. ???
+ 
+```{r}
+wolf <- read.csv("chap16e2InbreedingWolves.csv")
+
+head(wolf)
+```
+
+2. ???
+
+```{r}
+shapiro.test(wolf$nPups)
+shapiro.test(wolf$inbreedCoef)
+```
+
+3. ??? 
+
+```{r}
+cor.test(~ nPups + inbreedCoef, data = wolf, method = "pearson")
+```
+
+4. ???
+
+```{r}
+ggplot(wolf, aes(x=inbreedCoef, y =nPups)) +
+  geom_point() +
+  geom_smooth(method="lm", se = F, color = "firebrick4") +
+  theme_classic() +
+  stat_cor(method = "pearson", label.x = 0.1, label.y = 10) 
+```
+
+¿Cuál es la conclusión?
+
+## Datos de biodiversidad
+
+Con las variables cuantitativas que tienes en el dataset de biodiversidad (`Temp.Mean`, `Rh.Mean` y `Photoperiod`, comprueba si hay alguna correlación significativa. Recuerda comprobar el supuesto de normalidad y haz el gráfico con `ggplot`.
+
+
+```{r}
+shapiro.test(datI$Temp.Mean)
+shapiro.test(datI$Rh.Mean)
+shapiro.test(datI$Photoperiod)
+
+cor.test(~ Temp.Mean + Rh.Mean, data = datI, method = "spearman")
+cor.test(~ Temp.Mean + Photoperiod, data = datI, method = "spearman")
+cor.test(~ Rh.Mean + Photoperiod, data = datI, method = "spearman")
+
+ggplot(datI, aes(x=Temp.Mean, y =Rh.Mean)) +
+  geom_point() +
+  geom_smooth(method="lm", se = F, color = "firebrick4") +
+  theme_classic() +
+  stat_cor(method = "spearman", label.x = 0.1, label.y = 10) 
+
+ggplot(datI, aes(x=Temp.Mean, y =Photoperiod)) +
+  geom_point() +
+  geom_smooth(method="lm", se = F, color = "firebrick4") +
+  theme_classic() +
+  stat_cor(method = "spearman", label.x = 0.1, label.y = 10) 
+```
+
+Tabla resumen de las correlaciones:
+
+| Supuesto                    | Pearson                              | Spearman                              |
+| --------------------------- | ------------------------------------ | ------------------------------------- |
+| Normalidad de las variables | ✔ necesaria                          | ❌ no necesaria                        |
+| Función en R                | `cor.test(method = "pearson")` | `cor.test(method = "spearman")` |
