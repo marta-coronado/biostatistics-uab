@@ -46,10 +46,7 @@ h3 {
 </style>
 ```
 
-
 ## **Estadística descriptiva**
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Media aritmética**
 
@@ -57,29 +54,24 @@ $$
 \bar{x} = \mu = \frac{1}{n} \sum_{i=1}^{n} x_i
 $$
 
-donde:  
+donde:
 
-- $\bar{x} = \mu$ : media aritmética  
-- $n$ : número de muestras
-- $i$ : índice de los valores de la variable ($i = 1, 2, \dots, n$)  
-- $x_i$ : valor $i$-ésimo de la variable $x$
-
-</div>
+-   $\bar{x} = \mu$ : media aritmética\
+-   $n$ : número de muestras
+-   $i$ : índice de los valores de la variable ($i = 1, 2, \dots, n$)\
+-   $x_i$ : valor $i$-ésimo de la variable $x$
 
 <br>
 
-<div style="background-color:#fffced; padding:15px;">
-
-
 **Mediana**
 
-- Para un número **impar** de observaciones ($n$):
+-   Para un número **impar** de observaciones ($n$):
 
 $$
 \text{mediana}(x) = \left(\frac{n+1}{2}\right)^{\text{th}}
 $$
 
-- Para un número **par** de observaciones:
+-   Para un número **par** de observaciones:
 
 $$
 \text{mediana}(x) = \frac{\left(
@@ -89,14 +81,11 @@ $$
 
 donde:
 
-- $\text{mediana}(x)$: mediana de los valores disponibles de la variable $x$  
-- $n$: número de observaciones disponibles para $x$  
-
-</div>
+-   $\text{mediana}(x)$: mediana de los valores disponibles de la
+    variable $x$\
+-   $n$: número de observaciones disponibles para $x$
 
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Moda**
 
@@ -106,15 +95,12 @@ $$
 
 donde:
 
-- $\text{moda}(x)$: moda de los valores disponibles de la variable $x$
-- $\max_{k=1}()$: argumento que maximiza sobre $k$ en $1$ a $p$
-- $I_i()$: función indicadora que devuelve 1 si la condición interna es cierta para $i$ en $1$ a $n$
-
-</div>
+-   $\text{moda}(x)$: moda de los valores disponibles de la variable $x$
+-   $\max_{k=1}()$: argumento que maximiza sobre $k$ en $1$ a $p$
+-   $I_i()$: función indicadora que devuelve 1 si la condición interna
+    es cierta para $i$ en $1$ a $n$
 
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Rango**
 
@@ -123,11 +109,8 @@ Diferencia entre el valor máximo y el mínimo de una variable $x$:
 $$
 rango = x_{\text{max}} - x_{\text{min}}
 $$
-</div>
 
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Varianza**
 
@@ -137,18 +120,13 @@ $$
 
 donde:
 
-- $s^2$: varianza  
-- $n$: número de observaciones de la muestra  
-- $i$: índice de los valores de la variable ($i = 1, 2, \dots, n$)  
-- $x_i$: valor $i$-ésimo de la variable $x$  
-- $\bar{x}$: media aritmética 
-
-</div>
-
+-   $s^2$: varianza\
+-   $n$: número de observaciones de la muestra\
+-   $i$: índice de los valores de la variable ($i = 1, 2, \dots, n$)\
+-   $x_i$: valor $i$-ésimo de la variable $x$\
+-   $\bar{x}$: media aritmética
 
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Desviación estándard**
 
@@ -158,45 +136,30 @@ $$
 
 donde:
 
-- $SD = s$: desviación estándar  
-- $s^2$: varianza  
-
-</div>
+-   $SD = s$: desviación estándar\
+-   $s^2$: varianza
 
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
-
 
 **Cuantiles**
 
-| Nombre                        | Símbolo     | Porcentaje de los datos | Interpretación                                           |
-| :---------------------------- | :---------- | :---------------------- | :------------------------------------------------------- |
-| Primer cuartil                | $Q_1$     | 25%                     | El 25% de los datos son menores o iguales que este valor |
-| Segundo cuartil (mediana) | $Q_2$ | 50%                 | El 50% de los datos son menores o iguales que este valor |
-| Tercer cuartil                | $Q_3$     | 75%                     | El 75% de los datos son menores o iguales que este valor |
-
-</div>
-
+| Nombre | Símbolo | Porcentaje de los datos | Interpretación |
+|:-----------------|:-----------------|:-----------------|:-----------------|
+| Primer cuartil | $Q_1$ | 25% | El 25% de los datos son menores o iguales que este valor |
+| Segundo cuartil (mediana) | $Q_2$ | 50% | El 50% de los datos son menores o iguales que este valor |
+| Tercer cuartil | $Q_3$ | 75% | El 75% de los datos son menores o iguales que este valor |
 
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Rango intercuartílico**
 
 $$
 IQR=Q_3-Q_1
 $$
-</div>
-
 
 <br>
 
-<div style="background-color:#fffced; padding:15px;">
-
-**_Outliers_**
-
+***Outliers***
 
 $$
 \text{Cerca inferior} = Q_1 - 1.5 \times IQR
@@ -206,13 +169,9 @@ $$
 \text{Cerca superior} = Q_3 + 1.5 \times IQR
 $$
 
-</div>
-
 <hr>
 
 ## **Distribuciones**
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Asimetría**
 
@@ -259,11 +218,7 @@ p_neg <- ggplot(data_neg, aes(x, y)) +
 
 ```
 
-</div>
-
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Curtosis**
 
@@ -311,14 +266,9 @@ ggplot(df, aes(x = x, y = y, color = Tipo)) +
         panel.background = element_rect(fill = "white"))
 ```
 
-</div>
-
 <hr>
 
 ## **Distribución binomial**
-
-<div style="background-color:#fffced; padding:15px;">
-
 
 **Fórmula de la distribución binomial**
 
@@ -328,16 +278,12 @@ $$
 
 donde:
 
-- $n$: número total de ensayos o repeticiones del experimento
-- $k$: número de éxitos observados
-- $p$: probabilidad de éxito en un solo ensayo
-- $1 - p$: probabilidad de fracaso
-
-</div>
+-   $n$: número total de ensayos o repeticiones del experimento
+-   $k$: número de éxitos observados
+-   $p$: probabilidad de éxito en un solo ensayo
+-   $1 - p$: probabilidad de fracaso
 
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Coeficiente binomial**
 
@@ -347,66 +293,54 @@ $$
 
 donde:
 
-- $n = 1, 2, \dots$: número total de ensayos 
-- $k = 0, 1, 2, \dots , n$: número de éxitos posibles
-- Para cualquier número entero $m$, $m! = m \times (m - 1) \times (m - 2) \times \dots \times 1$
-
-</div>
+-   $n = 1, 2, \dots$: número total de ensayos
+-   $k = 0, 1, 2, \dots , n$: número de éxitos posibles
+-   Para cualquier número entero $m$,
+    $m! = m \times (m - 1) \times (m - 2) \times \dots \times 1$
 
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Tabla resumen de la binomial**
 
-| Símbolo      | Significado    | Expresión | 
-|:------------ |:-------------- |:-------------------------------- | 
-| $P(X \le k)$ | “como mucho k” | $P(X \le k)$                    | 
-| $P(X < k)$   | “menos de k”   | $P(X \le k-1)$                   | 
-| $P(X \ge k)$ | “al menos k”   | $1 - P(X \le k-1)$               | 
-| $P(X > k)$   | “más de k”     | $1 - P(X \le k)$                 |
-
-</div>
+| Símbolo      | Significado    | Expresión          |
+|:-------------|:---------------|:-------------------|
+| $P(X \le k)$ | “como mucho k” | $P(X \le k)$       |
+| $P(X < k)$   | “menos de k”   | $P(X \le k-1)$     |
+| $P(X \ge k)$ | “al menos k”   | $1 - P(X \le k-1)$ |
+| $P(X > k)$   | “más de k”     | $1 - P(X \le k)$   |
 
 <br>
 
-<div style="background-color:#fffced; padding:15px;">
+Si la variable aleatoria sigue una distribución
+$X \sim \text{Binomial}(n, p)$, entonces:
 
-Si la variable aleatoria sigue una distribución $X \sim \text{Binomial}(n, p)$, entonces:
+-   **Media**\
+    $$
+    \mu = n \times p
+    $$
 
-- **Media**  
-$$
-\mu = n \times p
-$$
-
-- **Varianza**  
-$$
-\sigma^2 = n \times p \times (1 - p)
-$$
-
-</div>
+-   **Varianza**\
+    $$
+    \sigma^2 = n \times p \times (1 - p)
+    $$
 
 <hr>
 
 ## **Distribución normal**
 
-<div style="background-color:#fffced; padding:15px;">
+Si la variable aleatoria sigue una distribución
+$X \sim N(\mu, \sigma^2)$, entonces:
 
-Si la variable aleatoria sigue una distribución $X \sim N(\mu, \sigma^2)$, entonces:
-
-- $\mu$ representa la **media**
-- $\sigma$ representa la **desviación estándar**
-
-</div>
+-   $\mu$ representa la **media**
+-   $\sigma$ representa la **desviación estándar**
 
 <br>
 
-
-<div style="background-color:#fffced; padding:15px;">
-
 **Estandarización**
 
-Si una variable aleatoria $X$ sigue una distribución normal con media $\mu$ y varianza $\sigma^2$, $X \sim N(\mu,\ \sigma^2)$, entonces la variable estandarizada:  
+Si una variable aleatoria $X$ sigue una distribución normal con media
+$\mu$ y varianza $\sigma^2$, $X \sim N(\mu,\ \sigma^2)$, entonces la
+variable estandarizada:
 
 $$
 Z = \frac{X - \mu}{\sigma}
@@ -414,30 +348,20 @@ $$
 
 sigue una distribución normal estándar: $Z \sim N(0,1)$.
 
-
-</div>
-
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Tabla resumen de la normal**
 
-| Símbolo              | Significado        | Expresión                                   |
-|:---------------------|:------------------|:---------------------------------------------|
-| $P(X \le x)$         | “como mucho x”    | $P(X \le x)$                                 | 
-| $P(X < x)$           | “menos de x”      | $P(X \le x)$ (igual, continua)               | 
-| $P(X \ge x)$         | “al menos x”      | $1 - P(X \le x)$                             | 
-| $P(X > x)$           | “más de x”        | $1 - P(X \le x)$                             | 
-| $P(a \le X \le b)$   | “entre a y b”     | $P(X \le b) - P(X \le a)$                    | 
-| $P(a < X < b)$       | “entre a y b”     | $P(X \le b) - P(X \le a)$ (igual, continua) | 
-
-</div>
-
+| Símbolo | Significado | Expresión |
+|:-----------------------|:-----------------------|:-----------------------|
+| $P(X \le x)$ | “como mucho x” | $P(X \le x)$ |
+| $P(X < x)$ | “menos de x” | $P(X \le x)$ (igual, continua) |
+| $P(X \ge x)$ | “al menos x” | $1 - P(X \le x)$ |
+| $P(X > x)$ | “más de x” | $1 - P(X \le x)$ |
+| $P(a \le X \le b)$ | “entre a y b” | $P(X \le b) - P(X \le a)$ |
+| $P(a < X < b)$ | “entre a y b” | $P(X \le b) - P(X \le a)$ (igual, continua) |
 
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Regla empírica ("68-95-99.7")**:
 
@@ -533,18 +457,13 @@ ggplot() +
 
 ```
 
-- ~68% de los valores dentro de 1 desviación estándar de la media
-- ~95% dentro de 2 desviaciones estándar
-- ~99.7% dentro de 3 desviaciones estándar
-
-</div>
+-   \~68% de los valores dentro de 1 desviación estándar de la media
+-   \~95% dentro de 2 desviaciones estándar
+-   \~99.7% dentro de 3 desviaciones estándar
 
 <hr>
 
-
 ## **Distribución de Poisson**
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Fórmula de la distribución de Poisson**
 
@@ -554,29 +473,21 @@ $$
 
 donde:
 
-- $X$: número de eventos en un intervalo dado  
-- $\lambda$: tasa esperada de eventos en ese intervalo  ($n \times p$)
-- $k$: número de eventos observados
-
-
-</div>
+-   $X$: número de eventos en un intervalo dado\
+-   $\lambda$: tasa esperada de eventos en ese intervalo ($n \times p$)
+-   $k$: número de eventos observados
 
 <br>
 
-<div style="background-color:#fffced; padding:15px;">
+Si la variable aleatoria sigue una distribución de Poisson
+$X \sim \text{Poisson}(\lambda)$, entonces:
 
-Si la variable aleatoria sigue una distribución de Poisson $X \sim \text{Poisson}(\lambda)$, entonces:
+-   $\lambda$ representa tanto la media como el parámetro de la
+    distribución: $\mu = \lambda$
 
-- $\lambda$ representa tanto la media como el parámetro de la distribución: $\mu = \lambda$
-
-- La desviación estándar es: $\sigma = \sqrt{\lambda}$
-
-</div>
+-   La desviación estándar es: $\sigma = \sqrt{\lambda}$
 
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
-
 
 La probabilidad de exáctamente $x$ eventos en $t$ unidades de tiempo es:
 
@@ -584,50 +495,37 @@ $$
 P(X = k) = \frac{e^{-\lambda t} (\lambda t)^k }{k!}
 $$
 
-En $t$ unidades de tiempo, la media es $\mu = \lambda t$ y desviación estandard $\sigma = \sqrt{\lambda t}$.
-
-
-</div>
+En $t$ unidades de tiempo, la media es $\mu = \lambda t$ y desviación
+estandard $\sigma = \sqrt{\lambda t}$.
 
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Tabla resumen de la distribución de Poisson**
 
-| Símbolo      | Significado    | Expresión |
-|:------------ |:-------------- |:--------- | 
-| $P(X \le k)$ | “como mucho k” | $P(X \le k)$ | 
-| $P(X < k)$   | “menos de k”   | $P(X \le k-1)$ |
+| Símbolo      | Significado    | Expresión          |
+|:-------------|:---------------|:-------------------|
+| $P(X \le k)$ | “como mucho k” | $P(X \le k)$       |
+| $P(X < k)$   | “menos de k”   | $P(X \le k-1)$     |
 | $P(X \ge k)$ | “al menos k”   | $1 - P(X \le k-1)$ |
-| $P(X > k)$   | “más de k”     | $1 - P(X \le k)$ | 
-
-</div>
+| $P(X > k)$   | “más de k”     | $1 - P(X \le k)$   |
 
 <br>
 
-
 ## **Tabla resumen de las distribuciones**
 
-<div style="background-color:#fffced; padding:15px;">
-
-|                  | Binomial       | Normal       | Poisson      |
-|:----------------:|:--------------:|:------------:|:------------:|
-| Parámetros       | $n$, $p$           | $μ$, $σ$         |  $λ$            |
-| Valores posibles  | $0, 1, ..., n$   | $(-∞, ∞)$      | $0, 1, ..., ∞$ |
-| Media             | $np$             | $\mu$            | $\lambda$            |
-| Desviación estándard | $\sqrt{np(1-p)}$   | $σ$            | $\sqrt{\lambda}$ ($\sqrt{\lambda t}$)           |
-
-</div>
+|   | Binomial | Normal | Poisson |
+|:----------------:|:----------------:|:----------------:|:----------------:|
+| Parámetros | $n$, $p$ | $μ$, $σ$ | $λ$ |
+| Valores posibles | $0, 1, ..., n$ | $(-∞, ∞)$ | $0, 1, ..., ∞$ |
+| Media | $np$ | $\mu$ | $\lambda$ |
+| Desviación estándard | $\sqrt{np(1-p)}$ | $σ$ | $\sqrt{\lambda}$ ($\sqrt{\lambda t}$) |
 
 </hr>
 
-
 ## **Intervalos de confianza**
 
-<div style="background-color:#fffced; padding:15px;">
-
-**Desviación estándar de la distribución muestral [error estándar (SE)]**
+**Desviación estándar de la distribución muestral [error estándar
+(SE)]**
 
 $$
 \sigma_{\bar{X}} = SE = \frac{\sigma}{\sqrt{n}}
@@ -639,14 +537,9 @@ $$
 SE = \frac{s}{\sqrt{n}}
 $$
 
-
-</div>
-
 <hr>
 
-<div style="background-color:#fffced; padding:15px;">
-
-**Intervalo de confianza (CI)** 
+**Intervalo de confianza (CI)**
 
 $$
 CI = \bar{x} \pm z \times \frac{\sigma}{\sqrt{n}}
@@ -654,12 +547,13 @@ $$
 
 donde:
 
-  - $\bar{x}$ = media muestral  
-  - $z$ = valor crítico según el nivel de confianza (por ejemplo, 1.96 para 95%)
-  - $\sigma/\sqrt{n}$ = error estándar de la media  
-  
+-   $\bar{x}$ = media muestral\
+-   $z$ = valor crítico según el nivel de confianza (por ejemplo, 1.96
+    para 95%)
+-   $\sigma/\sqrt{n}$ = error estándar de la media
 
-Cuando estimamos una media poblacional $\mu$, un intervalo de confianza tiene la forma general:
+Cuando estimamos una media poblacional $\mu$, un intervalo de confianza
+tiene la forma general:
 
 $$
 (\bar{x} - m, \bar{x} + m) = \bar{x} \pm m
@@ -667,7 +561,7 @@ $$
 
 donde:
 
-- $m$: **margen de error**
+-   $m$: **margen de error**
 
 El margen de error $m$ se define como:
 
@@ -675,8 +569,8 @@ $$
 m=z_{\alpha/2}\times\frac{\sigma}{\sqrt{n}}
 $$
 
-
-A partir de la **media muestral $\bar{x}$** y el **error**, podemos calcular:
+A partir de la **media muestral** $\bar{x}$ y el **error**, podemos
+calcular:
 
 $$
 IC = (\bar{x} - \text{error}, \bar{x} + \text{error})
@@ -688,9 +582,9 @@ $$
 \text{error} = z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{N}}
 $$
 
-- $z_{\alpha/2}$: valor crítico según el nivel de confianza deseado  
-- $\sigma$: desviación estándar poblacional  
-- $N$: tamaño de la muestra  
+-   $z_{\alpha/2}$: valor crítico según el nivel de confianza deseado\
+-   $\sigma$: desviación estándar poblacional\
+-   $N$: tamaño de la muestra
 
 Por lo tanto, los límites del IC son:
 
@@ -699,11 +593,7 @@ x_1 = \bar{x} - z_{\alpha/2} \frac{\sigma}{\sqrt{N}}, \quad
 x_2 = \bar{x} + z_{\alpha/2} \frac{\sigma}{\sqrt{N}}
 $$
 
-</div>
-
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Fórmula para el tamaño de la muestra**
 
@@ -711,30 +601,23 @@ $$
 N = \left(\frac{z_{\alpha/2} \times \sigma}{\text{error deseado}}\right)^2
 $$
 
-</div>
-
-
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Intervalos de confianza unilaterales (*one-sided*)**
 
-- Proporcionan **un límite inferior o un límite superior**, pero **no ambos**.
+-   Proporcionan **un límite inferior o un límite superior**, pero **no
+    ambos**.
 
-- Forma general:  
+-   Forma general:
 
 $$
 (-\infty, \bar{x} + \text{error}) \quad \text{o} \quad (\bar{x} - \text{error}, \infty)
 $$
 
-- Se utiliza **el error estándar (SE)** y un valor $z$ crítico, pero el $z$ **es distinto** que para intervalos bilaterales.  
-
-</div>
+-   Se utiliza **el error estándar (SE)** y un valor $z$ crítico, pero
+    el $z$ **es distinto** que para intervalos bilaterales.
 
 <br>
-
-<div style="background-color:#fffced; padding:15px;">
 
 **Estadístico z para una media muestral**
 
@@ -742,49 +625,175 @@ $$
 z = \frac{\bar{x} - \mu}{\sigma / \sqrt{n}}
 $$
 
-donde:  
+donde:
 
-- $\bar{x}$ = media muestral  
-- $\mu$ = media poblacional bajo $H_0$  
-- $\sigma$ = desviación estándar poblacional  
-- $n$ = tamaño de la muestra  
-
-</div>
+-   $\bar{x}$ = media muestral\
+-   $\mu$ = media poblacional bajo $H_0$\
+-   $\sigma$ = desviación estándar poblacional\
+-   $n$ = tamaño de la muestra
 
 <hr>
 
 ## **T-test**
 
-<div style="background-color:#fffced; padding:15px;">
-
-
 **Tablas resumen para t-test**
 
 | Tipo de t-test | Estadístico t | Grados de libertad (df) | Intervalo de confianza (IC) |
-|----------------|---------------|-------------------------|-----------------------------|
+|------------------|------------------|------------------|------------------|
 | **1 muestra** | $t = \frac{\bar{x}-\mu_0}{s/\sqrt{n}}$ | $n-1$ | $\bar{x} \pm t_{df} \frac{s}{\sqrt{n}}$ |
 | **Pareado** | $t = \frac{\bar{x}_{dif}}{s_{dif}/\sqrt{n}}$ | $n-1$ | $\bar{x}_{dif} \pm t_{df} \frac{s_{dif}}{\sqrt{n}}$ |
 | **2 muestras independientes** | $t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s^2_1/n_1 + s^2_2/n_2}}$ | $n_1 + n_2 - 2$ | $(\bar{x}_1 - \bar{x}_2) \pm t_{df} \sqrt{s^2_1/n_1 + s^2_2/n_2}$ |
 
-</div>
 <br>
-<div style="background-color:#fffced; padding:15px;">
 
-| Tipo de t-test                  | Hipótesis nula ($H_0$) | Hipótesis alternativa ($H_A$) |
-|---------------------------------|------------------------|-------------------------------|
-| **1 muestra**                    | $\mu = \mu_0$          | $\mu \ne \mu_0$               |
-| **Pareado**                      | $\mu_{dif} = 0$        | $\mu_{dif} \ne 0$             |
-| **2 muestras independientes**    | $\mu_1 = \mu_2$        | $\mu_1 \ne \mu_2$             |
+| Tipo de t-test | Hipótesis nula ($H_0$) | Hipótesis alternativa ($H_A$) |
+|------------------------|------------------------|------------------------|
+| **1 muestra** | $\mu = \mu_0$ | $\mu \ne \mu_0$ |
+| **Pareado** | $\mu_{dif} = 0$ | $\mu_{dif} \ne 0$ |
+| **2 muestras independientes** | $\mu_1 = \mu_2$ | $\mu_1 \ne \mu_2$ |
 
-
-</div>
 <br>
-<div style="background-color:#fffced; padding:15px;">
+
+| Tipo de test | Hipótesis | IC / Zona crítica | Interpretación |
+|------------------|------------------|------------------|------------------|
+| **Bilateral (dos colas)** | $H_0: \mu = \mu_0$ <br> $H_A: \mu \ne \mu_0$ | $IC = \bar{x} \pm |t_{crit}| \times SE$ | IC simétrico alrededor de $\bar{x}$. Si $\mu_0$ **no está dentro**, se rechaza $H_0$. |
+| **Unilateral (cola derecha)** | $H_0: \mu = \mu_0$ <br> $H_A: \mu > \mu_0$ | $IC = (\bar{x} - |t_{crit}| \times SE, +\infty)$ | Si límite inferior \> $\mu_0$, se rechaza $H_0$. |
+| **Unilateral (cola izquierda)** | $H_0: \mu = \mu_0$ <br> $H_A: \mu < \mu_0$ | $IC = (-\infty, \bar{x} + |t_{crit}| \times SE)$ | Si límite superior \< $\mu_0$, se rechaza $H_0$. |
+
+<br>
+
+<center><img src="CriticalRegion.png" width="55%"/></img></center>
+
+## **ANOVA**
+
+#### ANOVA de una vía
+
+| Fuente de variación | Suma de cuadrados (SS) | Grados de libertad (gl) | Media cuadrática (MS) | Estadístico F |
+|:--------------------:|:----------------------:|:-----------------------:|:----------------------:|:--------------:|
+| **Factor** (variabilidad entre grupos) | $SS_{entre} = \displaystyle \sum_{i=1}^{g} n_i (M_i - G)^2$ | $gl_{entre} = g - 1$ | $MS_{entre} = \dfrac{SS_{entre}}{gl_{entre}}$ | $F = \dfrac{MS_{entre}}{MS_{dentro}}$ |
+| **Residuos** (variabilidad dentro de los grupos) | $SS_{dentro} = \displaystyle \sum_{i=1}^{g} \sum_{j=1}^{n_i} (x_{ij} - M_i)^2$ | $gl_{dentro} = N - g$ | $MS_{dentro} = \dfrac{SS_{dentro}}{gl_{dentro}}$ |  |
+| **Total** | $SS_{total} = \displaystyle \sum_{i=1}^{g} \sum_{j=1}^{n_i} (x_{ij} - G)^2$ | $gl_{total} = N - 1$ |  |  |
+
+**Donde:**
+
+- $G$ = media global (media conjunta de todos los grupos)  
+- $M_i$ = media del grupo *i*  
+- $n_i$ = tamaño del grupo *i*  
+- $g$ = número de grupos  
+- $N$ = número total de observaciones  
+
+<br>
+
+#### ANOVA de dos vías
+
+|  Fuente de variación |                                                                       Suma de cuadrados (SS)                                                                      | Grados de libertad (gl) |         Media cuadrática (MS)        |           Estadístico F          |
+| :------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------: | :----------------------------------: | :------------------------------: |
+|     **Factor A**     |                               $SS_{A}=n\times p\times \sum(\bar{A}_i-\bar{G})^2$                              |      $gl_A = p - 1$     |      $MS_A = \dfrac{SS_A}{gl_A}$     |    $F_A = \dfrac{MS_A}{MS_E}$    |
+|     **Factor B**     |                              $SS_{B}=n\times q\times \sum(\bar{B}_i-\bar{G})^2$                             |      $gl_B = q - 1$     |      $MS_B = \dfrac{SS_B}{gl_B}$     |    $F_B = \dfrac{MS_B}{MS_E}$    |
+|     **Entre grupos**     |                              $SS_{btw}=n\times\sum\sum(\bar{X}_{ij}-\bar{G})^2$                             |      $gl_{btw} = p \times q - 1$     |      $MS_B = \dfrac{SS_{btw}}{gl_{btw}}$     |  |
+|  **Interacción A×B** | $SS_{A:B}=SS_{btw}-SS_{A}-SS_{B}$ |  $gl_{AB} = (p-1)(q-1)$ | $MS_{AB} = \dfrac{SS_{A:B}}{gl_{AB}}$ | $F_{A:B} = \dfrac{MS_{A:B}}{MS_E}$ |
+| **Residuos (Error)** |                             $SS_{error}=\sum\sum\sum(x_{mij}-\bar{AB}_{ij})^2$                             |     $gl_E = (n-1)\times p \times q$     |      $MS_E = \dfrac{SS_E}{gl_E}$     |                                  |
+|       **Total**      |                                            $SS_{total}=\sum\sum\sum(x_{mij}-\bar{G})^2$                                            |      $gl_T = n\times p \times q-1$     |                                      |                                  |
+
+**Donde:**
+
+- $n$: total de observaciones
+- $p$: número de grupos en el factor A
+- $q$: número de grupos en el factor B
+- $\bar{G}$ = media global de todas las observaciones
+- $\bar{A}_i$ = media de cada nivel del factor A
+- $\bar{B}_i$ = media de cada nivel del factor B
+- $\bar{AB}_{ij}$: media de cada combinación de niveles de A × B.
+
+<br>
+
+| Tipo de ANOVA | Descomposición                                     | Componentes              | R²                                            |
+| ------------- | -------------------------------------------------- | ------------------------ | --------------------------------------------- |
+| **Una vía**   | $SS_{total} = SS_{entre} + SS_{dentro}$                   | 1 factor                 | $R^2 = SS_{entre} / SS_{total}$                      |
+| **Dos vías**  | $SS_{total} = SS_A + SS_B + SS_{A:B} + SS_{error}$ | 2 factores + interacción | $R^2 = (SS_A + SS_B + SS_{A:B}) / SS_{total}$ |
 
 
-| Tipo de test                    | Hipótesis                                    | IC / Zona crítica | Interpretación                                                                                   |
-|---------------------------------|---------------------------------------------|-----------------|-------------------------------------------------------------------------------------------------|
-| **Bilateral (dos colas)**       | $H_0: \mu = \mu_0$ <br> $H_A: \mu \ne \mu_0$ | $IC = \bar{x} \pm |t_{crit}| \times SE$ | IC simétrico alrededor de $\bar{x}$. Si $\mu_0$ **no está dentro**, se rechaza $H_0$.         |
-| **Unilateral (cola derecha)**   | $H_0: \mu = \mu_0$ <br> $H_A: \mu > \mu_0$   | $IC = (\bar{x} - |t_{crit}| \times SE, +\infty)$ | Si límite inferior > $\mu_0$, se rechaza $H_0$.                                                |
-| **Unilateral (cola izquierda)** | $H_0: \mu = \mu_0$ <br> $H_A: \mu < \mu_0$   | $IC = (-\infty, \bar{x} + |t_{crit}| \times SE)$ | Si límite superior < $\mu_0$, se rechaza $H_0$.                                                |
-</div>
+## **Coeficiente de correlación de Pearson**
+
+$r = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i - \bar{x})^2} \, \sqrt{\sum_{i=1}^{n}(y_i - \bar{y})^2}}$
+
+donde:
+
+- $r$: coeficiente de correlación de Pearson  
+- $x_i$: valores individuales de la variable $x$  
+- $y_i$: valores individuales de la variable $y$  
+- $\bar{x}$: media de la variable $x$  
+- $\bar{y}$: media de la variable $y$  
+
+
+<br>
+
+## **Correlación de Spearman**
+
+
+$r_s = 1 - \frac{6 \sum d_i^2}{n(n^2 - 1)}$
+
+donde: 
+
+- $r_s$ es el coeficiente de correlación de Spearman  
+- $n$ es el número de pares de datos  
+- $d_i = R(X_i) - R(Y_i)$ es la diferencia entre los rangos del i-ésimo par de valores  
+- $\sum_{i=1}^{n} d_i^2$ es la suma de los cuadrados de las diferencias de rangos
+
+<br>
+
+**Test del coeficiente de correlación**
+
+$t = \frac{r \sqrt{n-2}}{\sqrt{1-r^2}}$
+
+- $r$: coeficiente de correlación de la muestra  
+- $n$: tamaño de la muestra  
+- El **p-valor** se calculará usando la distribución `t` con $n-2$ grados de libertad
+
+<br>
+
+## **τ de Kendall**
+
+
+$\tau = \frac{(n_c - n_d)}{n_c+n_d}$
+
+donde:  
+
+- $n_c$: número de pares **concordantes**  
+- $n_d$: número de pares **discordantes**  
+
+<br>
+
+**Test del coeficiente de τ de Kendall**
+
+$z = \frac{3\tau\sqrt{n(n-1)}}{\sqrt{2(2n + 5)}}$
+
+<br>
+
+## **Chi-cuadrado**
+
+$\chi^2 = \sum \frac{(O - E)^2}{E}$
+
+$gl = (r - 1)(c - 1)$
+
+donde:
+
+- $r$ es el número de filas  
+- $c$ es el número de columnas  
+
+## **Test exacto de Fisher**
+
+Para una tabla de contingencia \(2 \times 2\):
+
+$\begin{array}{c|cc|c}
+ & \text{Éxito} & \text{Fracaso} & \text{Total} \\
+\hline
+\text{Grupo A} & a & b & a + b \\
+\text{Grupo B} & c & d & c + d \\
+\hline
+\text{Total} & a + c & b + d & n
+\end{array}$
+
+La probabilidad exacta de observar esta tabla viene dada por la distribución hipergeométrica:
+
+$P = \frac{\binom{a+b}{a}\binom{c+d}{c}}{\binom{n}{a+c}}$
