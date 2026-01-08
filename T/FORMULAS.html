@@ -4237,8 +4237,8 @@ combinación de niveles de A × B.</li>
 <td><span class="math inline">\(SS_{total} = SS_{entre} +
 SS_{dentro}\)</span></td>
 <td>1 factor</td>
-<td><span class="math inline">\(R^2 = SS_{entre} /
-SS_{total}\)</span></td>
+<td><span class="math inline">\(R^2 = SS_{entre} / SS_{total}\)</span> o
+<span class="math inline">\(R^2 = 1 - SS_{res}/SS_{total}\)</span></td>
 </tr>
 <tr class="even">
 <td><strong>Dos vías</strong></td>
@@ -4246,7 +4246,8 @@ SS_{total}\)</span></td>
 SS_{error}\)</span></td>
 <td>2 factores + interacción</td>
 <td><span class="math inline">\(R^2 = (SS_A + SS_B + SS_{A:B}) /
-SS_{total}\)</span></td>
+SS_{total}\)</span> o <span class="math inline">\(R^2 = 1 -
+SS_{res}/SS_{total}\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -4356,6 +4357,37 @@ E)^2}{E}\)</span></p>
 distribución hipergeométrica:</p>
 <p><span class="math inline">\(P =
 \frac{\binom{a+b}{a}\binom{c+d}{c}}{\binom{n}{a+c}}\)</span></p>
+</div>
+<div id="odds-ratio" class="section level2">
+<h2><strong><em>Odds ratio</em></strong></h2>
+<p><span class="math inline">\(OR=\frac{\frac{a}{b}}{\frac{c}{d}}=\frac{ad}{bc}\)</span></p>
+</div>
+<div id="d-de-cohen" class="section level2">
+<h2><strong>D de Cohen</strong></h2>
+<p><span class="math inline">\(d =
+\frac{\bar{X}_1-\bar{X}_2}{s_p}\)</span></p>
+<p>donde</p>
+<p><span class="math inline">\(s_p=\sqrt{\frac{(n_1-1)s^2_1+(n_2-1)s^2_2}{n_1+n_2-2}}\)</span></p>
+</div>
+<div id="teorema-de-bayes" class="section level2">
+<h2><strong>Teorema de Bayes</strong></h2>
+<p><span class="math inline">\(p(θ|d) =
+\frac{p(d|θ)p(θ)}{p(d)}\)</span></p>
+<p>donde:</p>
+<ul>
+<li><span class="math inline">\(p(θ|d)\)</span>: <em>posterior
+prob.</em></li>
+<li><span class="math inline">\(p(d|θ)\)</span>: <em>verosimilitud
+likelihood</em></li>
+<li><span class="math inline">\(p(θ)\)</span>: <em>prior</em></li>
+<li><span class="math inline">\(p(d)\)</span>: constante normalizadora o
+probabilidad marginal</li>
+</ul>
+<p><span class="math inline">\(p(θ|d) ∝ p(d|θ)p(θ)\)</span>:
+<em>unscaled prior</em></p>
+<p><br></p>
+<p><strong>Bayes Factor</strong></p>
+<p><span class="math inline">\(BF_{10}\frac{P(datos|H_1)}{P(datos|H_0)}\)</span></p>
 </div>
 
 

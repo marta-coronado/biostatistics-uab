@@ -709,8 +709,8 @@ donde:
 
 | Tipo de ANOVA | Descomposición                                     | Componentes              | R²                                            |
 | ------------- | -------------------------------------------------- | ------------------------ | --------------------------------------------- |
-| **Una vía**   | $SS_{total} = SS_{entre} + SS_{dentro}$                   | 1 factor                 | $R^2 = SS_{entre} / SS_{total}$                      |
-| **Dos vías**  | $SS_{total} = SS_A + SS_B + SS_{A:B} + SS_{error}$ | 2 factores + interacción | $R^2 = (SS_A + SS_B + SS_{A:B}) / SS_{total}$ |
+| **Una vía**   | $SS_{total} = SS_{entre} + SS_{dentro}$                   | 1 factor                 | $R^2 = SS_{entre} / SS_{total}$ o $R^2 = 1 - SS_{res}/SS_{total}$                      |
+| **Dos vías**  | $SS_{total} = SS_A + SS_B + SS_{A:B} + SS_{error}$ | 2 factores + interacción | $R^2 = (SS_A + SS_B + SS_{A:B}) / SS_{total}$ o $R^2 = 1 - SS_{res}/SS_{total}$ |
 
 
 ## **Coeficiente de correlación de Pearson**
@@ -797,3 +797,35 @@ $\begin{array}{c|cc|c}
 La probabilidad exacta de observar esta tabla viene dada por la distribución hipergeométrica:
 
 $P = \frac{\binom{a+b}{a}\binom{c+d}{c}}{\binom{n}{a+c}}$
+
+
+## **_Odds ratio_**
+
+$OR=\frac{\frac{a}{b}}{\frac{c}{d}}=\frac{ad}{bc}$
+
+## **D de Cohen**
+
+$d = \frac{\bar{X}_1-\bar{X}_2}{s_p}$
+
+donde
+
+$s_p=\sqrt{\frac{(n_1-1)s^2_1+(n_2-1)s^2_2}{n_1+n_2-2}}$
+
+## **Teorema de Bayes**
+
+$p(θ|d) = \frac{p(d|θ)p(θ)}{p(d)}$
+
+donde:
+
+- $p(θ|d)$: _posterior prob._
+- $p(d|θ)$: _verosimilitud likelihood_
+- $p(θ)$: _prior_
+- $p(d)$: constante normalizadora o probabilidad marginal
+
+$p(θ|d) ∝ p(d|θ)p(θ)$: _unscaled prior_
+
+<br>
+
+**Bayes Factor**
+
+$BF_{10}\frac{P(datos|H_1)}{P(datos|H_0)}$
