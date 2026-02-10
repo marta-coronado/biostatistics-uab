@@ -1,11 +1,11 @@
-# 📊 Clases de Bioestadística - Grado en Genética UAB
+# 📊 Data Visualization - Bachelor's Degree in Bioinformatics (UPC)
 
-Este repositorio contiene los materiales de la asignatura **Bioestadística** del Grado en Genética (UAB).  
-Aquí encontrarás organizados en secciones los recursos de teoría, seminarios y prácticas de ordenador.
+This repository contains the materials for the **Data Visualization** course in the Bachelor's Degree in Bioinformatics (UPC).  
+Here you will find theory resources and computer lab materials organized by sections.
 
-🌐 La página web del curso está disponible en:  
-👉 [marta-coronado.github.io/biostatistics-uab](https://marta-coronado.github.io/biostatistics-uab/)
+🌐 The course website is available at:  
+👉 [marta-coronado.github.io/data-visualization](https://marta-coronado.github.io/data-visualization/)
 
 ---
 
-✍️ Mantenido por [Marta Coronado](https://github.com/marta-coronado)  
+✍️ Maintained by [Marta Coronado](https://github.com/marta-coronado)
