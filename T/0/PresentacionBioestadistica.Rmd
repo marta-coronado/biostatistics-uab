@@ -26,6 +26,9 @@ knitr::opts_chunk$set(
   hiline = TRUE,
   fig.retina = 5
 )
+knitr::opts_chunk$set(
+  comment = "")
+
 library(ggplot2)
 library(readr)
 library(knitr)
@@ -71,7 +74,7 @@ David Castellano ([david.castellano@uab.cat](mailto:david.castellano@uab.cat))
 ]
 
 .footer-info[
-**Grado en Genética | 15/09/2025**
+**Grado en Genética | 14/09/2026**
 ]
 ]
 
@@ -161,6 +164,26 @@ David Castellano ([david.castellano@uab.cat](mailto:david.castellano@uab.cat))
   font-size: 0.9em;
   color: #444;
 }
+
+.remark-slide-content h2,
+.remark-slide-content h3,
+.remark-slide-content h4,
+.remark-slide-content h5 {
+  margin-top: 1em;
+  margin-bottom: 0.6em;
+}
+
+.remark-slide-content p,
+.remark-slide-content ul,
+.remark-slide-content ol {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.remark-slide-content li {
+  margin-bottom: 0.1em;
+}
+
 </style>
 
 
@@ -178,56 +201,62 @@ class: animated, fadeIn
 | <a href="https://bsky.app/profile/geneticament.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @geneticament.bsky.social</a> |                 <a href="https://bsky.app/profile/castellanoed.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @castellanoed.bsky.social</a> |
 | <a href="https://www.uab.cat"><i class="fa fa-map-marker fa-fw"></i>&nbsp; Universitat Autònoma de Barcelona</a> |    <a href="https://gutengroup.mcb.arizona.edu/"> <i class="fa fa-map-marker fa-fw"></i>&nbsp; University of Arizona</a> |
 
-
-
-
----
-class: animated, fadeIn
-# Visión general del curso
-
-#### **1. Fundamentos de bioestadística y visualización de datos**
-- Introducción a la bioestadística y estadística descriptiva
-- Introducción a la programación con `R` y visualización de datos con `ggplot2`
-
-#### **2. Probabilidad e inferencia estadística**
-
-- Introducción a probabilidad: distribución binomial y normal (en `R`)
-- Proceso científico, hipótesis, introducción a inferencia estadística
-
-#### **3. Comparaciones y análisis de datos**
-
-- T-tests (uno y dos grupos), ANOVA (uno y dos factores), ANCOVA, regresión simple y múltiple, análisis de datos categóricos y tests no paramétricos
-
-#### **4. Aplicaciones avanzadas y bioestadística actual**
-
-- Introducción a estadística Bayesiana
-
 ---
 class: animated, fadeIn
 
-# Objetivos de aprendizaje
+## Objetivos de la asignatura 
 
-#### 1. Una comprensión sólida de la bioestadística básica
-- Tener una visión general de los métodos disponibles  
-- Ser capaz de valorar la aplicabilidad de cada método  
 
-#### 2. Competencia básica en el uso de `R`
-- Conocer los comandos básicos y cómo funcionan  
-- Ser capaz de preparar conjuntos de datos biológicamente relevantes para su análisis y visualización 
-- Poder aplicar métodos estadísticos básicos a esos conjuntos de datos  
+<center>
+<img src="img/biostat1.png"></img>
+</center>
 
-#### 3. Diseño de investigación
-- Comprender cómo formular hipótesis contrastables  
-- Conocer la importancia de aplicar enfoques estadísticos adecuados en investigación  
-- Ser capaz de evaluar críticamente los métodos estadísticos empleados en publicaciones científicas
+- Comprender los conceptos fundamentales de la **estadística descriptiva** e **inferencial**
+- Desarrollar la **capacidad de aplicar métodos estadísticos** a preguntas de Genética
+- Aprender a **formular hipótesis**, interpretar resultados y reconocer sus limitaciones
+- Adquirir competencias en el **uso de `R`** para el manejo de datos, análisis y visualización
+- **Comunicar resultados** con tablas y figuras claras y rigurosas
+- Introducir **estadística Bayesiana** y **aprendizaje automático** (*Deep Learning*)
 
 ---
 class: animated, fadeIn
-# Organización
+## Visión general del curso
+
+.pull-left[
+#### **Bloque 1. Introducción a la bioestadística y visualización de datos**
+<span style="font-size:0.8em">Estadística descriptiva ● Introducción a `R` ● Visualización de datos con `ggplot2` ● Importancia de mostrar los datos</span>
+
+
+#### **Bloque 2. Distribuciones de probabilidad e intervalos de confianza**
+<span style="font-size:0.8em">Distribuciones de probabilidad (binomial, Poisson, normal) ● Teorema central del límite ● Estimación: error estándar e intervalos de confianza</span>
+
+#### **Bloque 3. Inferencia estadística y contraste de hipótesis**
+<span style="font-size:0.8em">Razonamiento estadístico y creación de hipótesis ● Contraste por remuestreo: permutación y *bootstrap* ● Errores I/II, tamaño de efecto y potencia ● T-test ● ANOVA de una y dos vías ● Alternativas no paramétrica </span>
+]
+
+--
+
+.pull-right[
+#### **Bloque 4. Modelos lineales y relaciones entre variables cuantitativas y categóricas**
+<span style="font-size:0.8em">Correlación ● Regresión lineal: simple y múltiple ● Regresión logística y modelos lineales generalizados, GLM ● Test de χ² y test exacto de Fisher </span>
+
+#### **Bloque 5. Corrección de contrastes múltiples e inferencia causal**
+<span style="font-size:0.8em">Comparaciones múltiples: FWER y FDR, con los métodos de Bonferroni, Holm y Benjamini-Hochberg ● Inferencia causal: correlación, confusión y grafos causales o DAGs</span>
+
+
+#### **Bloque 6. Métodos y temas avanzados**
+<span style="font-size:0.8em">Estadística Bayesiana: Bayes, priors, posteriors e intervalos creíbles, estimación de la posterior y MCMC ● *Deep learning* y modelos de lenguaje LLM: del perceptrón a las redes neuronales</span>
+]
+
+---
+class: animated, fadeIn
+## Organización
 
 #### **1. Clases de teoría**: 30h de teoría - diapositivas interactivas (`Rmd`).
-#### **2. Seminarios**: 11 seminarios - resolución de problemas y dudas.
-#### **3. Prácticas**: 6 prácticas de ordenador. Aplicación de `R` a datos reales.
+#### **2. Seminarios**: 11 seminarios - resolución de problemas y dudas, presentaciones.
+#### **3. Prácticas**: 6 prácticas de ordenador (2h/práctica). Aplicación de `R` a datos reales.
+
+- Material del curso: https://marta-coronado.github.io/biostatistics-uab/
 
 .pull-left[
 ### Diapositivas interactivas 
@@ -243,6 +272,7 @@ mean(values)
 ]
 
 .pull-right[
+<br>
 ```{r, echo = F, fig.height=4, fig.width=6}
 
 library(ggplot2)
@@ -275,20 +305,58 @@ ggplot(df, aes(x = x, y = y)) +
 
 ---
 class: animated, fadeIn
-# Evaluación
+## Evaluación
 
-#### **Exámenes** (70%)
-- Primer parcial (30%)
-- Segundo parcial (40%)
+### Evaluación continua
 
-#### **Seminarios** (15%)
-- Participación en clase (5%)
-- Presentación en grupo (10%)
+.pull-left[
+#### **Exámenes** (50%)
+- Primer parcial (20%)
+- Segundo parcial (30%)
 
-#### **Prácticas** (15%)
-- Participación en clase (5%)
-- Exámen práctico (10%)
+#### **Seminarios** (30%)
+- Participación en clase (10%)
+- Presentación en grupo (20%)
 
+#### **Prácticas** (20%)
+- Exámen práctico (20%)
+
+###  Evaluación única
+- Exámen de teoría (70%), examen práctico (15%) y entrega problemas (15%).
+]
+
+--
+
+.pull-right[
+
+<i class="fa fa-warning fa-fw"></i> El alumnado deberá notificar por correo electrónico, durante el primer día de clase, si opta por la **evaluación continua** o por la **evaluación única**.
+
+
+]
+
+---
+class: animated, fadeIn
+
+## Participación en el proyecto de innovación docente AIR-LAB
+
+#### El campus com a laboratori viu per a l’avaluació i la conscienciació de la qualitat de l’aire a la UAB 
+
+<center><img src="img/airlab.png" width=94%></img>
+</center>
+
+Profesorado colaborador: David Castellano y Marta Coronado (*Bioestadística*, Genética), Helen Cole (*Salud ambiental*, Ciencias Ambientales) y Laura Rubio y Álba González (*Módulo de Mutagénesis*, Genética).
+
+---
+class: animated, fadeIn
+
+## Participación en el proyecto de innovación docente AIR-LAB
+
+### Calendario
+
+<center><img src="img/airlab-cal.png" width=70%></img>
+</center>
+
+- 22 de octubre de 15-16h: clase conjunta con *Salud ambiental*
 
 
 ---
@@ -300,7 +368,10 @@ class: animated, fadeIn
 <img src="img/libros.png" width=90%></img>
 </center>
 <br><br>
-Si quieres más recursos para la asignatura, pídenoslo!
+
+- Libros disponibles en línea en la Biblioteca de Biociències: https://apps.uab.cat/guies/public/html/2026/assignatura/101965/ca
+
+- Si quieres más recursos para la asignatura, pídenoslo!
 
 ---
 
@@ -376,8 +447,10 @@ El error en los datos fue detectado por la Dra. B. M. Weiß a principios de [201
 - Se publicó una fe de erratas ([*corrigendum*](https://doi.org/10.1093/chemse/bjx034)).
 - Se subió una versión corregida del artículo.
 
+<br>
 Ninguna de las conclusiones del trabajo cambió.
 
+<br><br>
 **No pasa nada grave siempre que notifiques los errores y des las correcciones.**
 
 ]
@@ -809,7 +882,9 @@ Es un _entorno de desarrollo integrado_ (**IDE**) para R: proporciona un espacio
 <img src="img/rstudio3.png" width="100%"></img>
 </center>
 ]
----
+
+???
+
 class: animated, fadeIn
 
 # Las partes de RStudio
@@ -870,11 +945,11 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-# Uso de ChatGPT
+# Uso de la IA
 
 
 .pull-left[
-- El uso de ChatGPT es bienvenido
+- El uso de IA (Claude, ChatGPT, ...) es bienvenido
 
 - Se espera un uso crítico y reflexivo (no copiar/pegar sin revisar)
 
