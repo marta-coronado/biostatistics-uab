@@ -3,9 +3,4 @@ readr
 knitr
 xaringanthemer
 xaringanExtra
-dplyr
-sp
-SeuratObject
-Seurat
 patchwork
-future

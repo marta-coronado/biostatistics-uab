@@ -258,6 +258,8 @@ class: animated, fadeIn
 
 - Material del curso: https://marta-coronado.github.io/biostatistics-uab/
 
+--
+
 .pull-left[
 ### Diapositivas interactivas 
 
@@ -337,9 +339,9 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-## Participación en el proyecto de innovación docente AIR-LAB
+### Participación en el proyecto de innovación docente **AIR-LAB**
 
-#### El campus com a laboratori viu per a l’avaluació i la conscienciació de la qualitat de l’aire a la UAB 
+#### *El campus com a laboratori viu per a l’avaluació i la conscienciació de la qualitat de l’aire a la UAB*
 
 <center><img src="img/airlab.png" width=94%></img>
 </center>
@@ -349,15 +351,15 @@ Profesorado colaborador: David Castellano y Marta Coronado (*Bioestadística*, G
 ---
 class: animated, fadeIn
 
-## Participación en el proyecto de innovación docente AIR-LAB
+### Participación en el proyecto de innovación docente **AIR-LAB**
 
 ### Calendario
 
 <center><img src="img/airlab-cal.png" width=70%></img>
 </center>
 
-- 22 de octubre de 15-16h: clase conjunta con *Salud ambiental*
-
+<i class="fa fa-warning fa-fw"></i>  22 de octubre de 15-16h: clase conjunta con *Salud ambiental*<br>
+<i class="fa fa-info-circle fa-fw"></i> Clase práctica analizando datos (práctica 3 o 4)
 
 ---
 class: animated, fadeIn
@@ -373,272 +375,32 @@ class: animated, fadeIn
 
 - Si quieres más recursos para la asignatura, pídenoslo!
 
----
 
+---
 layout: false
 class: left, bottom, inverse, animated, bounceInDown
+
 # 01
-## La importancia de la estadística
-
----
-class: animated, fadeIn
-
-# *When mistakes happen*
-.pull-left[
-Los artículos científicos pasan por un sistema de revision riguroso (*peer-review system*), que puede no ser infalible.
-
-]
-.pull-right[
-<center>
-<img src="img/paper1.png" width=70%></img>
-
-]
-
----
-class: animated, fadeIn
-
-# *When mistakes happen*
-.pull-left[
-Los artículos científicos pasan por un sistema de revision riguroso (*peer-review system*), que puede no ser infalible.
-
-Un ejemplo:
-- Birkenmeyer *et al.* publicaron un artículo con errores en [2016](https://doi.org/10.1093/chemse/bjw056).
-
-]
-.pull-right[
-<center>
-<img src="img/paper1.png" width=70%></img>
-
-]
-
----
-class: animated, fadeIn
-
-# *When mistakes happen*
-.pull-left[
-Los artículos científicos pasan por un sistema de revision riguroso (*peer-review system*), que puede no ser infalible.
-
-Un ejemplo:
-- Birkenmeyer *et al.* publicaron un artículo con errores en [2016](https://doi.org/10.1093/chemse/bjw056).
-
-El error en los datos fue detectado por la Dra. B. M. Weiß a principios de [2017](https://doi.org/10.1093/chemse/bjx034).
-- Se publicó una fe de erratas ([*corrigendum*](https://doi.org/10.1093/chemse/bjx034)).
-- Se subió una versión corregida del artículo.
-
-
-]
-.pull-right[
-<center>
-<img src="img/paper2.png" width=70%></img>
-
-]
-
----
-class: animated, fadeIn
-
-# *When mistakes happen*
-.pull-left[
-Los artículos científicos pasan por un sistema de revision riguroso (*peer-review system*), que puede no ser infalible.
-
-Un ejemplo:
-- Birkenmeyer *et al.* publicaron un artículo con errores en [2016](https://doi.org/10.1093/chemse/bjw056).
-
-El error en los datos fue detectado por la Dra. B. M. Weiß a principios de [2017](https://doi.org/10.1093/chemse/bjx034).
-- Se publicó una fe de erratas ([*corrigendum*](https://doi.org/10.1093/chemse/bjx034)).
-- Se subió una versión corregida del artículo.
-
-<br>
-Ninguna de las conclusiones del trabajo cambió.
-
-<br><br>
-**No pasa nada grave siempre que notifiques los errores y des las correcciones.**
-
-]
-.pull-right[
-<center>
-<img src="img/paper2.png" width=70%></img>
-
-]
-
-
----
-class: animated, fadeIn
-
-## Prácticas fraudulentas: el caso de Andrew Wakefield
-
-<center>
-<img src="img/autismo.png" width="30%" style="margin-right: 10px;"/>
-
-
----
-class: animated, fadeIn
-
-## Prácticas fraudulentas: el caso de Andrew Wakefield
-
-.pull-left[
-- Afirmó haber encontrado una relación entre vacunas y autismo (artículo de <a href="https://doi.org/10.1016/s0140-6736(97)11096-0">1998</a>)  
-
-]
-
-.pull-right[
-<div style="display: flex; align-items: center;">
-<center>
-<img src="img/autismo.png" width="49%" style="margin-right: 10px;"/>
-
-</div>
-]
-
----
-class: animated, fadeIn
-
-## Prácticas fraudulentas: el caso de Andrew Wakefield
-
-.pull-left[
-- Afirmó haber encontrado una relación entre vacunas y autismo (artículo de <a href="https://doi.org/10.1016/s0140-6736(97)11096-0">1998</a>)  
-
-- El artículo fue **retractado** por la editorial *The Lancet* 12 años después  
-
-- El Consejo Médico General de Gran Bretaña le revocó la licencia médica  
-
-- Su carrera académica terminó, a pesar de contar con una gran comunidad de seguidores en EE.UU., Australia y Brasil  
-]
-
-.pull-right[
-<div style="display: flex; align-items: center;">
-<center>
-<img src="img/paper_retracted.png" width="75%"/>
-
-</div>
-]
-
----
-class: animated, fadeIn
-
-## Prácticas fraudulentas: el caso de  Diederik Stapel
-
-.pull-left[
-- Manipuló datos y fabricó estudios enteros
-
-- Fue despedido de su puesto como profesor en la Universidad de Tilburg
-
-- 58 artículos retractados
-
-- También tuvieron que retractarse artículos de otros co-autores
-<center>
-<img src="img/diederik-stapel-1.jpg" width="65%" style="margin-right: 10px;"/>
-
-]
-
-.pull-right[
-<div style="display: flex; align-items: center;">
-<center>
-<img src="img/paper_retracted2.png" width="80%"/>
-
-</div>
-]
-
----
-class: animated, fadeIn
-
-## Prácticas fraudulentas: el caso de  Diederik Stapel
-
-.pull-left[
-- Manipuló datos y fabricó estudios enteros
-
-- Fue despedido de su puesto como profesor en la Universidad de Tilburg
-
-- 58 artículos retractados
-
-- También tuvieron que retractarse artículos de otros co-autores
-
-<br>
-<i class="fa fa-warning fa-fw"></i> **Las prácticas fraudulentas conscientes pueden costarte la carrera, desacreditar a tu institución y a tu campo de investigación, e incluso perjudicar seriamente la carrera de colaboradores.**
-]
-
-.pull-right[
-<div style="display: flex; align-items: center;">
-
-<center>
-<img src="img/paper_retracted2.png" width="80%"/>
-
-</div>
-]
-
----
-class: animated, fadeIn
-
-# Uso incorrecto de la estadística
-
-<br>
-### Falta de conocimiento estadístico
-
-**Aplicar métodos estadísticos a datos para los que no están pensados**
-→ Los métodos pueden "fallar"
-
-**Comprensión defectuosa de la metodología** → Conclusiones incorrectas
-
-### Falta de conocimiento biológico
-
-**Identificación de asociaciones sin sentido pero estadísticamente significativas** → *p-hacking*
-
-**Desconocimiento sobre cómo formular hipótesis contrastables y factibles** → Pérdida de tiempo
-
----
-class: animated, fadeIn
-
-# Advertencia
-
-.pull-left[
-**A menudo en biología tenemos ideas preconcebidas sobre lo que esperamos encontrar** → ¿Ajustar los datos para que coincidan con las expectativas?
-
-<br>
-
-<div style="background-color: #fff9c4;
-  border-left: 6px solid #fbc02d;
-  padding: 12px 16px;
-  font-size: 1.2em;
-  margin: 0 auto;">
-  No dejar que el sesgo personal influya en el análisis.
-</div>
-
-Los estudios biológicos sin análisis estadísticos **rigurosos** son casi impublicables.
-
-
-]
-
-.pull-right[
-<div style="display: flex; align-items: center;">
-<center>
-<img src="img/513476_1_En_18_Fig2_HTML.png" width="75%" style="margin-right: 10px;"/>
-
-</div>
-<small><a href="https://doi.org/10.1038/526182a">Nuzzo, R. How scientists fool themselves – and how they can stop. Nature 526, 182–185 (2015)</a>
-]
-
-
----
-layout: false
-class: left, bottom, inverse, animated, bounceInDown
-
-# 02
-## Terminología
+## Introducción a la bioestadística
 
 ---
 class: animated, fadeIn
 
 # _ The big picture of statistics_
 
-Toda investigación estadística comienza con una **pregunta de investigación**.  
-El proceso continúa con los siguientes pasos:  
+Toda **investigación** empieza con una **pregunta**:
+
+<br>
 
 .pull-left[
-**1. Producir datos**:  un buen muestreo y diseño de estudio son esenciales. Importancia de la aleatorización (permite utilizar las leyes de la probabilidad)
 
-**2. Explorar los datos**: estadística descriptiva (mostrar y resumir los datos, numérica y gráficamente)
+1. **Producir datos**:  diseñar bien el estudio y aleatorizar los datos<br><br>
 
-**3. Probabilidad**: conecta la muestra con la población, nos dice qué resultados son más o menos esperables por azar
+2. **Explorar los datos**: describir numérica y gráficamente los datos (estadística descriptiva)<br><br>
 
-**4. Extraer conclusiones**: estadística inferencial para llegar a conclusiones sobre la población a partir de una muestra
+3. **Probabilidad**: conecta la muestra con la población<br><br>
+
+4. **Extraer conclusiones**: estadística inferencial para llegar a conclusiones sobre la población a partir de una muestra
 ]
 
 .pull-right[
@@ -650,7 +412,7 @@ class: animated, fadeIn
 
 # Población *vs.* muestra
 
-.pull-left[**Población**: describe el total de todos los valores existentes de una variable según una pregunta de investigación determinada. Esto incluye datos no medidos.
+.pull-left[**Población**: describe el total de todos los valores existentes de una variable según una pregunta determinada. Esto incluye datos no medidos.
 ]
 
 .pull-right[**Muestra**: describe el total de todos los valores disponibles de una variable para un análisis determinado. Solo puede incluir datos medidos.
@@ -662,13 +424,13 @@ class: animated, fadeIn
 
 *Ejemplo*:
 .right-column[
-- En un experimento, crías una colonia de hormigas de exactamente 10.000 individuos.
+<i class="fa fa-microscope fa-fw"></i> En un experimento, crías una colonia de hormigas de exactamente 10.000 individuos.
 
-- Te interesa la fuerza promedio de la mandíbula de las hormigas dentro de la colonia.
+<i class="fa fa-teeth fa-fw"></i> Te interesa la fuerza promedio de la mandíbula de las hormigas dentro de la colonia.
 
-- El problema: No es posible medir a los 10.000 individuos.
+<i class="fa fa-square-xmark fa-fw"></i> El problema: No es posible medir a los 10.000 individuos.
 
-- La solución: Tomar medidas sobre una **muestra** (por ejemplo, 1.000 individuos) dentro de la **población** (10.000 individuos).
+<i class="fa fa-thumbs-up fa-fw"></i> La solución: Tomar medidas sobre una **muestra** (por ejemplo, 1.000 individuos) dentro de la **población** (10.000 individuos).
 ]
 
 
@@ -682,23 +444,30 @@ class: animated, fadeIn
 
 # Señal y ruido
 
-- **Señal:** información significativa que queremos detectar.
+- **Señal:** información relevante que queremos detectar
 
-- **Ruido:** variación aleatoria que interfiere con la señal.  
+- **Ruido:** variación aleatoria que la esconde  
 
 --
 
 <br>
 
+<br>
 *Ejemplo*:
 
-- **Hipótesis**: "La dieta rica en proteína aumenta la fuerza de la mandíbula en las hormigas" 
+.right-column[
+- **Hipótesis**: "Una dieta rica en proteína aumenta la fuerza de la mandíbula en las hormigas"<br><br>
+  
+  - **Señal:** la diferencia real en fuerza de mandíbula entre colonias con distinta dieta
+  
+  - **Ruido:** todo lo demás que también hace variar la fuerza: edad de las hormigas, errores de medición, diferencias entre individuos, microambiente...
+]
 
-  - **Señal:** diferencia real en la fuerza promedio de la mandíbula entre colonias con distinta dieta  
-  
-  - **Ruido:** variación por edad de las hormigas, errores de medición, diferencias individuales o microambiente
-  
-  
+.left-column[
+<br>
+<img src="img/imrs.webp" width=100%></img>
+]
+
 ---
 class: animated, fadeIn
 
@@ -706,7 +475,7 @@ class: animated, fadeIn
 
 - La estadística es la **ciencia de entender datos** y de **tomar decisiones frente a la variabilidad** y la **incertidumbre**.
   
-- Nos ayuda a separar **señal** (información significativa) de **ruido** (variación aleatoria).
+  - Nos ayuda a separar la **señal** (información relevante) del **ruido** (variación aleatoria).
 
 --
 
@@ -717,25 +486,25 @@ class: animated, fadeIn
 - La **variabilidad** es la diferencia natural entre observaciones.  
 
 - Ejemplos:  
+  - Fuerza de la mandíbula en hormigas de la misma colonia
   - Altura de plantas en el mismo experimento  
   - Tiempo de desarrollo de larvas de mosca  
-  - Fuerza de la mandíbula en hormigas de la misma colonia
-  
 ]
 
 .pull-right[
 
 #### Incertidumbre
 
-- La **incertidumbre** refleja **lo poco que sabemos con certeza** sobre un resultado o estimación.  
+- La **incertidumbre** refleja **cuánto podemos confiar** en un resultado o estimación.  
 
 - Ejemplos:
 
-  - Muestra no significativa
+  - Medir solo 1.000 hormigas de una colonia de 10.000 (muestra pequeña)
   - Resolución limitada en el instrumento de medición
-  - Medir solo 1.000 hormigas de una colonia de 10.000 
-
+  
 ]
+
+<br>
 - La estadística nos permite **cuantificar y entender la variabilidad** y la **incertidumbre**.
 
 
@@ -745,22 +514,106 @@ variabilidad: Range, variance, and standard deviation are used to quantify varia
 Incertidumbre: - Se puede cuantificar con: intervalos de confianza, desviación estándar, probabilidad.  
 - Incluso un buen experimento tiene incertidumbre.  
 
+"El ruido en este ejemplo es la variabilidad de las hormigas (edad, microambiente, medición...). Cuanta más de esta variabilidad haya, y cuantas menos hormigas midamos, más incertidumbre tendremos sobre si la señal (efecto de la dieta) es real."
+
+---
+class: animated, fadeIn
+
+## Con cuál te quedas: ¿A o B?
+```{r, echo = FALSE, fig.align='center',fig.width=15}
+library(ggplot2)
+library(patchwork)
+
+set.seed(42)
+
+# --- Panel A: ALTA variabilidad ---
+# Diferencia real entre grupos (5 unidades) pero con mucho ruido (sd alta)
+# -> los boxplots se solapan a pesar de que SI hay diferencia real
+n <- 10
+control_A <- rnorm(n, mean = 50, sd = 12)
+dieta_A   <- rnorm(n, mean = 80, sd = 12)
+
+dfA <- data.frame(
+  fuerza = c(control_A, dieta_A),
+  grupo  = rep(c("Control", "Dieta"), each = n)
+)
+
+# --- Panel B: BAJA variabilidad ---
+# Diferencia real MAS PEQUEÑA (3 unidades) pero con muy poco ruido (sd baja)
+# -> los boxplots NO se solapan, la diferencia es clara pese a ser mas pequeña
+control_B <- rnorm(n, mean = 50, sd = 1.2)
+dieta_B   <- rnorm(n, mean = 55, sd = 1.2)
+
+dfB <- data.frame(
+  fuerza = c(control_B, dieta_B),
+  grupo  = rep(c("Control", "Dieta"), each = n)
+)
+
+# --- Tema comun ---
+tema_comun <- theme_classic(base_size = 18) +
+  theme(
+    axis.title.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = "none",
+  )
+ 
+colores <- c("Control" = "#8DA3A6", "Dieta" = "#1B6E77")
+ 
+# --- Panel A ---
+pA <- ggplot(dfA, aes(x = grupo, y = fuerza, fill = grupo)) +
+  geom_boxplot(width = 0.5, alpha = 0.9, outlier.shape = NA) +
+  geom_jitter(width = 0.08, size = 2, alpha = 0.6, color = "black") +
+  stat_summary(
+    fun = mean, geom = "text",
+    aes(label = sprintf("%.1f", after_stat(y))),
+    position = position_nudge(y = 6),
+    size = 4.2, fontface = "bold", color = "firebrick4"
+  ) +
+  scale_fill_manual(values = colores) +
+  labs(y = "Fuerza de mandíbula") +
+  ylim(20, 100) +
+  tema_comun
+ 
+# --- Panel B ---
+pB <- ggplot(dfB, aes(x = grupo, y = fuerza, fill = grupo)) +
+  geom_boxplot(width = 0.5, alpha = 0.9, outlier.shape = NA) +
+  geom_jitter(width = 0.08, size = 2, alpha = 0.6, color = "black") +
+  stat_summary(
+    fun = mean, geom = "text",
+    aes(label = sprintf("%.1f", after_stat(y))),
+    position = position_nudge(y = 3),
+    size = 4.2, fontface = "bold", color = "firebrick4"
+  ) +
+  scale_fill_manual(values = colores) +
+  labs(y = "Fuerza de mandíbula") +
+  ylim(20, 100) +
+  tema_comun
+
+# --- Combinar en una sola figura, con etiquetas A/B tipo plot_grid ---
+figura_final <- (pA + pB) +
+  plot_annotation(tag_levels = "A") &
+  theme(
+    plot.tag = element_text(face = "bold", size = 20),
+    plot.tag.position = c(0, 1)
+  )
+figura_final
+
+```
+
+
 ---
 class: animated, fadeIn
 
 ## ¿Qué hace que los datos sean realmente aleatorios?
 
 ### Aleatorización
-- La aleatorización es una de las prácticas más importantes en los estudios biológicos.  
-- Un procedimiento de muestreo es **aleatorio** cuando **cualquier miembro de la población** tiene la **misma probabilidad** de ser seleccionado en la muestra.  
-
+- La aleatorización es una de las prácticas más importantes en los estudios biológicos.
+- Un procedimiento de muestreo es **aleatorio** cuando **todos los miembros de la población** tienen **la misma probabilidad** de ser seleccionados para la muestra.
 .pull-left[
 ### Recolección de datos
-- Numerar todas las unidades dentro del diseño experimental.  
-
-- Seleccionar aquellas unidades que correspondan a **números aleatorios**.  
+- Numerar todas las unidades del diseño experimental.
+- Seleccionar las unidades cuyo número coincida con una secuencia de **números aleatorios**.
 ]
-
 .pull-right[
 <img src="img/muestreo.png" width=100%></img>
 
@@ -824,85 +677,8 @@ R no es solo un **lenguaje de programación**, es un **entorno para estadística
 
 .pull-right[
 <center>
-<img src="img/Sin título_Nero_AI_Image_Upscaler_Standard_Face.png" width="65%"></img>
-</center>
-]
-
----
-class: animated, fadeIn
-
-# El poder de R
-
-.pull-left[
-
-R no es solo un **lenguaje de programación**, es un **entorno para estadística** y **creación de gráficos**:
-
-- Código abierto, con una gran comunidad
-
-- Fácil de instalar en cualquier plataforma
-
-- Gestión de grandes conjuntos de datos
-
-- Facilidad para crear gráficos
-
-- Herramientas integradas
-
-- Lenguaje de programación simple y efectivo
-
-**_All-in-one_**!
-
-]
-
-.pull-right[
-<center>
 <img src="img/R.png" width="75%"></img>
 <br><font size="3"> <a href="https://www.nature.com/articles/517109a">Tippmann, S. Programming tools: Adventures with R. <br>Nature 517, 109–110 (2015)</a>.</font> 
-</center>
-]
-
----
-class: animated, fadeIn
-# ¿Qué es RStudio?
-
-.pull-left[
-Es un _entorno de desarrollo integrado_ (**IDE**) para R: proporciona un espacio con muchas funcionalidades para usar R de manera fácil y efectiva.
-
-- GUI, no solo terminal (CLI)  
-
-- Ideal para aprender  
-
-- _Código abierto_ y gratuito  
-
-- Disponible para cualquier plataforma
-
-]
-
-.pull-right[
-<center>
-<img src="img/rstudio3.png" width="100%"></img>
-</center>
-]
-
-???
-
-class: animated, fadeIn
-
-# Las partes de RStudio
-
-.pull-left[
-La GUI de RStudio se divide en **cuatro paneles**:
-- **Consola**: donde escribimos los comandos y vemos los resultados. Si usas R sin RStudio, esto es lo que verías (CLI).  
-
-- **Editor de _script_**: donde escribimos los comandos para que queden guardados en un archivo (_script_, `.R`). También se pueden ejecutar los comandos (`Run`).  
-
-- **Environment/History**: muestra todos los objetos activos y el historial de todas las órdenes ejecutadas en la consola.  
-
-- ***Files/Plots/Packages/Help***: podemos ver los archivos que existen en el directorio actual, los gráficos creados, los paquetes instalados y consultar el manual de ayuda.
-]
-
-.pull-right[
-<center>
-<img src="img/rstudio3.png" width="100%"></img>
 </center>
 ]
 
@@ -911,9 +687,9 @@ class: animated, fadeIn
 
 # Instalando R y RStudio
 
-- R está disponible en [https://cloud.r-project.org/](https://cloud.r-project.org/)  para Windows, Linux y MacOS.
+- **R** está disponible en [https://cloud.r-project.org/](https://cloud.r-project.org/)  para Windows, Linux y MacOS.
 
-- RStudio está disponible en [https://posit.co/download/rstudio-desktop/] (https://posit.co/download/rstudio-desktop/)  para Windows, Linux y MacOS.
+- **RStudio** está disponible en [https://posit.co/download/rstudio-desktop/](https://posit.co/download/rstudio-desktop/)  para Windows, Linux y MacOS.
 
 ### ¿Y si necesito ayuda?
 
@@ -928,13 +704,12 @@ class: animated, fadeIn
 # La evolución del código
 
 .pull-left[
-- Tu código y tus prácticas de programación **evolucionan** con el tiempo  
+- Tu código y tus hábitos de programación **evolucionan** con el tiempo 
 
-- Comenta cada línea de código
+- omenta tu código, línea por línea si hace falta
 
-- Un código **elegante** hace que un análisis sea más fácil de reproducir  
+- Un código **elegante** y **orgenado** es mucho más fácil de reproducir y entender
 
-- Evita el **hard-coding**!
 ]
 .pull-right[
 <center>
