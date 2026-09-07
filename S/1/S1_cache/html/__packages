@@ -4,3 +4,5 @@ knitr
 xaringanthemer
 patchwork
 scales
+readr
+xaringanExtra

@@ -1,5 +1,5 @@
 ---
-title: "<br>"
+title: ""
 subtitle: ""
 author: ""
 date: ""
@@ -15,7 +15,6 @@ output:
       ratio: "16:9"
       
 ---
-
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
 #knitr::include_graphics()
@@ -24,12 +23,16 @@ knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE, 
   warning = FALSE,
-  hiline = TRUE
+  hiline = TRUE,
+  fig.retina = 5
 )
-library(dplyr)
+knitr::opts_chunk$set(
+  comment = "")
+
 library(ggplot2)
+library(readr)
 library(knitr)
-# pagedown::chrome_print("S1.html")
+#pagedown::chrome_print("PresentacionBioestadistica.html")
 ```
 
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
@@ -43,8 +46,154 @@ style_mono_accent(
 )
 ```
 
+
+```{r xaringanExtra-clipboard, echo=FALSE}
+library(xaringanExtra)
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #90BE6D\"></i>",
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
+
+
+class: title-slide, animated, fadeIn
+
+.left-top[
+# Seminarios de
+.subtitle[Bioestadística]
+
+]
+
+.left-bottom[
+.authors[
+**Seminario 1 | La importancia de mostrar los datos**
+<br><br><br><br>
+
+Marta Coronado ([marta.coronado@uab.cat](mailto:marta.coronado@uab.cat))  
+]
+
+.footer-info[
+**Grado en Genética | Curso 2026/2027**
+]
+]
+
+.right-panel[]
+
+
+
+<style>
+.title-slide {
+  background-image: none;
+}
+
+/* Contenedor teal superior (solo título) */
+.title-slide .left-top {
+  position: absolute;
+  top: 0; left: 0;
+  width: 60%;
+  height: 62%;
+  background-color: #163a3a;
+  color: white;
+  padding: 50px 45px 30px 65px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;   /* ← esto faltaba */
+  align-items: flex-start;  /* ← con column, flex-end alinearía a la derecha; usa flex-start para pegar a la izquierda */
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+
+/* Contenedor blanco inferior (autores, fecha) */
+.title-slide .left-bottom {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 60%;
+  height: 38%;
+  background-color: white;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px 45px 30px 65px;
+  margin: 0;
+}
+
+.title-slide .right-panel {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 41%;
+  background-color: white;
+  background-image: url('img/1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.title-slide h1 {
+  font-size: 1.9em;
+  line-height: 1.25;
+  margin: 0;
+  font-weight: 400;
+}
+
+.title-slide .subtitle {
+  display: block;   /* ← esto es la clave: sin esto, margin-top se ignora */
+  font-size: 2em;
+  font-weight: bold;
+  color: #7ac142;
+  margin-top: -35px;
+  margin-bottom: 15px;
+}
+
+.title-slide .authors {
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.title-slide .authors a {
+  color: #e8846b;
+  text-decoration: none;
+}
+
+.title-slide .footer-info {
+  font-size: 0.9em;
+  color: #444;
+}
+
+.remark-slide-content h2,
+.remark-slide-content h3,
+.remark-slide-content h4,
+.remark-slide-content h5 {
+  margin-top: 1em;
+  margin-bottom: 0.6em;
+}
+
+.remark-slide-content p,
+.remark-slide-content ul,
+.remark-slide-content ol {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.remark-slide-content li {
+  margin-bottom: 0.1em;
+}
+
+</style>
+
+
+
+---
+
 class: animated, fadeIn
-### <i>"El mejor gráfico estadístico jamás dibujado"</i> ~Edward Tufte
+### <i>The best statistical graphic ever drawn"</i> ~Edward Tufte
 
 <center>
 <img src="img/Minard2020_9_22D12_40_47.png" align="middle" width="85%" margin="0 auto" />
@@ -53,12 +202,6 @@ class: animated, fadeIn
 
 El gráfico es notable por su representación en dos dimensiones de seis tipos de datos: el número de tropas de Napoleón; la distancia; la temperatura; la latitud y la longitud; la dirección del viaje; y la ubicación en relación con fechas específicas. <a href="https://en.wikipedia.org/wiki/Charles_Joseph_Minard">Wikipedia</a>.
 
-<style>
-.title-slide {
-  background-image: url('img/1.png');
-  background-size: 100%;
-}
-</style>
 
 ---
 layout: false
@@ -74,17 +217,17 @@ class: animated, fadeIn
 .pull-left[
 ### **Seis principios de Tufte**:
 
-1. **Comparaciones**: Muestra comparaciones para ilustrar contrastes y diferencias.
+1. **Comparaciones**: mostrar comparaciones para resaltar contrastes y diferencias
 
-2. **Causalidad**: Demuestra cómo una o más variables independientes afectan o influyen en las variables dependientes.
+2. **Causalidad**: mostrar cómo una o más variables influyen sobre otras
 
-3. **Multivariable**: Combina diferentes tipos de datos.
+3. **Multivariable**: combinar varios tipos de datos en un mismo gráfico
 
-4. **Integración**: Incorpora diversos modos de información.
+4. **Integración**: incorporar distintos modos de información (texto, números, imágenes)
 
-5. **Documentación**: Incluye atribuciones, títulos detallados y mediciones (escalas).
+5. **Documentación**: incluir fuentes, títulos claros y las escalas de medición usadas
 
-6. **Contexto**: Describe el estado antes y después.
+6. **Contexto**:  mostrar el estado de las variables antes y después
 ]
 
 .pull-right[
@@ -121,7 +264,7 @@ class: left, bottom, inverse, animated, bounceInDown
 ---
 class: animated, fadeIn
 
-### **Límites justos de los ejes **
+### **Integridad en los ejes **
 
 Promedio de horas de trabajo/semana (Eurofund 2014).
 Gráfico creado por la agencia de desarrollo económico alemana GTAI.  <a src="https://www.gtai.de/GTAI/Navigation/EN/invest,t=motivated-and-dependable-employees,did=214428.html">Fuente</a>.
@@ -165,7 +308,7 @@ p1
 ---
 class: animated, fadeIn
 
-### **Límites justos de los ejes **
+### **Integridad en los ejes **
 
 Promedio de horas de trabajo/semana (Eurofund 2014).
 Gráfico creado por la agencia de desarrollo económico alemana GTAI.  <a src="https://www.gtai.de/GTAI/Navigation/EN/invest,t=motivated-and-dependable-employees,did=214428.html">Fuente</a>.
@@ -234,14 +377,13 @@ p1 + p2
  
 ```
 
-<i class="fa fa-info-circle"></i> Las **barras** en un **gráfico de barras** deben (casi) siempre **extenderse al cero** (magnitud absoluta de los valores). No es necesario en gráficos lineares (cambio en la variable dependiente a medida que cambia la variable independiente).
-
+<i class="fa fa-info-circle"></i> Las **barras** de un **gráfico de barras** deben (casi) siempre **empezar en cero**, porque su longitud representa la magnitud absoluta del valor. Esto no es necesario en los **gráficos de líneas**, donde lo que importa es el cambio de la variable a medida que cambia otra.
 
 
 ---
 class: animated, fadeIn
 
-### **Límites justos de los ejes **
+### **Integridad en los ejes **
 .pull-left[
 <img src="img/stand_your_ground2020_9_22D12_42_34.png" width = 75%>
 ]
@@ -249,16 +391,15 @@ class: animated, fadeIn
 --
 
 .pull-right[
-- Impresión visual inmediata de que las muertes por armas de fuego disminuyeron drásticamente tras la aprobación de la ley de defensa propia (_"Stand Your Ground"_) en Florida
-
-- **El descenso es una ilusión**
+- A primera vista, parece que las muertes por armas de fuego cayeron drásticamente tras la aprobación de la ley de defensa propia (_"Stand Your Ground"_) en Florida
+- **Pero ese descenso es una ilusión**
 ]
 
 
 ---
 class: animated, fadeIn
 
-### **Límites justos de los ejes **
+### **Integridad en los ejes **
 <center>
 <img src="img/monster-1040x7392020_9_22D12_45_17.jpg" width = 65%>
 
@@ -266,7 +407,7 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-### **Límites justos de los ejes **
+### **Integridad en los ejes **
 
 ```{r  echo=F, eval=T, fig.height=6, fig.width=7}
 temp_df <- data.table::fread("img/combined_temperature.csv")
@@ -314,7 +455,7 @@ p1
 
 ---
 
-### **Límites justos de los ejes **
+### **Integridad en los ejes **
 
 ```{r  echo=F, eval=T, fig.height=6, fig.width=14}
 temp_df <- data.table::fread("img/combined_temperature.csv")
@@ -472,7 +613,7 @@ b <- ggplot(gdp, aes(x = `Variable observation date`)) +
 a + b
 ```
 
-Los datos con las mismas unidades de medida se muestran mejor usando **la misma escala** en un único eje.
+Los datos con las mismas unidades de medida se muestran mejor usando **una única escala** en un mismo eje.
 
 ---
 class: animated, fadeIn
@@ -480,7 +621,7 @@ class: animated, fadeIn
 ### Evitar el uso de dobles ejes
 
 <center>
-<img src="img/nicolas.png"  width = 60%>
+<img src="img/5227_google-searches-for-batman_correlates-with_the-number-of-security-guards-in-oklahoma.svg"  width = 60%>
 
 Correlaciones espúreas (<a href="https://tylervigen.com/spurious-correlations">link</a>).
 </center>
@@ -500,14 +641,14 @@ class: animated, fadeIn
 # Las tres operaciones visuales de percepción de patrones de Cleveland
 
 .pull-left[
-1. **Detección**: el reconocimiento visual de que un objeto geométrico codifica un valor físico.
+1. **Detección**: reconocer visualmente que un objeto geométrico representa un valor físico
 
-2. **Agrupación**: la organización de los elementos gráficos detectados.
+2. **Agrupación**: organizar los elementos gráficos ya detectados
 
-3. **Estimación**: la evaluación visual de la magnitud relativa de dos o más valores físicos cuantitativos.
+3. **Estimación**: evaluar visualmente la magnitud relativa entre dos o más valores físicos cuantitativos
 
 
-##### Crédito: John Rauser
+
 
 ]
 
@@ -515,6 +656,8 @@ class: animated, fadeIn
 .pull-right[
 <img src="img/419GVCrktGL._AC_UL600_SR432,600_.jpg" width=60%>
 ]
+
+.footnote[Crédito: John Rauser]
 
 ---
 class: animated, fadeIn
@@ -526,42 +669,42 @@ class: animated, fadeIn
 
 <br>
 
-<a>https://www.youtube.com/watch?v=fSgEeI2Xpdc</a>
+<a href="https://www.youtube.com/watch?v=fSgEeI2Xpdc">https://www.youtube.com/watch?v=fSgEeI2Xpdc</a>
 
 </center>
 
-##### Crédito: John Rauser
+.footnote[Crédito: John Rauser]
 
 ---
 class: animated, fadeIn
 
 ## Niveles de estimación
 
-##### Crédito: John Rauser
+.footnote[Crédito: John Rauser]
 
-Tres niveles diferentes de estimación:
+Tres niveles de estimación:
 
 
-1. **Discriminación**: dos valores son diferentes  &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp; &nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;   &nbsp;&nbsp;   &nbsp;   <code>X=Y X!=Y</code>
-2. **Ranking**: un valor es mayor   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp; &nbsp;   &nbsp;   &nbsp;   &nbsp;   <code>X>Y   X&lt;Y</code>
-3. **Comparación de razones**: un valor es dos veces más grande   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;    <code>X/Y = ?</code>
+1. **Discriminación**: dos valores son distintos  &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp; &nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;  &nbsp;&nbsp;  &nbsp;&nbsp;  &nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   <code>X = Y &nbsp;&nbsp;  X != Y</code>
+2. **Ranking**: un valor es mayor que otro   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;  &nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp;&nbsp;   &nbsp; &nbsp;   &nbsp;   &nbsp;   &nbsp;   <code>X > Y &nbsp;&nbsp;   X &lt; Y</code>
+3. **Comparación de razones**: un valor es el doble (triple, etc.) de otro   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;    <code>X/Y = ?</code>
 
 --
 <br>
 <br>
 
-Todas estas implican comparación:
+Los tres niveles implican comparación:
 <br>
 
-<center>
-<b>La comparación eficiente entre diferentes puntos de datos es casi siempre el objetivo de una visualización.</b>
+<center><br>
+<b>Comparar eficientemente distintos puntos de datos es, casi siempre, el objetivo de una visualización.</b>
 
 </center>
 ---
 class: animated, fadeIn
 
 ## Ranking de Cleveland
-##### Crédito: John Rauser
+.footnote[Crédito: John Rauser]
 <i class="fa fa-file"></i> Cleveland and McGill (1985) Graphical Perception and Graphical Methods for Analyzing Scientific Data. Science 29(4716):828-833
 
 | Rango | Aspecto evaluado |
@@ -574,11 +717,10 @@ class: animated, fadeIn
 | 6 | Volumen, densidad o saturación del color |
 | 7 | Tonalidad del color |
 
-Qué tan precisos somos los humanos al estimar cantidades que se codifican de diferentes maneras.
-
+Qué tan precisos somos los humanos al estimar cantidades codificadas de distintas formas.
 
 <center>
-**Siete formas diferentes de codificar un valor cuantitativo, clasificadas de la más efectiva a la menos efectiva.**
+**Siete formas de codificar un valor cuantitativo, ordenadas de la más efectiva a la menos efectiva.**
 
 
 
@@ -586,24 +728,24 @@ Qué tan precisos somos los humanos al estimar cantidades que se codifican de di
 class: animated, fadeIn
 
 ## Ejemplo con el color
-##### Crédito: John Rauser
+.footnote[Crédito: John Rauser]
 .pull-left[
 <center>
 <img src="img/hue2020_9_22D12_51_28.png" width="85%">
 </center>
-**Gráfico que codifica información utilizando el color** - <small>Conjunto de datos de 32 automóviles que fueron evaluados en una edición de 1974 de la revista Motor Trend. Eficiencia de combustible en millas por galón (mpg).</small>
+**Gráfico que codifica la información mediante el color** — <small>datos de 32 automóviles evaluados en una edición de 1974 de la revista Motor Trend, con su eficiencia de combustible en millas por galón (mpg).</small>
 ]
 
 ---
 class: animated, fadeIn
 
 ## Ejemplo con el color
-##### Crédito: John Rauser
+.footnote[Crédito: John Rauser]
 .pull-left[
 <center>
 <img src="img/Diapositiva12020_9_22D12_51_57.png" width="85%">
 </center>
-**Gráfico que codifica información utilizando el color** - <small>Conjunto de datos de 32 automóviles que fueron evaluados en una edición de 1974 de la revista Motor Trend. Eficiencia de combustible en millas por galón (mpg).</small>
+**Gráfico que codifica la información mediante el color** — <small>datos de 32 automóviles evaluados en una edición de 1974 de la revista Motor Trend, con su eficiencia de combustible en millas por galón (mpg).</small>
 
 ]
 
@@ -617,13 +759,13 @@ La primera tarea de estimación de Cleveland es **discriminación**:
 class: animated, fadeIn
 
 ## Ejemplo con el color
-##### Crédito: John Rauser
+.footnote[Crédito: John Rauser]
 
 .pull-left[
 <center>
 <img src="img/Diapositiva22020_9_22D12_52_22.png"  width="85%">
 </center>
-**Gráfico que codifica información utilizando el color** - <small>Conjunto de datos de 32 automóviles que fueron evaluados en una edición de 1974 de la revista Motor Trend. Eficiencia de combustible en millas por galón (mpg).</small>
+**Gráfico que codifica la información mediante el color** — <small>datos de 32 automóviles evaluados en una edición de 1974 de la revista Motor Trend, con su eficiencia de combustible en millas por galón (mpg).</small>
 
 ]
 
@@ -637,13 +779,13 @@ La primera tarea de estimación de Cleveland es **discriminación**:
 class: animated, fadeIn
 
 ## Ejemplo con el color
-##### Crédito: John Rauser
+.footnote[Crédito: John Rauser]
 
 .pull-left[
 <center>
 <img src="img/Diapositiva32020_9_22D12_52_47.png"  width="85%">
 </center>
-**Gráfico que codifica información utilizando el color** - <small>Conjunto de datos de 32 automóviles que fueron evaluados en una edición de 1974 de la revista Motor Trend. Eficiencia de combustible en millas por galón (mpg).</small>
+**Gráfico que codifica la información mediante el color** — <small>datos de 32 automóviles evaluados en una edición de 1974 de la revista Motor Trend, con su eficiencia de combustible en millas por galón (mpg).</small>
 
 ]
 
@@ -657,8 +799,8 @@ La segunda tarea de estimación de Cleveland es **ranking**:
 class: animated, fadeIn
 
 ## Ejemplo con posición (escala común)
-##### Crédito: John Rauser
-Así es como los datos deberían haber sido representados: ¡la discriminación, la comparación de razones y el ranking son triviales!
+.footnote[Crédito: John Rauser]
+Así es como deberían haberse representado los datos: ¡la discriminación, la comparación de razones y el ranking se vuelven triviales!
 
 <center>
 <img src="img/plot22020_9_22D12_53_14.png" width = 50%>
@@ -668,29 +810,30 @@ Así es como los datos deberían haber sido representados: ¡la discriminación,
 class: animated, fadeIn
 
 ## ¿Por qué es malo apilar datos?
-##### Crédito: John Rauser
+.footnote[Crédito: John Rauser]
 <center>
 <img src="img/stack2020_9_22D12_53_47.png" width = 45%>
+
+<br>
+<strong>Gráfico de barras apiladas</strong> — conjunto de datos de 54.000 diamantes, con el número de diamantes en cada combinación de corte y claridad.
 <br>
 
-Conjunto de datos de 54,000 diamantes. <b>Gráfico de barras apiladas</b>: Conteo de diamantes en cada combinación de corte y claridad.
-<br>
-<i class="fa fa-question-circle"></i> ¿Hay más diamantes de corte premium con claridad SI1 o con claridad SI2?
-
+<i class="fa fa-question-circle"></i> ¿Hay más diamantes de corte premium con claridad SI1, o con claridad SI2?
 </center>
 
 ---
 class: animated, fadeIn
 
 ## ¿Por qué es malo apilar datos?
-##### Crédito: John Rauser
+.footnote[Crédito: John Rauser]
 <center>
 <img src="img/lines2020_9_22D12_54_13.png" width = 45%>
 <br>
 
-Conjunto de datos de 54,000 diamantes. <b>Gráfico de coordenadas paralelas</b>.<br>
+<strong>Gráfico de coordenadas paralelas</strong> — conjunto de datos de 54.000 diamantes, con el número de diamantes en cada combinación de corte y claridad.
 
-<i class="fa fa-info-circle"></i> Si quieres comunicar el conteo en cada combinación de corte y claridad, <b>codifica esa información utilizando la posición en una escala común</b>.
+<br>
+<i class="fa fa-info-circle"></i> Si quieres comunicar ese número en cada combinación de corte y claridad, <b>codifícalo usando la posición en una escala común</b>.
 
 </center>
 
