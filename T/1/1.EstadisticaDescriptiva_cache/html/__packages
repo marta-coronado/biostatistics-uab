@@ -3,5 +3,6 @@ readr
 knitr
 xaringanthemer
 xaringanExtra
-dplyr
 patchwork
+dplyr
+scales

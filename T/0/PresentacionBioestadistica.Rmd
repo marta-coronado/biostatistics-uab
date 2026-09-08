@@ -324,7 +324,7 @@ class: animated, fadeIn
 - Exámen práctico (20%)
 
 ###  Evaluación única
-- Exámen de teoría (70%), examen práctico (15%) y entrega problemas (15%).
+- Exámen de teoría (70%), examen práctico (15%) y entrega problemas (15%)
 ]
 
 --

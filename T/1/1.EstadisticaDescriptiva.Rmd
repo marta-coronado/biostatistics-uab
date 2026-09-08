@@ -1,5 +1,5 @@
 ---
-title: "<br>"
+title: ""
 subtitle: ""
 author: ""
 date: ""
@@ -9,7 +9,6 @@ output:
     lib_dir: libs
     self_contained: true
     nature:
-      mathjax: "default"
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -17,19 +16,24 @@ output:
       
 ---
 ```{r setup, include=FALSE}
-options(htmltools.dir.version = FALSE)
+options(htmltools.dir.version = FALSE, width = 200)
 #knitr::include_graphics()
 knitr::opts_chunk$set(
   cache = TRUE,
+  echo = TRUE,
   message = FALSE, 
   warning = FALSE,
   hiline = TRUE,
   fig.retina = 5
+
 )
+knitr::opts_chunk$set(
+  comment = "")
+
 library(ggplot2)
 library(readr)
 library(knitr)
-#pagedown::chrome_print(".html")
+#pagedown::chrome_print("PresentacionBioestadistica.html")
 ```
 
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
@@ -43,6 +47,7 @@ style_mono_accent(
 )
 ```
 
+
 ```{r xaringanExtra-clipboard, echo=FALSE}
 library(xaringanExtra)
 htmltools::tagList(
@@ -54,6 +59,138 @@ htmltools::tagList(
 )
 ```
 
+
+class: title-slide, animated, fadeIn
+
+.left-top[
+# Estadística descriptiva
+
+]
+
+.left-bottom[
+.authors[
+**Bioestadística**
+<br><br><br><br>
+
+Marta Coronado ([marta.coronado@uab.cat](mailto:marta.coronado@uab.cat))  
+]
+
+.footer-info[
+**Grado en Genética | Curso 2026/2027**
+]
+]
+
+.right-panel[]
+
+
+
+<style>
+.title-slide {
+  background-image: none;
+}
+
+/* Contenedor teal superior (solo título) */
+.title-slide .left-top {
+  position: absolute;
+  top: 0; left: 0;
+  width: 60%;
+  height: 62%;
+  background-color: #163a3a;
+  color: white;
+  padding: 50px 45px 30px 65px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;   /* ← esto faltaba */
+  align-items: flex-start;  /* ← con column, flex-end alinearía a la derecha; usa flex-start para pegar a la izquierda */
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+
+/* Contenedor blanco inferior (autores, fecha) */
+.title-slide .left-bottom {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 60%;
+  height: 38%;
+  background-color: white;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px 45px 30px 65px;
+  margin: 0;
+}
+
+.title-slide .right-panel {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 41%;
+  background-color: white;
+  background-image: url('img/1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.title-slide h1 {
+  font-size: 1.9em;
+  line-height: 1.25;
+  margin: 0;
+  font-weight: 400;
+}
+
+.title-slide .subtitle {
+  display: block;   /* ← esto es la clave: sin esto, margin-top se ignora */
+  font-size: 2em;
+  font-weight: bold;
+  color: #7ac142;
+  margin-top: -35px;
+  margin-bottom: 15px;
+}
+
+.title-slide .authors {
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.title-slide .authors a {
+  color: #e8846b;
+  text-decoration: none;
+}
+
+.title-slide .footer-info {
+  font-size: 0.9em;
+  color: #444;
+}
+
+.remark-slide-content h2,
+.remark-slide-content h3,
+.remark-slide-content h4,
+.remark-slide-content h5 {
+  margin-top: 1em;
+  margin-bottom: 0.6em;
+}
+
+.remark-slide-content p,
+.remark-slide-content ul,
+.remark-slide-content ol {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.remark-slide-content li {
+  margin-bottom: 0.1em;
+}
+
+</style>
+
+
+
+---
 
 class: animated, fadeIn
 # Outline
@@ -143,9 +280,9 @@ Una **variable** representa **información** acerca de diferentes **característ
   <td>Una planta</td>
 </tr>
 <tr>
-  <td>Colonias bacterianas en cada uno de seis platos de Petri</td>
+  <td>Colonias bacterianas en cada uno de seis placas de Petri</td>
   <td>Número de colonias</td>
-  <td>Un plato de Petri</td>
+  <td>Una placa de Petri</td>
 </tr>
     </tr>
   </tbody>
@@ -333,21 +470,6 @@ class: animated, fadeIn
 
 <br>
 
-<table style="border-collapse:collapse;border-color:#ccc;border-spacing:0;border:none;table-layout: fixed; width: 663px" class="tg"><colgroup><col style="width: 272px"><col style="width: 100px"><col style="width: 92px"><col style="width: 102px"><col style="width: 97px"></colgroup>
-<thead>
-<tr><th style="background-color:#f0f0f0;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">Nivel de medición</th><th style="background-color:#f0f0f0;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">Nominal</th><th style="background-color:#f0f0f0;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">Ordinal</th>
-<th style="background-color:#f0f0f0;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">Intervalo</th><th style="background-color:#f0f0f0;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">Ratio</th></tr>
-</thead>
-<tbody>
-<tr><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;overflow:hidden;padding:10px 5px;text-align:left;vertical-align:top;word-break:normal">Categoriza las variables</td><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">✔</td><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">✔</td>
-<td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">✔</td><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">✔</td></tr>
-<tr><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;overflow:hidden;padding:10px 5px;text-align:left;vertical-align:top;word-break:normal">Ordena las categorías en un orden</td><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal"></td><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">✔</td>
-<td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">✔</td><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">✔</td></tr>
-<tr><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;overflow:hidden;padding:10px 5px;text-align:left;vertical-align:top;word-break:normal">Tiene intervalos conocidos</td><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal"></td><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal"></td>
-<td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">✔</td><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">✔</td></tr>
-<tr><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;overflow:hidden;padding:10px 5px;text-align:left;vertical-align:top;word-break:normal">Tiene un 0 real o con significado</td><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal"></td><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal"></td>
-<td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal"></td><td style="background-color:#fff;border-color:inherit;border-style:solid;border-width:0px;color:#333;font-size:16px;font-weight:bold;overflow:hidden;padding:10px 5px;text-align:center;vertical-align:top;word-break:normal">✔</td></tr>
-</tbody></table>
 
 ---
 
@@ -363,7 +485,7 @@ class: animated, fadeIn
 
 - Cada elemento de la población se asigna a uno de esos grupos finitos
 
-- En algunos casos, esas categorías pueden tener un orden lógico (ordinales)
+- En algunos casos, esas categorías pueden tener un orden lógico (**ordinales**)
 ]
 
 .pull-right[
@@ -493,6 +615,7 @@ p_ordinal
 
 --
 
+???
 En R, este tipo de variables suelen representarse como `factor` o como `character`.
 
 ---
@@ -587,8 +710,8 @@ class: animated, fadeIn
 .pull-left[
 #### Continua
 Variable numérica que se mide en una escala continua (incluyendo decimales).
-- Peso de un bebé
-- Concentración del colesterol en sangre
+- Peso de un bebé (kg)
+- Concentración del colesterol en sangre (mg/dL)
 
 #### Discreta
 Variable numérica para la cual podemos enumerar todos los posibles valores (no incluye decimales).
@@ -645,7 +768,8 @@ p_discreto
 
 
 ]
---
+
+???
 <br>
 En R, las variables continuas normalmente se almacenan como numéricas (`numeric` o `integer`).
 
@@ -688,6 +812,8 @@ Las **variables continuas** se pueden transformar en **variables categóricas** 
 
 --
 
+<br>
+
 **Ejemplo:**  
 Supongamos que tenemos un rango de temperaturas de −2.15°C a 17.85°C, y queremos dividirlo en 4 intervalos de igual tamaño:
 
@@ -697,8 +823,8 @@ Supongamos que tenemos un rango de temperaturas de −2.15°C a 17.85°C, y quer
 - Intervalo 4: 12.85°C < X ≤ 17.85°C 
 
 --
-<br>
-> Nota: Una variable continua puede representarse tanto como **continua** como **categórica**, mientras que una variable categórica **solo puede ser categórica**.
+<br><br>
+> <i class="fa-solid fa-info-circle"></i> **Nota**: Una variable continua puede representarse tanto como **continua** como **categórica**, mientras que una variable categórica **solo puede ser categórica**.
 
 ---
 class: animated, fadeIn
@@ -787,14 +913,14 @@ class: animated, fadeIn
 ## Escala ordinal
 
 
-La **escala ordinal** de variables corresponden a _variables categóricas_ que se pueden ordenar de una manera lógica/con significado.
+La **escala ordinal** de variables corresponde a _variables categóricas_ que se pueden ordenar de una manera lógica/con significado.
 
 .pull-left[
 
 Ejemplos:
 
 - Tamaño (pequeño, mediano, grande, etc.)
-- Variables continuas _binneadas_
+- Variables continuas agrupadas en categorías (_binneadas_)
 ]
 
 .pull-right[
@@ -831,7 +957,7 @@ class: animated, fadeIn
 
 ## Escala de intervalo
 
-Las **escalas de intervalo** corresponden a una mezcla de variables continuas.
+Las **escalas de intervalo** corresponden a variables continuas.
 
 - Las variables en escalas de intervalo se miden en intervalos iguales a partir de un punto de origen definido.
 - El punto de origen (por ejemplo, 0) no significa ausencia de la característica que se está midiendo.
@@ -877,7 +1003,7 @@ class: animated, fadeIn
 
 ## Escala de relación/proporción
 
-Las escalas de razón/proporción de las variables corresponden a variables continuas.
+Las escalas de razón/proporción corresponden a variables continuas.
 
 - Las variables en escalas de razón/proporción se miden en intervalos iguales a partir de un punto de origen definido.
 
@@ -889,7 +1015,7 @@ Las escalas de razón/proporción de las variables corresponden a variables cont
 Ejemplos:
 
 - Temperatura (K)
-- Peso
+- Peso (kg)
 ]
 
 .pull-right[
@@ -991,10 +1117,12 @@ class: animated, fadeIn
 
 En estadística descriptiva, un parámetro proporciona información sobre la **forma de la distribución** de los valores de una determinada variable.  
 
+<br>
 **¿Por qué es importante?**  
 
 Los parámetros se pueden utilizar para **resumir las propiedades de los datos** y hacer que grandes conjuntos de datos, con múltiples valores por variable, sean más accesibles.  
 
+<br>
 **Entonces...**  
 
 Para saber qué parámetros usar, es necesario **conocer cuáles existen y cómo calcularlos**.  
@@ -1024,7 +1152,7 @@ class: animated, fadeIn
 ## Media aritmética
 
 **Definición:**  
-También llamada **promedio**, esta métrica es el **promedio matemático** de los valores de los datos proporcionados.
+También llamada **promedio**, esta métrica corresponde al **valor central matemático** de los datos proporcionados.
 
 > No es resistente a valores atípicos (_outliers_) ni a distribuciones asimétricas.
 
@@ -1048,7 +1176,7 @@ class: animated, fadeIn
 ## Media aritmética
 
 .pull-left[
-La media aritmética se calcula aplicando la función `mean()` de `R base`.
+La media aritmética se calcula aplicando la función `mean()` de `R`.
 
 ```{r}
 # calculo
@@ -1115,18 +1243,16 @@ La **mediana** es el valor que separa la mitad superior de los datos de la mitad
 - Para un número **impar** de observaciones ($n$):
 
 $$
-\text{mediana}(x) = \left(\frac{n+1}{2}\right)^{\text{th}}
+\text{mediana}(x) = x_{\left(\frac{n+1}{2}\right)}
 $$
 
 - Para un número **par** de observaciones:
 
-$$
-\text{mediana}(x) = \frac{\left(
-{\left(\tfrac{n}{2}\right)}^{th} + {\left(\tfrac{n}{2}+1\right)}^{th}\right)
-}{2}
-$$
+.center[
+$\text{mediana}(x) = \frac{x_{\left(\frac{n}{2}\right)} + x_{\left(\frac{n}{2}+1\right)}}{2}$
+]
 
-
+<br>
 - $\text{mediana}(x)$: mediana de los valores disponibles de la variable $x$.  
 - $n$: número de observaciones disponibles para $x$.  
 
@@ -1202,9 +1328,9 @@ La **moda** de un conjunto de datos es el valor que aparece con mayor frecuencia
 
 **Cálculo**
 
-<center>
-<img src="img/Captura.png" width=50%>
-</center>
+.center[
+$\text{moda}(x) = \max_{k=1}\left(I_{i=1}(x_i = x_k)\right)$
+]
 
 donde
 
@@ -1328,7 +1454,7 @@ Todas las medidas de tendencia central describen la posición central de la dist
 
 - La **mediana** se comporta de manera **robusta** frente a distribuciones **asimétricas** de los datos.  
 
-- La **moda** es más aplicable en **contextos de clasificación** y se usa con poca frecuencia (se utiliza con variables cualitativas).  
+- La **moda** es más aplicable en **contextos de clasificación** y se usa con menor frecuencia, principalmente en variables cualitativas.
 
 <br>
 > En general, la **mediana suele ser suficiente** en la mayoría de los análisis descriptivos.
@@ -1413,8 +1539,9 @@ class: animated, fadeIn
 ## Varianza
 
 **Definición:**  
-La varianza mide **qué tanto se dispersan los valores de los datos respecto a su valor promedio**.  
-No es resistente a **valores atípicos (_outliers_)** ni a **distribuciones asimétricas**.  
+La varianza mide **cuánto se dispersan los valores de los datos respecto a su media**.
+
+> No es resistente a **valores atípicos (_outliers_)** ni a **distribuciones asimétricas**.  
 
 **Cálculo:**
 
@@ -1508,7 +1635,7 @@ ggplot(dens_df, aes(x = x, y = y)) +
 ## Desviación estándar
 
 **Definición:**  
-La desviación estándar cuantifica la **cantidad de variación o dispersión** de un conjunto de valores de datos.  
+La desviación estándar cuantifica la **variación o dispersión** de un conjunto de datos.
 
 > No es resistente a **valores atípicos (outliers)** ni a **distribuciones asimétricas**.  
 
@@ -1619,7 +1746,7 @@ class: animated, fadeIn
 **Definición:**  
 Los cuantiles son **puntos de corte** que dividen el rango de una distribución de valores en intervalos adyacentes con **igual probabilidad**.  
 
-Al calcular cuantiles, siempre se obtiene **un punto de corte menos** que el número de cuantiles producidos.  
+Al calcular cuantiles, siempre se obtienen **un punto de corte menos** que el número de intervalos que se quieren generar.
 
 <br>
 > Son resistentes a **valores atípicos (outliers)** y a **distribuciones asimétricas**.  
@@ -1630,7 +1757,7 @@ Al calcular cuantiles, siempre se obtiene **un punto de corte menos** que el nú
 - **Cuantil 25 y 75**: también conocidos como **cuartiles Q1 y Q3**.  
 
 --
-La diferencia entre Q3 y Q1 es el **rango intercuartílico (IQR)**, contiene el 50% central de los datos.
+La diferencia entre Q3 y Q1 es el **rango intercuartílico (IQR)**, que contiene el 50% central de los datos.
 
 ---
 class: animated, fadeIn
@@ -1858,7 +1985,7 @@ class: animated, fadeIn
 
 - Los **outliers** se pueden definir como **valores que exceden 1.5 veces el rango intercuartílico**.  
 
-- Para mostrarlos en un **boxplot**, se calculan valores llamados **“cercas” (fences)**:  
+- Para mostrarlos en un **boxplot**, se calculan valores llamados **“cercas” (_fences_)**:  
 
 $$
 \text{Cerca inferior} = Q1 - 1.5 \times IQR
