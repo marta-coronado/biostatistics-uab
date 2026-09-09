@@ -1330,13 +1330,13 @@ https://github.com/jespermaag/gganatogram
 # devtools::install_github("jespermaag/gganatogram")
 # sample data set
 organ_df <- data.frame(organ = c("heart", "leukocyte", "nerve", "brain", "liver", "stomach", "colon"), 
- type = c("circulation", "circulation",  "nervous system", "nervous system", "digestion", "digestion", "digestion"), 
+ type = c("circulation", "immune system",  "nervous system", "nervous system", "digestion", "digestion", "digestion"), 
  colour = c("red", "red", "purple", "purple", "orange", "orange", "orange"), 
  value = c(10, 5, 1, 8, 2, 5, 5),
  stringsAsFactors=F)
 ```
 
-```{r echo=TRUE, fig.height=4.7, fig.width=7.8}
+```{r echo=TRUE, fig.height=4.7, fig.width=4.8}
 library(gganatogram)
 gganatogram(data=organ_df, fillOutline='#a6bddb', organism='human',
             sex='female', fill="value") +

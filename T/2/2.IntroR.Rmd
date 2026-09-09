@@ -426,7 +426,7 @@ library("tidyverse")
 
 --
 ### _Pipes_ (`%>%`)
-Para hacer que el código R sea más legible, las herramientas de `Tidyverse` utilizan la **canalización** (_pipes_), `%>%` (desde R 4.10, se puede utilizar `|>`), que forma parte del paquete `dplyr` que se instala automáticamente con `Tidyverse`: permite que la salida de un comando se use como entrada para otro.
+Para hacer que el código R sea más legible, las herramientas de `Tidyverse` utilizan la **canalización** (_pipes_), `%>%` (desde R 4.1.0, se puede utilizar `|>`), que forma parte del paquete `dplyr` que se instala automáticamente con `Tidyverse`: permite que la salida de un comando se use como entrada para otro.
 
 
 ```{r}
@@ -438,7 +438,7 @@ class: animated, fadeIn
 # Trabajando con datos
 
 ### Leer datos en R
-Independientemente del análisis que estemos realizando, generalmente necesitamos leer **datos**. La **función** que usemos en R dependerá del tipo de archivo de datos que estemos importando (por ejemplo, texto, Excel, etc.) y de cómo estén separadas o delimitadas las datos en ese archivo.
+Independientemente del análisis que estemos realizando, generalmente necesitamos leer **datos**. La **función** que usemos en R dependerá del tipo de archivo de datos que estemos importando (por ejemplo, texto, Excel, etc.) y de cómo estén separados o delimitados los datos en ese archivo.
 
 --
 

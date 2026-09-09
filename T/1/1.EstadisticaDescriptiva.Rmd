@@ -280,7 +280,7 @@ Una **variable** representa **información** acerca de diferentes **característ
   <td>Una planta</td>
 </tr>
 <tr>
-  <td>Colonias bacterianas en cada uno de seis placas de Petri</td>
+  <td>Colonias bacterianas en una de cada seis placas de Petri</td>
   <td>Número de colonias</td>
   <td>Una placa de Petri</td>
 </tr>
@@ -352,9 +352,9 @@ Una **variable** representa **información** acerca de diferentes **característ
   <td>Una planta</td>
 </tr>
 <tr>
-  <td>Colonias bacterianas en cada uno de seis platos de Petri</td>
+  <td>Colonias bacterianas en una de cada seis placas de Petri</td>
   <td>Número de colonias</td>
-  <td>Un plato de Petri</td>
+  <td>Una placa de Petri</td>
 </tr>
     </tr>
   </tbody>
@@ -367,7 +367,7 @@ class: animated, fadeIn
 
 ### Distribuciones según el tipo de variable
 
-#### Variables cuantitativas
+#### Variables cuantitativas continuas
 
 ```{r eval=T, echo = F, fig.height=2.8,fig.width=12, fig.align="center", fig.retina=5}
 library(ggplot2)
@@ -436,7 +436,7 @@ p_hyper <- ggplot(df_hyper, aes(x, y)) +
 
 ```
 
-#### Variables cualitativas
+#### Variables cuantitativas discretas
 
 
 ```{r eval=T, echo = F, fig.height=2.8,fig.width=12, fig.align="center", fig.retina=5}
@@ -995,7 +995,7 @@ p_continuo
 ]
 
 ???
-pH 0 es un punto arbitrario, no significa que no tenga ph
+pH 0 es un punto arbitrario, no significa ausencia de pH
 
 
 ---
@@ -1023,10 +1023,10 @@ Ejemplos:
 # --- Variable continua: peso ---
 set.seed(123)
 df_cont <- data.frame(
-  ph = rnorm(1000, mean = 70, sd = 4)
+  peso = rnorm(1000, mean = 70, sd = 4)
 )
 
-p_continuo <- ggplot(df_cont, aes(x = ph)) +
+p_continuo <- ggplot(df_cont, aes(x = peso)) +
   geom_histogram(binwidth = 0.2, fill = "#0E8A8A", alpha = 0.5) +
   labs(title = "Distribución de peso", x = NULL, y = NULL) +
   theme_minimal(base_size=18) +

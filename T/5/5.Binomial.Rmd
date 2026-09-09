@@ -1,5 +1,5 @@
 ---
-title: "<br>"
+title: ""
 subtitle: ""
 author: ""
 date: ""
@@ -9,7 +9,6 @@ output:
     lib_dir: libs
     self_contained: true
     nature:
-      mathjax: "default"
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -17,19 +16,24 @@ output:
       
 ---
 ```{r setup, include=FALSE}
-options(htmltools.dir.version = FALSE)
+options(htmltools.dir.version = FALSE, width = 200)
 #knitr::include_graphics()
 knitr::opts_chunk$set(
   cache = TRUE,
+  echo = TRUE,
   message = FALSE, 
   warning = FALSE,
   hiline = TRUE,
   fig.retina = 5
+
 )
+knitr::opts_chunk$set(
+  comment = "")
+
 library(ggplot2)
 library(readr)
 library(knitr)
-#pagedown::chrome_print(".html")
+#pagedown::chrome_print("PresentacionBioestadistica.html")
 ```
 
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
@@ -43,6 +47,7 @@ style_mono_accent(
 )
 ```
 
+
 ```{r xaringanExtra-clipboard, echo=FALSE}
 library(xaringanExtra)
 htmltools::tagList(
@@ -55,14 +60,166 @@ htmltools::tagList(
 ```
 
 
+class: title-slide, animated, fadeIn
+
+.left-top[
+# Distribución binomial
+
+]
+
+.left-bottom[
+.authors[
+**Bioestadística**
+<br><br><br><br>
+
+Marta Coronado ([marta.coronado@uab.cat](mailto:marta.coronado@uab.cat))  
+]
+
+.footer-info[
+**Grado en Genética | Curso 2026/2027**
+]
+]
+
+.right-panel[]
+
+
+
+<style>
+.title-slide {
+  background-image: none;
+}
+
+/* Contenedor teal superior (solo título) */
+.title-slide .left-top {
+  position: absolute;
+  top: 0; left: 0;
+  width: 60%;
+  height: 62%;
+  background-color: #163a3a;
+  color: white;
+  padding: 50px 45px 30px 65px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;   /* ← esto faltaba */
+  align-items: flex-start;  /* ← con column, flex-end alinearía a la derecha; usa flex-start para pegar a la izquierda */
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+
+/* Contenedor blanco inferior (autores, fecha) */
+.title-slide .left-bottom {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 60%;
+  height: 38%;
+  background-color: white;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px 45px 30px 65px;
+  margin: 0;
+}
+
+.title-slide .right-panel {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 41%;
+  background-color: white;
+  background-image: url('img/1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.title-slide h1 {
+  font-size: 1.9em;
+  line-height: 1.25;
+  margin: 0;
+  font-weight: 400;
+}
+
+.title-slide .subtitle {
+  display: block;   /* ← esto es la clave: sin esto, margin-top se ignora */
+  font-size: 2em;
+  font-weight: bold;
+  color: #7ac142;
+  margin-top: -35px;
+  margin-bottom: 15px;
+}
+
+.title-slide .authors {
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.title-slide .authors a {
+  color: #e8846b;
+  text-decoration: none;
+}
+
+.title-slide .footer-info {
+  font-size: 0.9em;
+  color: #444;
+}
+
+.remark-slide-content h2,
+.remark-slide-content h3,
+.remark-slide-content h4,
+.remark-slide-content h5 {
+  margin-top: 1em;
+  margin-bottom: 0.6em;
+}
+
+.remark-slide-content p,
+.remark-slide-content ul,
+.remark-slide-content ol {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.remark-slide-content li {
+  margin-bottom: 0.1em;
+}
+
+.practica::before {
+  content: "\f303";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+
+.R::before {
+  content: "\f4f7";
+  font-family: "Font Awesome 6 Brands";
+  font-weight: 400;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+</style>
+
+
+
+---
 class: animated, fadeIn
 # Outline
 
 #### **Distribuciones binomiales**
 - Función de densidad de probabilidad
-- Función de distribucion acumulada
+- Función de distribución acumulada
 - Cálculo de la media y varianza
-- Ejemplo con el albisnimo
+- Ejemplo con el albinismo
 - Árboles de decision
 
 <style>
@@ -87,7 +244,7 @@ class: animated, fadeIn
 
 .pull-left[
 
-- Modela el número de éxitos en un serie de intentos independientes, cada uno con una probabilidad de éxito constante ($p$), dentro de un tamaño fijo de muestra ($n$)
+- Modela el número de éxitos en una serie de intentos independientes, cada uno con una probabilidad de éxito constante ($p$), dentro de un tamaño fijo de muestra ($n$)
 
 ]
 
@@ -98,7 +255,7 @@ class: animated, fadeIn
 
 .pull-left[
 
-- Modela el número de éxitos en un serie de intentos independientes, cada uno con una probabilidad de éxito constante ($p$), dentro de un tamaño fijo de muestra ($n$)
+- Modela el número de éxitos en una serie de intentos independientes, cada uno con una probabilidad de éxito constante ($p$), dentro de un tamaño fijo de muestra ($n$)
 
 **Ejemplos**
 - Prevalencia de una enfermedad dentro de un fijado número de pacientes
@@ -117,7 +274,7 @@ class: animated, fadeIn
 
 .pull-left[
 
-- Modela el número de éxitos en un serie de intentos independientes, cada uno con una probabilidad de éxito constante ($p$), dentro de un tamaño fijo de muestra ($n$)
+- Modela el número de éxitos en una serie de intentos independientes, cada uno con una probabilidad de éxito constante ($p$), dentro de un tamaño fijo de muestra ($n$)
 
 **Ejemplos**
 - Prevalencia de una enfermedad dentro de un fijado número de pacientes
@@ -133,7 +290,7 @@ $$
 P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}
 $$
 ]
-donde $n$ es el número de ranas capturadas y $p$ la probabilidad de que una rana sea verde clarito
+donde $n$ es el número de ranas capturadas y $p$ la probabilidad de que una rana sea verde claro
 
 --
 
@@ -157,17 +314,16 @@ df <- data.frame(light_frogs = x, probability = prob)
 # graficar
 ggplot(df, aes(x = as.integer(light_frogs), y = probability)) +
   geom_point(size = 3) +
-  labs(x = "Número de ranas de color verde clarito", y = "Probabilidad") +
+  labs(x = "Número de ranas de color verde claro", y = "Probabilidad") +
   ggthemes::theme_base(base_size = 16) +
   theme(panel.grid=element_blank(),
         axis.text=element_text(color="black"),
         panel.background = element_rect(fill = "white"))  +
   scale_y_continuous(breaks = seq(0, 0.4, 0.1), limits = c(0, 0.33)) +
   scale_x_continuous(breaks = 0:10, limits = c(0, 10))  +
-  annotate("text", x = 7, y = 0.2, label = "p=0.3\nn=10", color = "black", size = 7)
+  annotate("text", x = 7, y = 0.2, label = "p=1/3\nn=10", color = "black", size = 7)
 ```
 
-]
 
 ---
 class: animated, fadeIn
@@ -176,7 +332,7 @@ class: animated, fadeIn
 
 .pull-left[
 
-- Modela el número de éxitos en un serie de intentos independientes, cada uno con una probabilidad de éxito constante ($p$), dentro de un tamaño fijo de muestra ($n$)
+- Modela el número de éxitos en una serie de intentos independientes, cada uno con una probabilidad de éxito constante ($p$), dentro de un tamaño fijo de muestra ($n$)
 
 **Ejemplos**
 - Prevalencia de una enfermedad dentro de un fijado número de pacientes
@@ -193,7 +349,7 @@ $$
 P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}
 $$
 ]
-donde $n$ es el número de ranas captadas y $p$ la probabilidad de que una rana sea verde clarito
+donde $n$ es el número de ranas capturadas y $p$ la probabilidad de que una rana sea verde claro
 
 ```{r, echo = F, fig.height=5,fig.width=6,fig.align='center'}
 
@@ -215,21 +371,20 @@ df <- data.frame(light_frogs = x, probability = prob)
 # graficar
 ggplot(df, aes(x = as.integer(light_frogs), y = probability)) +
   geom_point(size = 3) +
-  labs(x = "Número de ranas de color verde clarito", y = "Probabilidad") +
+  labs(x = "Número de ranas de color verde claro", y = "Probabilidad") +
   ggthemes::theme_base(base_size = 16) +
   theme(panel.grid=element_blank(),
         axis.text=element_text(color="black"),
         panel.background = element_rect(fill = "white"))  +
   scale_y_continuous(breaks = seq(0, 0.4, 0.1), limits = c(0, 0.33)) +
   scale_x_continuous(breaks = 0:10, limits = c(0, 10))  +
-  annotate("text", x = 7, y = 0.2, label = "p=0.4\nn=10", color = "black", size = 7) +
+  annotate("text", x = 7, y = 0.2, label = "p=1/3\nn=10", color = "black", size = 7) +
   # anotación para x = 3
   annotate("segment", x = 3, xend = 3, y = 0.31, yend = 0.28,
            arrow = arrow(length = unit(0.2, "cm")), color = "black") +
   annotate("text", x = 3, y = 0.32, label = "valor esperado: n×p", color = "black", size = 6) 
 ```
 
-]
 
 
 ---
@@ -259,6 +414,7 @@ class: animated, fadeIn
 3. Contar el número de muestras positivas de entre 50 muestras que se analizan sucesivamente.✔️
 
 ---
+exclude: true
 class: animated, fadeIn
 
 ###  Distribucion binomial 
@@ -275,10 +431,11 @@ class: animated, fadeIn
 
 ###  Función de densidad de probabilidad de la distribución binomial
   - Se utiliza para calcular $P(X = k)$
-  - Por ejemplo: ¿Cuál es la probabilida de coger 5 ranas de color verde, si $n=10$ y $p=1/3$?
+  - Por ejemplo: ¿Cuál es la probabilidad de coger 5 ranas de color verde claro, si $n=10$ y $p=1/3$?
 
 --
 
+<br>
 La fórmula general es:
 
 $$
@@ -314,10 +471,11 @@ $$
 class: animated, fadeIn
 
 
-#### Coeficiente binomial
+### Coeficiente binomial
 
-El coeficiente binomial $ \binom{10}{5} $ es el **número de maneras de elegir $k$ elementos** de un conjunto de tamaño $n$, **sin importar el orden** de la elección.  
+El coeficiente binomial $\binom{10}{5}$ es el **número de maneras de elegir $k$ elementos** de un conjunto de tamaño $n$, **sin importar el orden** de la elección.  
 
+<br>
 Matemáticamente:
 
 $$
@@ -336,7 +494,7 @@ class: animated, fadeIn
 
 ### Función de densidad de probabilidad de la distribución binomial en R (`dbinom`)
   - Se utiliza para calcular $P(X = k)$
-  - Por ejemplo: ¿Cuál es la probabilida de coger 5 ranas de color verde, si $n=10$ y $p=1/3$?
+  - Por ejemplo: ¿Cuál es la probabilidad de coger 5 ranas de color verde, si $n=10$ y $p=1/3$?
 
 En `R`:
 
@@ -347,6 +505,7 @@ dbinom(x = 5, size = 10, prob = 1/3)
 
 
 ---
+exclude: true
 class: animated, fadeIn
 
 ###  Distribucion binomial 
@@ -367,7 +526,7 @@ La función de distribución acumulada permite calcular **probabilidades de rang
 
 - Probabilidad de hasta cierto número de éxitos: $P(X ≤ k)$
 
-- Probabilidad de superar un valor $P(X > k)$, $P(X ≥ k)$
+- Probabilidad de superar un valor: $P(X > k)$ o $P(X ≥ k)$
 
 - O para menos que $P(X < k)$
 
@@ -376,9 +535,9 @@ La función de distribución acumulada permite calcular **probabilidades de rang
 <br>
 - Por ejemplo: ¿cuál es la probabilidad de coger **al menos** 6 ranas? y de coger **como mucho** 5 ranas? 
 
-  - Al menos 6 ranas: $P(X ≥ k)$
+  - Al menos 6 ranas: $P(X ≥ 6)$
   
-  - Como mucho 5 ranas: $P(X ≤ k)$
+  - Como mucho 5 ranas: $P(X ≤ 5)$
 
 
 
@@ -410,19 +569,17 @@ $$
 
 ---
 
-class: animated, fadeIn
+class: animated, fadeIn, R
 
 ###  Función de distribución acumulada binomial 
 
 Probabilidad de capturar como mucho 5 ranas verde claro (de 0 a 5).
 
---
 
 $$
 P(X ≤ 5)
 $$
 
---
 
 .pull-left[
 ```{r, echo = F, fig.height=5,fig.width=6,fig.align='center'}
@@ -449,7 +606,7 @@ ggplot(df, aes(x = factor(x), y = prob, fill = destacado)) +
   scale_fill_manual(values = c("FALSE" = "cadetblue3", "TRUE" = "orange2"),
                     labels = c("FALSE"="Mayor a 5","TRUE"="Menor o igual a 5")) +
   labs(
-    x = "Número de ranas verde clarito (X)",
+    x = "Número de ranas verde claro (X)",
     y = "P(X = k)",
     fill = "Zona"
   ) +
@@ -460,7 +617,7 @@ ggplot(df, aes(x = factor(x), y = prob, fill = destacado)) +
 .pull-right[
 
 ```{r}
-pbinom(q = 5, size = n, prob = p)
+pbinom(q = 5, size = 10, prob = 1/3)
 
 ```
 
@@ -468,7 +625,7 @@ pbinom(q = 5, size = n, prob = p)
 ]
 
 ---
-
+exclude: true
 class: animated, fadeIn
 
 ### Función de distribución acumulada binomial 
@@ -493,7 +650,7 @@ $$
 
 ---
 
-class: animated, fadeIn
+class: animated, fadeIn, R
 
 ###  Función de distribución acumulada binomial 
 Probabilidad de capturar más de 5 ranas verde claro (6 o más).
@@ -501,6 +658,8 @@ Probabilidad de capturar más de 5 ranas verde claro (6 o más).
 $$
 P(X > 5) = 1 - P(X ≤ 5)
 $$
+
+--
 
 .pull-left[
 ```{r, echo = F, fig.height=5,fig.width=7,fig.align='center'}
@@ -527,7 +686,7 @@ ggplot(df, aes(x = factor(x), y = prob, fill = destacado)) +
   scale_fill_manual(values = c("FALSE" = "cadetblue3", "TRUE" = "orange2"),
                     labels = c("FALSE"="Menor o igual a 5","TRUE"="Mayor a 5")) +
   labs(
-    x = "Número de ranas verde clarito (X)",
+    x = "Número de ranas verde claro (X)",
     y = "P(X = k)",
     fill = "Zona"
   ) +
@@ -550,7 +709,7 @@ pbinom(q = 5,
 
 ---
 
-class: animated, fadeIn
+class: animated, fadeIn, R
 
 ###  Distribucion binomial (`pbinom`)
 
@@ -562,7 +721,7 @@ class: animated, fadeIn
 
 ---
 
-class: animated, fadeIn
+class: animated, fadeIn, R
 
 ###  Función de distribución acumulada binomial 
 
@@ -595,7 +754,7 @@ pbinom(5, size = 10, prob = 1/3, lower.tail = FALSE)
 
 ---
 
-class: animated, fadeIn
+class: animated, fadeIn, R
 
 ###  Función de distribución acumulada binomial 
 
@@ -645,7 +804,7 @@ class: animated, fadeIn
 
 ###  Pregunta
 
-En una población donde la prevalencia de una enfermedad es del 4%, se selecciona un grupo de 100 personas al azar.  ¿Qué comando nos dala probabilidad de que **exactamente 7** personas tengan la enfermedad?  
+En una población donde la prevalencia de una enfermedad es del 4%, se selecciona un grupo de 100 personas al azar.  ¿Qué comando nos da la probabilidad de que **exactamente 7** personas tengan la enfermedad?  
 
 a) `dbinom(x=7, size=100, prob=0.04)` ✅ 
 
@@ -657,12 +816,11 @@ d) `dbinom(7, size=100, prob=0.04, lower.tail=F)` ❌
 
 ---
 
-
-class: animated, fadeIn
+class: animated, fadeIn, practica
 
 ###  Pregunta
 
-En una población donde la prevalencia de una enfermedad es del 4%, se selecciona un grupo de 100 personas al azar.  ¿Qué comando nos dala probabilidad de que **exactamente 7** personas tengan la enfermedad?  
+En una población donde la prevalencia de una enfermedad es del 4%, se selecciona un grupo de 100 personas al azar.  ¿Qué comando nos da la probabilidad de que **exactamente 7** personas tengan la enfermedad?  
 
 --
 
@@ -683,7 +841,7 @@ P(X=7) = 0.058
 $$
 
 --
-En R, podemos calcular el coeficiente binomial con la función `choose`: 
+<i class="fa fa-info-circle fa-fw"></i> En `R`, podemos calcular el coeficiente binomial con la función `choose`: 
 
 ```{r}
 choose(100, 7)
@@ -692,6 +850,7 @@ choose(100, 7)
 
 
 ---
+exclude: true
 class: animated, fadeIn
 
 ###  Función de distribución acumulada binomial 
@@ -727,7 +886,7 @@ ggplot(df, aes(x = factor(x), y = prob, fill = destacado)) +
   scale_fill_manual(values = c("FALSE" = "cadetblue3", "TRUE" = "orange2"),
                     labels = c("FALSE"="Fuera de 2-5","TRUE"="Entre 2 y 5")) +
   labs(
-    x = "Número de ranas verde clarito (X)",
+    x = "Número de ranas verde claro (X)",
     y = "P(X = k)",
     fill = "Zona"
   ) +
@@ -751,10 +910,10 @@ class: animated, fadeIn
 Supongamos:
 
 - **Número de ensayos (n):**  
-  $n = 10$ (por ejemplo, 10 ranas capturadas)
+  $n = 10$
 
 - **Probabilidad de “éxito” (p):**  
- $p = \frac{1}{3}$ &nbsp; (por ejemplo, que una rana realice cierta acción)
+ $p = \frac{1}{3}$
 
 --
 
@@ -765,7 +924,7 @@ $$
 X \sim \text{Binomial}(n, p)
 $$
 
-entonces:
+entonces:<br>
 
 - **Media**  
 $$
@@ -806,11 +965,12 @@ class: animated, fadeIn
 - Si **dos portadores** del gen de albinismo tienen hijos:
 
   - Cada hijo tiene probabilidad $p = \tfrac{1}{4}$ de ser **albino**  
-  - La probabilidad es **independiente** entre hijos (modelo de ensayos independientes).  
-  - $n$ = número de hijos en la familia.
+  - La probabilidad es **independiente** entre hijos (modelo de ensayos independientes)  
+  - $n$ = número de hijos en la familia
 
 --
 
+<br>
 Usando **A** = albino, **N** = no albino:
 
 | Nº hijos | Posibles combinaciones | Probabilidades |
@@ -842,7 +1002,7 @@ class: animated, fadeIn
 
 --
 <br>
-¿Cuál es la probabilidad que una pareja portadora del gen del albisnimo tenga 2 hijos y 1 sea albino?
+¿Cuál es la probabilidad que una pareja portadora del gen del albinismo tenga 2 hijos y 1 sea albino?
 
 ---
 class: animated, fadeIn
@@ -856,14 +1016,14 @@ $$
 3/16 + 3/16 = 0.375
 $$
 ---
-class: animated, fadeIn
+class: animated, fadeIn, practica
 
 ### Problema
 
 Supongamos que dos portadores del gen del albinismo tienen una familia de 3 hijos. ¿Cuál es la probabilidad de que exactamente un hijo sea albino?
 
 - Resuélvelo con la fórmula de la binomial
-- Resuélvelo con R
+- Resuélvelo con `R`
 
 
 ---

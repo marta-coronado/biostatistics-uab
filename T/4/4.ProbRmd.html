@@ -165,7 +165,7 @@ class: animated, fadeIn
 #### **2. Muestreo**
 #### **3. Distribuciones de probabilidad**
 - Tipos
-- Como medir las distribuciones
+- Cómo medir las distribuciones
 
 &lt;style&gt;
 .title-slide {
@@ -227,13 +227,13 @@ class: animated, fadeIn
 # Motivación
 
 .pull-left[
-&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-2-1.png" alt="" width="360" /&gt;
+&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-1-1.png" alt="" width="360" /&gt;
 
 **Modelo estadístico**
 $$
 peso = dieta + residuos
 $$
-- `\(dieta\)`: promedio de los grupos
+- `\(dieta\)`: medias de los grupos
 - `\(residuos\)`: siguen una distribución estadística
 
 ]
@@ -242,7 +242,7 @@ $$
 **Pregunta**: hay diferencia en el peso en ratones control *vs.* con una dieta alta en grasas?
 
 **Problema**: la diferencia en las medias puede deberse al azar:
-- Sólo tenemos una muestra de ratones en cada muestra
+- Sólo tenemos una muestra de ratones en cada grupo de dieta
 - Hay variación en los pesos
 
 Saber las reglas de la aleatoriedad/variación nos dirá cuán probable es que estas diferencias se deban al azar.
@@ -256,14 +256,14 @@ class: animated, fadeIn
 # Motivación
 
 .pull-left[
-&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-3-1.png" alt="" width="360" /&gt;
+&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-2-1.png" alt="" width="360" /&gt;
 
 **Modelo estadístico**
 $$
 peso = dieta + residuos
 $$
-- `\(dieta\)`: promedio de los grupos
-- `\(residuos\)`: siguen una distribución estadística (no siempre siguen una distribución Gaussiana...)
+- `\(dieta\)`: medias de los grupos
+- `\(residuos\)`: siguen una distribución estadística
 
 ]
 
@@ -271,7 +271,7 @@ $$
 **Pregunta**: hay diferencia en el peso en ratones control *vs.* con una dieta alta en grasas?
 
 **Problema**: la diferencia en las medias puede deberse al azar:
-- Sólo tenemos una muestra de ratones en cada muestra
+- Sólo tenemos una muestra de ratones en cada grupo de dieta
 - Hay variación en los pesos
 
 Saber las reglas de la aleatoriedad/variación nos dirá cuán probable es que estas diferencias se deban al azar.
@@ -398,12 +398,14 @@ class: animated, fadeIn
 - Asigna probabilidades a los posibles resultados de un experimento
 - Reglas de aleatorización 
 
+&lt;br&gt;
 **Por ejemplo**:
-- Número de ranas verde clarito en 10 capturas
+- Número de ranas verde claro en 10 capturas
 - Fracción real: 1/3
 - Hay 11 posibles resultados: 0, 1, ... 10
 
-Resultados posibles:&lt;br&gt;
+&lt;br&gt;
+Posibles resultados:&lt;br&gt;
 
 &lt;img src="img/ranas4.png" width=80%&gt;
 ]
@@ -412,7 +414,7 @@ Resultados posibles:&lt;br&gt;
 
 .pull-right[
 
-&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-4-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
+&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-3-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -425,12 +427,14 @@ class: animated, fadeIn
 - Asigna probabilidades a los posibles resultados de un experimento
 - Reglas de aleatorización 
 
+&lt;br&gt;
 **Por ejemplo**:
-- Número de ranas verde clarito en 10 capturas
+- Número de ranas verde claro en 10 capturas
 - Fracción real: 1/3
 - Hay 11 posibles resultados: 0, 1, ... 10
 
-Resultados posibles:&lt;br&gt;
+&lt;br&gt;
+Posibles resultados:&lt;br&gt;
 
 &lt;img src="img/ranas4.png" width=80%&gt;
 ]
@@ -439,7 +443,7 @@ Resultados posibles:&lt;br&gt;
 
 .pull-right[
 
-&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-5-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
+&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-4-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -455,7 +459,7 @@ Función de masa de probabilidad:
 - Probabilidad de que la variable tome un valor específico.
 - La probabilidad de que tome un valor intermedio es 0.
 
-&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-6-1.png" alt="" width="324" style="display: block; margin: auto;" /&gt;
+&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-5-1.png" alt="" width="324" style="display: block; margin: auto;" /&gt;
 
 
 ]
@@ -485,12 +489,12 @@ Función de densidad de probabilidad (FDP):
 - Se define mediante parámetros como la media y la varianza
 - Valores infinitos en el eje `x`
 - La probabilidad de que la variable tome un valor exacto es 0; en cambio, se calcula la probabilidad de que esté dentro de un intervalo, mediante el área bajo la curva de la FDP.
-- La suma area bajo la curva (AUC) es 1
+- La suma del área bajo la curva (AUC) es 1
 
 ]
 
 .pull-right[
-&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-7-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
+&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-6-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -502,7 +506,7 @@ class: animated, fadeIn
 - Los datos pueden seguir patrones definidos por una distribución teórica
 - Al tratarse de un muestreo, siempre hay un componente de aleatoriedad
 
-&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-8-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
+&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-7-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
 
 ---
 class: animated, fadeIn
@@ -515,7 +519,7 @@ class: animated, fadeIn
 
 1. Las probabilidades en una distribución estadística suman 1.  
 2. Una distribución de probabilidad asigna probabilidades a los posibles resultados de un experimento.  
-3. Si los experimentos no son aleatorizados, los resultados no siguen una distribución estadística.
+3. Los resultados de un experimento solo siguen una distribución estadística si el muestreo fue aleatorizado.
 
 ---
 class: animated, fadeIn
@@ -528,7 +532,7 @@ class: animated, fadeIn
 
 1. Las probabilidades en una distribución estadística suman 1. ✔️ 
 2. Una distribución de probabilidad asigna probabilidades a los posibles resultados de un experimento. ✔️
-3. Si los experimentos no son aleatorizados, los resultados no siguen una distribución estadística.❌ 
+3. Los resultados de un experimento solo siguen una distribución estadística si el muestreo fue aleatorizado. ❌ 
 ---
 class: animated, fadeIn
 
@@ -572,16 +576,16 @@ Las principales son:
 
 - **Poisson**: probabilidad de que ocurra un número dado de eventos en un intervalo fijo de tiempo o espacio.
 
-- **Gaussiana (normal)**: distribución continua con forma de campana, caracterizada por su media y desviación estándar.
+- **Normal (Gaussiana)**: distribución continua con forma de campana, caracterizada por su media y desviación estándar.
 
-&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-9-1.png" alt="" width="576" style="display: block; margin: auto;" /&gt;
+&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-8-1.png" alt="" width="576" style="display: block; margin: auto;" /&gt;
 
 ---
 class: animated, fadeIn
 
-## Como medir las distribuciones
+## Cómo medir las distribuciones
 
-Las distribuciones se pueden describrir con parámetros clásicos de estadística descriptiva:
+Las distribuciones se pueden describir con parámetros clásicos de estadística descriptiva:
 
 .pull-left[
 - Media
@@ -592,7 +596,7 @@ Las distribuciones se pueden describrir con parámetros clásicos de estadístic
 
 .pull-right[
 - Varianza
-- Desviación estándard
+- Desviación estándar
 - Rango de cuantiles
 - Asimetría
 - Curtosis
@@ -612,14 +616,14 @@ class: animated, fadeIn
 - Asimetría negativa (skew negativo): la cola izquierda es más larga que la derecha.
 
 
-&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-10-1.png" alt="" width="576" style="display: block; margin: auto;" /&gt;
+&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-9-1.png" alt="" width="576" style="display: block; margin: auto;" /&gt;
 
 ---
 class: animated, fadeIn
 
 ### Curtosis
 
-**Describe la aplanamiento o longitud de las colas de una distribución.**
+**Describe el aplanamiento o longitud de las colas de una distribución.**
 
 - Curtosis positiva: distribución de colas cortas, también llamada leptocúrtica.
 
@@ -627,7 +631,7 @@ class: animated, fadeIn
 
 - Curtosis negativa: distribución de colas largas, también llamada platicúrtica.
 
-&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-11-1.png" alt="" width="576" style="display: block; margin: auto;" /&gt;
+&lt;img src="4.ProbRmd_files/figure-html/unnamed-chunk-10-1.png" alt="" width="576" style="display: block; margin: auto;" /&gt;
 
 
 ---

@@ -1,7 +1,7 @@
 ---
 title: "**Estadística descriptiva y visualización de datos:**<br><font color='#A8A8A8' size='5'>Introducción a `R` y `ggplot2`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
 author: "Marta Coronado Zamora"
-date: "Septiembre 2025"
+date: "Septiembre 2026"
 output:
   prettydoc::html_pretty:
     theme: leonids
@@ -22,7 +22,7 @@ library(prettydoc)
 <style>
   @import url(https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,500,500i,700,700i);
   @import url(https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css);
-  @import url("https://use.fontawesome.com/releases/v5.10.1/css/all.css");
+  @import url(https://use.fontawesome.com/releases/v7.0.0/css/all.css);
   
   body {
     font-family: 'Fira Sans','Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Microsoft YaHei', 'Songti SC', serif;
@@ -80,6 +80,10 @@ A lo largo del documento verás diferentes iconos, cuyo significado es:
 
 ## Instalación de herramientas
 
+<div style="background-color:#FFDA9E">
+<b><i class="fas fa-warning"></i>&nbsp;IMPORTANTE: </b> No has de instalar ninguna herramienta en los ordenadores de la facultad.</b> 
+</div>
+
 Recomendamos encarecidamente usar un sistema operativo **Linux** y acostumbrarse a trabajar con la **terminal**.  
 En esta práctica, sin embargo, no la usaremos y casi no hay diferencias entre usar RStudio en Windows o en Linux.
 
@@ -118,7 +122,7 @@ En el caso de `ggplot2`, usarás:
 
 > `library("ggplot2")`
 
-¡Ya estás listo para empezar a usar R!
+¡Ya estás listo/lista para empezar a usar `R`!
 
 ```{r example, echo = FALSE}
 # Simulate data
@@ -159,7 +163,7 @@ Podemos definir una nueva ruta de trabajo con `setwd()`:
 setwd("/ruta/nuevo/directorio")
 ```
 
-O de manera gráfica dentro de RStudio a *Session > Set Working Directory > Choose Directory...*). 
+O más sencillo, de manera gráfica dentro de RStudio a *Session > Set Working Directory > Choose Directory...*). 
 
 #### **<i class="fa fa-cogs"></i>** Actividad 1.1  
 **Decide una ruta de trabajo en tu ordenador con `setwd()` o de manera gráfica. Comprueba que sea correcta con `getwd()`.**
@@ -175,7 +179,7 @@ En este directorio de trabajo que hayas escogido, realizaremos todos los anális
 
 ## Leer el archivo con los datos de expresión  
 
-Lee en `R` el archivo ["**GSE68849_expression.csv**"](https://github.com/marta-coronado/biostatistics-uab/blob/main/P/1/data/GSE68849_expression.csv) que encontrarás en la carpeta [**data**](https://github.com/marta-coronado/biostatistics-uab/blob/main/P/1/data/). 
+Lee en `R` el archivo ["**GSE68849_expression.csv**"](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/1/data/GSE68849_expression.csv). 
 
 ![](img/fichero.png)
 
@@ -184,7 +188,10 @@ Lee en `R` el archivo ["**GSE68849_expression.csv**"](https://github.com/marta-c
 
 <i class="fa fa-key"></i> Puedes utilizar los comandos que vimos en la [diapositiva 12 de introducción a R](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#18). Ten en cuenta que quizás necesites cargar una librería, como `library(readr)`, según la función que quieras usar.
 
+<i class="fa fa-key"></i> No hace falta que descargues el fichero, `R` puede leerlo directamente con el enlace URL ["https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/1/data/GSE68849_expression.csv"](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/1/data/GSE68849_expression.csv).
+
 ```{r, respuesta 2}
+
 
 ```
 
@@ -192,7 +199,7 @@ Lee en `R` el archivo ["**GSE68849_expression.csv**"](https://github.com/marta-c
 **Explora el archivo**. Utiliza comandos como `head(expressionData)` y `View(expressionData)` para explorar el contenido de `expressionData`. ¿Qué información contiene?  
 
 
-```{r, respuesta 3, eval = F}
+```{r, respuesta 3}
 
 
 ```
@@ -201,7 +208,7 @@ Lee en `R` el archivo ["**GSE68849_expression.csv**"](https://github.com/marta-c
 
 #### **<i class="fa fa-cogs"></i>** Actividad 1.4
 
-Para saber el tipo de variable que contiene `expressionData`, podemos utilizar la función `str(DATA.FRAME)`. Rellena la siguiente tabla indicando qué tipo de variable contiene el `data.frame expressionData`.
+Para saber el tipo de variable que contiene `expressionData`, podemos utilizar la función `str(expressionData)`. Rellena la siguiente tabla indicando qué tipo de variable contiene el `data.frame expressionData`.
 
 
 ```{r}
@@ -219,7 +226,7 @@ Para saber el tipo de variable que contiene `expressionData`, podemos utilizar l
 
 ## Estadística descriptiva
 
-R contiene muchas funciones `built-in` para realizar estadística descriptiva básica.
+`R` contiene muchas funciones `built-in` para realizar estadística descriptiva básica.
 
 #### **<i class="fa fa-cogs"></i>** Actividad 1.5
 
@@ -268,7 +275,7 @@ Una de las columnas de la tabla es `subject`. Extrae todos los datos correspondi
 
 
 #### **<i class="fa fa-cogs"></i>** Actividad 1.8 
-**Explora `expressionData`**. Estamos interesados en conocer el nivel de expresión del gen *IFNA5* en condición de infección para el sujeto `GSM1684096`. ¿Cómo lo harías? Combina `filter()` y `select()`:
+**Explora `expressionData`**. Estamos interesados en conocer el nivel de expresión del gen *IFNA5* en condición de infección para el sujeto `GSM1684104`. ¿Cómo lo harías? Combina `filter()` y `select()`:
 
 ```{r, respuesta 8}
 
@@ -276,7 +283,7 @@ Una de las columnas de la tabla es `subject`. Extrae todos los datos correspondi
 
 
 #### **<i class="fa fa-cogs"></i>** Actividad 1.9  
-Calcula la media del nivel de expresión para cada tratamiento. Deberás combinar `group_by()` y `summarize()`. La [diapositiva 42](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#62) puede servir de guía:
+Calcula la media del nivel de expresión para cada grupo (`treatment`). Deberás combinar `group_by()` y `summarize()`. La [diapositiva 43](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#65) puede servir de guía:
 
 
 ```{r, respuesta 9}
@@ -286,7 +293,7 @@ Calcula la media del nivel de expresión para cada tratamiento. Deberás combina
 
 #### **<i class="fa fa-cogs"></i>** Actividad 1.10
 
-Crea una nueva columna basada en el nivel de expresión de los genes: <10 → "bajo", 10-100 → "moderado", 100-1000 → "alto", >1000 → "muy alto"  (*binning*)
+Crea una nueva columna basada en el nivel de expresión de los genes: <10 → "bajo", 10-100 → "moderado", 100-1000 → "alto", ≥1000 → "muy alto"  (*binning*)
 
 En la [diapositiva 32](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#44) viste cómo hacerlo con `ifelse()` para dos grupos. Ahora lo haremos con `case_when()`, que permite trabajar con múltiples condiciones. Un ejemplo que puede servirte:
 
@@ -309,7 +316,7 @@ surv_raw <- surv_raw %>%
 
 #### **<i class="fa fa-cogs"></i>** Actividad 1.11 (OPCIONAL)
 
-En qué grupo de tratamiento estan los genes con categoría de expresión `muy alto`? en los controles, en los de influenza, o ambos?
+En qué grupo de tratamiento están los genes con categoría de expresión `muy alto`? en los controles, en los de influenza, o ambos?
 
 
 ```{r, respuesta 11}
@@ -336,6 +343,8 @@ Modifica los ??? del siguiente código:
 
 
 ```{r, eval = F}
+library(ggplot2)
+
 exp.heatmap <- ggplot(data = expressionData,
                       mapping = aes(x = ???,
                                     y = ???,
