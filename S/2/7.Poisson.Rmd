@@ -189,6 +189,17 @@ Marta Coronado ([marta.coronado@uab.cat](mailto:marta.coronado@uab.cat))
 </style>
 
 
+---
+
+class: animated, fadeIn
+# Outline
+
+#### **Distribución de Poisson**
+- Aproximación de la binomial
+- Distribución de Poisson en `R`
+- Ejemplos
+
+
 
 ---
 
@@ -222,6 +233,7 @@ class: animated, fadeIn
 - Capturamos 100 ranas en una hora: $n\approx100$
 - la fracción de ranas de color verde es baja: $p=0.02$
 
+<br>
 Cuántas ranas de color verde claro esperamos capturar en 1h?
 
 ]
@@ -243,6 +255,7 @@ class: animated, fadeIn
 - Capturamos 100 ranas en una hora: $n\approx100$
 - la fracción de ranas de color verde es baja: $p=0.02$
 
+<br>
 Cuántas ranas de color verde claro esperamos capturar en 1h?
 
 - **El número de ranas de color verde claro por hora es**:
@@ -282,7 +295,7 @@ class: animated, fadeIn
 - Contar eventos en un dominio fijado (tiempo, espacio, volumen)
 - Los eventos ocurren de manera independiente con una tasa subyacente constante ($\lambda$)
 
-
+<br>
 **Ejemplos:**
 - Número de ranas observadas en 1 hora o en una zona específica del lago.
 - Número de células dentro de un volumen determinado.
@@ -374,7 +387,7 @@ $$
 ]
 
 .pull-right[
-La desviación estándard es:
+La desviación estándar es:
 
 $$
 \sigma = \sqrt{\lambda}
@@ -418,6 +431,7 @@ class: animated, fadeIn
 
 --
 
+<br>
 1. ¿Cuál es la incidencia esperada en un período de **5 años**?  
 2. En una población pequeña de **75,000 habitantes**, ¿cuál es la probabilidad de observar  
    **exactamente 8 casos** en un período de 5 años?  
@@ -513,7 +527,7 @@ class: animated, fadeIn
 | Parámetros       | $n$, $p$           | $μ$, $σ$         |  $λ$            |
 | Valores posibles  | $0, 1, ..., n$   | $(-∞, ∞)$      | $0, 1, ..., ∞$ |
 | Media             | $np$             | $\mu$            | $\lambda$            |
-| Desviación estándard | $\sqrt{np(1-p)}$   | $σ$            | $\sqrt{\lambda}$ ($\sqrt{\lambda t}$)           |
+| Desviación estándar | $\sqrt{np(1-p)}$   | $σ$            | $\sqrt{\lambda}$ ($\sqrt{\lambda t}$)           |
 
 
 ---
@@ -544,7 +558,7 @@ class: animated, fadeIn
 .pull-left[
 Usa la información proporcionada por los biólogos pesqueros en Creel Chronicle para encontrar una distribución de probabilidad para $r$, el número de peces (de todos los tamaños) que capturas en un período de 7 horas. 
 
-1. ¿Cuál es la probabilidad de que en 7 horas pescarás al menos 3 peces de cualquier tamaño?
+1. ¿Cuál es la probabilidad de que en 7 horas pescarás hasta 3 peces de cualquier tamaño?
 
 2. ¿Cuál es la probabilidad de pescar 4 o más peces en 7 horas?
 ]
