@@ -490,9 +490,9 @@ donde:
 
 
 ---
-class: animated, fadeIn
+class: animated, fadeIn, R
 
-### Función de densidad de probabilidad de la distribución binomial en R (`dbinom`)
+### Función de densidad de probabilidad de la distribución binomial en `R` (`dbinom`)
   - Se utiliza para calcular $P(X = k)$
   - Por ejemplo: ¿Cuál es la probabilidad de coger 5 ranas de color verde, si $n=10$ y $p=1/3$?
 
@@ -535,8 +535,9 @@ La función de distribución acumulada permite calcular **probabilidades de rang
 <br>
 - Por ejemplo: ¿cuál es la probabilidad de coger **al menos** 6 ranas? y de coger **como mucho** 5 ranas? 
 
+--
+
   - Al menos 6 ranas: $P(X ≥ 6)$
-  
   - Como mucho 5 ranas: $P(X ≤ 5)$
 
 
