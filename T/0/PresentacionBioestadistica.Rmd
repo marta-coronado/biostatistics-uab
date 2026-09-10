@@ -250,63 +250,6 @@ class: animated, fadeIn
 
 ---
 class: animated, fadeIn
-## Organización
-
-#### **1. Clases de teoría**: 30h de teoría - diapositivas interactivas (`Rmd`).
-#### **2. Seminarios**: 11 seminarios - resolución de problemas y dudas, presentaciones.
-#### **3. Prácticas**: 6 prácticas de ordenador (2h/práctica). Aplicación de `R` a datos reales.
-
-- Material del curso: https://marta-coronado.github.io/biostatistics-uab/
-
---
-
-.pull-left[
-### Diapositivas interactivas 
-
-**Documentos de <i class="fab fa-r-project fa-fw"></i></i> interactivos**  
-
-Código de `R` ejecutable dentro de la diapositiva.
-
-```{r, echo=TRUE}
-values <- c(31.45, 78.1, 93.6, 12.3)
-mean(values)
-```
-]
-
-.pull-right[
-<br>
-```{r, echo = F, fig.height=4, fig.width=6}
-
-library(ggplot2)
-
-# Simular datos
-set.seed(123)
-df <- data.frame(
-  x = rnorm(20, mean = 50, sd = 10),
-  y = rnorm(20, mean = 50, sd = 10)
-)
-
-# Graficar correlación
-ggplot(df, aes(x = x, y = y)) +
-  geom_point(color = "#69b3a2", size = 4, alpha = 0.7) +   # puntos grandes y pastel
-  geom_smooth(method = "lm", color = "#404080", se = TRUE, fill = "#B0C4DE", alpha = 0.3) + # línea de tendencia con banda
-  labs(
-    x = "X",
-    y = "Y"
-  ) +
-  theme_minimal(base_size = 16) +
-  theme(
-    plot.background = element_rect(fill = "#FFF8F0", color = NA),
-    panel.grid.minor = element_blank(),
-    panel.grid.major = element_line(color = "#E0E0E0")
-  )
-```
-
-]
-
-
----
-class: animated, fadeIn
 ## Evaluación
 
 ### Evaluación continua
@@ -376,11 +319,85 @@ class: animated, fadeIn
 - Si quieres más recursos para la asignatura, pídenoslo!
 
 
+
 ---
 layout: false
 class: left, bottom, inverse, animated, bounceInDown
 
 # 01
+## Organización del Bloque 1
+
+---
+class: animated, fadeIn
+## Organización
+
+#### **1. Clases de teoría**: 30h de teoría - diapositivas interactivas (`Rmd`).
+#### **2. Seminarios**: 11 seminarios - resolución de problemas y dudas, presentaciones.
+#### **3. Prácticas**: 6 prácticas de ordenador (2h/práctica). Aplicación de `R` a datos reales.
+
+- Material del curso: https://marta-coronado.github.io/biostatistics-uab/
+
+--
+
+.pull-left[
+### Diapositivas interactivas 
+
+**Documentos de <i class="fab fa-r-project fa-fw"></i></i> interactivos**  
+
+Código de `R` ejecutable dentro de la diapositiva.
+
+```{r, echo=TRUE}
+values <- c(31.45, 78.1, 93.6, 12.3)
+mean(values)
+```
+]
+
+.pull-right[
+<br>
+```{r, echo = F, fig.height=4, fig.width=6}
+
+library(ggplot2)
+
+# Simular datos
+set.seed(123)
+df <- data.frame(
+  x = rnorm(20, mean = 50, sd = 10),
+  y = rnorm(20, mean = 50, sd = 10)
+)
+
+# Graficar correlación
+ggplot(df, aes(x = x, y = y)) +
+  geom_point(color = "#69b3a2", size = 4, alpha = 0.7) +   # puntos grandes y pastel
+  geom_smooth(method = "lm", color = "#404080", se = TRUE, fill = "#B0C4DE", alpha = 0.3) + # línea de tendencia con banda
+  labs(
+    x = "X",
+    y = "Y"
+  ) +
+  theme_minimal(base_size = 16) +
+  theme(
+    plot.background = element_rect(fill = "#FFF8F0", color = NA),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(color = "#E0E0E0")
+  )
+```
+
+]
+
+
+---
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+# 02
+## Organización del Bloque 2
+
+---
+
+---
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+# 03
 ## Introducción a la bioestadística
 
 ---
@@ -519,7 +536,9 @@ Incertidumbre: - Se puede cuantificar con: intervalos de confianza, desviación 
 ---
 class: animated, fadeIn
 
-## Con cuál te quedas: ¿A o B?
+## **Hipótesis**: "Una dieta rica en proteína aumenta la fuerza de la mandíbula en las hormigas"<br><br>
+
+### Con cuál te quedas: ¿A o B?
 ```{r, echo = FALSE, fig.align='center',fig.width=15}
 library(ggplot2)
 library(patchwork)
@@ -602,6 +621,7 @@ figura_final
 
 
 ---
+exclude: true
 class: animated, fadeIn
 
 ## ¿Qué hace que los datos sean realmente aleatorios?
@@ -621,6 +641,7 @@ class: animated, fadeIn
 
 
 ---
+exclude: true
 class: animated, fadeIn
 
 ## Muestreo aleatorio en R

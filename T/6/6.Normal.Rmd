@@ -2097,9 +2097,11 @@ Si la media es 10 y la SD es 2, el 95% de los valores estarán entre 6 y 14.
 ]
 
 ---
-class: animated, fadeIn, R
+class: animated, fadeIn
 
 ### Función de distribución acumulada de la normal
+
+Tabla resumen: 
 
 | Símbolo              | Significado        | Expresión                                   | R con `pnorm`                                         |
 |----------------------|-------------------|----------------------------------------------|------------------------------------------------------|
