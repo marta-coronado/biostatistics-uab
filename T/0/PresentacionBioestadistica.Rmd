@@ -329,11 +329,11 @@ class: left, bottom, inverse, animated, bounceInDown
 
 ---
 class: animated, fadeIn
-## Organización
+## Organización del Bloque 1
 
-#### **1. Clases de teoría**: 30h de teoría - diapositivas interactivas (`Rmd`).
-#### **2. Seminarios**: 11 seminarios - resolución de problemas y dudas, presentaciones.
-#### **3. Prácticas**: 6 prácticas de ordenador (2h/práctica). Aplicación de `R` a datos reales.
+#### **1. Clases de teoría**: 17h de teoría - diapositivas interactivas (`Rmd`).
+#### **2. Seminarios**: 9 seminarios - resolución de problemas y dudas, presentaciones.
+#### **3. Prácticas**: 4 prácticas de ordenador (2h/práctica). Aplicación de `R` a datos reales.
 
 - Material del curso: https://marta-coronado.github.io/biostatistics-uab/
 
@@ -383,6 +383,50 @@ ggplot(df, aes(x = x, y = y)) +
 
 ]
 
+---
+class: animated, fadeIn
+
+## Contenido del bloque 1
+
+.pull-left[
+#### **Bloque 1. Introducción a la bioestadística y visualización de datos**
+<span style="font-size:0.8em">Estadística descriptiva ● Introducción a `R` ● Visualización de datos con `ggplot2` ● Importancia de mostrar los datos</span>
+
+
+#### **Bloque 2. Distribuciones de probabilidad e intervalos de confianza**
+<span style="font-size:0.8em">Distribuciones de probabilidad (binomial, Poisson, normal) ● Teorema central del límite ● Estimación: error estándar e intervalos de confianza</span>
+
+#### **Bloque 3. Inferencia estadística y contraste de hipótesis**
+<span style="font-size:0.8em">Razonamiento estadístico y creación de hipótesis ● Contraste por remuestreo: permutación y *bootstrap* ● Errores I/II, tamaño de efecto y potencia ● T-test ● ANOVA de una y dos vías ● Alternativas no paramétrica </span>
+]
+
+.pull-right[
+#### **Bloque 4. Modelos lineales y relaciones entre variables cuantitativas y categóricas**
+<span style="font-size:0.8em">Correlación ● Regresión lineal: simple y múltiple </span>
+
+]
+
+???
+Mirar los datos antes de analizarlos
+
+"En este curso aprenderás el recorrido completo de un análisis de datos: cómo explorarlos y visualizarlos,poner a prueba tus hipótesis con rigor,  entender qué es esperable por azar, seleccionar pruebas estadísticas adecuadas, y finalmente construir modelos que expliquen las relaciones entre tus variables."
+
+---
+
+## Formato
+
+### Teoría
+- Diapositivas en: https://marta-coronado.github.io/biostatistics-uab/ (con antelación)
+- Actividades en clase y práctica en casa
+- Pregunta!
+
+### Seminarios
+- Participación activa
+- Resolución de problemas
+
+### Prácticas de ordenador
+- Autoexplicativas, el ritmo lo pones tú
+- Discusión con compañeros
 
 ---
 layout: false
@@ -392,6 +436,155 @@ class: left, bottom, inverse, animated, bounceInDown
 ## Organización del Bloque 2
 
 ---
+
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-01.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-02.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-03.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-04.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-05.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-06.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-07.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-08.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-09.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-10.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-11.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-12.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-13.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-14.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-15.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-16.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-17.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-18.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-19.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-20.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-21.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-22.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-23.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-24.png">
+
+---
+class: animated, fadeIn, center
+
+<center>
+<img src="b2/b2-25.png">
 
 ---
 layout: false
@@ -536,9 +729,10 @@ Incertidumbre: - Se puede cuantificar con: intervalos de confianza, desviación 
 ---
 class: animated, fadeIn
 
-## **Hipótesis**: "Una dieta rica en proteína aumenta la fuerza de la mandíbula en las hormigas"<br><br>
+### ¿Con cuál te quedas: el experimento A o B?
 
-### Con cuál te quedas: ¿A o B?
+**Hipótesis**: "Una dieta rica en proteína aumenta la fuerza de la mandíbula en las hormigas"<br><br>
+
 ```{r, echo = FALSE, fig.align='center',fig.width=15}
 library(ggplot2)
 library(patchwork)
@@ -670,6 +864,13 @@ pop
 sam <- sample(pop, 5, replace = FALSE)
 sam
 ```
+
+---
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+# 04
+## Herramientas
 
 ---
 class: animated, fadeIn
