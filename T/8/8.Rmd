@@ -1,0 +1,588 @@
+
+https://www.youtube.com/watch?v=uGsf3spCM3Y
+
+
+https://www.youtube.com/watch?v=JSQZPsqrq1I
+
+https://www.youtube.com/watch?v=o0-_i_kH0I0
+
+
+
+---
+title: "<br>"
+subtitle: ""
+author: ""
+date: ""
+output:
+  xaringan::moon_reader:
+  css: [xaringan-themer.css, rutgers, "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css", "https://use.fontawesome.com/releases/v7.0.0/css/all.css"]
+lib_dir: libs
+self_contained: true
+nature:
+  mathjax: "default"
+highlightStyle: github
+highlightLines: true
+countIncrementalSlides: false
+ratio: "16:9"
+
+---
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  cache = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  fig.retina = 5
+)
+library(ggplot2)
+library(readr)
+library(knitr)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_accent(
+  base_color = "#1c5253", link_color =  "#DE1144", code_inline_color = "#DE1144",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "400", "400i"),
+  code_font_google   = google_font("Roboto Mono"),
+)
+```
+
+```{r xaringanExtra-clipboard, echo=FALSE}
+library(xaringanExtra)
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #90BE6D\"></i>",
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
+
+
+class: animated, fadeIn
+# Outline
+
+#### **Contraste por remuestreo I: permutación**
+- Motivación: ¿por qué remuestrear?
+  - Lógica del test de permutación
+- Distribución nula generada por permutación
+- Cálculo del p-valor
+- Test de permutación en `R`
+
+#### **Contraste por remuestreo II: bootstrap**
+- Motivación: estimar incertidumbre sin fórmulas
+- Lógica del bootstrap
+- Bootstrap de la media
+- Intervalo de confianza empírico (percentil)
+- Bootstrap en `R`
+- Permutación *vs.* bootstrap
+
+<style>
+  .title-slide {
+    background-image: url('img/1.png');
+    background-size: 100%;
+  }
+</style>
+  
+  
+  ---
+  
+  layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+## Contraste por remuestreo I: permutación
+
+---
+  class: animated, fadeIn
+
+## ¿Por qué remuestrear?
+
+- Hasta ahora hemos calculado p-valores e IC usando **fórmulas** que asumen una distribución teórica (normal, t, etc.).
+
+- Pero, ¿qué pasa si no queremos asumir ninguna distribución concreta?
+  
+  --
+  
+  - El **remuestreo** (*resampling*) usa los propios datos, una y otra vez, para construir la distribución nula o de muestreo **por simulación**, en lugar de por fórmula.
+
+--
+  
+  > Idea clave: si la hipótesis nula fuera cierta, **da igual qué ratón está en qué grupo de dieta** — las etiquetas "chow"/"hf" serían intercambiables.
+
+---
+  class: animated, fadeIn
+
+## Recordamos el ejemplo de los ratones
+
+```{r, echo = F, fig.height=4, fig.width=6, fig.align='center'}
+url <- 'https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/mice_pheno.csv'
+mice <- read.csv(url)
+mice <- na.omit(mice[, c("Diet","Bodyweight")])
+
+ggplot(mice, aes(x=Diet, y=Bodyweight, fill=Diet)) +
+  geom_boxplot(show.legend = F) +
+  geom_jitter(alpha=0.4, show.legend = F, width = 0.1) +
+  ggthemes::theme_base(base_size = 16) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white")) +
+  scale_fill_manual(values=c("cadetblue4", "orange2"))
+```
+
+$$
+  H_0: \mu_{hf} = \mu_{chow} \quad \text{vs.} \quad H_A: \mu_{hf} \neq \mu_{chow}
+$$
+  
+  Nuestro **estadístico observado** es la diferencia de medias entre los dos grupos.
+
+---
+  class: animated, fadeIn
+
+## El estadístico observado
+
+```{r}
+obs_diff <- diff(tapply(mice$Bodyweight, mice$Diet, mean))
+obs_diff
+```
+
+- Los ratones con dieta alta en grasas (`hf`) pesan, de media, **`r round(obs_diff, 2)` g más** que los del grupo control (`chow`).
+
+- **Pregunta**: ¿es esta diferencia mayor de lo que esperaríamos solo por azar?
+  
+  ---
+  class: animated, fadeIn
+
+## La lógica de la permutación
+
+Si $H_0$ fuera cierta (la dieta no afecta al peso), entonces:
+  
+  - Las etiquetas `chow`/`hf` serían **arbitrarias**.
+- Podríamos **barajar** (permutar) esas etiquetas entre los ratones sin cambiar nada relevante.
+- Cada vez que barajamos y recalculamos la diferencia de medias, obtenemos **un valor que podría haber ocurrido por azar**, bajo $H_0$.
+
+--
+  
+  Repitiendo este proceso miles de veces, construimos la **distribución nula** del estadístico, **sin asumir ninguna fórmula teórica**.
+
+---
+  class: animated, fadeIn
+
+## Una permutación, paso a paso
+
+.pull-left[
+  1. Barajamos aleatoriamente la columna `Diet` (las etiquetas), manteniendo los pesos en su sitio.
+  2. Con las etiquetas barajadas, recalculamos la diferencia de medias.
+  3. Este nuevo valor es una **muestra de la distribución nula**.
+]
+
+.pull-right[
+  ```{r}
+  set.seed(1)
+  etiquetas_barajadas <- sample(mice$Diet)
+  
+  diff(tapply(mice$Bodyweight, 
+              etiquetas_barajadas, 
+              mean))
+  ```
+]
+
+--
+  
+  <center>
+  Repetimos este proceso **muchas veces** (por ejemplo, 10.000)
+
+---
+  class: animated, fadeIn
+
+## Repitiendo la permutación 10.000 veces
+
+```{r}
+set.seed(123)
+n_perm <- 10000
+
+perm_diffs <- replicate(n_perm, {
+  etiquetas_barajadas <- sample(mice$Diet)
+  diff(tapply(mice$Bodyweight, etiquetas_barajadas, mean))
+})
+```
+
+```{r, echo = F, fig.height=4, fig.width=5}
+head(perm_diffs)
+```
+
+Cada uno de estos 10.000 valores es una diferencia de medias que **podría haber surgido por azar**, si $H_0$ fuera cierta.
+
+---
+  class: animated, fadeIn
+
+## La distribución nula por permutación
+
+.pull-left[
+  La distribución de estos 10.000 valores es nuestra **distribución nula empírica**.
+  
+  - Está centrada en 0 (sin diferencia esperada bajo $H_0$).
+  - No hemos asumido ninguna forma teórica (normal, t...): la distribución sale **directamente de los datos**.
+]
+
+.pull-right[
+  ```{r, echo = F, fig.height=5, fig.width=6}
+  df_perm <- data.frame(diff = perm_diffs)
+  
+  ggplot(df_perm, aes(x = diff)) +
+    geom_histogram(fill = "cadetblue3", color="white", bins = 40) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    labs(x = "Diferencia de medias (permutada)", y = "Frecuencia",
+         title = "Distribución nula por permutación") +
+    ggthemes::theme_base(base_size = 14) +
+    theme(panel.grid=element_blank(),
+          axis.text=element_text(color="black"),
+          panel.background = element_rect(fill = "white"))
+  ```
+]
+
+---
+  class: animated, fadeIn
+
+## ¿Dónde cae nuestro valor observado?
+
+.pull-left[
+  Superponemos el **valor observado** (`r round(obs_diff,2)`) sobre la distribución nula.
+  
+  - Si el valor observado cae en una zona **poco probable** de la distribución nula (muy alejado de 0), tenemos evidencia contra $H_0$.
+]
+
+.pull-right[
+  ```{r, echo = F, fig.height=5, fig.width=6}
+  ggplot(df_perm, aes(x = diff)) +
+    geom_histogram(fill = "cadetblue3", color="white", bins = 40) +
+    geom_vline(xintercept = c(-abs(obs_diff), abs(obs_diff)), 
+               color = "firebrick3", linetype = "dashed", size = 1) +
+    annotate("text", x = abs(obs_diff), y = 700, 
+             label = "valor\nobservado", color = "firebrick4") +
+    labs(x = "Diferencia de medias (permutada)", y = "Frecuencia",
+         title = "Distribución nula por permutación") +
+    ggthemes::theme_base(base_size = 14) +
+    theme(panel.grid=element_blank(),
+          axis.text=element_text(color="black"),
+          panel.background = element_rect(fill = "white"))
+  ```
+]
+
+---
+  class: animated, fadeIn
+
+## El p-valor por permutación
+
+El **p-valor** es la proporción de permutaciones que dieron una diferencia **igual o más extrema** que la observada (en valor absoluto, porque el test es de dos colas):
+  
+```{r}
+p_valor <- mean(abs(perm_diffs) >= abs(obs_diff))
+p_valor
+```
+
+--
+  
+  > El p-valor **se hace tangible**: no es un número que sale de una tabla o fórmula, es literalmente **la fracción de las 10.000 barajadas** que fueron tan extremas como nuestros datos reales.
+
+---
+  class: animated, fadeIn
+
+## Interpretación
+
+```{r, echo = F, fig.height=4.5, fig.width=6, fig.align='center'}
+df_perm$extremo <- abs(df_perm$diff) >= abs(obs_diff)
+
+ggplot(df_perm, aes(x = diff, fill = extremo)) +
+  geom_histogram(color="white", bins = 40, show.legend = FALSE) +
+  geom_vline(xintercept = c(-abs(obs_diff), abs(obs_diff)), 
+             color = "firebrick3", linetype = "dashed", size = 1) +
+  scale_fill_manual(values = c("FALSE" = "cadetblue3", "TRUE" = "firebrick3")) +
+  labs(x = "Diferencia de medias (permutada)", y = "Frecuencia",
+       title = paste0("p-valor ≈ ", round(p_valor, 4))) +
+  ggthemes::theme_base(base_size = 16) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+```
+
+Con $p \approx$ `r round(p_valor, 4)` `r ifelse(p_valor < 0.05, ", **rechazamos** $H_0$", ", **no rechazamos** $H_0$")` al nivel $\alpha = 0.05$.
+
+---
+  class: animated, fadeIn
+
+## Ventajas del test de permutación
+
+- **No asume normalidad** ni ninguna otra forma concreta de distribución.
+- Funciona bien incluso con **muestras pequeñas**.
+- La lógica es **muy intuitiva**: "¿qué pasaría si las etiquetas de grupo no importaran?"
+
+--
+  
+  **Limitación**: computacionalmente más costoso que una fórmula cerrada, y el resultado puede variar ligeramente entre ejecuciones si no fijamos `set.seed()`.
+
+---
+  
+  layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+## Contraste por remuestreo II: bootstrap
+
+---
+  class: animated, fadeIn
+
+## Motivación: más allá del p-valor
+
+- La permutación nos dice **si** hay evidencia de una diferencia.
+- Pero, ¿y si queremos saber **cuán grande** es esa diferencia, con un margen de incertidumbre?
+  
+  --
+  
+  > Necesitamos un **intervalo de confianza**, pero sin asumir que el estadístico sigue una distribución normal o t.
+
+- El **bootstrap** nos permite construir un IC **empírico**, remuestreando de los propios datos.
+
+---
+  class: animated, fadeIn
+
+## La lógica del bootstrap
+
+- La permutación baraja las **etiquetas** entre grupos (simula $H_0$).
+
+- El bootstrap, en cambio, remuestrea **con reemplazo** dentro de cada grupo, tratando la muestra como si fuera la población.
+
+--
+  
+  .pull-left[
+    **Muestra original**
+      
+      Ratones del grupo `hf`: 
+      
+      $$
+      x_1, x_2, x_3, \dots, x_n
+    $$
+  ]
+
+.pull-right[
+  **Una remuestra bootstrap**
+    
+$$
+ x_3, x_1, x_1, x_5, \dots, x_2
+$$
+    
+    (algunos valores se repiten, otros no aparecen)
+]
+
+--
+  
+  <center>
+  Cada remuestra tiene el **mismo tamaño** que la muestra original, pero se extrae **con reemplazo**.
+
+---
+  class: animated, fadeIn
+
+## Una remuestra bootstrap, paso a paso
+
+.pull-left[
+  1. Tomamos el grupo `hf` de nuestros datos.
+  2. Extraemos una muestra **del mismo tamaño**, **con reemplazo**.
+  3. Calculamos la media de esa remuestra.
+]
+
+.pull-right[
+```{r}
+  pesos_hf <- mice$Bodyweight[mice$Diet == "hf"]
+  
+  set.seed(1)
+  remuestra <- sample(pesos_hf, 
+                      replace = TRUE)
+  
+  mean(remuestra)
+```
+]
+
+--
+  
+  <center>
+  Repetimos este proceso **muchas veces** para ver cuánto varía la media de una remuestra a otra.
+
+---
+  class: animated, fadeIn
+
+## Repitiendo el bootstrap 10.000 veces
+
+```{r}
+set.seed(123)
+n_boot <- 10000
+
+boot_medias_hf <- replicate(n_boot, {
+  remuestra <- sample(pesos_hf, replace = TRUE)
+  mean(remuestra)
+})
+```
+
+```{r, echo = F}
+head(boot_medias_hf)
+```
+
+Cada uno de estos 10.000 valores es una **estimación plausible** de la media del grupo `hf`.
+
+---
+  class: animated, fadeIn
+
+## La distribución bootstrap de la media
+
+.pull-left[
+  La dispersión de estos 10.000 valores refleja **la incertidumbre** de nuestra estimación puntual, sin usar ninguna fórmula de error estándar.
+]
+
+.pull-right[
+```{r, echo = F, fig.height=5, fig.width=6}
+  df_boot <- data.frame(media = boot_medias_hf)
+  
+  ggplot(df_boot, aes(x = media)) +
+    geom_histogram(fill = "orange2", color="white", bins = 40) +
+    geom_vline(xintercept = mean(pesos_hf), linetype = "dashed", color="firebrick4") +
+    labs(x = "Media (remuestreada)", y = "Frecuencia",
+         title = "Distribución bootstrap de la media") +
+    ggthemes::theme_base(base_size = 14) +
+    theme(panel.grid=element_blank(),
+          axis.text=element_text(color="black"),
+          panel.background = element_rect(fill = "white"))
+```
+]
+
+---
+  class: animated, fadeIn
+
+## El intervalo de confianza empírico (percentil)
+
+En vez de usar $\bar{x} \pm z_{\alpha/2} \times SE$, construimos el IC **directamente a partir de los percentiles** de la distribución bootstrap:
+  
+```{r}
+ic_boot <- quantile(boot_medias_hf, probs = c(0.025, 0.975))
+ic_boot
+```
+
+> Para un IC del 95%, cogemos los percentiles **2.5%** y **97.5%** de las 10.000 medias remuestreadas — sin asumir normalidad en ningún momento.
+
+---
+  class: animated, fadeIn
+
+## Visualizando el IC empírico
+
+```{r, echo = F, fig.height=4.5, fig.width=7, fig.align='center'}
+df_boot$dentro <- boot_medias_hf >= ic_boot[1] & boot_medias_hf <= ic_boot[2]
+
+ggplot(df_boot, aes(x = media, fill = dentro)) +
+  geom_histogram(color="white", bins = 40, show.legend = FALSE) +
+  geom_vline(xintercept = ic_boot, color = "firebrick3", linetype = "dashed", size = 1) +
+  scale_fill_manual(values = c("FALSE" = "grey70", "TRUE" = "orange2")) +
+  labs(x = "Media (remuestreada)", y = "Frecuencia",
+       title = "IC empírico (percentil) del 95%") +
+  ggthemes::theme_base(base_size = 16) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+```
+
+---
+  class: animated, fadeIn
+
+## Bootstrap sobre la diferencia de medias
+
+También podemos aplicar bootstrap **directamente sobre nuestro estadístico de interés**: la diferencia de medias entre grupos.
+
+```{r}
+pesos_chow <- mice$Bodyweight[mice$Diet == "chow"]
+
+set.seed(123)
+boot_diff <- replicate(n_boot, {
+  chow_r <- sample(pesos_chow, replace = TRUE)
+  hf_r   <- sample(pesos_hf,   replace = TRUE)
+  mean(hf_r) - mean(chow_r)
+})
+
+ic_diff <- quantile(boot_diff, c(0.025, 0.975))
+ic_diff
+```
+
+---
+  class: animated, fadeIn
+
+## Conectando con lo que ya sabemos
+
+.pull-left[
+  Recuerda: **si el IC no contiene el valor nulo (0), rechazamos $H_0$** al nivel correspondiente.
+  
+```{r}
+  ic_diff
+```
+  
+`r ifelse(ic_diff[1] > 0 | ic_diff[2] < 0, "El 0 **no** está dentro del IC → rechazamos $H_0$", "El 0 está dentro del IC → no rechazamos $H_0$")`
+]
+
+.pull-right[
+```{r, echo = F, fig.height=5, fig.width=6}
+  df_diff <- data.frame(diff = boot_diff)
+  df_diff$dentro <- boot_diff >= ic_diff[1] & boot_diff <= ic_diff[2]
+  
+  ggplot(df_diff, aes(x = diff, fill = dentro)) +
+    geom_histogram(color="white", bins = 40, show.legend = FALSE) +
+    geom_vline(xintercept = 0, linetype = "dotted", size = 1) +
+    geom_vline(xintercept = ic_diff, color = "firebrick3", linetype = "dashed", size = 1) +
+    scale_fill_manual(values = c("FALSE" = "grey70", "TRUE" = "orange2")) +
+    labs(x = "Diferencia de medias (remuestreada)", y = "Frecuencia",
+         title = "IC bootstrap de la diferencia hf - chow") +
+    ggthemes::theme_base(base_size = 14) +
+    theme(panel.grid=element_blank(),
+          axis.text=element_text(color="black"),
+          panel.background = element_rect(fill = "white"))
+```
+]
+
+---
+class: animated, fadeIn
+
+## Permutación *vs.* bootstrap
+
+| | **Permutación** | **Bootstrap** |
+  |---|---|---|
+  | ¿Qué remuestrea? | Las **etiquetas** de grupo | Los **valores** dentro de cada grupo |
+  | ¿Con o sin reemplazo? | Sin reemplazo (baraja) | **Con reemplazo** |
+  | ¿Qué simula? | La hipótesis nula ($H_0$) | La variabilidad del muestreo |
+  | ¿Para qué sirve principalmente? | Calcular un **p-valor** | Calcular un **intervalo de confianza** |
+  | ¿Asume una distribución teórica? | No | No |
+  
+--
+  
+> Ambos métodos comparten la misma filosofía: **usar el ordenador para generar la distribución que necesitamos, en vez de asumirla por fórmula**.
+
+---
+  class: animated, fadeIn
+
+## Resumen
+
+- El **remuestreo** nos permite construir distribuciones nulas o de muestreo **directamente desde los datos**, sin asumir normalidad.
+
+- La **permutación** baraja etiquetas de grupo para simular $H_0$ y calcular un **p-valor tangible**: la proporción de barajadas tan extremas como lo observado.
+
+- El **bootstrap** remuestrea con reemplazo dentro de cada grupo para estimar la **variabilidad** de un estadístico y construir un **IC empírico** (percentil).
+
+- Ambos métodos son especialmente útiles cuando:
+  - Los supuestos de normalidad no se cumplen.
+- El estadístico de interés no tiene una fórmula de error estándar sencilla (mediana, ratio, coeficiente de correlación...).
+
+---
+  class: animated, fadeIn
+
+## Contacto
+
+<div style="margin-top: 20vh; text-align:center;">
+  
+  | Marta Coronado Zamora | David Castellano | 
+  |:-:|:-:|
+  | <a href="mailto:marta.coronado@uab.cat"><i class="fa fa-paper-plane fa-fw"></i> marta.coronado@uab.cat</a> | <a href="mailto:david.castellano@uab.cat"><i class="fa fa-paper-plane fa-fw"></i>&nbsp; david.castellano@uab.cat</a> | 
+  | <a href="https://bsky.app/profile/geneticament.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @geneticament.bsky.social</a> |                 <a href="https://bsky.app/profile/castellanoed.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @castellanoed.bsky.social</a> |
+  | <a href="https://www.uab.cat"><i class="fa fa-map-marker fa-fw"></i>&nbsp; Universitat Autònoma de Barcelona</a> |    <a href="https://gutengroup.mcb.arizona.edu/"> <i class="fa fa-map-marker fa-fw"></i>&nbsp; University of Arizona</a> |

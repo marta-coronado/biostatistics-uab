@@ -1,0 +1,305 @@
+---
+title: "**Bootstrap:**<br><font color='#A8A8A8' size='5'>práctica en  `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
+author: "Marta Coronado Zamora"
+date: "Noviembre 2025"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5, fig.align = 'center', fig.height = 3, fig.width = 3)
+library(dplyr)
+library(tibble)
+library(ggplot2)
+library(prettydoc)
+library(data.table)
+library(ggpubr)
+library(car)
+library(boot)
+library(tidyverse)
+library(infer)
+```
+
+<style>
+  @import url(https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,500,500i,700,700i);
+  @import url(https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css);
+  @import url("https://use.fontawesome.com/releases/v5.10.1/css/all.css");
+  
+  body {
+    font-family: 'Fira Sans','Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Microsoft YaHei', 'Songti SC', serif;
+  }
+  
+  /* Make bold syntax compile to RU-red */
+  strong {
+    color: #DE1144;
+  }
+
+</style>
+
+
+# Incertidumbre
+
+Tienes una muestra y has obtenido una estimación, y quieres comunicar la precisión de dicha estimación. Dado que las estimaciones basadas en muestras varían por azar, es irresponsable y engañoso presentar una estimación sin describir la **incertidumbre** asociada, por ejemplo informando del **error estándar** u otras medidas de variabilidad.
+
+
+## Generar una distribución muestral
+
+**Pregunta:**  
+Normalmente solo tenemos **una** muestra, no toda la población. Entonces, ¿cómo generamos una distribución muestral?
+
+**Respuesta:**  
+¡Con nuestra imaginación!
+
+<center>
+<img src="img/4qga05.jpg" width=50%>
+</center>
+
+### ¿Qué herramientas pueden usar nuestra imaginación?
+
+- Podemos utilizar **trucos matemáticos** que conectan la variabilidad de nuestra muestra con la incertidumbre de nuestra estimación.  
+- Podemos **simular** el proceso que creemos que generó nuestros datos.  
+- Podemos **re-muestrear** a partir de nuestra muestra mediante **bootstrapping**: lo que haremos en esta práctica.
+
+
+## Remuestreo de nuestra muestra (Bootstrapping)
+
+> *Aunque la estadística no ofrece una píldora mágica para las investigaciones científicas cuantitativas, el bootstrap es el mejor analgésico estadístico jamás creado.*  
+> — **Xiao-Li Meng**  
+> citado en Cochran (2019)  “What Is the Bootstrap?” *Significance* 16 (1): 8–9. https://doi.org/10.1111/j.1740-9713.2019.01225.x.
+
+Solo tenemos una muestra, pero necesitamos imaginar nuevos remuestreos como si vinieran de la población.  
+Una forma de construir una **distribución muestral** en esta situación es asumir que nuestra muestra es una **representación razonable de la población**, y remuestrear a partir de ella.
+
+Por supuesto, si simplemente volviéramos a recoger todos los valores observados sin más, obtendríamos exactamente la misma estimación que antes.  Por eso hacemos **remuestreo con reemplazo**, y calculamos una estimación a partir de ese remuestreo. Es decir, hacemos lo siguiente:
+
+1. Elegir una observación de la muestra de forma aleatoria.  
+2. Registrar su valor.  
+3. Devolverla a la “bolsa” (reemplazo).  
+4. Volver al paso (1) hasta obtener tantas observaciones remuestreadas como el tamaño original de la muestra.  
+5. Calcular una estimación a partir de este nuevo conjunto de observaciones.
+
+<center>
+<img src="img/bootstrap-scheme.png" width=60%>
+</center>
+
+Al finalizar este procedimiento, tenemos una **réplica bootstrap**.
+
+### 🐝💡 Cálculo del Bootstrapping y ejemplo con luciérnagas
+
+Supongamos que estamos estudiando la duración de los pulsos de luz de los machos de la luciérnaga *Photinus ignitus*, una especie en la que las hembras prefieren aparearse con machos que emiten pulsos luminosos más largos.  
+Podemos examinar los datos de duración del pulso, recopilados por [Cratsley y Lewis (2003)](https://academic.oup.com/beheco/article-abstract/14/1/135/209237), para estimar la **duración media** de los pulsos y la **incertidumbre** asociada a esta estimación.
+
+#### **Paso 1: leer los datos**
+Lee el fichero que contiene los datos, que tiene formato .csv (`read.csv`) y encabezado (`header=TRUE`) y que se encuentra en: "https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/6/chap04q07FireflyFlash.csv" y guárdalo en un data frame que se llame `firefly`.
+
+```{r}
+
+```
+
+Ya que esta tabla contiene únicamente una columna con la duración del pulso de luz (`flash`), añadiremos una nueva columna llamada `id` para identificar a cada luciérnaga.  
+El siguiente código crea un vector numérico desde 1 hasta el número total de filas de la tabla (`nrow`) y lo asigna a la columna `id`.
+
+<i class="fa fa-exclamation-triangle"></i> Indicamos que `id` es un *factor* porque, aunque contiene números, queremos que se interprete como una **variable categórica** (identificador) y no como una variable cuantitativa.
+
+```{r eval = F}
+firefly$id <- 1:nrow(firefly)
+firefly$id <- as.factor(firefly$id)
+head(firefly)
+```
+
+Puedes ver el data frame resultante con `View(firefly)`.
+
+#### **Paso 2: cálculo de estimaciones a partir de los datos**
+
+Ahora vamos a calcular una estimación a partir de los datos. Podemos aplicar *bootstrapping* a cualquier tipo de estimador: una media, una mediana, una desviación estándar, una correlación, un estadístico F, una filogenia... lo que sea. Pero comenzaremos con la **media** por simplicidad.
+
+Calcula la media de la duración del pulso de luz (`flash`) usando la función `mean()` y guárdala en el objeto `sample_estimate`:
+
+```{r}
+
+```
+
+Nuestra estimación muestral es que la duración media del pulso de luz en luciérnagas es de **95.94**. Pero esto es solo una estimación basada en *nuestra* muestra.
+
+No podemos conocer el valor real del parámetro poblacional, pero sí podemos usar **bootstrapping** para entender **cuán lejos** podría estar nuestra estimación del valor verdadero.
+
+#### **Paso 3: Re-muestreo de nuestros datos (con reemplazo) para generar una réplica bootstrap**
+
+Primero, vamos a usar la función `sample_n()` para generar una muestra del mismo tamaño que la original.
+
+- El muestreo será **con reemplazo**, es decir, cada observación vuelve a la bolsa después de ser seleccionada.
+- Tomamos una muestra re-muestreada del **mismo tamaño** que la muestra original, no un subconjunto más pequeño.
+  - Para obtener el tamaño de la muestra original, podemos usar la función `nrow` sobre la tabla de datos, ya que contará el número de filas que tenemos.
+
+Completa los "???":
+
+```{r eval = FALSE}
+library(dplyr)
+
+resampled_fireflies <- firefly  %>% 
+  sample_n(size = ???, replace = ???)
+
+```
+
+Para confirmar que el re-muestreo **con reemplazo** funcionó, debemos comprobar que **algunos individuos aparecen más de una vez** y que **otros no aparecen en la muestra re-muestreada**. Ejecuta el siguiente bloque de código y visualiza el gráfico que genera:
+
+```{r eval = FALSE}
+library(ggplot2)
+
+resampled_fireflies                %>%
+  group_by(id, .drop=FALSE)        %>%   # .drop = FALSE  significa que mantenemos el conteo para los individuos con cero, en lugar de perderlos
+  tally(sort = TRUE)               %>%   # contar cuántas veces aparece cada individuo en el remuestreo, y ordenar de mayor a menor
+  mutate(id = fct_reorder(id, n, .desc = TRUE)) %>%  # indicamos a R que queremos listar los números en orden de número de observaciones, no de 1 a n
+  ggplot(aes(x=id, y = n)) +      # configurar el ggplot
+  geom_col() +                     # crear un gráfico de barras
+  labs(title = "Distribución de los individuos remuestreados en nuestro bootstrap")
+
+```
+
+#### **Paso 4: Estimación a partir de los datos remuestreados**
+
+Ahora que hemos verificado que el remuestreo **con reemplazo** funcionó correctamente (algunos individuos aparecen varias veces y otros no aparecen), vamos a calcular una estimación a partir de estos datos remuestreados.
+
+Calcula la **media** de la duración del pulso de luz usando los datos remuestreados (`resampled_fireflies`):
+
+```{r}
+
+```
+
+#### **Paso 4: Estimación a partir de los datos remuestreados**
+
+Ahora vamos a repetir el proceso muchas veces (**10000**) utilizando la función `rep_sample_n()`. Después, calcularemos la media dentro de cada réplica.
+
+Completa los "???":
+
+```{r eval = F}
+library(infer)
+
+many_resampled_fireflies <- firefly  %>%
+  rep_sample_n(size =  ???, replace = ???, reps = ???)
+
+View(many_resampled_fireflies)
+```
+
+Con la función `summarize()` calcula la media de cada replica. Para eso, primero agrupa con `group_by` por réplica (`replicate`) y luego calcula la media dentro de `flash` con `summarize` y `mean`. [Ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#63). Guarda el resultado en `firefly_boot`.
+
+```{r}
+
+```
+
+
+#### **Paso 5: Visualización de la distribución de bootstrap**
+
+Genera un histograma para **visualizar la distribución de las estimaciones bootstrap**. [Ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#26).
+
+```{r}
+
+```
+
+Teníamos una muestra, no la población completa, pero hicimos **remuestreo con reemplazo** para generar una **distribución muestral**.  Este histograma muestra el **error muestral esperado** de una población que podría haber generado nuestra muestra.  Podemos usar esto para tener una idea del **error de muestreo esperado** en la población real, que no exploramos más allá de esta muestra.
+
+> Nota: Esto es una **buena guía**, pero no es infalible.  
+> Como partimos de una muestra de la población, la distribución muestral bootstrap **diferirá** de la distribución muestral real de la población, pero sigue siendo una **estimación razonable**.
+
+
+## Intervalo de confianza bootstrap
+
+Podemos estimar un **intervalo de confianza** específico como la región central que contiene esa proporción de réplicas bootstrap.  
+Por ejemplo, los **límites que abarcan el 95% central** de las réplicas bootstrap, dejando fuera las réplicas más extremas, definen el **intervalo de confianza del 95%**.  
+
+En R, podemos usar la función `quantile()` para encontrar estos **puntos de corte** en la distribución bootstrap. [Ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/1/1.EstadisticaDescriptiva.html#48).
+
+Completa los "???":
+
+```{r eval = F}
+firefly_boot_CI <- firefly_boot %>% 
+  summarise(CI         = c("lower 95", "upper 95"),  # añade una columna para indicar qué límite del intervalo de confianza estamos calculando
+            mean_flash = quantile(???, probs = c(???, ???)))  # límites numéricos que separan el 95% central del resto de las réplicas bootstrap
+
+firefly_boot_CI
+```
+
+Podemos añadir estos intervalos de confianza a nuestro histograma interior usando `geom_vline()` con el siguiente código.
+
+```{r eval = F}
+código ggplot histograma +  
+  geom_vline(xintercept = pull(firefly_boot_CI, mean_flash))
+```
+
+**¿Cuál es la interpretación del IC anterior?**
+
+
+
+# Problema: 🐒🧠 Centros del lenguaje en chimpancés
+
+Vamos a trabajar con los datos de 20 chimpancés del estudio de [Cantalupo y Hopkins (2001)](https://www.nature.com/articles/35107134). Este conjunto de datos contiene información sobre la **asimetría cerebral** en chimpancés, centrada en el **Área de Brodmann 44 (BA44)**, que en humanos forma parte del área de Broca, importante para el lenguaje.
+
+Cada fila del dataset corresponde a un chimpancé e incluye:
+
+- **chimpName:** nombre del individuo.  
+- **sex:** sexo del individuo (M = macho, F = hembra).  
+- **asymmetryScore:** medida de asimetría del BA44 entre hemisferio izquierdo y derecho.  
+  - Valores **positivos** indican mayor volumen/actividad en el hemisferio izquierdo.  
+  - Valores **negativos** indican mayor volumen/actividad en el hemisferio derecho.  
+  - Valores cercanos a 0 indican simetría entre hemisferios.
+
+Estos datos permiten estudiar la **lateralización cerebral** en chimpancés y compararla con la de los humanos.
+
+Los datos estan disponibles en: https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/6/chap19e2ChimpBrains.csv
+
+#### **Paso 1: lee los datos**
+Guarda los datos en un data frame que se llame `chimp`.
+
+```{r}
+
+```
+
+#### **Paso 2: crea un histograma**
+Visualiza la distribución de la asimetría  (`asymmetryScore`).
+
+```{r}
+
+```
+
+#### **Paso 3: calcula la mediana**
+Calcula la **mediana** de los valores de asimetría (`asymmetryScore`) en los datos.  
+Esta mediana será nuestro **estadístico de la muestra**.
+
+```{r}
+
+```
+
+#### **Paso 4: genera la distribución con boostrap (10000 muestras)**
+Utiliza la función `rep_sample_n` para generar la distribución con bootstrap. Recuerda que puedes saber el tamaño de la muestra con la función `nrow(data.frame)`, que contará cuantas líneas tiene la tabla.
+
+```{r}
+
+```
+
+#### **Paso 5: calcula la mediana de cada replica**
+Utiliza las funciones `group_by` y `summarize` para calcular la mediana de cada replica.
+
+```{r}
+
+```
+
+#### **Paso 6: visualiza la distribución**
+
+```{r}
+
+```
+
+#### **Paso 7: intervalos de confianza**
+
+Calcula el intervalo de confianza al 95%.
+
+```{r}
+
+```
+
+**Completa la conclusión:**
+
+A partir del bootstrap con XXXX réplicas, estimamos que la mediana de asimetría del Área de Brodmann 44 en chimpancés se encuentra entre XXXX y XXXX con un XXXX% de confianza. Dado que el intervalo incluye 0, [sí/no] hay evidencia estadística de asimetría lateralizada.

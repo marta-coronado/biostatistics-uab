@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title> </title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <script src="8_files/header-attrs/header-attrs.js"></script>
+    <link href="8_files/remark-css/default.css" rel="stylesheet" />
+    <link href="8_files/remark-css/default-fonts.css" rel="stylesheet" />
+    <script src="8_files/clipboard/clipboard.min.js"></script>
+    <link href="8_files/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="8_files/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
+    <link href="8_files/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="8_files/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# <br>
+]
+.author[
+### 
+]
+
+---
+
+
+
+
+
+
+
+
+class: animated, fadeIn
+# Outline
+
+#### **Contraste por remuestreo I: permutación**
+- Motivación: ¿por qué remuestrear?
+  - Lógica del test de permutación
+- Distribución nula generada por permutación
+- Cálculo del p-valor
+- Test de permutación en `R`
+
+#### **Contraste por remuestreo II: bootstrap**
+- Motivación: estimar incertidumbre sin fórmulas
+- Lógica del bootstrap
+- Bootstrap de la media
+- Intervalo de confianza empírico (percentil)
+- Bootstrap en `R`
+- Permutación *vs.* bootstrap
+
+&lt;style&gt;
+  .title-slide {
+    background-image: url('img/1.png');
+    background-size: 100%;
+  }
+&lt;/style&gt;
+  
+  
+  ---
+  
+  layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+## Contraste por remuestreo I: permutación
+
+---
+  class: animated, fadeIn
+
+## ¿Por qué remuestrear?
+
+- Hasta ahora hemos calculado p-valores e IC usando **fórmulas** que asumen una distribución teórica (normal, t, etc.).
+
+- Pero, ¿qué pasa si no queremos asumir ninguna distribución concreta?
+  
+  --
+  
+  - El **remuestreo** (*resampling*) usa los propios datos, una y otra vez, para construir la distribución nula o de muestreo **por simulación**, en lugar de por fórmula.
+
+--
+  
+  &gt; Idea clave: si la hipótesis nula fuera cierta, **da igual qué ratón está en qué grupo de dieta** — las etiquetas "chow"/"hf" serían intercambiables.
+
+---
+  class: animated, fadeIn
+
+## Recordamos el ejemplo de los ratones
+
+&lt;img src="8_files/figure-html/unnamed-chunk-1-1.png" alt="" width="432" style="display: block; margin: auto;" /&gt;
+
+$$
+  H_0: \mu_{hf} = \mu_{chow} \quad \text{vs.} \quad H_A: \mu_{hf} \neq \mu_{chow}
+$$
+  
+  Nuestro **estadístico observado** es la diferencia de medias entre los dos grupos.
+
+---
+  class: animated, fadeIn
+
+## El estadístico observado
+
+
+``` r
+obs_diff &lt;- diff(tapply(mice$Bodyweight, mice$Diet, mean))
+obs_diff
+```
+
+```
+##       hf 
+## 3.069195
+```
+
+- Los ratones con dieta alta en grasas (`hf`) pesan, de media, **3.07 g más** que los del grupo control (`chow`).
+
+- **Pregunta**: ¿es esta diferencia mayor de lo que esperaríamos solo por azar?
+  
+  ---
+  class: animated, fadeIn
+
+## La lógica de la permutación
+
+Si `\(H_0\)` fuera cierta (la dieta no afecta al peso), entonces:
+  
+  - Las etiquetas `chow`/`hf` serían **arbitrarias**.
+- Podríamos **barajar** (permutar) esas etiquetas entre los ratones sin cambiar nada relevante.
+- Cada vez que barajamos y recalculamos la diferencia de medias, obtenemos **un valor que podría haber ocurrido por azar**, bajo `\(H_0\)`.
+
+--
+  
+  Repitiendo este proceso miles de veces, construimos la **distribución nula** del estadístico, **sin asumir ninguna fórmula teórica**.
+
+---
+  class: animated, fadeIn
+
+## Una permutación, paso a paso
+
+.pull-left[
+  1. Barajamos aleatoriamente la columna `Diet` (las etiquetas), manteniendo los pesos en su sitio.
+  2. Con las etiquetas barajadas, recalculamos la diferencia de medias.
+  3. Este nuevo valor es una **muestra de la distribución nula**.
+]
+
+.pull-right[
+  
+  ``` r
+  set.seed(1)
+  etiquetas_barajadas &lt;- sample(mice$Diet)
+  
+  diff(tapply(mice$Bodyweight, 
+              etiquetas_barajadas, 
+              mean))
+  ```
+  
+  ```
+  ##         hf 
+  ## 0.06921099
+  ```
+]
+
+--
+  
+  &lt;center&gt;
+  Repetimos este proceso **muchas veces** (por ejemplo, 10.000)
+
+---
+  class: animated, fadeIn
+
+## Repitiendo la permutación 10.000 veces
+
+
+``` r
+set.seed(123)
+n_perm &lt;- 10000
+
+perm_diffs &lt;- replicate(n_perm, {
+  etiquetas_barajadas &lt;- sample(mice$Diet)
+  diff(tapply(mice$Bodyweight, etiquetas_barajadas, mean))
+})
+```
+
+
+```
+##          hf          hf          hf          hf          hf          hf 
+## -0.11526409 -0.03616240  0.57887712  0.18977419  0.55633601  0.02574327
+```
+
+Cada uno de estos 10.000 valores es una diferencia de medias que **podría haber surgido por azar**, si `\(H_0\)` fuera cierta.
+
+---
+  class: animated, fadeIn
+
+## La distribución nula por permutación
+
+.pull-left[
+  La distribución de estos 10.000 valores es nuestra **distribución nula empírica**.
+  
+  - Está centrada en 0 (sin diferencia esperada bajo `\(H_0\)`).
+  - No hemos asumido ninguna forma teórica (normal, t...): la distribución sale **directamente de los datos**.
+]
+
+.pull-right[
+  &lt;img src="8_files/figure-html/unnamed-chunk-6-1.png" alt="" width="432" /&gt;
+]
+
+---
+  class: animated, fadeIn
+
+## ¿Dónde cae nuestro valor observado?
+
+.pull-left[
+  Superponemos el **valor observado** (3.07) sobre la distribución nula.
+  
+  - Si el valor observado cae en una zona **poco probable** de la distribución nula (muy alejado de 0), tenemos evidencia contra `\(H_0\)`.
+]
+
+.pull-right[
+  &lt;img src="8_files/figure-html/unnamed-chunk-7-1.png" alt="" width="432" /&gt;
+]
+
+---
+  class: animated, fadeIn
+
+## El p-valor por permutación
+
+El **p-valor** es la proporción de permutaciones que dieron una diferencia **igual o más extrema** que la observada (en valor absoluto, porque el test es de dos colas):
+  
+
+``` r
+p_valor &lt;- mean(abs(perm_diffs) &gt;= abs(obs_diff))
+p_valor
+```
+
+```
+## [1] 0
+```
+
+--
+  
+  &gt; El p-valor **se hace tangible**: no es un número que sale de una tabla o fórmula, es literalmente **la fracción de las 10.000 barajadas** que fueron tan extremas como nuestros datos reales.
+
+---
+  class: animated, fadeIn
+
+## Interpretación
+
+&lt;img src="8_files/figure-html/unnamed-chunk-9-1.png" alt="" width="432" style="display: block; margin: auto;" /&gt;
+
+Con `\(p \approx\)` 0 , **rechazamos** `\(H_0\)` al nivel `\(\alpha = 0.05\)`.
+
+---
+  class: animated, fadeIn
+
+## Ventajas del test de permutación
+
+- **No asume normalidad** ni ninguna otra forma concreta de distribución.
+- Funciona bien incluso con **muestras pequeñas**.
+- La lógica es **muy intuitiva**: "¿qué pasaría si las etiquetas de grupo no importaran?"
+
+--
+  
+  **Limitación**: computacionalmente más costoso que una fórmula cerrada, y el resultado puede variar ligeramente entre ejecuciones si no fijamos `set.seed()`.
+
+---
+  
+  layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+## Contraste por remuestreo II: bootstrap
+
+---
+  class: animated, fadeIn
+
+## Motivación: más allá del p-valor
+
+- La permutación nos dice **si** hay evidencia de una diferencia.
+- Pero, ¿y si queremos saber **cuán grande** es esa diferencia, con un margen de incertidumbre?
+  
+  --
+  
+  &gt; Necesitamos un **intervalo de confianza**, pero sin asumir que el estadístico sigue una distribución normal o t.
+
+- El **bootstrap** nos permite construir un IC **empírico**, remuestreando de los propios datos.
+
+---
+  class: animated, fadeIn
+
+## La lógica del bootstrap
+
+- La permutación baraja las **etiquetas** entre grupos (simula `\(H_0\)`).
+
+- El bootstrap, en cambio, remuestrea **con reemplazo** dentro de cada grupo, tratando la muestra como si fuera la población.
+
+--
+  
+  .pull-left[
+    **Muestra original**
+      
+      Ratones del grupo `hf`: 
+      
+      $$
+      x_1, x_2, x_3, \dots, x_n
+    $$
+  ]
+
+.pull-right[
+  **Una remuestra bootstrap**
+    
+$$
+ x_3, x_1, x_1, x_5, \dots, x_2
+$$
+    
+    (algunos valores se repiten, otros no aparecen)
+]
+
+--
+  
+  &lt;center&gt;
+  Cada remuestra tiene el **mismo tamaño** que la muestra original, pero se extrae **con reemplazo**.
+
+---
+  class: animated, fadeIn
+
+## Una remuestra bootstrap, paso a paso
+
+.pull-left[
+  1. Tomamos el grupo `hf` de nuestros datos.
+  2. Extraemos una muestra **del mismo tamaño**, **con reemplazo**.
+  3. Calculamos la media de esa remuestra.
+]
+
+.pull-right[
+
+``` r
+  pesos_hf &lt;- mice$Bodyweight[mice$Diet == "hf"]
+  
+  set.seed(1)
+  remuestra &lt;- sample(pesos_hf, 
+                      replace = TRUE)
+  
+  mean(remuestra)
+```
+
+```
+## [1] 30.25218
+```
+]
+
+--
+  
+  &lt;center&gt;
+  Repetimos este proceso **muchas veces** para ver cuánto varía la media de una remuestra a otra.
+
+---
+  class: animated, fadeIn
+
+## Repitiendo el bootstrap 10.000 veces
+
+
+``` r
+set.seed(123)
+n_boot &lt;- 10000
+
+boot_medias_hf &lt;- replicate(n_boot, {
+  remuestra &lt;- sample(pesos_hf, replace = TRUE)
+  mean(remuestra)
+})
+```
+
+
+```
+## [1] 30.61432 30.69041 30.39672 30.56142 30.67734 30.80676
+```
+
+Cada uno de estos 10.000 valores es una **estimación plausible** de la media del grupo `hf`.
+
+---
+  class: animated, fadeIn
+
+## La distribución bootstrap de la media
+
+.pull-left[
+  La dispersión de estos 10.000 valores refleja **la incertidumbre** de nuestra estimación puntual, sin usar ninguna fórmula de error estándar.
+]
+
+.pull-right[
+&lt;img src="8_files/figure-html/unnamed-chunk-13-1.png" alt="" width="432" /&gt;
+]
+
+---
+  class: animated, fadeIn
+
+## El intervalo de confianza empírico (percentil)
+
+En vez de usar `\(\bar{x} \pm z_{\alpha/2} \times SE\)`, construimos el IC **directamente a partir de los percentiles** de la distribución bootstrap:
+  
+
+``` r
+ic_boot &lt;- quantile(boot_medias_hf, probs = c(0.025, 0.975))
+ic_boot
+```
+
+```
+##     2.5%    97.5% 
+## 29.81015 31.17726
+```
+
+&gt; Para un IC del 95%, cogemos los percentiles **2.5%** y **97.5%** de las 10.000 medias remuestreadas — sin asumir normalidad en ningún momento.
+
+---
+  class: animated, fadeIn
+
+## Visualizando el IC empírico
+
+&lt;img src="8_files/figure-html/unnamed-chunk-15-1.png" alt="" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+  class: animated, fadeIn
+
+## Bootstrap sobre la diferencia de medias
+
+También podemos aplicar bootstrap **directamente sobre nuestro estadístico de interés**: la diferencia de medias entre grupos.
+
+
+``` r
+pesos_chow &lt;- mice$Bodyweight[mice$Diet == "chow"]
+
+set.seed(123)
+boot_diff &lt;- replicate(n_boot, {
+  chow_r &lt;- sample(pesos_chow, replace = TRUE)
+  hf_r   &lt;- sample(pesos_hf,   replace = TRUE)
+  mean(hf_r) - mean(chow_r)
+})
+
+ic_diff &lt;- quantile(boot_diff, c(0.025, 0.975))
+ic_diff
+```
+
+```
+##     2.5%    97.5% 
+## 2.239343 3.899579
+```
+
+---
+  class: animated, fadeIn
+
+## Conectando con lo que ya sabemos
+
+.pull-left[
+  Recuerda: **si el IC no contiene el valor nulo (0), rechazamos `\(H_0\)`** al nivel correspondiente.
+  
+
+``` r
+  ic_diff
+```
+
+```
+##     2.5%    97.5% 
+## 2.239343 3.899579
+```
+  
+El 0 **no** está dentro del IC → rechazamos `\(H_0\)`
+]
+
+.pull-right[
+&lt;img src="8_files/figure-html/unnamed-chunk-18-1.png" alt="" width="432" /&gt;
+]
+
+---
+class: animated, fadeIn
+
+## Permutación *vs.* bootstrap
+
+| | **Permutación** | **Bootstrap** |
+  |---|---|---|
+  | ¿Qué remuestrea? | Las **etiquetas** de grupo | Los **valores** dentro de cada grupo |
+  | ¿Con o sin reemplazo? | Sin reemplazo (baraja) | **Con reemplazo** |
+  | ¿Qué simula? | La hipótesis nula (`\(H_0\)`) | La variabilidad del muestreo |
+  | ¿Para qué sirve principalmente? | Calcular un **p-valor** | Calcular un **intervalo de confianza** |
+  | ¿Asume una distribución teórica? | No | No |
+  
+--
+  
+&gt; Ambos métodos comparten la misma filosofía: **usar el ordenador para generar la distribución que necesitamos, en vez de asumirla por fórmula**.
+
+---
+  class: animated, fadeIn
+
+## Resumen
+
+- El **remuestreo** nos permite construir distribuciones nulas o de muestreo **directamente desde los datos**, sin asumir normalidad.
+
+- La **permutación** baraja etiquetas de grupo para simular `\(H_0\)` y calcular un **p-valor tangible**: la proporción de barajadas tan extremas como lo observado.
+
+- El **bootstrap** remuestrea con reemplazo dentro de cada grupo para estimar la **variabilidad** de un estadístico y construir un **IC empírico** (percentil).
+
+- Ambos métodos son especialmente útiles cuando:
+  - Los supuestos de normalidad no se cumplen.
+- El estadístico de interés no tiene una fórmula de error estándar sencilla (mediana, ratio, coeficiente de correlación...).
+
+---
+  class: animated, fadeIn
+
+## Contacto
+
+&lt;div style="margin-top: 20vh; text-align:center;"&gt;
+  
+  | Marta Coronado Zamora | David Castellano | 
+  |:-:|:-:|
+  | &lt;a href="mailto:marta.coronado@uab.cat"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt; marta.coronado@uab.cat&lt;/a&gt; | &lt;a href="mailto:david.castellano@uab.cat"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt;&amp;nbsp; david.castellano@uab.cat&lt;/a&gt; | 
+  | &lt;a href="https://bsky.app/profile/geneticament.bsky.social"&gt;&lt;i class="fab fa-bluesky fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @geneticament.bsky.social&lt;/a&gt; |                 &lt;a href="https://bsky.app/profile/castellanoed.bsky.social"&gt;&lt;i class="fab fa-bluesky fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @castellanoed.bsky.social&lt;/a&gt; |
+  | &lt;a href="https://www.uab.cat"&gt;&lt;i class="fa fa-map-marker fa-fw"&gt;&lt;/i&gt;&amp;nbsp; Universitat Autònoma de Barcelona&lt;/a&gt; |    &lt;a href="https://gutengroup.mcb.arizona.edu/"&gt; &lt;i class="fa fa-map-marker fa-fw"&gt;&lt;/i&gt;&amp;nbsp; University of Arizona&lt;/a&gt; |
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

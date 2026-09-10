@@ -1,5 +1,5 @@
 ---
-title: "<br>"
+title: ""
 subtitle: ""
 author: ""
 date: ""
@@ -9,7 +9,6 @@ output:
     lib_dir: libs
     self_contained: true
     nature:
-      mathjax: "default"
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -17,19 +16,24 @@ output:
       
 ---
 ```{r setup, include=FALSE}
-options(htmltools.dir.version = FALSE)
+options(htmltools.dir.version = FALSE, width = 200)
 #knitr::include_graphics()
 knitr::opts_chunk$set(
   cache = TRUE,
+  echo = TRUE,
   message = FALSE, 
   warning = FALSE,
   hiline = TRUE,
   fig.retina = 5
+
 )
+knitr::opts_chunk$set(
+  comment = "")
+
 library(ggplot2)
 library(readr)
 library(knitr)
-#pagedown::chrome_print(".html")
+#pagedown::chrome_print("PresentacionBioestadistica.html")
 ```
 
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
@@ -43,6 +47,7 @@ style_mono_accent(
 )
 ```
 
+
 ```{r xaringanExtra-clipboard, echo=FALSE}
 library(xaringanExtra)
 htmltools::tagList(
@@ -55,6 +60,158 @@ htmltools::tagList(
 ```
 
 
+class: title-slide, animated, fadeIn
+
+.left-top[
+# Distribución normal
+
+]
+
+.left-bottom[
+.authors[
+**Bioestadística**
+<br><br><br><br>
+
+Marta Coronado ([marta.coronado@uab.cat](mailto:marta.coronado@uab.cat))  
+]
+
+.footer-info[
+**Grado en Genética | Curso 2026/2027**
+]
+]
+
+.right-panel[]
+
+
+
+<style>
+.title-slide {
+  background-image: none;
+}
+
+/* Contenedor teal superior (solo título) */
+.title-slide .left-top {
+  position: absolute;
+  top: 0; left: 0;
+  width: 60%;
+  height: 62%;
+  background-color: #163a3a;
+  color: white;
+  padding: 50px 45px 30px 65px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;   /* ← esto faltaba */
+  align-items: flex-start;  /* ← con column, flex-end alinearía a la derecha; usa flex-start para pegar a la izquierda */
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+
+/* Contenedor blanco inferior (autores, fecha) */
+.title-slide .left-bottom {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 60%;
+  height: 38%;
+  background-color: white;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px 45px 30px 65px;
+  margin: 0;
+}
+
+.title-slide .right-panel {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 41%;
+  background-color: white;
+  background-image: url('img/1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.title-slide h1 {
+  font-size: 1.9em;
+  line-height: 1.25;
+  margin: 0;
+  font-weight: 400;
+}
+
+.title-slide .subtitle {
+  display: block;   /* ← esto es la clave: sin esto, margin-top se ignora */
+  font-size: 2em;
+  font-weight: bold;
+  color: #7ac142;
+  margin-top: -35px;
+  margin-bottom: 15px;
+}
+
+.title-slide .authors {
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.title-slide .authors a {
+  color: #e8846b;
+  text-decoration: none;
+}
+
+.title-slide .footer-info {
+  font-size: 0.9em;
+  color: #444;
+}
+
+.remark-slide-content h2,
+.remark-slide-content h3,
+.remark-slide-content h4,
+.remark-slide-content h5 {
+  margin-top: 1em;
+  margin-bottom: 0.6em;
+}
+
+.remark-slide-content p,
+.remark-slide-content ul,
+.remark-slide-content ol {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.remark-slide-content li {
+  margin-bottom: 0.1em;
+}
+
+.practica::before {
+  content: "\f303";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+
+.R::before {
+  content: "\f4f7";
+  font-family: "Font Awesome 6 Brands";
+  font-weight: 400;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+</style>
+
+
+
+---
 class: animated, fadeIn
 # Outline
 
@@ -89,25 +246,28 @@ class: animated, fadeIn
 
 ## Datos discretos *vs.* continuos
 
-- Una variable aleatoria y discreta puede tomar un número **finito** de valores
+- Una variable aleatoria y discreta puede tomar un número **finito** de valores:
   - El número de caras en una serie de lanzamientos de moneda
   - Número de personas que han tenido varicela en una muestra aleatoria
   
 --
 
-En el tema anterior, hemos considerado distribuciones de probabilidad para este tipo de datos discretos: la **distribución binomial** es un caso particular de modelos discretos
+<br>
+En el tema anterior, hemos considerado distribuciones de probabilidad para este tipo de datos discretos: la **distribución binomial** es un caso particular de modelos discretos.
 
 --
 
-- Sin embargo, muchos conjuntos de datos provenientes de experimentos consisten en **mediciones continuas**. Una **variable aleatoria continua** puede tomar cualquier valor real dentro de un intérvalo.
-  - Altura en una población
-  - Presión arterial en una población
+<br>
+- Sin embargo, muchos conjuntos de datos provenientes de experimentos consisten en **mediciones continuas**. Una **variable aleatoria continua** puede tomar cualquier valor real dentro de un intervalo:
+  - Altura en una población (cm)
+  - Presión arterial en una población (mmHg)
   
 --
 
+<br>
 La **distribución normal** será un modelo particular para datos continuos.
 
-```{r, fig.height=3, echo = F, fig.align='center'}
+```{r, fig.height=2.6, echo = F, fig.align='center'}
 library(ggplot2)
 
 # ----------------------------
@@ -206,7 +366,7 @@ p_normtemp <- ggplot(normtemp, aes(x = hr)) +
     geom_histogram(aes(y = ..density..), fill = "lightblue3", alpha = 0.6) +  # área bajo la curva
       geom_density( size = 1, color = "lightblue3") +  # área bajo la curva
 
-  labs(title = "Frecuencia cardíaca en reposo",
+  labs(title = "Frecuencia cardíaca en reposo (lpm)",
        x = "",
        y = "Densidad") +
   ggthemes::theme_base(base_size = 13) +
@@ -225,9 +385,9 @@ class: animated, fadeIn
 
 Dos características importantes de las distribuciones continuas:
 
-- El área total bajo la curva de densidad es 1.
+- El **área total bajo la curva de densidad** es **1**.
 
-- La probabilidad de que una variable tome un valor dentro de un intervalo específico es el área bajo la curva sobre ese intervalo.
+- La **probabilidad** de que una variable tome un valor dentro de un intervalo específico es el **área bajo la curva sobre ese intervalo**.
 
 ```{r, echo = F, fig.align='center', fig.height=5, fig.width=9}
 library(dplyr)
@@ -267,6 +427,7 @@ class: animated, fadeIn
 
 Cuando trabajamos con variables aleatorias continuas, la probabilidad se calcula para **intervalos de valores** y no para valores individuales.
 
+<br>
 - La probabilidad de que una variable aleatoria continua $X$ tome un valor individual es **0**.  
   Es decir, $P(X = x) = 0$.
 
@@ -280,7 +441,7 @@ class: animated, fadeIn
 
 ### Curvas de densidad
 
-Una curva suave que representa una distribución de frecuencias se llama **curva de densidad**.
+Una línea suave que representa una distribución de frecuencias se llama **curva de densidad**.
 
 - Las coordenadas verticales de una curva de densidad se representan en una escala llamada escala de densidad.
 - Cuando se utiliza la escala de densidad, las frecuencias relativas se representan como áreas bajo la curva.
@@ -344,7 +505,7 @@ este se aproxima a una curva suave que describe la distribución de los datos.</
 - El área total bajo la curva de densidad es 1.
 
 --
-- Para dos números cualquiera _a_ y _b_, la área bajo la curva de densidad entre  _a_ y _b_ equivale a la proporción de valores _Y_ entre  _a_ y _b_.
+- Para dos números cualquiera _a_ y _b_, el área bajo la curva de densidad entre  _a_ y _b_ equivale a la proporción de valores _Y_ entre  _a_ y _b_.
 
 ---
 class: animated, fadeIn
@@ -407,7 +568,7 @@ class: animated, fadeIn
 
 - Tiene forma de campana simétrica (*bell curve*)
 
--  Aplica el **teorema central del límite**: la distribución de la media de una muestra suficientemente grande tiende a ser normal, aunque la población original no lo sea.
+-  Aplica el **teorema central del límite**: la distribución de la media de una muestra suficientemente grande tiende a ser normal, aunque la población original no lo sea
 
 ```{r, echo = F, fig.align='center', fig.height=5, fig.width=6}
 p4 + labs(subtitle="")
@@ -499,6 +660,7 @@ class: animated, fadeIn
 
 --
 
+<br>
 **Definición**
 
 - Sea $X$ una variable aleatoria continua.  
@@ -570,7 +732,7 @@ class: animated, fadeIn
 - Solo **una distribución normal especial** ha sido tabulada: $N(0,1)$.
 
   - La distribución $N(0,1)$ se llama **distribución normal estándar**.
-    - Se caracteriza por una media $\mu$=0 y una desviación estándard $\sigma$=1
+    - Se caracteriza por una media $\mu$=0 y una desviación estándar $\sigma$=1
 
 
 ---
@@ -1072,6 +1234,7 @@ kable(head(z_table_df, 6), digits = 4, align = "c",
 
 
 ---
+exclude: true
 class: animated, fadeIn
 
 ### Distribución normal en `R`
@@ -1091,9 +1254,9 @@ La función de distribución acumulada permite calcular **probabilidades de rang
 - Probabilidad de menor que un valor: $P(Z < z)$, $P(Z \le z)$ 
 
 ---
-class: animated, fadeIn
+class: animated, fadeIn, R
 
-### Función de distribución acumulada 
+### Función de distribución acumulada normal en `R` 
 
 - Por ejemplo: ¿cuál es la probabilidad de que $Z$ sea **mayor que -0.5** o **menor que 1.42**?  
 
@@ -1101,7 +1264,7 @@ $$P(Z \ge -0.5), \quad \quad \quad P(Z \le 1.42)$$
 
 --
 
-> En R usaríamos `pnorm()`: por defecto computa $P(Z \le z)$, la probabilidad acumulada _hasta_ $z$ para una distribución normal estándard $N(0,1)$:
+> En R usaríamos `pnorm()`: por defecto computa $P(Z \le z)$, la probabilidad acumulada _hasta_ $z$ para una distribución normal estándar $N(0,1)$:
 
 
 ```{r}
@@ -1118,6 +1281,7 @@ pnorm(1.42)        # P(Z < 1.42)
 pnorm(-0.5, lower.tail = F)
 ```
 
+
 ---
 class: animated, fadeIn
 
@@ -1133,12 +1297,14 @@ $$
   - $\mu$ = media (centro de la curva)  
   - $\sigma$ = desviación estándar (anchura de la curva)  
 
+<br>
 - En la **distribución normal estándar** se denota como:  
   - El **0** indica que la curva está centrada en 0.  
   - El **1** indica que la desviación estándar es 1.  
 
 --
 
+<br>
 - Si queremos calcular probabilidades para una **normal con media $\mu$ y desviación estándar $\sigma$ diferentes**, debemos **convertirla a la normal estándar**.
   - Este proceso se conoce como **estandarización**.
 
@@ -1344,7 +1510,7 @@ Este proceso puede describirse con la siguiente regla:
 > entonces $Z \sim N(0,1)$
 
 ---
-class: animated, fadeIn
+class: animated, fadeIn, practica
 
 ### Ejemplo de estandarización
 
@@ -1371,7 +1537,7 @@ $$
 
 
 ---
-class: animated, fadeIn
+class: animated, fadeIn, practica
 
 ### Ejemplo de estandarización
 
@@ -1398,7 +1564,7 @@ $$
 - Usando la simetría de la normal:
 
 $$
-P(Z \le -0.8) = P(Z \ge 0.8) = 0.2219
+P(Z \le -0.8) = P(Z \ge 0.8) = 0.2119
 $$
 ]
 
@@ -1541,7 +1707,7 @@ $$
 Por lo tanto, un bebé en el percentil 99 pesaría aproximadamente **4660 g**.
 
 ---
-class: animated, fadeIn
+class: animated, fadeIn, R
 
 ### Qué peso tendría un bebé que está en el percentil 99? en `R`
 
@@ -1689,7 +1855,7 @@ P(a \le Z \le b) = P(Z \ge a) - P(Z \ge b)
 $$
 
 ---
-class: animated, fadeIn
+class: animated, fadeIn, R
 
 ### Probabilidad entre dos puntos en `R`
 
@@ -1931,7 +2097,7 @@ Si la media es 10 y la SD es 2, el 95% de los valores estarán entre 6 y 14.
 ]
 
 ---
-class: animated, fadeIn
+class: animated, fadeIn, R
 
 ### Función de distribución acumulada de la normal
 

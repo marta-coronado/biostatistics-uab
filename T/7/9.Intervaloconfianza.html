@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>9.IntervaloConfianza.knit</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/rutgers.css" rel="stylesheet" />
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
+    <link href="libs/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v7.0.0/css/all.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+
+class: title-slide, animated, fadeIn
+
+.left-top[
+# Intervalos de confianza
+
+]
+
+.left-bottom[
+.authors[
+**Bioestadística**
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+Marta Coronado ([marta.coronado@uab.cat](mailto:marta.coronado@uab.cat))  
+]
+
+.footer-info[
+**Grado en Genética | Curso 2026/2027**
+]
+]
+
+.right-panel[]
+
+
+
+&lt;style&gt;
+.title-slide {
+  background-image: none;
+}
+
+/* Contenedor teal superior (solo título) */
+.title-slide .left-top {
+  position: absolute;
+  top: 0; left: 0;
+  width: 60%;
+  height: 62%;
+  background-color: #163a3a;
+  color: white;
+  padding: 50px 45px 30px 65px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;   /* ← esto faltaba */
+  align-items: flex-start;  /* ← con column, flex-end alinearía a la derecha; usa flex-start para pegar a la izquierda */
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+
+/* Contenedor blanco inferior (autores, fecha) */
+.title-slide .left-bottom {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 60%;
+  height: 38%;
+  background-color: white;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px 45px 30px 65px;
+  margin: 0;
+}
+
+.title-slide .right-panel {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 41%;
+  background-color: white;
+  background-image: url('img/1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.title-slide h1 {
+  font-size: 1.9em;
+  line-height: 1.25;
+  margin: 0;
+  font-weight: 400;
+}
+
+.title-slide .subtitle {
+  display: block;   /* ← esto es la clave: sin esto, margin-top se ignora */
+  font-size: 2em;
+  font-weight: bold;
+  color: #7ac142;
+  margin-top: -35px;
+  margin-bottom: 15px;
+}
+
+.title-slide .authors {
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.title-slide .authors a {
+  color: #e8846b;
+  text-decoration: none;
+}
+
+.title-slide .footer-info {
+  font-size: 0.9em;
+  color: #444;
+}
+
+.remark-slide-content h2,
+.remark-slide-content h3,
+.remark-slide-content h4,
+.remark-slide-content h5 {
+  margin-top: 1em;
+  margin-bottom: 0.6em;
+}
+
+.remark-slide-content p,
+.remark-slide-content ul,
+.remark-slide-content ol {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.remark-slide-content li {
+  margin-bottom: 0.1em;
+}
+
+.practica::before {
+  content: "\f303";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+
+.R::before {
+  content: "\f4f7";
+  font-family: "Font Awesome 6 Brands";
+  font-weight: 400;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+&lt;/style&gt;
+
+
+
+---
+class: animated, fadeIn
+# Outline
+
+#### **Introducción**
+- Herramientas de inferencia
+
+#### **Variabilidad en las estimas**
+- Distribución muestral de la media
+- Error estándar de la media muestral
+
+#### **Intervalo de confianza**
+- IC bilateral
+- Estimación de la media poblacional a partir de una muestra
+- Precisión de la media según el tamaño de la muestra
+- N necesaria
+- IC unilateral
+- Interpretación correcta del IC
+
+
+&lt;style&gt;
+.title-slide {
+  background-image: url('img/1.png');
+  background-size: 100%;
+}
+&lt;/style&gt;
+
+
+---
+class: animated, fadeIn
+
+## Introducción
+
+&lt;center&gt;
+&lt;img src="img/ranas.png" width=55%&gt;
+&lt;/center&gt;
+
+--
+- **Parámetro poblacional**: valor verdadero que describe una característica de toda la población (por ejemplo: media, `\(\mu\)`).
+- **Estadístico muestral**: valor calculado a partir de una muestra, utilizado para estimar el parámetro poblacional (`\(\bar{x}\)`).
+- **Variabilidad del muestreo**: diferentes muestras aleatorias producen diferentes estimaciones.
+
+---
+class: animated, fadeIn
+
+## Herramientas de inferencia
+
+1. **Estimación puntual**: un único valor calculado a partir de los datos de la muestra que sirve como la mejor aproximación del parámetro desconocido de la población.  
+
+2. **Intervalos de confianza**: permiten cuantificar la incertidumbre asociada a la estimación puntual, dando un rango plausible para el parámetro con un cierto nivel de confianza (ej. 95%).  
+
+3. **Pruebas de hipótesis**: permiten contrastar si una afirmación sobre la población es consistente con los datos muestrales, evaluando la evidencia estadística (ej. ¿es el tamaño medio mayor en una isla que en el continente?).
+
+--
+
+### Idea clave
+
+&gt; La inferencia estadística permite **hacer conclusiones sobre poblaciones a partir de muestras**, incorporando la **incertidumbre** del muestreo.
+
+---
+
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+## Variabilidad en las estimas
+
+---
+class: animated, fadeIn
+
+## Variabilidad en las estimas
+
+- Una manera natural de estimar una característica de una población (**parámetro poblacional**, por ejemplo la media, `\(\mu\)`), es calcular el **estadístico muestral** correspondiente (media muestral, `\(\bar{x}\)`) a partir de una muestra.
+
+--
+
+Ejemplo con la altura de personas adultas:
+
+  - La media de altura en una muestra de 60 adultos es `\(\bar{x}_{altura} = 170cm\)`.
+  - Esta media muestral es una **estimación puntual** de la **media poblacional**, `\(\mu_{altura}\)`.  
+  - Si se tomara una muestra diferente de otros 60 individuos, la nueva media muestral probablemente sería distinta como resultado de la **variación del muestreo**.  
+
+---
+class: animated, fadeIn
+
+## Variabilidad en las estimas
+
+
+``` r
+# Simulamos una "población" de alturas (100000 datos, media=170, sd=10)
+poblacion &lt;- rnorm(100000, mean = 170, sd = 10)
+# Media real de la población
+media_real &lt;- mean(poblacion); media_real
+```
+
+```
+## [1] 169.9396
+```
+
+``` r
+# Muestreos de n = 30
+mean(sample(poblacion, 30)) # una muestra
+```
+
+```
+## [1] 169.02
+```
+
+``` r
+mean(sample(poblacion, 30)) # otra muestra
+```
+
+```
+## [1] 167.6896
+```
+
+Aunque las **estimaciones muestrales** varían de una muestra a otra, la **media poblacional** es un valor fijo.
+
+---
+class: animated, fadeIn
+
+## Variabilidad en las estimas
+
+¿Cómo crees que influye el **tamaño muestral**?
+--
+
+
+``` r
+n &lt;- 500
+mean(sample(poblacion, n))
+```
+
+```
+## [1] 170.1224
+```
+
+``` r
+n &lt;- 50
+mean(sample(poblacion, n))
+```
+
+```
+## [1] 169.8573
+```
+
+``` r
+n &lt;- 5
+mean(sample(poblacion, n))
+```
+
+```
+## [1] 180.7006
+```
+
+
+---
+class: animated, fadeIn
+
+## Variabilidad en las estimas
+
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-3-1.png" alt="" width="864" style="display: block; margin: auto;" /&gt;
+
+&gt; Las estimaciones puntuales son más precisas a medida que aumenta el tamaño muestral.
+
+---
+class: animated, fadeIn
+
+### Distribución muestral de la media
+
+- Cada media muestral `\(\bar{x}\)` puede considerarse como una única observación de una variable aleatoria `\(\bar{X}\)`.  
+- La distribución de `\(\bar{X}\)` se denomina **distribución muestral de la media muestral**, y tiene su propia **media** y **desviación estándar**.  
+
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-4-1.png" alt="" width="648" style="display: block; margin: auto;" /&gt;
+
+- La distribución muestral es la distribución de las estimaciones puntuales basadas en muestras de un tamaño fijo tomadas de una determinada población.
+- **Teorema central del límite**: la distribución de la media muestral se aproximará a una normal.
+
+---
+
+### Teorema central del límite
+
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-5-1.png" alt="" width="720" style="display: block; margin: auto;" /&gt;
+
+- Aunque la población sea sesgada, la distribución de las medias muestrales tiende a ser aproximadamente normal cuando el tamaño de la muestra es suficiente.
+
+---
+class: animated, fadeIn
+
+### Distribución muestral de la media
+
+.pull-left[
+- **Población**: media `\(\mu\)` y desviación estándar `\(\sigma\)`
+- **Muestra**: media `\(\bar{X}\)` 
+  - La distribución de las medias muestrales es **mucho más compacta** que la de la población original. Su desviación estándar (error estándar) es:
+
+$$
+\sigma_{\bar{X}} = \frac{\sigma}{\sqrt{N}}
+$$
+
+donde  `\(n\)` es el tamaño de la muestra.
+
+A medida que aumenta el tamaño muestral, la distribución de `\(\bar{X}\)` se vuelve más estrecha y más concentrada alrededor del valor central `\(\mu\)`.
+
+]
+.pull-right[
+
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-6-1.png" alt="" width="648" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+class: animated, fadeIn
+
+### Distribución muestral de la media
+
+.pull-left[
+- **Población**: media `\(\mu\)` y desviación estándar `\(\sigma\)`
+- **Muestra**: media `\(\bar{X}\)` 
+  - La distribución de las medias muestrales es **mucho más compacta** que la de la población original. Su desviación estándar (error estándar) es:
+
+$$
+\sigma_{\bar{X}} = \frac{\sigma}{\sqrt{N}}
+$$
+
+donde  `\(n\)` es el tamaño de la muestra.
+
+A medida que aumenta el tamaño muestral, la distribución de `\(\bar{X}\)` se vuelve más estrecha y más concentrada alrededor del valor central `\(\mu\)`.
+
+]
+.pull-right[
+
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-7-1.png" alt="" width="648" style="display: block; margin: auto;" /&gt;
+
+]
+---
+class: animated, fadeIn
+
+### Distribución muestral de la media
+
+.pull-left[
+
+Las dos distribuciones siguen una distribución normal con media `\(\mu\)`, pero cambia la desviación estándar:
+
+
+- `\(N(\mu, \sigma)\)`  
+
+- `\(N(\mu, \frac{\sigma}{\sqrt{N}})\)`
+
+]
+.pull-right[
+
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-8-1.png" alt="" width="648" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+class: animated, fadeIn
+
+## Error estándar de la media muestral
+
+El **error estándar (SE)** de la media muestral mide la **variabilidad entre muestras** de `\(\bar{X}\)`,  es decir, el grado en que los valores de las medias muestrales repetidas oscilan alrededor de la **media poblacional**.  
+
+El error estándar teórico de la media muestral se calcula dividiendo la **desviación estándar poblacional** (`\(\sigma\)`)   entre la raíz cuadrada del tamaño de muestra `\(n\)`:  
+$$
+SE = \frac{\sigma}{\sqrt{N}}
+$$
+
+Dado que la desviación estándar poblacional `\(\sigma\)` suele ser desconocida, se utiliza con frecuencia la **desviación estándar muestral** `\(s\)` como estimador de `\(\sigma\)`.  
+
+$$
+SE = \frac{s}{\sqrt{N}}
+$$
+
+
+De este modo, `\(s\)` constituye una buena aproximación en la práctica para calcular el error estándar.
+
+
+---
+class: animated, fadeIn
+
+### Resumen
+
+- La **media** y la **desviación estándar poblacional** se denotan por `\(\mu\)` y `\(\sigma\)`.  
+- La **media** y la **desviación estándar muestral** se denotan por `\(\bar{x}\)` y `\(s\)`.  
+- Una **variable aleatoria** `\(X\)` representa los valores posibles de una característica de la población; las **medias muestrales** `\(\bar{X}\)` forman la **distribución muestral de la media** si extrajéramos repetidamente múltiples muestras de tamaño `\(n\)`.  
+- La media de la distribución muestral es igual a la **media poblacional**:  
+$$
+\mu_{\bar{X}} = E(\bar{X}) = \mu
+$$
+- La **desviación estándar de la distribución muestral**, denominada **error estándar (SE)**, mide la **variabilidad de las medias muestrales**:  
+$$
+\sigma_{\bar{X}} = SE = \frac{\sigma}{\sqrt{N}}
+$$
+- Como `\(\sigma\)` suele ser desconocida, se utiliza la **desviación estándar muestral** `\(s\)` para estimar el SE:  
+$$
+SE \approx \frac{s}{\sqrt{N}}
+$$
+- **Cuanto mayor es el tamaño de la muestra**, más **pequeño y preciso** será el SE.  
+- El SE es **una estimación confiable** de la dispersión teórica de `\(\bar{X}\)` cuando `\(n \ge 30\)` y la población no está muy sesgada.
+
+
+---
+class: animated, fadeIn
+
+### Ejemplo 1: Duración de las bombillas 💡
+
+Sabemos que la duración media de las bombillas de una determinada marca sigue una distribución normal:  
+
+$$
+X \sim N(\mu = 1500, \sigma = 160)
+$$
+
+a) Queremos calcular la probabilidad de que una bombilla al azar funcione más de 1524h.
+
+b) Queremos calcular la probabilidad de que una muestra de 100 bombillas funcione en promedio más de 1524h.
+
+---
+class: animated, fadeIn
+
+### Ejemplo 1: Duración de las bombillas 💡
+
+.pull-left[
+**a) Una bombilla al azar**
+- Queremos calcular la probabilidad de que funcione más de 1524h:  
+$$
+P(X &gt; 1524)
+$$
+
+- Calculamos el valor `\(z\)`:  
+$$
+z = \frac{1524 - 1500}{160} = 0.15
+$$
+- Miramos la tabla de la distribución normal:  
+$$
+P(Z&gt;0.15) \approx 0.4404
+$$
+
+]
+.pull-right[
+&lt;img src="9.IntervaloConfianza_files/figure-html/ggplot-una-bombilla-1.png" alt="" width="504" style="display: block; margin: auto;" /&gt;
+]
+---
+
+class: animated, fadeIn
+
+### Ejemplo 1: Duración de las bombillas 💡
+
+.pull-left[
+
+**b) Muestra de 100 bombillas**
+
+La media de la muestra se distribuye como:  
+
+$$
+\bar{X} \sim N\left(\mu = 1500, \frac{\sigma}{\sqrt{N}} = \frac{160}{\sqrt{100}} = 16 \right)
+$$
+
+Queremos calcular la probabilidad de que la **media de la muestra** sea superior a 1524 horas:  
+
+- Calculamos el valor `\(z\)`:
+$$
+Z = \frac{1524 - 1500}{16} = 1.5
+$$
+
+- Probabilidad:
+$$
+P(\bar{X} &gt; 1524) = P(Z&gt;1.5) \approx 0.0668
+$$
+
+]
+
+.pull-right[
+
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-9-1.png" alt="" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+
+class: animated, fadeIn, practica
+
+### Ejemplo 2: Muestra de lubinas (n=20) 🐟
+
+.pull-left[
+Se conoce que el peso de las lubinas producidas en una piscifactoría se puede aproximar por:  
+
+$$
+X \sim N(\mu = 600, \sigma = 100)
+$$
+
+Considerando una muestra aleatoria simple de tamaño `\(n = 20\)`, queremos calcular la probabilidad de que el **peso medio** sea inferior a 550g.
+
+]
+
+---
+
+class: animated, fadeIn, practica
+
+### Ejemplo 2: Muestra de lubinas (n=20) 🐟
+
+.pull-left[
+La media de la muestra se distribuye como:  
+
+$$
+\bar{X} \sim N\left(\mu = 600, \frac{\sigma}{\sqrt{N}} = \frac{100}{\sqrt{20}} \approx 22.36 \right)
+$$
+
+Queremos calcular:
+
+$$
+P(\bar{X} &lt; 550)
+$$
+
+- Calculamos el valor `\(z\)`:
+$$
+Z = \frac{550 - 600}{22.36} \approx -2.236
+$$
+
+- Probabilidad:
+$$
+P(Z &lt; -2.236) \approx 0.0127
+$$
+]
+
+.pull-right[
+
+
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-10-1.png" alt="" width="504" style="display: block; margin: auto;" /&gt;&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-10-2.png" alt="" width="504" style="display: block; margin: auto;" /&gt;
+
+
+]
+
+---
+
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
+
+## Intervalo de confianza
+
+---
+
+class: animated, fadeIn
+
+## Distribución normal
+
+
+.pull-left[
+Sabemos calcular todo esto con la tabla de la distribución normal:
+
+- Área por debajo de un valor positivo
+- Área por encima de un valor positivo
+- Área por debajo de un valor negativo
+- Área por encima de un valor negativo
+- Área entre dos valores
+]
+.pull-right[
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-11-1.png" alt="" width="720" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: animated, fadeIn
+
+## Intervalo de confianza
+
+Un **intervalo de confianza (IC)** es un rango de valores **simétrico respecto a la media** que, con un determinado **nivel de confianza**, se utiliza para **estimar un parámetro poblacional desconocido**.
+
+- Permite cuantificar la **incertidumbre** de la estimación de la media.  
+
+--
+
+- Se suele expresar como:  
+
+$$
+CI = \bar{x} \pm z \times \frac{s}{\sqrt{N}}
+$$
+donde:
+  - `\(\bar{x}\)` = media muestral  
+  - `\(z\)` = valor crítico según el nivel de confianza  
+  - `\(s/\sqrt{N}\)` = error estándar de la media  
+
+---
+class: animated, fadeIn, center
+
+&lt;center&gt;
+&lt;img src="img/2.png"&gt;
+
+---
+class: animated, fadeIn, center
+
+&lt;center&gt;
+&lt;img src="img/3.png"&gt;
+
+---
+class: animated, fadeIn, center
+
+&lt;center&gt;
+&lt;img src="img/4.png"&gt;
+
+---
+class: animated, fadeIn, center
+
+&lt;center&gt;
+&lt;img src="img/5.png"&gt;
+
+---
+class: animated, fadeIn, center
+
+&lt;center&gt;
+&lt;img src="img/6.png"&gt;
+
+---
+class: animated, fadeIn, center
+
+&lt;center&gt;
+&lt;img src="img/7.png"&gt;
+
+---
+class: animated, fadeIn, center
+
+&lt;center&gt;
+&lt;img src="img/8.png"&gt;
+
+---
+class: animated, fadeIn, center
+
+&lt;center&gt;
+&lt;img src="img/9.png"&gt;
+
+---
+class: animated, fadeIn, center
+
+&lt;center&gt;
+&lt;img src="img/10.png"&gt;
+
+---
+class: animated, fadeIn, center
+
+&lt;center&gt;
+&lt;img src="img/11.png"&gt;
+
+---
+class: animated, fadeIn, center
+
+&lt;center&gt;
+&lt;img src="img/12.png"&gt;
+
+---
+class: animated, fadeIn, center
+
+&lt;center&gt;
+&lt;img src="img/13.png"&gt;
+
+---
+class: animated, fadeIn, center
+
+&lt;center&gt;
+&lt;img src="img/14.png"&gt;
+
+---
+class: animated, fadeIn, center
+
+&lt;center&gt;
+&lt;img src="img/15.png"&gt;
+
+---
+class: animated, fadeIn
+
+## Intervalo de confianza (bilateral, *two-tailed*)
+
+.pull-left[
+Mientras que una **estimación puntual** consiste en un único valor, una **estimación por intervalo** proporciona un **rango plausible** de valores para un parámetro poblacional.  
+
+Cuando estimamos una media poblacional `\(\mu\)`, un intervalo de confianza tiene la forma general:
+
+$$
+(\bar{x} - m, \bar{x} + m) = \bar{x} \pm m
+$$
+
+donde `\(m\)` es el **margen de error**.  
+
+Se llaman **intervalos de confianza de dos lados** porque proporcionan tanto el **límite inferior** (`\(\bar{x} - m\)`) como el **límite superior** (`\(\bar{x} + m\)`).
+
+- El área **fuera del intervalo** se llama `\(\alpha\)`.  
+- Por eso, los valores críticos se denotan como `\(-z_{\alpha/2}\)` y `\(z_{\alpha/2}\)`.
+]
+
+.pull-right[
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-12-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
+
+El margen de error `\(m\)` se define como:
+
+$$
+m=z_{\alpha/2}\times\frac{s}{\sqrt{N}}
+$$
+
+]
+
+---
+class: animated, fadeIn
+
+### Cálculo del IC
+
+.pull-left[
+Queremos saber **entre qué dos alturas se encuentra el 95% de la población** en una distribución normal.  
+
+- Nivel de confianza deseado: 95% 
+- Área fuera del intervalo: `\(\alpha = 1 - 0.95 = 0.05\)`  
+- Como es simétrico: 2.5% en la cola inferior y 2.5% en la superior.
+]
+
+.pull-right[
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-13-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: animated, fadeIn
+
+### Cálculo del IC
+
+.pull-left[
+Queremos saber **entre qué dos alturas se encuentra el 95% de la población** en una distribución normal.  
+
+- Nivel de confianza deseado: 95% 
+- Área fuera del intervalo: `\(\alpha = 1 - 0.95 = 0.05\)`  
+- Como es simétrico: 2.5% en la cola inferior y 2.5% en la superior.
+
+
+#### Cómo usar la tabla Z (N(0,1))
+
+1. La **tabla Z** nos da el área acumulada **por debajo de un valor Z**.  
+2. No nos da directamente el valor que deja un porcentaje **entre dos límites**, pero usando simetría podemos calcularlo.  
+
+]
+
+.pull-right[
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-14-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+class: animated, fadeIn
+
+### Cálculo del IC
+
+  - Queremos que el área entre los dos valores centrales sea 0.95 → cada cola tiene 0.025
+  
+  - El área acumulada hasta el límite superior será:  
+
+$$
+0.95 + \frac{0.05}{2} = 0.975
+$$
+
+- Buscamos en la tabla `\(Z\)` el valor que deja **0.975 debajo de** `\(z\)`, ese será el `\(z\)` **superior**, y el inferior será `\(-z\)`.
+
+
+.pull-left[
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-15-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
+
+]
+
+--
+
+.pull-right[
+&lt;table class="table" style="font-size: 14px; color: black; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption style="font-size: initial !important;"&gt;Tabla: Probabilidades acumuladas P(Z ≤ z)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; Z &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.00 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.01 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.02 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.03 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.04 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.05 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.06 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.07 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.08 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 1.5 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9332 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9345 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9357 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9370 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9382 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9394 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9406 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9418 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9429 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 1.6 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9452 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9463 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9474 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9484 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9495 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9505 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9515 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9525 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9535 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 1.7 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9554 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9564 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9573 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9582 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9591 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9599 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9608 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9616 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9625 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 1.8 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9641 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9649 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9656 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9664 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9671 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9678 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9686 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9693 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9699 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 1.9 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9713 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9719 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9726 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9732 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9738 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9744 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9750 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9756 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9761 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 2.0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9772 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9778 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9783 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9788 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9793 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9798 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9803 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9808 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9812 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&gt; El valor `\(z\)` es 1.96.
+]
+
+---
+class: animated, fadeIn
+
+### Cálculo del IC
+
+El intervalo de confianza del 95% está entre:
+
+$$
+z_{0.025} = -1.96 
+$$
+
+$$
+z_{0.975} = 1.96
+$$
+
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-17-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
+
+--
+
+$$
+IC_{95\%} = \bar{x} \pm 1.96 \cdot \frac{s}{\sqrt{N}}
+$$
+
+---
+class: animated, fadeIn
+
+### Cálculo del IC
+
+.pull-left[
+- Nivel de confianza: 90% → `\(\alpha = 0.10\)`  
+- Distribuido simétricamente: 5% en cada cola  
+- Queremos `\(z\)` tal que el **área acumulada a la izquierda del límite superior = 0.90 + 0.05 = 0.95**  
+- De la tabla Z: `\(z \approx 1.645\)`  
+- Intervalo de confianza:  
+$$
+IC_{90\%} = \bar{x} \pm 1.645 \cdot \frac{s}{\sqrt{N}}
+$$
+]
+.pull-right[
+
+
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-18-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
+
+]
+
+&lt;table class="table" style="font-size: 14px; color: black; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption style="font-size: initial !important;"&gt;Tabla: Probabilidades acumuladas P(Z ≤ z)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; Z &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.00 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.01 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.02 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.03 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.04 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.05 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.06 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.07 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.08 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.09 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 1.5 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9332 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9345 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9357 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9370 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9382 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9394 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9406 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9418 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9429 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9441 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 1.6 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9452 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9463 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9474 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9484 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9495 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9505 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9515 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9525 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9535 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9545 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 1.7 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9554 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9564 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9573 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9582 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9591 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9599 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9608 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9616 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9625 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9633 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 1.8 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9641 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9649 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9656 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9664 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9671 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9678 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9686 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9693 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9699 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9706 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 1.9 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9713 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9719 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9726 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9732 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9738 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9744 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9750 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9756 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9761 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9767 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 2.0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9772 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9778 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9783 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9788 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9793 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9798 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9803 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9808 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9812 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9817 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+class: animated, fadeIn
+
+
+## Ejemplo: duración de los neumáticos 🚗
+
+La duración (en km) de los neumáticos de cierta marca se ajusta a una distribución normal:
+
+$$
+X \sim N(\mu = 48000, \sigma = 3000)
+$$
+
+&gt; ¿Cuál es el intervalo dentro del cual se encuentra, con un 80% de confianza, la media de duración de los neumáticos de esta marca?
+
+--
+
+#### Paso 1: Determinar `\(\alpha\)` y `\(z\)` crítico
+
+- Nivel de confianza: 80% → `\(\alpha = 1 - 0.8 = 0.2\)`  
+- Área en cada cola: 0.1  
+- Buscamos `\(z\)` tal que **área acumulada a la izquierda = 0.8 + 0.1 = 0.9**  
+
+
+&lt;table class="table" style="font-size: 14px; color: black; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption style="font-size: initial !important;"&gt;Tabla: Probabilidades acumuladas P(Z ≤ z)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; Z &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.00 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.01 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.02 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.03 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.04 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.05 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.06 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.07 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.08 &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 0.09 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 1.0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8413 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8438 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8461 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8485 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8508 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8531 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8554 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8577 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8599 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8621 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 1.1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8643 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8665 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8686 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8708 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8729 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8749 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8770 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8790 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8810 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8830 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 1.2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8849 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8869 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8888 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8907 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8925 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8944 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8962 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8980 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.8997 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9015 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;font-weight: bold;background-color: rgba(230, 242, 255, 1) !important;"&gt; 1.3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9032 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9049 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9066 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9082 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9099 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9115 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9131 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9147 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9162 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0.9177 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;center&gt;
+De la tabla Z:  `\(z \approx 1.28\)`
+
+---
+class: animated, fadeIn
+
+
+## Ejemplo: duración de los neumáticos 🚗
+
+#### Paso 2: Convertir a valores de la población
+
+Fórmula de conversión de `\(Z\)` a `\(X\)`:  
+
+$$
+Z=\frac{X-\mu}{\sigma}, \quad
+X = \mu + z \times \sigma
+$$
+
+- Límite inferior:  
+$$
+x_{\text{inf}} = \mu + (-1.28) \cdot \sigma = 48000 - 1.28 \cdot 3000 \approx 44160
+$$
+
+- Límite superior:  
+$$
+x_{\text{sup}} = \mu + 1.28 \cdot \sigma = 48000 + 1.28 \cdot 3000 \approx 51840
+$$
+
+**Intervalo de confianza 80%:**  
+$$
+IC_{80\%} = (44160, 51840)
+$$
+
+&gt; Con un **80% de confianza**, la media de duración de los neumáticos se encuentra entre 44,160 km y 51,840 km.
+
+---
+class: animated, fadeIn
+
+
+## Ejemplo: duración de los neumáticos 🚗
+
+#### Visualización
+
+&lt;img src="9.IntervaloConfianza_files/figure-html/ic-neumaticos-1.png" alt="" width="648" style="display: block; margin: auto;" /&gt;
+---
+
+class: animated, fadeIn
+
+
+### Estimación de la media poblacional a partir de una muestra
+
+Supongamos que queremos estimar la **estatura media en Catalunya (`\(\mu\)`)**.
+
+- Tomamos una **muestra aleatoria** de `\(N = 100\)` personas y obtenemos una **media muestral**: `\(\bar{x} = 169 \text{cm}\)`  
+
+- ¿Podemos afirmar que la media poblacional `\(\mu\)` es igual a 169 cm?  
+
+--
+
+&gt; No. Solo con una muestra no podemos afirmar el valor exacto de `\(\mu\)`.  
+
+Lo que sí podemos hacer es construir un **intervalo de confianza** alrededor de la media muestral dentro del cual **esperamos que se encuentre `\(\mu\)` con cierta seguridad**.
+
+
+---
+
+class: animated, fadeIn
+
+
+### Estimación de la media poblacional a partir de una muestra
+
+A partir de la **media muestral `\(\bar{x}\)`** y el **error estándar**, podemos calcular:
+
+$$
+IC = (\bar{X} - \text{error}, \bar{X} + \text{error})
+$$
+
+donde el **error** se calcula como:
+
+$$
+\text{error} = z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{N}}
+$$
+
+- `\(z_{\alpha/2}\)`: valor crítico según el nivel de confianza deseado  
+- `\(\sigma\)`: desviación estándar poblacional  
+- `\(N\)`: tamaño de la muestra  
+
+&lt;br&gt;
+Por lo tanto, los límites del IC son:
+
+&lt;br&gt;
+
+`\(x_1 = \bar{X} - z_{\alpha/2} \frac{\sigma}{\sqrt{N}}, \quad x_2 = \bar{X} + z_{\alpha/2} \frac{\sigma}{\sqrt{N}}\)`
+
+
+---
+class: animated, fadeIn
+
+
+### Estimación de la media poblacional a partir de una muestra
+
+
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-21-1.png" alt="" width="648" style="display: block; margin: auto;" /&gt;
+---
+
+class: animated, fadeIn
+
+## Precisión de la media según el tamaño de la muestra
+
+- Cuanto mayor sea `\(N\)`, **más precisa** será la media muestral `\(\bar{X}\)`
+
+- El **error estándar** disminuye:
+
+$$
+\text{error} = z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{N}}
+$$
+
+- IC más estrecho → media poblacional más centrada
+
+---
+class: animated, fadeIn
+
+### Ejemplo: Tiempo diario dedicado a actividades deportivas 🤸
+
+- Distribución poblacional: `\(X \sim N(\mu, \sigma=20 \text{ min})\)`
+
+- Muestra aleatoria simple: `\(N = 250\)`
+
+- Media muestral: `\(\bar{x} = 90 \text{ min}\)`
+
+- Queremos **IC del 90%** para `\(\mu\)`
+
+--
+
+#### Cálculo del IC
+
+- Nivel de confianza: 90% → `\(\alpha = 0.10\)`  
+
+- `\(z\)` crítico: `\(z_{0.95} = 1.645\)`  
+
+$$
+\text{error} = z \times \frac{\sigma}{\sqrt{N}} = 1.645 \times \frac{20}{\sqrt{250}} \approx 2.08
+$$
+
+$$
+IC_{90\%} = (\bar{x} - \text{error}, \bar{x} + \text{error}) = (90 - 2.08, 90 + 2.08) \approx (87.92, 92.08)
+$$
+
+
+&gt; Con un 90% de certeza, la **media poblacional (`\(\mu\)`)** está entre **87.92 y 92.08 minutos diarios**.
+
+
+---
+class: animated, fadeIn
+
+### Ejemplo: Tiempo diario dedicado a actividades deportivas 🤸
+
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-22-1.png" alt="" width="648" style="display: block; margin: auto;" /&gt;
+
+---
+
+class: animated, fadeIn
+
+## Permitir un error máximo
+
+Queremos estimar la media poblacional `\(\mu\)` de **tiempo diario dedicado a deporte** con un **error máximo permitido** de 1 minuto y un **nivel de confianza del 90%**.
+
+- Desviación estándar poblacional conocida: `\(\sigma = 20\)` min  
+
+- Nivel de confianza: 90% → `\(z_{\alpha/2} = 1.645\)`  
+
+- **Error máximo permitido**: `\(E = 1 min.\)` 
+
+--
+
+#### Fórmula para el tamaño de la muestra
+
+$$
+\text{error} = z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{N}} \le E
+$$
+
+De donde despejamos `\(N\)`:
+
+$$
+\sqrt{N} \ge \frac{z_{\alpha/2} \times \sigma}{E} 
+$$
+
+$$
+\implies N \ge \left(\frac{z_{\alpha/2} \times \sigma}{E}\right)^2
+$$
+---
+
+class: animated, fadeIn
+
+## Permitir un error máximo
+
+$$
+N \ge \left(\frac{1.645 \times 20}{1}\right)^2
+$$
+
+$$
+N \ge 1082.41
+$$
+
+&gt; Por lo tanto, necesitamos **al menos 1083 individuos** (redondeando hacia arriba) para garantizar que el error máximo en la estimación de `\(\mu\)` sea menor a 1 minuto con un 90% de confianza.
+
+---
+
+class: animated, fadeIn
+
+## Permitir un error máximo
+
+- Fórmula general:
+
+$$
+N = \left(\frac{z_{\alpha/2} \times \sigma}{\text{error deseado}}\right)^2
+$$
+
+- Siempre redondear hacia arriba para asegurar que se cumple la condición.
+
+- Cuanto mayor sea `\(N\)`, más precisa será la estimación de la media poblacional.
+
+---
+class: animated, fadeIn
+
+## Intervalos de confianza unilaterales (*one-sided*)
+
+- Proporcionan **un límite inferior o un límite superior**, pero **no ambos**.
+
+- Forma general:  
+
+$$
+(-\infty, \bar{x} + \text{error}) \quad \text{o} \quad (\bar{x} - \text{error}, \infty)
+$$
+
+- Se utiliza **el error estándar (SE)** y un valor `\(z\)` crítico, pero el `\(z\)` **es distinto** que para intervalos bilaterales.  
+
+--
+
+#### Ejemplo conceptual
+
+Queremos construir un IC del **95%** de manera que podamos afirmar que, basándonos en la muestra, la media poblacional `\(\mu\)` se encuentre **por debajo de** `\(\bar{x} + \text{error}\)`.  
+
+- Calculamos `\(z\)` tal que el área en la **cola derecha = 0.05**  
+
+- Intervalo de confianza superior: 
+
+$$
+(-\infty, \bar{x} + 1.645 \times SE)
+$$
+
+---
+
+class: animated, fadeIn
+
+## Intervalos de confianza unilaterales (*one-sided*)
+
+**Datos:**  
+- Muestra de 60 adultos  
+- Media muestral: `\(\bar{x} = 77\)`  
+- Error estándar: `\(SE = 2.87\)`
+
+**Cálculo del límite inferior de un IC de 95% (*one-sided*):**  
+
+$$
+\text{límite inferior} = \bar{x} - (1.645 \times SE) = 77 - (1.645 \times 2.87) \approx 72.28
+$$
+
+**Intervalo de confianza:**  
+$$
+(72.28, \infty)
+$$
+
+&gt; Con un 95% de confianza, el peso promedio de los adultos en EEUU se encuentra por encima de 72.28kg.
+
+---
+class: animated, fadeIn
+
+## Interpretación correcta de un IC
+
+- La interpretación correcta de un IC XX% es: 
+
+&gt; **"Estamos XX% seguros de que el parámetro poblacional se encuentra dentro del intervalo."  **
+
+- No se debe decir que hay XX% de probabilidad de que el parámetro esté dentro del intervalo.
+
+- El nivel de confianza refleja la **fiabilidad del procedimiento**, es decir, que si repitiéramos el procedimiento muchas veces bajo los mismos supuestos, el IC contendría el parámetro verdadero XX% de las veces.  
+
+
+
+&lt;img src="9.IntervaloConfianza_files/figure-html/unnamed-chunk-23-1.png" alt="" width="432" style="display: block; margin: auto;" /&gt;
+
+---
+class: animated, fadeIn
+
+## Contacto
+
+&lt;div style="margin-top: 20vh; text-align:center;"&gt;
+
+| Marta Coronado Zamora | David Castellano | 
+|:-:|:-:|
+| &lt;a href="mailto:marta.coronado@uab.cat"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt; marta.coronado@uab.cat&lt;/a&gt; | &lt;a href="mailto:david.castellano@uab.cat"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt;&amp;nbsp; david.castellano@uab.cat&lt;/a&gt; | 
+| &lt;a href="https://bsky.app/profile/geneticament.bsky.social"&gt;&lt;i class="fab fa-bluesky fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @geneticament.bsky.social&lt;/a&gt; |                 &lt;a href="https://bsky.app/profile/castellanoed.bsky.social"&gt;&lt;i class="fab fa-bluesky fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @castellanoed.bsky.social&lt;/a&gt; |
+| &lt;a href="https://www.uab.cat"&gt;&lt;i class="fa fa-map-marker fa-fw"&gt;&lt;/i&gt;&amp;nbsp; Universitat Autònoma de Barcelona&lt;/a&gt; |    &lt;a href="https://gutengroup.mcb.arizona.edu/"&gt; &lt;i class="fa fa-map-marker fa-fw"&gt;&lt;/i&gt;&amp;nbsp; University of Arizona&lt;/a&gt; |
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
