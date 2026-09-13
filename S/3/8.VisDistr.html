@@ -70,7 +70,7 @@ class: animated, fadeIn
 
 - **Histograma**.  Cuando se dispone de una muestra suficientemente grande, el histograma permite aproximar la forma de la distribución de probabilidad subyacente. 
 
-&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-1-1.png" width="396" style="display: block; margin: auto;" /&gt;
+&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-1-1.png" alt="" width="396" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -80,7 +80,7 @@ class: animated, fadeIn
 
 - **Histograma**.  Cuando se dispone de una muestra suficientemente grande, el histograma permite aproximar la forma de la distribución de probabilidad subyacente. 
 
-&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-2-1.png" width="396" style="display: block; margin: auto;" /&gt;
+&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-2-1.png" alt="" width="396" style="display: block; margin: auto;" /&gt;
 
 --
 - Podríamos mirar si sigue una distribución normal (*gaussiana*) 
@@ -95,7 +95,7 @@ class: animated, fadeIn
 
 - **Distribucion acumulativa empírica**. Para cada valor, indica la probabilidad de que una observación sea menor o igual a ese valor.
 
-&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-3-1.png" width="396" style="display: block; margin: auto;" /&gt;
+&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-3-1.png" alt="" width="396" style="display: block; margin: auto;" /&gt;
 
 --
 - La distribución empírica se calcula a partir de los datos y muestra pequeños "saltos" en cada observación.
@@ -108,7 +108,7 @@ class: animated, fadeIn
 
 - **Distribución acumulativa teórica**: Para cada valor, muestra la probabilidad que esperaríamos de que una observación sea menor o igual a ese valor.
 
-&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-4-1.png" width="396" style="display: block; margin: auto;" /&gt;
+&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-4-1.png" alt="" width="396" style="display: block; margin: auto;" /&gt;
 
 
 - Al usar este tipo de gráficos para comparar distribuciones, es más fácil identificar desviaciones respecto a lo esperado.
@@ -121,7 +121,7 @@ class: animated, fadeIn
 
 - **QQ-plot**: gráfico que compara los cuantiles de un conjunto de datos observados con los cuantiles de una distribución teórica. Evaluar visualmente si los datos siguen una distribución específica. Por defecto, asume la distribución normal estándard.
 
-&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-5-1.png" width="396" style="display: block; margin: auto;" /&gt;
+&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-5-1.png" alt="" width="396" style="display: block; margin: auto;" /&gt;
 
 - El cuantil 25 indica el valor `\(k\)` por debajo del cual se encuentra el 25% de los datos.
 - Cuando la distribución teórica y los datos muestreados son similares, los puntos del QQ-plot se alinean sobre la línea de referencia.
@@ -160,7 +160,7 @@ ggplot(data, aes(sample = frog_size)) +
 ```
 ]
 .pull-right[
-&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-7-1.png" width="432" style="display: block; margin: auto;" /&gt;
+&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-7-1.png" alt="" width="432" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -178,7 +178,7 @@ class: animated, fadeIn
                          mean = 20, sd = 2)
   ```
   
-  &lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-9-1.png" width="216" style="display: block; margin: auto;" /&gt;
+  &lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-9-1.png" alt="" width="216" style="display: block; margin: auto;" /&gt;
   
   
   - Datos distribuidos de manera normal
@@ -195,7 +195,7 @@ class: animated, fadeIn
                      rate = 0.5) 
   ```
   
-  &lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-11-1.png" width="216" style="display: block; margin: auto;" /&gt;
+  &lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-11-1.png" alt="" width="216" style="display: block; margin: auto;" /&gt;
   
   - Datos no distribuidos de manera normal
   
@@ -215,7 +215,7 @@ class: animated, fadeIn
                          mean = 20, sd = 2)
 ```
   
-&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-13-1.png" width="216" style="display: block; margin: auto;" /&gt;
+&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-13-1.png" alt="" width="216" style="display: block; margin: auto;" /&gt;
   
   
 - Desviaciones aparentes de la normalidad pueden ser debidas a un tamaño de muestra muy pequeño.
@@ -232,7 +232,7 @@ vector_exp &lt;- rnorm(n = 5000,
                          mean = 20, sd = 2)
 ```
 
-&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-15-1.png" width="216" style="display: block; margin: auto;" /&gt;
+&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-15-1.png" alt="" width="216" style="display: block; margin: auto;" /&gt;
   
 - A tamaños más grandes, apenas hay desviaciones.
   
