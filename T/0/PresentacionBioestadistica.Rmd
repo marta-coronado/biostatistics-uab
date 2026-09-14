@@ -301,6 +301,8 @@ class: animated, fadeIn
 <center><img src="img/airlab-cal.png" width=70%></img>
 </center>
 
+<i class="fa fa-warning fa-fw"></i>  16 de octubre de 9-11h y 11-13h: ensamblaje del dispositivo en el [DissenyLab](https://webs.uab.cat/openlabs/)<br>:  *Salud ambiental* + 4 alumnos Genética 
+
 <i class="fa fa-warning fa-fw"></i>  22 de octubre de 15-16h: clase conjunta con *Salud ambiental*<br>
 <i class="fa fa-info-circle fa-fw"></i> Clase práctica analizando datos (práctica 3 o 4)
 
@@ -814,7 +816,7 @@ figura_final
 ```
 
 
----
+???
 exclude: true
 class: animated, fadeIn
 
@@ -834,8 +836,6 @@ class: animated, fadeIn
 ]
 
 
----
-exclude: true
 class: animated, fadeIn
 
 ## Muestreo aleatorio en R
@@ -846,7 +846,7 @@ class: animated, fadeIn
 
 3. Usar la función `sample()` para crear una **muestra aleatoria**  
 
---
+
 
 ```{r, echo=TRUE}
 # Hacemos que sea reproducible
@@ -857,7 +857,7 @@ pop <- c(1:15)
 pop
 ```
 
---
+
 
 ```{r, echo=TRUE}
 # Obtenemos una muestra aleatoria
