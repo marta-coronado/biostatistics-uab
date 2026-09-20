@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title> </title>
+    <title>8.VisDistr.knit</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
     <script src="libs/header-attrs/header-attrs.js"></script>
@@ -18,22 +18,168 @@
   </head>
   <body>
     <textarea id="source">
-class: center, middle, inverse, title-slide
 
-.title[
-# <br>
+
+
+
+
+
+
+
+
+class: title-slide, animated, fadeIn
+
+.left-top[
+# Seminarios de
+.subtitle[Bioestadística]
+
 ]
-.author[
-### 
+
+.left-bottom[
+.authors[
+**Seminario 3 | Herramientas para visualizar distribuciones**
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+Marta Coronado ([marta.coronado@uab.cat](mailto:marta.coronado@uab.cat))  
 ]
+
+.footer-info[
+**Grado en Genética | Curso 2026/2027**
+]
+]
+
+.right-panel[]
+
+
+
+&lt;style&gt;
+.title-slide {
+  background-image: none;
+}
+
+/* Contenedor teal superior (solo título) */
+.title-slide .left-top {
+  position: absolute;
+  top: 0; left: 0;
+  width: 60%;
+  height: 62%;
+  background-color: #163a3a;
+  color: white;
+  padding: 50px 45px 30px 65px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;   /* ← esto faltaba */
+  align-items: flex-start;  /* ← con column, flex-end alinearía a la derecha; usa flex-start para pegar a la izquierda */
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+
+/* Contenedor blanco inferior (autores, fecha) */
+.title-slide .left-bottom {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 60%;
+  height: 38%;
+  background-color: white;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px 45px 30px 65px;
+  margin: 0;
+}
+
+.title-slide .right-panel {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 41%;
+  background-color: white;
+  background-image: url('img/1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.title-slide h1 {
+  font-size: 1.9em;
+  line-height: 1.25;
+  margin: 0;
+  font-weight: 400;
+}
+
+.title-slide .subtitle {
+  display: block;   /* ← esto es la clave: sin esto, margin-top se ignora */
+  font-size: 2em;
+  font-weight: bold;
+  color: #7ac142;
+  margin-top: -35px;
+  margin-bottom: 15px;
+}
+
+.title-slide .authors {
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.title-slide .authors a {
+  color: #e8846b;
+  text-decoration: none;
+}
+
+.title-slide .footer-info {
+  font-size: 0.9em;
+  color: #444;
+}
+
+.remark-slide-content h2,
+.remark-slide-content h3,
+.remark-slide-content h4,
+.remark-slide-content h5 {
+  margin-top: 1em;
+  margin-bottom: 0.6em;
+}
+
+.remark-slide-content p,
+.remark-slide-content ul,
+.remark-slide-content ol {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.remark-slide-content li {
+  margin-bottom: 0.1em;
+}
+
+.practica::before {
+  content: "\f303";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+
+.R::before {
+  content: "\f4f7";
+  font-family: "Font Awesome 6 Brands";
+  font-weight: 400;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+
+&lt;/style&gt;
+
 
 ---
-
-
-
-
-
-
 
 
 class: animated, fadeIn
@@ -84,7 +230,7 @@ class: animated, fadeIn
 
 --
 - Podríamos mirar si sigue una distribución normal (*gaussiana*) 
-- El problema es que muchas distribuciones siguen una forma de campana (normal)
+- El problema es que muchas distribuciones tienen forma de campana **sin ser normales**
 - Una solución es mirar la **distribución acumulativa**
 
 
@@ -93,7 +239,7 @@ class: animated, fadeIn
 
 ### Herramientas para comparar distribuciones visualmente
 
-- **Distribucion acumulativa empírica**. Para cada valor, indica la probabilidad de que una observación sea menor o igual a ese valor.
+- **Distribución acumulativa empírica**. Para cada valor, indica la probabilidad de que una observación sea menor o igual a ese valor.
 
 &lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-3-1.png" alt="" width="396" style="display: block; margin: auto;" /&gt;
 
@@ -106,10 +252,11 @@ class: animated, fadeIn
 
 ### Herramientas para comparar distribuciones visualmente
 
-- **Distribución acumulativa teórica**: Para cada valor, muestra la probabilidad que esperaríamos de que una observación sea menor o igual a ese valor.
+- **Distribución acumulativa teórica**: Para cada valor, muestra la probabilidad esperada de que una observación sea menor o igual a ese valor.
 
 &lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-4-1.png" alt="" width="396" style="display: block; margin: auto;" /&gt;
 
+- La curva roja es la probabilidad acumulada que tendríamos si los datos fueran perfectamente normales, con la media y la desviación estándar que hemos medido en la muestra. Si los datos azules se separan de ella de forma sistemática, la normal no es un buen modelo.
 
 - Al usar este tipo de gráficos para comparar distribuciones, es más fácil identificar desviaciones respecto a lo esperado.
 
@@ -119,18 +266,20 @@ class: animated, fadeIn
 
 ### Herramientas para comparar distribuciones visualmente
 
-- **QQ-plot**: gráfico que compara los cuantiles de un conjunto de datos observados con los cuantiles de una distribución teórica. Evaluar visualmente si los datos siguen una distribución específica. Por defecto, asume la distribución normal estándard.
+- **QQ-plot**: gráfico que compara los cuantiles de un conjunto de datos observados con los cuantiles de una distribución teórica. Sirve para evaluar visualmente si los datos siguen una distribución específica. Por defecto, asume la distribución normal estándar.
 
 &lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-5-1.png" alt="" width="396" style="display: block; margin: auto;" /&gt;
 
 - El cuantil 25 indica el valor `\(k\)` por debajo del cual se encuentra el 25% de los datos.
 - Cuando la distribución teórica y los datos muestreados son similares, los puntos del QQ-plot se alinean sobre la línea de referencia.
+- Con la normal estándar como referencia, la ordenada en el origen de la recta es `\(\mu\)` y la pendiente es `\(\sigma\)`: solo importa que los puntos sigan una recta.
+- Puntos por encima de la recta en el extremo derecho indican una cola derecha más larga (como en la exponencial).
 
 ---
 
-class: animated, fadeIn
+class: animated, fadeIn, R
 
-#### QQ-plot: comprobar si una distribución sigue la normal
+#### QQ-plot: comprobar si unos datos siguen una distribución normal
 
 .pull-left[
 
@@ -167,18 +316,18 @@ ggplot(data, aes(sample = frog_size)) +
 ---
 class: animated, fadeIn
 
-#### QQ-plot: comprobar si una distribución sigue la normal
+#### QQ-plot: comprobar si unos datos siguen una distribución normal
 
 .pull-left[
   
-  
-  ``` r
+
+``` r
   set.seed(10)
-  vector_normal &lt;- rnorm(n = 5000, 
+  vector_normal &lt;- rnorm(n = 500, 
                          mean = 20, sd = 2)
-  ```
+```
   
-  &lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-9-1.png" alt="" width="216" style="display: block; margin: auto;" /&gt;
+&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-9-1.png" alt="" width="216" style="display: block; margin: auto;" /&gt;
   
   
   - Datos distribuidos de manera normal
@@ -188,14 +337,14 @@ class: animated, fadeIn
 .pull-right[
   
   
-  
-  ``` r
+
+``` r
   set.seed(10)
   vector_exp &lt;- rexp(n = 500, 
                      rate = 0.5) 
-  ```
+```
   
-  &lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-11-1.png" alt="" width="216" style="display: block; margin: auto;" /&gt;
+&lt;img src="8.VisDistr_files/figure-html/unnamed-chunk-11-1.png" alt="" width="216" style="display: block; margin: auto;" /&gt;
   
   - Datos no distribuidos de manera normal
   
@@ -204,14 +353,14 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-#### QQ-plot: comprobar si una distribución sigue la normal
+#### QQ-plot: comprobar si unos datos siguen una distribución normal
 
 .pull-left[
   
 
 ``` r
   set.seed(10)
-  vector_normal &lt;- rnorm(n = 50, 
+  vector_normal &lt;- rnorm(n = 20, 
                          mean = 20, sd = 2)
 ```
   
@@ -228,7 +377,7 @@ class: animated, fadeIn
 
 ``` r
 set.seed(10)
-vector_exp &lt;- rnorm(n = 5000, 
+vector_normal_5000 &lt;- rnorm(n = 5000, 
                          mean = 20, sd = 2)
 ```
 
@@ -251,7 +400,7 @@ class: animated, fadeIn
 
 ### Distribuciones comunes en datos biológicos
 - La distribución binomial modela el número de éxitos en una serie de ensayos.
-- La distribución de Poisson se utiliza a menudo para modelar datos de conteo. Supone que los conteos ocurren sobre un volumen o periodo de tiempo fijo. Es una aproximación de la distribución binomial.
+- La distribución de Poisson se utiliza a menudo para modelar datos de conteo. Supone que los conteos ocurren sobre un volumen o periodo de tiempo fijo. Aproxima a la binomial cuando `\(n\)` es grande y `\(p\)` es pequeña.
 - La distribución gaussiana o normal modela mediciones repetidas de lo mismo y es una distribución continua.
 
 ---
@@ -292,7 +441,6 @@ class: left, bottom, inverse, animated, bounceInDown
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-  "mathjax": "default",
   "highlightStyle": "github",
   "highlightLines": true,
   "countIncrementalSlides": false,

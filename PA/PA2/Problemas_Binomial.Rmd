@@ -1,7 +1,7 @@
 ---
 title: "Problemas de distribución binomial"
 author: "Bioestadística"
-date: "Octubre 2025"
+date: "Octubre 2026"
 output:
   html_document:
     self_contained: true  
@@ -83,7 +83,7 @@ Las semillas del **guisante de jardín** (*Pisum sativum*) pueden ser **amarilla
 
 ## 🩸 Problema 2 - Grupos sanguíneos
 
-En Estados Unidos, el **34% de la población** tiene **sangre tipo A** ([link](https://www.statista.com/statistics/1112664/blood-type-distribution-us/?srsltid=AfmBOopG0DYzh4mXjTE7dPi_uJt0zu3JsB9pB0yjjZaNCPVV3Zha6kdS)). Consideremos que tomamos una **muestra de tamaño 4**. Sea $Y$ el número de personas en la muestra con sangre tipo A. Calcula las siguientes probabilidades:
+En Estados Unidos, el **34% de la población** tiene **sangre tipo A positivo (A+)** ([link](https://www.statista.com/statistics/1112664/blood-type-distribution-us/)). Consideremos que tomamos una **muestra de tamaño 4**. Sea $Y$ el número de personas en la muestra con sangre tipo **A+**.
 
 ### a) $P(Y = 0)$  
 ### b) $P(Y = 1)$    
@@ -129,7 +129,7 @@ Un tratamiento farmacológico cura el **90%** de los casos de anquilostoma en ni
 
 ## 🐌 Problema 4: Color de la concha en caracoles
 
-La concha del caracol terrestre *Limocolaria martensiana* presenta **dos coloraciones posibles**: *streaked* (rayada) y *pallid* (pálida).En cierta población, el **60%** de los individuos tienen concha *streaked*. Se elige al azar una **muestra de 10 caracoles**. Calcula la probabilidad de que el **porcentaje de caracoles *streaked* en la muestra** sea:
+La concha del caracol terrestre *Limocolaria martensiana* presenta **dos coloraciones posibles**: *streaked* (rayada) y *pallid* (pálida). En cierta población, el **60%** de los individuos tienen concha *streaked*. Se elige al azar una **muestra de 10 caracoles**. Calcula la probabilidad de que el **porcentaje de caracoles *streaked* en la muestra** sea:
 
 ### a) 50%   
 ### b) 60%     
@@ -141,7 +141,7 @@ La concha del caracol terrestre *Limocolaria martensiana* presenta **dos colorac
 <details>
 <summary>Respuestas</summary>
 
-| Caso                              | Probabilidad |
+| Caso                              | Resultado |
 |------------------------------------|--------------:|
 | (a) 50% (k=5)          | 0.2007    |
 | (b) 60% (k=6)                    | 0.2508    |
@@ -181,12 +181,12 @@ Sea $Y$ la **variable número de semillas germinadas por estudiante**.
 <details>
 <summary>Respuestas</summary>
 
-| Pregunta                              | Probabilidad |
+| Pregunta                              | Resultado |
 |------------------------------------|--------------:|
 | (a) Posibles valores de $Y$          | $Y = 0, 1, 2, 3, 4, 5$    |
 | (b) Explicación de la variación                  | Cada estudiante recibe semillas al azar, variabilidad en la germinación   |
 | (c) Promedio germinación              | 0.45    |
-| (e) Bob        | Mala suerte    |
+| (e) Bob        | Esperable por azar  |
 
 \(d) Frecuencias esperadas:
 
@@ -197,7 +197,7 @@ Sea $Y$ la **variable número de semillas germinadas por estudiante**.
 | 2 | 94         | 94.33    |
 | 3 | 79         | 77.18    |
 | 4 | 33         | 31.57    |
-| 5 | 4          | 5.16     |
+| 5 | 4          | 5.17     |
 | Total | 280 | 280 |
 
 </details>

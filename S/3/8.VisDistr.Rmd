@@ -1,5 +1,5 @@
 ---
-title: "<br>"
+title: ""
 subtitle: ""
 author: ""
 date: ""
@@ -9,7 +9,6 @@ output:
     lib_dir: libs
     self_contained: true
     nature:
-      mathjax: "default"
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -21,15 +20,19 @@ options(htmltools.dir.version = FALSE)
 #knitr::include_graphics()
 knitr::opts_chunk$set(
   cache = TRUE,
+  echo = TRUE,
   message = FALSE, 
   warning = FALSE,
   hiline = TRUE,
   fig.retina = 5
 )
+knitr::opts_chunk$set(
+  comment = "")
+
 library(ggplot2)
 library(readr)
 library(knitr)
-#pagedown::chrome_print(".html")
+#pagedown::chrome_print("PresentacionBioestadistica.html")
 ```
 
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
@@ -43,6 +46,7 @@ style_mono_accent(
 )
 ```
 
+
 ```{r xaringanExtra-clipboard, echo=FALSE}
 library(xaringanExtra)
 htmltools::tagList(
@@ -53,6 +57,161 @@ htmltools::tagList(
   rmarkdown::html_dependency_font_awesome()
 )
 ```
+
+
+class: title-slide, animated, fadeIn
+
+.left-top[
+# Seminarios de
+.subtitle[Bioestadística]
+
+]
+
+.left-bottom[
+.authors[
+**Seminario 3 | Herramientas para visualizar distribuciones**
+<br><br><br><br>
+
+Marta Coronado ([marta.coronado@uab.cat](mailto:marta.coronado@uab.cat))  
+]
+
+.footer-info[
+**Grado en Genética | Curso 2026/2027**
+]
+]
+
+.right-panel[]
+
+
+
+<style>
+.title-slide {
+  background-image: none;
+}
+
+/* Contenedor teal superior (solo título) */
+.title-slide .left-top {
+  position: absolute;
+  top: 0; left: 0;
+  width: 60%;
+  height: 62%;
+  background-color: #163a3a;
+  color: white;
+  padding: 50px 45px 30px 65px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;   /* ← esto faltaba */
+  align-items: flex-start;  /* ← con column, flex-end alinearía a la derecha; usa flex-start para pegar a la izquierda */
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+
+/* Contenedor blanco inferior (autores, fecha) */
+.title-slide .left-bottom {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 60%;
+  height: 38%;
+  background-color: white;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px 45px 30px 65px;
+  margin: 0;
+}
+
+.title-slide .right-panel {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 41%;
+  background-color: white;
+  background-image: url('img/1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.title-slide h1 {
+  font-size: 1.9em;
+  line-height: 1.25;
+  margin: 0;
+  font-weight: 400;
+}
+
+.title-slide .subtitle {
+  display: block;   /* ← esto es la clave: sin esto, margin-top se ignora */
+  font-size: 2em;
+  font-weight: bold;
+  color: #7ac142;
+  margin-top: -35px;
+  margin-bottom: 15px;
+}
+
+.title-slide .authors {
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.title-slide .authors a {
+  color: #e8846b;
+  text-decoration: none;
+}
+
+.title-slide .footer-info {
+  font-size: 0.9em;
+  color: #444;
+}
+
+.remark-slide-content h2,
+.remark-slide-content h3,
+.remark-slide-content h4,
+.remark-slide-content h5 {
+  margin-top: 1em;
+  margin-bottom: 0.6em;
+}
+
+.remark-slide-content p,
+.remark-slide-content ul,
+.remark-slide-content ol {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.remark-slide-content li {
+  margin-bottom: 0.1em;
+}
+
+.practica::before {
+  content: "\f303";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+
+.R::before {
+  content: "\f4f7";
+  font-family: "Font Awesome 6 Brands";
+  font-weight: 400;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+
+</style>
+
+
+---
 
 
 class: animated, fadeIn
@@ -104,7 +263,7 @@ data <- data.frame(frog_size = frog_size)
 # Definir el ancho del bin
 binwidth <- 0.5
 
-# Crear histograma con curva de densidad ajustada (counts)
+# Crear histograma (counts)
 ggplot(data, aes(x = frog_size)) +
   geom_histogram(color = "black", fill = "cadetblue4",
                  binwidth = binwidth) +
@@ -148,7 +307,7 @@ binwidth <- 0.5
 ggplot(data, aes(x = frog_size)) +
   geom_histogram(color = "black", fill = "cadetblue4",
                  binwidth = binwidth) +
-  stat_function(fun = function(x) dnorm(x, mean = mean_size, sd = sd_size) * n * binwidth,
+  stat_function(fun = function(x) dnorm(x, mean = mean(frog_size), sd = sd(frog_size)) * n * binwidth,
                 color = "firebrick4", size = 1) +
   labs(
     title = "Histograma",
@@ -165,7 +324,7 @@ ggplot(data, aes(x = frog_size)) +
 
 --
 - Podríamos mirar si sigue una distribución normal (*gaussiana*) 
-- El problema es que muchas distribuciones siguen una forma de campana (normal)
+- El problema es que muchas distribuciones tienen forma de campana **sin ser normales**
 - Una solución es mirar la **distribución acumulativa**
 
 
@@ -174,7 +333,7 @@ class: animated, fadeIn
 
 ### Herramientas para comparar distribuciones visualmente
 
-- **Distribucion acumulativa empírica**. Para cada valor, indica la probabilidad de que una observación sea menor o igual a ese valor.
+- **Distribución acumulativa empírica**. Para cada valor, indica la probabilidad de que una observación sea menor o igual a ese valor.
 
 ```{r, echo  = F, fig.height=5, fig.width=5.5, fig.align='center'}
 library(ggplot2)
@@ -188,12 +347,8 @@ sd_size <- 1
 frog_size <- rnorm(n, mean = mean_size, sd = sd_size)
 data <- data.frame(frog_size = frog_size)
 
-# Calcular la función de distribución acumulativa (CDF) teórica
-cdf_fun <- function(x) pnorm(x, mean = mean_size, sd = sd_size)
-
 # Valor a marcar
 x_mark <- 6
-#y_mark <- cdf_fun(x_mark)
 y_mark <- mean(frog_size <= x_mark)
 
 # Crear gráfico de distribución acumulativa
@@ -227,7 +382,7 @@ class: animated, fadeIn
 
 ### Herramientas para comparar distribuciones visualmente
 
-- **Distribución acumulativa teórica**: Para cada valor, muestra la probabilidad que esperaríamos de que una observación sea menor o igual a ese valor.
+- **Distribución acumulativa teórica**: Para cada valor, muestra la probabilidad esperada de que una observación sea menor o igual a ese valor.
 
 ```{r, echo  = F, fig.height=5, fig.width=5.5, fig.align='center'}
 library(ggplot2)
@@ -243,28 +398,35 @@ data <- data.frame(frog_size = frog_size)
 
 # Valor a marcar
 x_mark <- 6
-#y_mark <- cdf_fun(x_mark)
 y_mark <- mean(frog_size <= x_mark)
+cdf_fun <- function(x) pnorm(x, mean = mean(frog_size), sd = sd(frog_size))
 y_mark_t <- cdf_fun(x_mark)
 
 # Crear gráfico con CDF empírica y teórica
 ggplot(data, aes(x = frog_size)) +
   # CDF empírica
-  stat_ecdf(geom = "step", color = "cadetblue4", size = 1, alpha = 0.8) +
+  stat_ecdf(aes(color = "Empírica", linetype = "Empírica"),
+            geom = "step", size = 1, alpha = 0.8) +
   # CDF teórica
-  stat_function(fun = function(x) pnorm(x, mean = mean_size, sd = sd_size),
-                color = "firebrick4", size = 1, linetype = "dashed") +
+  stat_function(fun = cdf_fun,
+                aes(color = "Teórica", linetype = "Teórica"), size = 1) +
   # Líneas para el valor marcado
-  geom_vline(xintercept = x_mark, linetype = "dashed", color = "firebrick4") +
-  geom_hline(yintercept = y_mark, linetype = "dashed", color = "firebrick4") +
-    geom_hline(yintercept = y_mark_t, linetype = "dashed", color = "orange3") +
+  geom_vline(xintercept = x_mark, linetype = "dashed", color = "gray30") +
+  geom_hline(yintercept = y_mark, linetype = "dashed", color = "cadetblue4") +
+  geom_hline(yintercept = y_mark_t, linetype = "dashed", color = "firebrick4") +
 
   # Anotaciones
   annotate("text", x = x_mark + 0.5, y = 0.05, label = paste0(x_mark, " cm"), color = "gray30") +
   annotate("text", x = min(frog_size)+0.5, y = y_mark + 0.05, 
-           label = paste0("P = ", round(y_mark, 3)), color = "firebrick4") +
-   annotate("text", x = min(frog_size)+1.7, y = y_mark_t + 0.05, 
-           label = paste0("P = ", round(y_mark_t, 3)), color = "orange3") +
+           label = paste0("P = ", round(y_mark, 3)), color = "cadetblue4") +
+  annotate("text", x = min(frog_size)+1.7, y = y_mark_t + 0.05, 
+           label = paste0("P = ", round(y_mark_t, 3)), color = "firebrick4") +
+  
+  # Leyenda
+  scale_color_manual(name = NULL,
+                     values = c("Empírica" = "cadetblue4", "Teórica" = "firebrick4")) +
+  scale_linetype_manual(name = NULL,
+                        values = c("Empírica" = "solid", "Teórica" = "dashed")) +
   
   labs(
     title = "Distribución acumulativa teórica",
@@ -274,11 +436,12 @@ ggplot(data, aes(x = frog_size)) +
   ggthemes::theme_base(base_size = 13) +
   theme(panel.grid=element_blank(),
         axis.text=element_text(color="black"),
-        panel.background = element_rect(fill = "white"))
-
+        panel.background = element_rect(fill = "white"),
+        legend.position = "bottom")
 
 ```
 
+- La curva roja es la probabilidad acumulada que tendríamos si los datos fueran perfectamente normales, con la media y la desviación estándar que hemos medido en la muestra. Si los datos azules se separan de ella de forma sistemática, la normal no es un buen modelo.
 
 - Al usar este tipo de gráficos para comparar distribuciones, es más fácil identificar desviaciones respecto a lo esperado.
 
@@ -288,7 +451,7 @@ class: animated, fadeIn
 
 ### Herramientas para comparar distribuciones visualmente
 
-- **QQ-plot**: gráfico que compara los cuantiles de un conjunto de datos observados con los cuantiles de una distribución teórica. Evaluar visualmente si los datos siguen una distribución específica. Por defecto, asume la distribución normal estándard.
+- **QQ-plot**: gráfico que compara los cuantiles de un conjunto de datos observados con los cuantiles de una distribución teórica. Sirve para evaluar visualmente si los datos siguen una distribución específica. Por defecto, asume la distribución normal estándar.
 
 ```{r, echo  = F, fig.height=5, fig.width=5.5, fig.align='center'}
 
@@ -322,12 +485,14 @@ ggplot(data, aes(sample = frog_size)) +
 
 - El cuantil 25 indica el valor $k$ por debajo del cual se encuentra el 25% de los datos.
 - Cuando la distribución teórica y los datos muestreados son similares, los puntos del QQ-plot se alinean sobre la línea de referencia.
+- Con la normal estándar como referencia, la ordenada en el origen de la recta es $\mu$ y la pendiente es $\sigma$: solo importa que los puntos sigan una recta.
+- Puntos por encima de la recta en el extremo derecho indican una cola derecha más larga (como en la exponencial).
 
 ---
 
-class: animated, fadeIn
+class: animated, fadeIn, R
 
-#### QQ-plot: comprobar si una distribución sigue la normal
+#### QQ-plot: comprobar si unos datos siguen una distribución normal
 
 .pull-left[
 ```{r, eval = F, fig.height=5, fig.width=5.5, fig.align='center'}
@@ -392,20 +557,20 @@ ggplot(data, aes(sample = frog_size)) +
 ---
 class: animated, fadeIn
 
-#### QQ-plot: comprobar si una distribución sigue la normal
+#### QQ-plot: comprobar si unos datos siguen una distribución normal
 
 .pull-left[
   
-  ```{r}
+```{r}
   set.seed(10)
-  vector_normal <- rnorm(n = 5000, 
+  vector_normal <- rnorm(n = 500, 
                          mean = 20, sd = 2)
-  ```
+```
   
-  ```{r, echo = F, fig.height=3, fig.width=3, fig.align='center'}
+```{r, echo = F, fig.height=3, fig.width=3, fig.align='center'}
   ggplot(data.frame(x=vector_normal), aes(sample=x)) +
     stat_qq(color="cadetblue4") +
-    stat_qq_line(color="firebrick4") +
+    stat_qq_line(color="firebrick4", linetype = "dashed") +
     labs(title="QQ-plot",
          x="Cuantiles teóricos",
          y="Cuantiles muestrales") +
@@ -415,7 +580,7 @@ class: animated, fadeIn
           panel.background = element_rect(fill = "white"))
   
   
-  ```
+```
   
   
   - Datos distribuidos de manera normal
@@ -425,17 +590,17 @@ class: animated, fadeIn
 .pull-right[
   
   
-  ```{r}
+```{r}
   set.seed(10)
   vector_exp <- rexp(n = 500, 
                      rate = 0.5) 
-  ```
+```
   
-  ```{r, echo = F, fig.height=3, fig.width=3, fig.align='center'}
+```{r, echo = F, fig.height=3, fig.width=3, fig.align='center'}
   
   ggplot(data.frame(x=vector_exp), aes(sample=x)) +
     stat_qq(color="cadetblue4") +
-    stat_qq_line(color="firebrick4") +
+    stat_qq_line(color="firebrick4", linetype = "dashed") +
     labs(title="QQ-plot",
          x="Cuantiles teóricos",
          y="Cuantiles muestrales") +
@@ -446,7 +611,7 @@ class: animated, fadeIn
   
   
   
-  ```
+```
   
   - Datos no distribuidos de manera normal
   
@@ -455,21 +620,25 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-#### QQ-plot: comprobar si una distribución sigue la normal
+#### QQ-plot: comprobar si unos datos siguen una distribución normal
 
 .pull-left[
   
 ```{r}
   set.seed(10)
-  vector_normal <- rnorm(n = 50, 
+  vector_normal <- rnorm(n = 20, 
                          mean = 20, sd = 2)
 ```
   
 ```{r, echo = F, fig.height=3, fig.width=3, fig.align='center'}
-  ggplot(data.frame(x=vector_normal), aes(sample=x)) +
+set.seed(10)
+vector_normal <- rnorm(n = 20, 
+                         mean = 20, sd = 2)
+
+ggplot(data.frame(x=vector_normal), aes(sample=x)) +
     stat_qq(color="cadetblue4") +
-    stat_qq_line(color="firebrick4") +
-    labs(title="QQ-plot",
+    stat_qq_line(color="firebrick4", linetype = "dashed") +
+    labs(title="QQ-plot (n = 50)",
          x="Cuantiles teóricos",
          y="Cuantiles muestrales") +
     ggthemes::theme_base(base_size = 13) +
@@ -490,16 +659,16 @@ class: animated, fadeIn
   
 ```{r}
 set.seed(10)
-vector_exp <- rnorm(n = 5000, 
+vector_normal_5000 <- rnorm(n = 5000, 
                          mean = 20, sd = 2)
 ```
 
 ```{r, echo = F, fig.height=3, fig.width=3, fig.align='center'}
   
-  ggplot(data.frame(x=vector_exp), aes(sample=x)) +
+  ggplot(data.frame(x=vector_normal_5000), aes(sample=x)) +
     stat_qq(color="cadetblue4") +
-    stat_qq_line(color="firebrick4") +
-    labs(title="QQ-plot",
+    stat_qq_line(color="firebrick4", linetype = "dashed") +
+    labs(title="QQ-plot (n = 5000)",
          x="Cuantiles teóricos",
          y="Cuantiles muestrales") +
     ggthemes::theme_base(base_size = 13) +
@@ -528,7 +697,7 @@ class: animated, fadeIn
 
 ### Distribuciones comunes en datos biológicos
 - La distribución binomial modela el número de éxitos en una serie de ensayos.
-- La distribución de Poisson se utiliza a menudo para modelar datos de conteo. Supone que los conteos ocurren sobre un volumen o periodo de tiempo fijo. Es una aproximación de la distribución binomial.
+- La distribución de Poisson se utiliza a menudo para modelar datos de conteo. Supone que los conteos ocurren sobre un volumen o periodo de tiempo fijo. Aproxima a la binomial cuando $n$ es grande y $p$ es pequeña.
 - La distribución gaussiana o normal modela mediciones repetidas de lo mismo y es una distribución continua.
 
 ---

@@ -17,11 +17,14 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Tema 3: Visualización de datos](T/3/3.VisualizacionDatos.html)
 - [Tema 4: Distribuciones de probabilidad](T/4/4.ProbRmd.html)
 - [Tema 5: Distribución binomial](T/5/5.Binomial.html)
+- [Tema 6: Distribución normal](T/5/5.Binomial.html)
+- [Tema 7: Intervalos de confianza](T/5/5.Binomial.html)
 
 ---
 
 ## 🗣️ Seminarios
 - [Seminario 1: La importancia de mostrar los datos](S/1/S1.html)
+- [Seminario 2: Distribución de Poisson](S/1/S1.html)
 
 ---
 

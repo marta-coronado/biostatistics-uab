@@ -186,6 +186,28 @@ Marta Coronado ([marta.coronado@uab.cat](mailto:marta.coronado@uab.cat))
   margin-bottom: 0.1em;
 }
 
+.practica::before {
+  content: "\f303";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+
+.R::before {
+  content: "\f4f7";
+  font-family: "Font Awesome 6 Brands";
+  font-weight: 400;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+
 </style>
 
 
@@ -213,7 +235,7 @@ class: animated, fadeIn
 
 .pull-left[
 - Capturamos 100 ranas en una hora: $n\approx100$
-- la fracción de ranas de color verde es baja: $p=0.02$
+- la fracción de ranas de color verde claro es baja: $p=0.02$
 ]
 .pull-right[
 <center>
@@ -231,7 +253,7 @@ class: animated, fadeIn
 
 .pull-left[
 - Capturamos 100 ranas en una hora: $n\approx100$
-- la fracción de ranas de color verde es baja: $p=0.02$
+- la fracción de ranas de color verde claro es baja: $p=0.02$
 
 <br>
 Cuántas ranas de color verde claro esperamos capturar en 1h?
@@ -253,7 +275,7 @@ class: animated, fadeIn
 
 .pull-left[
 - Capturamos 100 ranas en una hora: $n\approx100$
-- la fracción de ranas de color verde es baja: $p=0.02$
+- la fracción de ranas de color verde claro es baja: $p=0.02$
 
 <br>
 Cuántas ranas de color verde claro esperamos capturar en 1h?
@@ -300,7 +322,7 @@ class: animated, fadeIn
 - Número de ranas observadas en 1 hora o en una zona específica del lago.
 - Número de células dentro de un volumen determinado.
 - Número de mutaciones en una secuencia de DNA por unidad de tiempo.
-- Número de infecciones por virus en un servidor de archivos de un centro de datos durante 24 horas.
+- Número de infecciones por virus informáticos en un servidor de archivos de un centro de datos durante 24 horas.
 
 ]
 
@@ -364,14 +386,16 @@ class: animated, fadeIn
 **De nuevo, estamos en un laboratorio de diagnóstico que recibe muestras de sangre de pacientes hospitalarios y las analiza para detectar alguna enfermedad. ¿Cuál de estos experimentos se puede modelar con una distribución de Poisson?**
 
 1. Contar el número de muestras que dan positivo en el transcurso de una hora. ✔️
-2. Contar el número de muestras positivas de entre 50 muestras analizadas sucesivamente. ✔️
+2. Contar el número de muestras positivas de entre 50 muestras analizadas sucesivamente. ❌
 3. Contar el número de muestras que se analizan en el transcurso de una hora. ✔️
 
 ---
 class: animated, fadeIn
 
+
 ## Distribución de Poisson
 
+Si $X$ es el número de eventos en un intervalo donde se esperan $\lambda$ eventos, la probabilidad de observar exactamente $k$ eventos es:
 
 $$
 P(X = k) = \frac{ e^{-\lambda} \lambda^k}{k!}
@@ -396,14 +420,14 @@ $$
 
 --
 
-La probabilidad de exáctamente $x$ eventos en $t$ unidades de tiempo es:
+La probabilidad de exactamente $x$ eventos en $t$ unidades de tiempo es:
 
 $$
 P(X = k) = \frac{e^{-\lambda t} (\lambda t)^k }{k!}
 $$
 
 
-En $t$ unidades de tiempo, la media y desviación estandard son:
+En $t$ unidades de tiempo, la media y desviación estándar son:
 
 .pull-left[
 
@@ -419,22 +443,20 @@ $$
 ]
 
 
-
 ---
 class: animated, fadeIn
 
-## Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en niños
+### Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en niños
 
 - En niños de **0 a 14 años**, la tasa de incidencia de ALL es de  
   **30 casos diagnosticados por millón de niños al año** en la década **2000–2010**.  
-- Aproximadamente un **20% de la población de EEUU** se encuentra en este rango de edad.  
+- Aproximadamente un **20% de la población de EEUU** se encuentra en este rango de edad. 
 
 --
 
 <br>
 1. ¿Cuál es la incidencia esperada en un período de **5 años**?  
-2. En una población pequeña de **75,000 habitantes**, ¿cuál es la probabilidad de observar  
-   **exactamente 8 casos** en un período de 5 años?  
+2. En una población pequeña de **75,000 habitantes**, ¿cuál es la probabilidad de observar **exactamente 8 casos** en un período de 5 años?  
 3. En esa misma población, ¿cuál es la probabilidad de observar  
    **8 o más casos** en un período de 5 años?  
 
@@ -442,71 +464,88 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-## Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en niños
+### Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en niños
+
+**Paso 1: tasa por niño y año ($\lambda$)**
 
 La tasa de incidencia de ALL en un año es de 30 por 1,000,000 niños:
 
 $$
-\frac{30}{1000000}=0.000003=3\times10^{-5}
-$$
-
-
---
-La tasa de incidencia en un periodo de 5 años es ($5\times30$) por 1,000,000 niños:
-
-$$
-\frac{150}{1000000}=0.000015=1.5\times10^{-4}
+\lambda = \frac{30}{1000000}=0.00003=3\times10^{-5} \text{ casos por niño y año}
 $$
 
 --
+
+**Paso 2: número esperado de casos por niño en $t$ años ($\lambda t$)**
+
+Con $t = 5$ años, la incidencia en un período de 5 años es ($5\times30$) por 1,000,000 niños:
+
+$$
+\lambda t = \frac{5\times30}{1000000}=\frac{150}{1000000}=0.00015=1.5\times10^{-4}
+$$
+
+--
+
+**Paso 3: número esperado de casos en la ciudad ($\mu$)**
+
+Para una población de $N$ niños, el número esperado de casos en $t$ años es:
+
+$$
+\mu = \lambda t N
+$$
 
 En una ciudad de 75,000 habitantes, aproximadamente $75,000\times0.2=15,000$ niños tendrán entre 0-14 años:
 
-La tasa de nuevos casos en 5 años en la ciudad será:
-
 $$
-1.5\times10^{-4} \times 15000 = 2.25 
+\mu = \lambda t N = 1.5\times10^{-4} \times 15000 = 2.25
 $$
 
+El número esperado de nuevos casos en 5 años en la ciudad es **2.25**.
 
 ---
 class: animated, fadeIn
 
-## Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en niños
+### Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en niños
 
-¿Cuál es la probabilidad de 8 casos en un periodo de 5 años?
+Sea $X$ el número de casos en la ciudad en 5 años. Entonces $X$ sigue una distribución de Poisson con **media $\mu = 2.25$** (el valor que calculamos en el paso 3).
+
+¿Cuál es la probabilidad de exactamente 8 casos en un período de 5 años?
 
 $$
-P(X = 8) = \frac{e^{-\lambda} (\lambda)^k }{k!} = \frac{e^{-2.25}2.25^8 }{8!}=0.0017
+P(X = 8) = \frac{e^{-\mu} \mu^k }{k!} = \frac{e^{-2.25}\,2.25^8 }{8!}=0.0017
 $$
 
 --
 
 En `R`:
 
-Suponiendo que $X$ sigue una distribución de Poisson on parámetro $\lambda$:
+```{r}
+dpois(x = 8, lambda = 2.25) # el argumento se llama lambda, pero aquí es la media, mu = 2.25
+```
+
+
+---
+class: animated, fadeIn
+
+### Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en niños
+
+¿Cuál es la probabilidad de 8 casos o más en un período de 5 años?
+
+$$
+P(X \ge 8) = 1 - P(X \le 7)
+$$
+
+En `R`:
 
 ```{r}
-dpois(x = 8, lambda = 2.25)
+ppois(q = 7, lambda = 2.25, lower.tail=FALSE) # P(X ≥ 8) = P(X > 7)
 ```
 
 ---
 class: animated, fadeIn
 
-## Ejemplo: Tasa de leucemia linfocítica aguda (ALL) en niños
 
-¿Cuál es la probabilidad de 8 casos o más en un periodo de 5 años?
-
-
-```{r}
-ppois(q = 7, lambda = 2.25, lower.tail=FALSE) # P(X > k)
-```
-
----
-class: animated, fadeIn
-
-
-### Función de distribución acumulada de Poisson
+### Función de distribución acumulada de Poisson, R
 
 | Símbolo      | Significado    | Expresión | R con `ppois`                           |
 | ------------ | -------------- | --------- | --------------------------------------- |
@@ -531,16 +570,16 @@ class: animated, fadeIn
 
 
 ---
-class: animated, fadeIn
+class: animated, fadeIn, practica
 
 # Ejercicio
 
-.pull-left[El Lago Pyramid se encuentra en Nevada, en la reserva india Paiute. El lago se describe como una hermosa joya en un precioso entorno desértico. Además de su belleza natural, el lago alberga algunas de las truchas corteza más grandes del mundo. Cada temporada se capturan ejemplares de 5,4 a 6,8 kg como trofeos.
+.pull-left[El Lago Pyramid se encuentra en Nevada, en la reserva india Paiute. El lago se describe como una hermosa joya en un precioso entorno desértico. Además de su belleza natural, el lago alberga algunas de las truchas degollada más grandes del mundo. Cada temporada se capturan ejemplares de 5.4 a 6.8 kg como trofeos.
 
 La Nación Paiute emplea biólogos pesqueros altamente capacitados para estudiar y mantener esta famosa pesquería.
 En una de sus publicaciones, Creel Chronicle (Vol. 3, Núm. 2), se proporcionó la siguiente información sobre la captura de noviembre para los pescadores en barco:
 
-**Pesca total por hora = 0,667 peces**
+**Pesca total por hora = 0.667 peces**
 
 Supongamos que decides pescar en el Lago Pyramid durante 7 horas en el mes de noviembre.
 
@@ -551,7 +590,7 @@ Supongamos que decides pescar en el Lago Pyramid durante 7 horas en el mes de no
 ]
 
 ---
-class: animated, fadeIn
+class: animated, fadeIn, practica
 
 # Ejercicio
 

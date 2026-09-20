@@ -192,6 +192,7 @@ Lee en `R` el archivo ["**GSE68849_expression.csv**"](https://raw.githubusercont
 
 ```{r, respuesta 2}
 
+expressionData <- read.csv(file="https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/1/data/GSE68849_expression.csv", header = TRUE)
 
 ```
 
@@ -218,7 +219,7 @@ Para saber el tipo de variable que contiene `expressionData`, podemos utilizar l
 
 | Variable           | Tipo de variable (Cuantitativa / Cualitativa) | Tipo específico (Discreta / Continua / Nominal / Ordinal) | Observaciones |
 |-------------------|-----------------------------------------------|-----------------------------------------------------------|---------------|
-| _Subject_           | [ ]                                           | [ ]                                                       | [ ]           |
+| _Subject_           | Cualitativa                                 | [ ]                                                       | [ ]           |
 | _Treatment_         | [ ]                                           | [ ]                                                       | [ ]           |
 | _Gene_              | [ ]                                           | [ ]                                                       | [ ]           |
 | _Expression level_  | [ ]                                           | [ ]                                                       | [ ]           |

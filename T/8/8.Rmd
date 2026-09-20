@@ -63,7 +63,7 @@ htmltools::tagList(
 class: title-slide, animated, fadeIn
 
 .left-top[
-# Bootstrap y test de permutación
+# *Bootstrap* y test de permutación
 
 ]
 
@@ -223,6 +223,30 @@ class: animated, fadeIn
   - _Bootstrap_
   - Test de permutación 
 
+
+---
+class: animated, fadeIn
+
+## De las fórmulas a la simulación
+
+En los temas anteriores calculamos la incertidumbre **con fórmulas**:
+
+- **Error estándar:** $SE = \dfrac{s}{\sqrt{n}}$
+- **IC:** $\bar{x} \pm z \times SE$
+- **p-valor:** estandarizamos, $z = \dfrac{\bar{x}-\mu_0}{SE}$, y miramos el área bajo la normal
+
+Todo esto depende de **conocer la distribución muestral** del estadístico (normal o $t$), algo que solo tenemos para unos pocos estadísticos y bajo ciertos supuestos.
+
+--
+
+<br>
+**¿Y si** el estadístico es la mediana o un cociente, los datos no son normales o la muestra es pequeña?
+
+> **Idea:** en lugar de deducir la distribución muestral con matemáticas, la **simulamos con el ordenador** remuestreando los datos.
+
+- ***Bootstrap*** → error estándar e **IC**, sin fórmula
+- **Test de permutación** → **p-valor**, sin fórmula
+
 ---
 class: animated, fadeIn
 
@@ -272,7 +296,7 @@ class: animated, fadeIn
 
 ## ¿Por qué es útil el remuestreo?
 
-- Para casi cualquier estadístico (media, varianza) existen fórmulas clásicas que nos dan su error estándar o su intervalo de confianza
+- Para algunos estadísticos (como la media) existen fórmulas clásicas que nos dan su error estándar o su intervalo de confianza
 
 <br>
 - Pero, **¿y si el estadístico que nos interesa no tiene una fórmula conocida?** (por ejemplo, la mediana)
@@ -310,11 +334,10 @@ class: animated, fadeIn
 
 - Se utiliza para estimar la precisión de los estadísticos muestrales extrayendo aleatoriamente, con reemplazamiento, de la muestra original
 
-## Test de permutaciones
+## Test de permutación
 
 - Un test de hipótesis no paramétrico
 
-<img>
 
 ---
 class: animated, fadeIn
@@ -322,7 +345,7 @@ class: animated, fadeIn
 
 ## *Bootstrapping*
 
-**Efron & Tibsihrani (1993)**: Libro clásico que popularizó el método.
+**Efron & Tibshirani (1993)**: Libro clásico que popularizó el método.
 
 - Idea central: Remuestrear con reemplazo para estimar la distribución de un estadístico y obtener intervalos de confianza, sesgo y varianza.
 
@@ -337,20 +360,20 @@ class: animated, fadeIn
 ## *Bootstrapping*
 
 .pull-left[
-El objetivo de Efron fue:
+**La idea de Efron:**
 
-> _“Poder hacer inferencia estadística usando solo la muestra disponible, como si la muestra fuera la población.”_
+> **Hacer inferencia estadística usando solo la muestra disponible, tratándola como si fuera la población.**
 
 - Esto revolucionó la estadística computacional.
 - Antes del bootstrap, los estadísticos estaban limitados por las matemáticas.
 - Después del bootstrap, estaban limitados solo por la computación.
-- El bootstrap se convirtió en la herramienta clave de la estadística moderna y del big data.
+- El *bootstrap* se convirtió en una de las herramienta clave de la estadística moderna y del big data.
 ]
 
 .pull-right[
 <img src="img/Efron-photo.png.webp"></img>
 <br>
-Bradley Efron - Premio Nobel de estadística en 2018 por la creación del método _bootstrap_: _a method that “transformed science’s ability to use and understand data and helped usher in the era of data analysis through computing”_
+Bradley Efron - **International Prize in Statistics (el "Nobel" de la estadística), anunciado en 2018 y entregado en 2019**, por la creación del método _bootstrap_: _a method that “transformed science’s ability to use and understand data and helped usher in the era of data analysis through computing”_
 ]
 
 ---
@@ -360,14 +383,14 @@ class: animated, fadeIn
 ## *Bootstrapping*
 
 .pull-left[
-El objetivo de Efron fue:
+**La idea de Efron:**
 
-> _“Poder hacer inferencia estadística usando solo la muestra disponible, como si la muestra fuera la población.”_
+> **Hacer inferencia estadística usando solo la muestra disponible, tratándola como si fuera la población.**
 
 - Esto revolucionó la estadística computacional.
 - Antes del bootstrap, los estadísticos estaban limitados por las matemáticas.
 - Después del bootstrap, estaban limitados solo por la computación.
-- El bootstrap se convirtió en la herramienta clave de la estadística moderna y del big data.
+- El *bootstrap* se convirtió en una de las herramienta clave de la estadística moderna y del big data.
 ]
 
 .pull-right[
@@ -392,7 +415,7 @@ class: animated, fadeIn
 Literalmente:
 
 <br>
-> “levantarse tirando de los cordones de tus zapatos.”
+> “levantarse tirando de los cordones de tus propios zapatos.”
 
 <br>
 - La idea es hacer algo sin ayuda externa, usando solo lo que ya tienes. Efron usó el término porque su método hace **estadística remuestreando únicamente la muestra disponible, sin más información que los propios datos.**
@@ -403,7 +426,7 @@ Literalmente:
 ---
 class: animated, fadeIn
 
-## Bootstrapping
+## *Bootstrapping*
 
 - Imagina que hemos desarrollado un nuevo medicamento para tratar una enfermedad
 
@@ -463,7 +486,7 @@ p_original <- ggplot(original, aes(x = value, y = 0)) +
     legend.position = "none"
   )
 
-# --- Grafico 2: remuestreo bootstrap (con reemplazo) ---
+# --- Grafico 2: remuestreo *bootstrap* (con reemplazo) ---
 p_bootstrap <- ggplot(bootstrap, aes(x = value, y = y_jitter)) +
   geom_hline(yintercept = 0, color = "grey40", linewidth = 0.6) +
   geom_point(aes(fill = id), shape = 21, size = 8, color = "black", stroke = 0.8) +
@@ -492,7 +515,7 @@ p_original
 
 <br>
 
-- ¿Hace algo el fármaco? Quizás el incremento de 0.5 es por cosas que no podemos controlar... **¿podemos hacer algo?**
+- ¿Hace algo el fármaco? Quizás el incremento de `r round(mean(original$value),3)` es por cosas que no podemos controlar... **¿podemos hacer algo?**
 
 --
 
@@ -502,13 +525,13 @@ Sí, repetir el experimento (💸, ⏳)
 --
 
 <br>
-- O utilizar ***boostrapping!***
+- O utilizar ***bootstrapping!***
 
 ---
 
 class: animated, fadeIn
 
-## Bootstrapping
+## *Bootstrapping*
 
 
 ```{r echo = F, fig.height=4, fig.align='center', fig.width=12}
@@ -557,7 +580,7 @@ p_original <- ggplot(original, aes(x = value, y = 0)) +
     legend.position = "none"
   )
 
-# --- Grafico 2: remuestreo bootstrap (con reemplazo) ---
+# --- Grafico 2: remuestreo *bootstrap* (con reemplazo) ---
 p_bootstrap <- ggplot(bootstrap, aes(x = value, y = y_jitter)) +
   geom_hline(yintercept = 0, color = "grey40", linewidth = 0.6) +
   #geom_point(aes(fill = id), shape = 21, size = 8, color = "black", stroke = 0.8) +
@@ -583,7 +606,7 @@ p_bootstrap
 
 class: animated, fadeIn
 
-## Bootstrapping
+## *Bootstrapping*
 
 
 ```{r echo = F, fig.height=4, fig.align='center', fig.width=12}
@@ -632,7 +655,7 @@ p_original <- ggplot(original, aes(x = value, y = 0)) +
     legend.position = "none"
   )
 
-# --- Grafico 2: remuestreo bootstrap (con reemplazo) ---
+# --- Grafico 2: remuestreo *bootstrap* (con reemplazo) ---
 p_bootstrap <- ggplot(head(bootstrap,1), aes(x = value, y = y_jitter)) +
   geom_hline(yintercept = 0, color = "grey40", linewidth = 0.6) +
   geom_point(aes(fill = id), shape = 21, size = 8, color = "black", stroke = 0.8) +
@@ -658,7 +681,7 @@ p_bootstrap
 
 class: animated, fadeIn
 
-## Bootstrapping
+## *Bootstrapping*
 
 
 ```{r echo = F, fig.height=4, fig.align='center', fig.width=12}
@@ -707,7 +730,7 @@ p_original <- ggplot(original, aes(x = value, y = 0)) +
     legend.position = "none"
   )
 
-# --- Grafico 2: remuestreo bootstrap (con reemplazo) ---
+# --- Grafico 2: remuestreo *bootstrap* (con reemplazo) ---
 p_bootstrap <- ggplot(bootstrap[c(1,3),], aes(x = value, y = y_jitter)) +
   geom_hline(yintercept = 0, color = "grey40", linewidth = 0.6) +
   geom_point(aes(fill = id), shape = 21, size = 8, color = "black", stroke = 0.8) +
@@ -733,7 +756,7 @@ p_bootstrap
 
 class: animated, fadeIn
 
-## Bootstrapping
+## *Bootstrapping*
 
 
 ```{r echo = F, fig.height=4, fig.align='center', fig.width=12}
@@ -782,7 +805,7 @@ p_original <- ggplot(original, aes(x = value, y = 0)) +
     legend.position = "none"
   )
 
-# --- Grafico 2: remuestreo bootstrap (con reemplazo) ---
+# --- Grafico 2: remuestreo *bootstrap* (con reemplazo) ---
 p_bootstrap <- ggplot(head(bootstrap,3), aes(x = value, y = y_jitter)) +
   geom_hline(yintercept = 0, color = "grey40", linewidth = 0.6) +
   geom_point(aes(fill = id), shape = 21, size = 8, color = "black", stroke = 0.8) +
@@ -808,7 +831,7 @@ p_bootstrap
 
 class: animated, fadeIn
 
-## Bootstrapping
+## *Bootstrapping*
 
 
 ```{r echo = F, fig.height=4, fig.align='center', fig.width=12}
@@ -857,7 +880,7 @@ p_original <- ggplot(original, aes(x = value, y = 0)) +
     legend.position = "none"
   )
 
-# --- Grafico 2: remuestreo bootstrap (con reemplazo) ---
+# --- Grafico 2: remuestreo *bootstrap* (con reemplazo) ---
 p_bootstrap <- ggplot(bootstrap, aes(x = value, y = y_jitter)) +
   geom_hline(yintercept = 0, color = "grey40", linewidth = 0.6) +
   geom_point(aes(fill = id), shape = 21, size = 8, color = "black", stroke = 0.8) +
@@ -880,9 +903,9 @@ p_bootstrap
 
 --
 
-- Escogemos hasta 8 valores (porque la muestra original son 8)
-- Siempre volvemos a escoger de todos los valores posibles
-- Pueden haber datos repetidos (muestreo con reemplazamiento, _sampling with replacement_)
+- Escogemos 8 valores (el tamaño de la muestra original)
+- Cada vez escogemos entre los 8 valores originales
+- Puede haber datos repetidos (muestreo con reemplazamiento, _sampling with replacement_)
 
 > Este nuevo conjunto de datos, creado con muestreo con reemplazamiento, se llama "muestra _bootstrap_"
 
@@ -891,7 +914,7 @@ p_bootstrap
 
 class: animated, fadeIn
 
-## Bootstrapping
+## *Bootstrapping*
 
 
 ```{r echo = F, fig.height=4, fig.align='center', fig.width=12}
@@ -940,7 +963,7 @@ p_original <- ggplot(original, aes(x = value, y = 0)) +
     legend.position = "none"
   )
 
-# --- Grafico 2: remuestreo bootstrap (con reemplazo) ---
+# --- Grafico 2: remuestreo *bootstrap* (con reemplazo) ---
 p_bootstrap <- ggplot(bootstrap, aes(x = value, y = y_jitter)) +
   geom_hline(yintercept = 0, color = "grey40", linewidth = 0.6) +
   geom_point(aes(fill = id), shape = 21, size = 8, color = "black", stroke = 0.8) +
@@ -961,7 +984,7 @@ p_original /
 p_bootstrap
 ```
 
-- La media de la muestra _bootstrap_ es `r round(mean(bootstrap$value),3)`
+- La media de la muestra _bootstrap 1_ es `r round(mean(bootstrap$value),3)`
 
 --
 
@@ -972,7 +995,7 @@ p_bootstrap
 
 class: animated, fadeIn
 
-## Bootstrapping
+## *Bootstrapping*
 
 
 ```{r echo = F, fig.height=5, fig.align='center', fig.width=12}
@@ -1032,7 +1055,7 @@ p_original <- ggplot(original, aes(x = value, y = 0)) +
     legend.position = "none"
   )
 
-# --- Grafico 2: remuestreo bootstrap (con reemplazo) ---
+# --- Grafico 2: remuestreo *bootstrap* (con reemplazo) ---
 p_bootstrap <- ggplot(bootstrap, aes(x = value, y = y_jitter)) +
   geom_hline(yintercept = 0, color = "grey40", linewidth = 0.6) +
   geom_point(aes(fill = id), shape = 21, size = 8, color = "black", stroke = 0.8) +
@@ -1048,7 +1071,7 @@ p_bootstrap <- ggplot(bootstrap, aes(x = value, y = y_jitter)) +
     legend.position = "none"
   )
 
-# --- Grafico 2: remuestreo bootstrap (con reemplazo) ---
+# --- Grafico 2: remuestreo *bootstrap* (con reemplazo) ---
 p_bootstrap2 <- ggplot(bootstrap2, aes(x = value, y = y_jitter)) +
   geom_hline(yintercept = 0, color = "grey40", linewidth = 0.6) +
   geom_point(aes(fill = id), shape = 21, size = 8, color = "black", stroke = 0.8) +
@@ -1075,7 +1098,7 @@ p_bootstrap2
 
 class: animated, fadeIn
 
-## Bootstrapping
+## *Bootstrapping*
 
 
 ```{r echo = F, fig.height=5, fig.align='center', fig.width=12}
@@ -1097,7 +1120,7 @@ original <- data.frame(
 
 mean_original <- mean(original$value)
 
-# --- Remuestreo bootstrap 1: se extraen 8 valores CON reemplazo ---
+# --- Remuestreo *bootstrap* 1: se extraen 8 valores CON reemplazo ---
 boot_idx <- sample(1:n, size = n, replace = TRUE)
 
 bootstrap <- original[boot_idx, ]
@@ -1108,7 +1131,7 @@ bootstrap$y_jitter <- ave(bootstrap$value, bootstrap$value,
 
 mean_boot1 <- mean(bootstrap$value)
 
-# --- Remuestreo bootstrap 2: se extraen 8 valores CON reemplazo ---
+# --- Remuestreo *bootstrap* 2: se extraen 8 valores CON reemplazo ---
 boot_idx <- sample(1:n, size = n, replace = TRUE)
 
 bootstrap2 <- original[boot_idx, ]
@@ -1143,7 +1166,7 @@ p_original <- ggplot(original, aes(x = value, y = 0)) +
     legend.position = "none"
   )
 
-# --- Grafico 2: remuestreo bootstrap 1, con linea y etiqueta salmon ---
+# --- Grafico 2: remuestreo *bootstrap* 1, con linea y etiqueta salmon ---
 p_bootstrap <- ggplot(bootstrap, aes(x = value, y = y_jitter)) +
   geom_hline(yintercept = 0, color = "grey40", linewidth = 0.6) +
   geom_vline(xintercept = mean_boot1, color = "salmon", linewidth = 1.3) +
@@ -1162,7 +1185,7 @@ p_bootstrap <- ggplot(bootstrap, aes(x = value, y = y_jitter)) +
     legend.position = "none"
   )
 
-# --- Grafico 3: remuestreo bootstrap 2, con linea y etiqueta salmon ---
+# --- Grafico 3: remuestreo *bootstrap* 2, con linea y etiqueta salmon ---
 p_bootstrap2 <- ggplot(bootstrap2, aes(x = value, y = y_jitter)) +
   geom_hline(yintercept = 0, color = "grey40", linewidth = 0.6) +
   geom_vline(xintercept = mean_boot2, color = "salmon", linewidth = 1.3) +
@@ -1200,7 +1223,7 @@ Lo repetimos 1,000 veces.
 
 class: animated, fadeIn
 
-## Bootstrapping
+## *Bootstrapping*
 
 - El histograma nos informa de cómo podría cambiar la media si repitiésemos el experimento muchas veces.
 
@@ -1224,7 +1247,7 @@ boot_means <- replicate(n_boot, {
 
 boot_df <- data.frame(mean_value = boot_means)
 
-# --- Histograma de las 1000 medias bootstrap ---
+# --- Histograma de las 1000 medias *bootstrap* ---
 p_hist <- ggplot(boot_df, aes(x = mean_value)) +
   geom_histogram(
     binwidth = 0.3,
@@ -1246,14 +1269,14 @@ print(p_hist)
 
 --
 
-- Si queremos saber el error estándard de la media de nuestro experimento original, podemos calcularla a partir de nuestra distribución de _bootstrap_
+- Si queremos saber el **error estándar** de la media de nuestro experimento original, podemos calcularlo como la **desviación estándar de la distribución _bootstrap_**: `r round(sd(boot_means), 2)`, muy parecido al de la fórmula clásica, $s/\sqrt{n}$ = `r round(sd(original_values)/sqrt(8), 2)`
 
 ---
 
 
 class: animated, fadeIn
 
-## Bootstrapping
+## *Bootstrapping*
 
 - El histograma nos informa de cómo podría cambiar la media si repitiésemos el experimento muchas veces.
 
@@ -1358,18 +1381,18 @@ print(combined)
 
 class: animated, fadeIn
 
-## Bootstrapping
+## *Bootstrapping*
 
 - Podemos aplicarlo a **cualquier estadístico** para crear un histograma de lo que pasaría si repitiésemos el experimento muchas veces
 
 - Esa información nos sirve para calcular el error estándar o el intervalo de confianza, sin necesidad de conocer una fórmula analítica
 
-- Independientemente del estadístico, el bootstrap nos permite verlo en el contexto de una distribución, que podemos usar para interpretar los resultados
+- Independientemente del estadístico, el *bootstrap* nos permite verlo en el contexto de una distribución, que podemos usar para interpretar los resultados
 
 
-- Las distribuciones bootstrap aproximan la dispersión, el sesgo y la forma de la distribución muestral real
+- Las distribuciones *bootstrap* aproximan la dispersión, el sesgo y la forma de la distribución muestral real
 
-- El bootstrap **no** sirve para obtener mejores estimaciones del parámetro: las distribuciones bootstrap están centradas en el estadístico calculado a partir de la muestra original, no en el valor poblacional desconocido
+- El *bootstrap* **no** sirve para obtener mejores estimaciones del parámetro: las distribuciones *bootstrap* están centradas en el estadístico calculado a partir de la muestra original, no en el valor poblacional desconocido
 
 - Es útil para cuantificar el comportamiento de una estimación, su error estándar, su asimetría (*skewness*) o su sesgo, o para calcular intervalos de confianza
 
@@ -1383,9 +1406,9 @@ class: animated, fadeIn
 
 ### ¿Cuántas remuestras se necesitan?
 
-- Normalmente, 1.000 muestras bootstrap son suficientes para obtener aproximaciones aproximadas
+- Con 1.000 remuestras suele bastar para estimar un **error estándar**
 
-- La regla general es usar al menos 10.000 remuestras bootstrap, y más cuando la precisión importa
+- Para **IC por percentiles** y **p-valores** se recomienda al menos 10.000, y más cuando la precisión importa
 
 - Aumentar el número de remuestras (m) no aumenta la información contenida en los datos, esa depende del tamaño de la muestra original (n), que se mantiene fijo en cada remuestra. Más remuestras solo dan una mejor estimación de la distribución muestral, no más información nueva
 
@@ -1396,7 +1419,7 @@ class: animated, fadeIn
 
 - Un test de hipótesis no paramétrico
 - Se basa en remuestrear los datos originales asumiendo la hipótesis nula
-- A partir de los datos remuestreados se puede concluir cuán probable es que los datos originales ocurran bajo la hipótesis nula
+- A partir de los datos remuestreados se puede concluir **cuán probable es obtener un estadístico tan extremo como el observado** si la hipótesis nula fuera cierta
 
 
 
@@ -1424,13 +1447,12 @@ class: animated, fadeIn
 ## Test de permutación
 
 .pull-left[
-$$H_0: \mu_{treatment} \le \mu_{control}$$
-
+$$H_0: \mu_{tratamiento} = \mu_{control}$$
 - El champú no incrementa la calidad de la lana
 ]
 
 .pull-right[
-$$H_A: \mu_{treatment} \gt \mu_{control}$$
+$$H_A: \mu_{tratamiento} \gt \mu_{control}$$
 - El champú incrementa la calidad de la lana
 ]
 
@@ -1440,14 +1462,14 @@ class: animated, fadeIn
 
 ## Test de permutación
 
-#### Paso 2: prueba estadística
+#### Paso 2: estadístico de prueba
 
 - Para determinar si el champú es o no efectivo, necesitamos una manera de cuantificar la diferencia entre nuestras hipótesis nula y alternativa: **prueba estadística**
 
 - Podemos utilizar la diferencia de medias de la respuesta entre los dos champús:
 
 <br><center>
-$\text{prueba estadística} = \mu_{tratamiento} - \mu_{control} = 6.118 - 4.591 = 1.527$
+$\text{estadístico de prueba} = \bar{x}_{tratamiento} - \bar{x}_{control} = 6.118 - 4.591 = 1.527$
 <br><br>
 <img src="img/6.png" width=50%></img>
 </center>
@@ -1481,7 +1503,7 @@ class: animated, fadeIn
 - El proceso se repite, permutando los datos una y otra vez, y recalculando el estadístico (diferencia de medias) en cada iteración
 - Tras un número suficiente de permutaciones (1.000-10.000), obtenemos la distribución aproximada del estadístico bajo la hipótesis nula
 - Esta distribución nos permite calcular la probabilidad de obtener distintos valores de diferencia de medias, asumiendo que el nuevo champú no mejora la calidad de la lana
-- Viendo dónde cae nuestro estadístico observado dentro de esta distribución, obtenemos la pieza final del test: el valor p.
+- Viendo dónde cae nuestro estadístico observado dentro de esta distribución, obtenemos la pieza final del test: el p-valor.
 ]
 
 .pull-right[
@@ -1550,9 +1572,9 @@ class: animated, fadeIn
 #### Paso 4: p-valor
 
 .pull-left[
-- El p-valor representa la probabilidad de obtener el valor observado, asumiendo que la hipótesis nula es cierta
+- El p-valor es la probabilidad de obtener **un estadístico igual o más extremo que el observado**, asumiendo que la hipótesis nula es cierta
 - Comparamos el  p-valor con un nivel de significación (que debería fijarse a priori; usaremos el 5%). Si el  p-valor es menor o igual que ese nivel, rechazamos la hipótesis nula: el resultado se considera estadísticamente significativo
-- Un  p-valor bajo indica que, si la hipótesis nula fuera cierta, sería poco probable obtener la diferencia en la calidad de la lana que observamos; un  p-valor alto indica lo contrario, que ese resultado sería bastante probable bajo la hipótesis nula
+- Un  p-valor bajo indica que, si la hipótesis nula fuera cierta, sería poco probable obtener la diferencia en la calidad de la lana que observamos; un p-valor alto indica que ese resultado no sería sorprendente si la hipótesis nula fuera cierta
 
 ]
 
@@ -1633,7 +1655,7 @@ $$
 p-valor = 5 / 1000 = 0.005
 $$
 - Si realmente fuera cierto que el nuevo champú no mejora la calidad de la lana, obtener la diferencia inicial que observamos ocurriría con una probabilidad de solo el 0.5%
-- Esa es una probabilidad muy baja.Con nuestro nivel de significación del 5%, rechazamos la hipótesis nula y aceptamos la alternativa: el nuevo champú sí parece mejorar la calidad de la lana.
+- Esa es una probabilidad muy baja. Con nuestro nivel de significación del 5%, rechazamos la hipótesis nula **y tenemos evidencia a favor de la alternativa**: el nuevo champú sí parece mejorar la calidad de la lana.
 
 ]
 
@@ -1747,7 +1769,7 @@ class: animated, fadeIn
 - No siempre es fácil o posible permutar (series temporales, autocorrelación espacial)
 - En diseños complejos, requiere permutaciones condicionadas (no siempre trivial)
 - Coste computacional elevado si *n* es grande
-- No da estimaciones de parámetros, solo p-valores (a diferencia del bootstrap)
+- No da estimaciones de parámetros, solo p-valores (a diferencia del *bootstrap*)
 ]
 
 ---
@@ -2037,7 +2059,7 @@ p_badges <- ggplot(plot_df, aes(x = col, y = y, label = label)) +
   scale_color_identity() +
   scale_x_continuous(limits = c(0.4, 3.6)) +
   scale_y_continuous(limits = c(0.3, nrow(datos) + 0.7)) +
-  labs(caption = "Datos originales") +
+  labs(caption = "Permutación NO válida (se mezcla el rendimiento entre todos)") +
   theme_void(base_size = 16) +
   theme(
     plot.caption = element_text(hjust = 0.5, size = 13, margin = margin(t = 15)),
@@ -2075,7 +2097,7 @@ class: animated, fadeIn
 - Agrupar las observaciones en estratos (bloques) según su nivel de renta
 
 **Paso 2: Permutar dentro de cada estrato**
-- Permutar las etiquetas de clases de repaso solo entre individuos del **mismo** estrato de renta
+- Permutar **el rendimiento (o, de forma equivalente, las etiquetas de clases de repaso)** solo entre individuos del **mismo** estrato de renta
 
 **Paso 3: Calcular y repetir**
 - Calcular el estadístico de prueba con los datos permutados, y repetir el proceso miles de veces para construir la distribución nula
@@ -2168,7 +2190,7 @@ p_badges <- ggplot(plot_df, aes(x = col, y = y, label = label)) +
   scale_color_identity() +
   scale_x_continuous(limits = c(0.4, 3.6)) +
   scale_y_continuous(limits = c(0.3, nrow(datos) + 0.7)) +
-  labs(caption = "Datos originales") +
+ labs(caption = "Permutación válida (dentro de cada nivel de renta)") +
   theme_void(base_size = 16) +
   theme(
     plot.caption = element_text(hjust = 0.5, size = 13, margin = margin(t = 15)),
@@ -2216,23 +2238,25 @@ class: animated, fadeIn
 
 class: animated, fadeIn
 
-## Bootstrap vs test de permutación
+## *Bootstrap* vs test de permutación
 
-| | Bootstrap | Test de permutación |
+| | *Bootstrap* | Test de permutación |
 |---|---|---|
 | **Uso** | Estimar la precisión de estadísticos muestrales | Un test de hipótesis no paramétrico |
-| **Supuestos** | Sin supuestos | Intercambiabilidad bajo la hipótesis nula |
+| **Supuestos** | Muestra representativa y observaciones independientes (sin distribución concreta) | Intercambiabilidad bajo la hipótesis nula |
+| **Resultado** | Error estándar, sesgo, IC** | p-valor |
 | **Reemplazamiento** | Con reemplazamiento | Sin reemplazamiento |
 
 --
 
-¿Podemos utilizar el bootstrap como prueba estadística? Vamos a verlo con la prueba de las alpacas.
+<br>
+¿Podemos utilizar el *bootstrap* como prueba estadística? Vamos a verlo con la prueba de las alpacas.
 
 ---
 
 class: animated, fadeIn
 
-## Bootstrap 
+## *Bootstrap* 
 
 .pull-left[
 - Nuestro estadístico de interés es la diferencia de las medias 
@@ -2253,24 +2277,30 @@ class: animated, fadeIn
 
 class: animated, fadeIn
 
-## Bootstrap 
+## *Bootstrap* 
+
 .pull-left[
+Diferencia de medias (tratamiento − control) en 1000 réplicas con reemplazamiento.
 
-- Distribución de nuestro estadístico en 1,000 réplicas con reemplazamiento
+#### 1. Con el IC
+
+- El **IC bootstrap del 95%** son los percentiles 2.5% y 97.5% de las réplicas (zona **azul**; en rojo, lo que queda fuera).
+- El IC **no contiene el 0**: rechazamos $H_0$ al 5% (dos colas).
 
 
-- El intervalo de confianza al 95% de las réplicas (coloreado en verde) no solapa con 0.
+#### 2. Con el p-valor
 
-- Las diferencias son significativas.
+- **Una cola** ($H_A$: tratamiento > control): proporción de réplicas con diferencia $\le 0$.
 
-- P-valor una cola: Una cola (H_A: el champú mejora la calidad, tratamiento > control): mean(boot_diffs <= 0) — la proporción de réplicas que caen en el lado "equivocado" (0 o negativo), que es la única dirección que te interesa para esta hipótesis.
-
-- P-valor de dos colas: multiplicaría por 2 ese valor
-
+- En nuestro caso, **`r sum(boot_diffs <= 0)` de 1000** réplicas son $\le 0$. Si sale 0, se escribe $p < 0.001$ (nunca $p = 0$).
+- **Dos colas:** el doble de ese valor.
 ]
+
+
 .pull-right[
 ```{r echo = F, fig.height=7, fig.align='center', fig.width=6}
 library(ggplot2)
+library(ggthemes)
 
 set.seed(14)
 
@@ -2281,7 +2311,7 @@ control     <- c(2.8, 5.4, 4.6, 5.8, 4.6, 4.4, 5.1, 5.6, 4.1, 3.9, 4.2)
 n_treat <- length(tratamiento)
 n_ctrl  <- length(control)
 
-# Estadistico observado: diferencia de media
+# Estadistico observado: diferencia de medias
 obs_diff <- mean(tratamiento) - mean(control)
 
 # --- Bootstrap: 1000 iteraciones, remuestreando CADA GRUPO POR SEPARADO ---
@@ -2296,29 +2326,48 @@ boot_diffs <- replicate(n_boot, {
 
 boot_df <- data.frame(diff = boot_diffs)
 
-# --- Intervalo de confianza al 95% ---
-ci <- quantile(boot_diffs, probs = c(0.025, 0.975))
+# --- Intervalo de confianza al 95% (percentiles 2.5% y 97.5%) ---
+ci <- unname(quantile(boot_diffs, probs = c(0.025, 0.975)))
 
-# Marcamos si cada replica cae dentro (verde) o fuera (rojo) del IC 95%
+# Marcamos si cada replica cae dentro o fuera del IC 95%
 boot_df$dentro_ci <- boot_df$diff >= ci[1] & boot_df$diff <= ci[2]
 
-# --- Grafico: histograma coloreado por dentro/fuera del IC ---
+# Altura maxima del histograma, para colocar las anotaciones
+binwidth <- 0.05
+y_max <- max(hist(boot_diffs,
+                  breaks = seq(min(boot_diffs) - binwidth, max(boot_diffs) + binwidth, by = binwidth),
+                  plot = FALSE)$counts)
+
+# --- Grafico ---
 p_boot <- ggplot(boot_df, aes(x = diff, fill = dentro_ci)) +
-  geom_histogram(binwidth = 0.05, color = "black", linewidth = 0.2) +
-  scale_fill_manual(values = c("FALSE" = "#D62728", "TRUE" = "#2CA02C"), guide = "none") +
-  geom_vline(xintercept = 0, color = "red", linetype = "dashed", linewidth = 1) +
-  geom_vline(xintercept = obs_diff, color = "black", linetype = "dashed", linewidth = 1) +
-  annotate("text", x = 0, y = Inf, label = "Diferencia = 0 si\nH0 es verdadera",
-           color = "red", vjust = 1.5, hjust = 1.1, size = 4) +
-  annotate("text", x = obs_diff, y = Inf, label = "Diferencia de\nmedias observada",
-           color = "black", vjust = 1.5, hjust = -0.1, size = 4) +
+  geom_histogram(binwidth = binwidth, color = "black", linewidth = 0.2, alpha = 0.6) +
+  scale_fill_manual(values = c("FALSE" = "firebrick3", "TRUE" = "cadetblue3"), guide = "none") +
+  # Lineas de referencia: diferencia = 0 (H0) y diferencia observada
+  geom_vline(xintercept = 0, color = "black", linewidth = 1) +
+  geom_vline(xintercept = obs_diff, linetype = "dashed", color = "gray30", linewidth = 1) +
+  # IC 95%
+  annotate("segment", x = ci[1], xend = ci[2], y = y_max*1.08, yend = y_max*1.08,
+           color = "orange4", linewidth = 1,
+           arrow = arrow(ends = "both", type = "closed", length = unit(0.05, "inches"))) +
+  annotate("text", x = mean(ci), y = y_max*1.16, label = "95% IC",
+           fontface = "bold", color = "orange4") +
+  # Etiquetas de las lineas
+  annotate("text", x = 0, y = y_max*1.32, label = "Diferencia = 0\nsi H0 es verdadera",
+           color = "black", hjust = -0.1) +
+  annotate("text", x = obs_diff, y = y_max*1.32, label = "Diferencia de\nmedias observada",
+           color = "gray30", hjust = -0.1) +
+  scale_x_continuous(breaks = seq(0, 3, by = 0.5)) +
+  scale_y_continuous(limits = c(0, y_max*1.45)) +
   labs(
-    title = "Distribución de nuestro estadístico en 1.000 réplicas\ncon reemplazamiento",
+    title = "Diferencia de medias en 1.000 réplicas bootstrap",
     x = "Diferencia bootstrap de medias",
     y = "Frecuencia"
   ) +
-  theme_minimal(base_size = 18) +
-  theme(panel.grid.minor = element_blank())
+  ggthemes::theme_base(base_size = 16) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        panel.background = element_rect(fill = "white"),
+        plot.title = element_text(size = 14))
 
 print(p_boot)
 
@@ -2329,13 +2378,40 @@ print(p_boot)
 
 class: animated, fadeIn
 
-## Bootstrap vs. test de permutación: el p-valor
+## *Bootstrap* vs. test de permutación: el p-valor
 
 > **Test de permutación:** "p = probabilidad de obtener un valor del estadístico tan extremo **como el observado**, si los grupos fueran idénticos (H₀ exacta)"
 
-> **Bootstrap:** "p = proporción de réplicas bootstrap que caen **del lado de H₀** (cruzan el 0); refleja la variabilidad de los datos observados"
+> **Bootstrap:** "p = proporción de réplicas *bootstrap* que caen **del lado de H₀** (cruzan el 0); refleja la variabilidad de los datos observados"
 
 - Ambos p-valores se interpretan como evidencia contra H₀, pero miden cosas ligeramente distintas
-- El bootstrap da un extra: además del p-valor, permite conocer la variabilidad/incertidumbre de nuestro estadístico (el intervalo de confianza)
+- El *bootstrap* da un extra: además del p-valor, permite conocer la variabilidad/incertidumbre de nuestro estadístico (el intervalo de confianza)
 
 
+---
+class: animated, fadeIn
+
+## Con fórmula *vs.* con remuestreo
+
+| | Con fórmula | Con remuestreo |
+|---|---|---|
+| **Error estándar** | $s/\sqrt{n}$ | desviación estándar de las medias *bootstrap* |
+| **IC 95%** | $\bar{x} \pm 1.96 \times SE$ | percentiles 2.5% y 97.5% de la distribución *bootstrap* |
+| **p-valor** | área bajo la normal (o $t$) más allá de $z$ | proporción de permutaciones con un estadístico igual o más extremo |
+
+<br>
+- Como vimos con los IC: **si el IC del 95% no contiene el valor de $H_0$, rechazamos $H_0$ al 5%** (dos colas). El *bootstrap* de las alpacas lo cumple.
+- En el próximo tema veremos el **t-test**, que aproxima la distribución nula con una fórmula.
+
+---
+class: animated, fadeIn
+
+## Contacto
+
+<div style="margin-top: 20vh; text-align:center;">
+
+| Marta Coronado Zamora | David Castellano | 
+|:-:|:-:|
+| <a href="mailto:marta.coronado@uab.cat"><i class="fa fa-paper-plane fa-fw"></i> marta.coronado@uab.cat</a> | <a href="mailto:david.castellano@uab.cat"><i class="fa fa-paper-plane fa-fw"></i>&nbsp; david.castellano@uab.cat</a> | 
+| <a href="https://bsky.app/profile/geneticament.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @geneticament.bsky.social</a> |                 <a href="https://bsky.app/profile/castellanoed.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @castellanoed.bsky.social</a> |
+| <a href="https://www.uab.cat"><i class="fa fa-map-marker fa-fw"></i>&nbsp; Universitat Autònoma de Barcelona</a> |    <a href="https://gutengroup.mcb.arizona.edu/"> <i class="fa fa-map-marker fa-fw"></i>&nbsp; University of Arizona</a> |

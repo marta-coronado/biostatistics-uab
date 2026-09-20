@@ -1,7 +1,7 @@
 ---
 title: "Problemas de distribución normal"
 author: "Bioestadística"
-date: "Octubre 2025"
+date: "Octubre 2026"
 output:
   html_document:
     self_contained: true  
@@ -61,7 +61,7 @@ h3 {
 
 ## Problema 1
 
-Se midió la presión arterial (promedio de las mediciones sistólica y diastólica) de 38 personas. El promedio fue 94,5 mm Hg. Se muestra un histograma de los datos.
+Se midió la presión arterial (promedio de las mediciones sistólica y diastólica) de 38 personas. El promedio fue 94.5 mm Hg. Se muestra un histograma de los datos.
 
 ```{r, echo = F, fig.align='center', fig.height=3, fig.width=5}
 library(ggplot2)
@@ -147,7 +147,7 @@ kable(z_table_df, digits = 4, align = "c",
 
 ### a) $P(Z > 0.62)$  
 ### b) $P(Z \le 0.93)$    
-### c) $P(0.56 < Z \le 2.80 ))$  
+### c) $P(0.56 < Z \le 2.80)$ 
 
 
 <details>
@@ -212,9 +212,9 @@ La duración de los embarazos humanos, desde la concepción hasta el nacimiento,
 <summary>Respuestas</summary>
 
 | Pregunta | Respuesta aproximada |
-|:--------:|:---------|:---------------------:|
-| a) $P(X < 240)$ | **0.0521** |
-| b) $P(240 < X < 270)$ | **0.5466**  |
+|:--------:|:---------|
+| a) $P(X < 240)$ | **0.0521 (5.21%)** |
+| b) $P(240 < X < 270)$ | **0.5466 (54.66%)**  |
 | c) Longitud mínima del 20% más largo (percentil 80) | **≈ 279.47 días**  |
 </details>
 
