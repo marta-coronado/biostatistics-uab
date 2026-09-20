@@ -24,13 +24,20 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 
 ## 🗣️ Seminarios
 - [Seminario 1: La importancia de mostrar los datos](S/1/S1.html)
-- [Seminario 2: Distribución de Poisson](S/1/S1.html)
+- [Seminario 2: Distribución de Poisson](S/2/7.Poisson.html)
 
 ---
 
 ## 💻 Prácticas de ordenador
 - [Práctica 1: Estadística descriptiva y visualización de datos - Introducción a `R` y `ggplot2`](P/1/PracticaR.html)
 - <a href="P/1/PracticaR.Rmd" download>Descarga el documento `Rmd` de la Práctica 1 aquí</a>.
+
+---
+
+## ✏️️ Problemas
+- [Problemas 1: Estadística descriptiva](PA/PA1/Problemas_Estadistica_Descriptiva.html)
+- [Problemas 2: Distribución binomial](PA/PA2/Problemas_Binomial.html)
+
    
 ---
 
