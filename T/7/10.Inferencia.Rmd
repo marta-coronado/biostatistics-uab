@@ -610,29 +610,21 @@ class: animated, fadeIn
 
 Si realizamos un test y decidimos **rechazar o no H₀**, existen cuatro posibles resultados:
 
-| Realidad / Decisión | Rechazamos H₀ | No rechazamos H₀ |
+| Decisión | H₀ cierta | H_A cierta |
 |--------------------|---------------|-----------------|
-| **H₀ verdadera**   | Error Tipo I   | Correcto        |
-| **H₀ falsa**       | Correcto      | Error Tipo II   |
+| **No rechazamos H₀**   | Correcto (1-α)   | Error tipo II (β), falso negativo        |
+| **Rechazamos H₀**       | Error tipo I (α), falso positivo       | Correcto (1-β) = potencia   |
 
 - **Error tipo I ($\alpha$)**:
 rechazamos la H₀ cuando es verdadera  
 - **Error tipo II ($\beta$)**: no rechazamos H₀ cuando es falsa
 
+<br>
 **Ejemplo:**
 
 - El medicamento no tiene un efecto y por lo tanto no hay diferencias en la presión arterial, pero en nuestra muestra los valores están tan alejados que por error pensamos que sí hay un efecto del medicamento.
 
 - El medicamento sí tiene un efecto, y por lo tanto sí hay diferencias en la presión arterial, pero nuestra muestra no muestra diferencias claras: no rechazamos H₀ y nos perdemos un efecto que sí existe 
-
----
-class: animated, fadeIn
-
-## 5. Tipos de errores
-
-
-<center>
-<img src="img/error.jpg" width=80%>
 
 ---
 class: animated, fadeIn
@@ -647,6 +639,91 @@ class: animated, fadeIn
 - **Falso negativo (error tipo II)**: no rechazamos H₀ aunque H₀ sea falsa  
   - Suele ocurrir si hay **muy pocos datos** o métodos poco sensibles  
   - Se reduce **aumentando el tamaño de muestra** o usando métodos con **mayor potencia estadística**
+
+---
+class: animated, fadeIn
+
+## 5. Tipos de errores
+
+```{r, echo = F, fig.align='center', fig.height=6, fig.width=12}
+library(ggplot2)
+
+# Parámetros
+mu0 <- 0      # media bajo H0
+mua <- 3      # media bajo Ha
+sd0 <- 1      # desviación típica (igual en ambas)
+crit <- 1.645  # valor crítico (alfa = 0.05, test unilateral)
+
+# Colores
+col_h0    <- "#2C7BB6"  # azul
+col_ha    <- "#D95F02"  # naranja
+col_alpha <- "#D7191C"  # rojo
+col_beta  <- "#1A9641"  # verde
+
+# Datos de las curvas
+x  <- seq(-4, 7, length.out = 1000)
+df <- data.frame(
+  x    = x,
+  h0   = dnorm(x, mu0, sd0),
+  ha   = dnorm(x, mua, sd0)
+)
+
+# Áreas sombreadas
+df_alpha <- subset(df, x >= crit)   # cola derecha de H0  -> error tipo I
+df_beta  <- subset(df, x <= crit)   # cola izquierda de Ha -> error tipo II
+
+# Probabilidades (para mostrarlas si se quiere)
+alpha <- 1 - pnorm(crit, mu0, sd0)
+beta  <- pnorm(crit, mua, sd0)
+
+ggplot(df, aes(x)) +
+  # Áreas
+  geom_area(data = df_beta,  aes(y = ha, fill = "Error tipo II (β)"),  alpha = 0.6) +
+  geom_area(data = df_alpha, aes(y = h0, fill = "Error tipo I (α)"),   alpha = 0.8) +
+  # Curvas
+  geom_line(aes(y = h0), colour = col_h0, linewidth = 1) +
+  geom_line(aes(y = ha), colour = col_ha, linewidth = 1) +
+  # Líneas verticales: medias y valor crítico
+  geom_segment(aes(x = mu0, xend = mu0, y = 0, yend = dnorm(0)), colour = col_h0) +
+  geom_segment(aes(x = mua, xend = mua, y = 0, yend = dnorm(0)), colour = col_ha) +
+  annotate("segment", x = crit, xend = crit, y = -0.015, yend = 0.38, linetype = "dashed") +
+  # Títulos de las distribuciones
+  annotate("text", x = mu0, y = 0.44, label = 'paste("Distribución bajo ", H[0])',
+           parse = TRUE, colour = col_h0, size = 5) +
+  annotate("text", x = mua, y = 0.44, label = 'paste("Distribución bajo ", H[a])',
+           parse = TRUE, colour = col_ha, size = 5) +
+  # Etiquetas α y β con flechas
+  annotate("text", x = crit + 1.3, y = 0.09, label = "alpha", parse = TRUE,
+           colour = col_alpha, size = 7) +
+  annotate("segment", x = crit + 1.1, xend = crit + 0.45, y = 0.075, yend = 0.03,
+           colour = col_alpha, arrow = arrow(length = unit(0.2, "cm"))) +
+  annotate("text", x = crit - 1.3, y = 0.2, label = "beta", parse = TRUE,
+           colour = col_beta, size = 7) +
+  annotate("segment", x = crit - 1.1, xend = crit - 0.4, y = 0.185, yend = 0.11,
+           colour = col_beta, arrow = arrow(length = unit(0.2, "cm"))) +
+  # Etiquetas del eje: c, H0, Ha
+  annotate("text", x = crit, y = -0.035, label = "c", fontface = "italic", size = 5) +
+  annotate("text", x = mu0, y = -0.035, label = "H[0]", parse = TRUE, size = 5) +
+  annotate("text", x = mua, y = -0.035, label = "H[a]", parse = TRUE, size = 5) +
+  # Flechas y regiones de decisión
+  annotate("segment", x = crit, xend = -4, y = -0.065, yend = -0.065,
+           arrow = arrow(length = unit(0.25, "cm"))) +
+  annotate("segment", x = crit, xend = 7, y = -0.065, yend = -0.065,
+           arrow = arrow(length = unit(0.25, "cm"))) +
+  annotate("text", x = (crit - 4) / 2, y = -0.095,
+           label = 'paste("Región donde NO rechazamos ", H[0])', parse = TRUE, size = 4.5) +
+  annotate("text", x = (crit + 7) / 2, y = -0.095,
+           label = 'paste("Región donde rechazamos ", H[0])', parse = TRUE, size = 4.5) +
+  # Leyenda y tema
+  scale_fill_manual(values = c("Error tipo I (α)"  = col_alpha,
+                               "Error tipo II (β)" = col_beta),
+                    name = NULL) +
+  coord_cartesian(ylim = c(-0.11, 0.46)) +
+  theme_void(base_size = 14) +
+  theme(legend.position = c(0.9, 0.85))
+```
+
+**Compromiso:** si movemos *c* a la derecha, **α baja pero β sube** (y viceversa). La única forma de reducir ambos a la vez es aumentar el tamaño muestral.
 
 
 ---
