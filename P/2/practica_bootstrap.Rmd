@@ -1,7 +1,7 @@
 ---
 title: "**Bootstrap:**<br><font color='#A8A8A8' size='5'>práctica en  `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
 author: "Marta Coronado Zamora"
-date: "Noviembre 2025"
+date: "Octubre 2026"
 output:
   prettydoc::html_pretty:
     theme: leonids
@@ -44,7 +44,7 @@ library(infer)
 
 Tienes una muestra y has obtenido una estimación, y quieres comunicar la precisión de dicha estimación. Dado que las estimaciones basadas en muestras varían por azar, es irresponsable y engañoso presentar una estimación sin describir la **incertidumbre** asociada, por ejemplo informando del **error estándar** u otras medidas de variabilidad.
 
-
+ 
 ## Generar una distribución muestral
 
 **Pregunta:**  
@@ -63,6 +63,9 @@ Normalmente solo tenemos **una** muestra, no toda la población. Entonces, ¿có
 - Podemos **simular** el proceso que creemos que generó nuestros datos.  
 - Podemos **re-muestrear** a partir de nuestra muestra mediante **bootstrapping**: lo que haremos en esta práctica.
 
+<hr>
+
+# Bootstrap
 
 ## Remuestreo de nuestra muestra (Bootstrapping)
 
@@ -122,7 +125,7 @@ Calcula la media de la duración del pulso de luz (`flash`) usando la función `
 
 ```
 
-Nuestra estimación muestral es que la duración media del pulso de luz en luciérnagas es de **95.94**. Pero esto es solo una estimación basada en *nuestra* muestra.
+Nuestra estimación muestral es que la duración media del pulso de luz en luciérnagas es de **95.94 (!!! r mean)**. Pero esto es solo una estimación basada en *nuestra* muestra.
 
 No podemos conocer el valor real del parámetro poblacional, pero sí podemos usar **bootstrapping** para entender **cuán lejos** podría estar nuestra estimación del valor verdadero.
 
@@ -233,73 +236,123 @@ código ggplot histograma +
 
 
 
-# Problema: 🐒🧠 Centros del lenguaje en chimpancés
+# Test de permutación
 
-Vamos a trabajar con los datos de 20 chimpancés del estudio de [Cantalupo y Hopkins (2001)](https://www.nature.com/articles/35107134). Este conjunto de datos contiene información sobre la **asimetría cerebral** en chimpancés, centrada en el **Área de Brodmann 44 (BA44)**, que en humanos forma parte del área de Broca, importante para el lenguaje.
+Imagine we have just designed a benchtop experiment in which we intend to measure the pressure (in mm Hg) at which a pair of overlapped stent grafts started to migrate or disconnect when deployed in a large thoracic aneurysm. 2
 
-Cada fila del dataset corresponde a un chimpancé e incluye:
 
-- **chimpName:** nombre del individuo.  
-- **sex:** sexo del individuo (M = macho, F = hembra).  
-- **asymmetryScore:** medida de asimetría del BA44 entre hemisferio izquierdo y derecho.  
-  - Valores **positivos** indican mayor volumen/actividad en el hemisferio izquierdo.  
-  - Valores **negativos** indican mayor volumen/actividad en el hemisferio derecho.  
-  - Valores cercanos a 0 indican simetría entre hemisferios.
+img migration_model.png
 
-Estos datos permiten estudiar la **lateralización cerebral** en chimpancés y compararla con la de los humanos.
+A common null hypothesis for comparing groups is that there is no difference between them. Under this model, we can treat all the experimental data as one big group instead of 2 different groups. We therefore pool the data from our completed experiment into one big group, shuffle it, and randomly assign data points into two groups of the original size. This is our generative model. After each round of permutation and assignment, we calculate and store the test statistic for the observed effect (difference in means between the two groups). Once many simulations have been completed, we’ll see where our true data falls relative to the virtual data.
 
-Los datos estan disponibles en: https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/6/chap19e2ChimpBrains.csv
+Los datos estan en predict.tsv
 
-#### **Paso 1: lee los datos**
-Guarda los datos en un data frame que se llame `chimp`.
+actividad 1 - leer el fichero en R
+delimitador es "\t"
+```{r}
+results_tbl <- read.table("predict.tsv")
+```
+
+actividad visualizar con un boxplot básico
 
 ```{r}
+boxplot_eda <- results_tbl %>% 
+    ggplot(aes(x=Device, y=Pressure)) +
+    geom_boxplot(
+        alpha  = .6,
+        width  = .4,
+        size   = .8,
+        fatten = .5,
+        fill   = c("#FDE725FF","#20A486FF")) +
+    labs(
+        y        = "Pressure (mm Hg)",
+        title    = "Predicate and Next-Gen Data",
+        subtitle = "Modular Disconnect Pressure"
+    )
+
+boxplot_eda
+```
+
+cambiar geom_boxplot por geom_density
+
+# funcion permutation test
+
+```{r}
+library(infer)
+
+perm <- results_tbl |>
+    specify(Pressure ~ Device) |>
+    hypothesize(null = "independence") |>
+    generate(reps = 10000, type = "permute") |>
+    calculate(perm_diff = "diff in means", order = c("Predicate", "Next_Gen"))
 
 ```
 
-#### **Paso 2: crea un histograma**
-Visualiza la distribución de la asimetría  (`asymmetryScore`).
+Visualiza el histograma
 
 ```{r}
-
+#Visualize difference in means as a histogram
+diffs_histogram_plot <- perm_diffs_df %>% ggplot(aes(perm_diffs)) +
+  geom_histogram(fill = "#2c3e50", color = "white", binwidth = .3, alpha = 0.8) +
+    labs(
+        x = "Pressure (mm Hg)",
+        title = "Histogram of Difference in Means",
+        subtitle = "Generated Under Null Hypothesis"
+    )
 ```
+hacerlo con las bolitas
 
-#### **Paso 3: calcula la mediana**
-Calcula la **mediana** de los valores de asimetría (`asymmetryScore`) en los datos.  
-Esta mediana será nuestro **estadístico de la muestra**.
+We just simulated many tests from the null hypothesis. These virtual data give us a good understanding of what sort of difference in means we might observe if there truly was no difference between the groups. As expected, most of the time the difference is around 0. But occasionally there is a noticeable difference in means just due to chance.
+
+But how big was the difference in means from our real world dataset? We’ll call this “baseline difference”.
+
 
 ```{r}
+#Evaluate difference in means from true data set
+predicate_pressure_mean <- mean(predicate_tbl$Pressure)
+next_gen_pressure_mean <- mean(next_gen_tbl$Pressure)
 
+baseline_difference <- predicate_pressure_mean - next_gen_pressure_mean
+baseline_difference 
 ```
 
-#### **Paso 4: genera la distribución con boostrap (10000 muestras)**
-Utiliza la función `rep_sample_n` para generar la distribución con bootstrap. Recuerda que puedes saber el tamaño de la muestra con la función `nrow(data.frame)`, que contará cuantas líneas tiene la tabla.
 
 ```{r}
-
+g1 <- diffs_histogram_plot + 
+  geom_vline(xintercept = baseline_difference, 
+             linetype   = "dotted", 
+             color      = "#2c3e50", 
+             size       = 1
+             ) 
 ```
 
-#### **Paso 5: calcula la mediana de cada replica**
-Utiliza las funciones `group_by` y `summarize` para calcular la mediana de cada replica.
 
-```{r}
+It looks like the our benchtop data was pretty extreme relative to the null. We should start to consider the possibility that this effect was not due solely to chance alone. 0.05 is a commonly used threshold for declaring statistical significance. Let’s see if our data is more or less extreme than 0.05 (solid line).
 
-```
 
-#### **Paso 6: visualiza la distribución**
 
-```{r}
+#Calculate the 5% quantile of the simulated distribution for difference in means
+the_five_percent_quantile <- quantile(perm_diffs_df$perm_diffs, probs = 0.05)
+the_five_percent_quantile
 
-```
+histograma añadiendole 0.05
 
-#### **Paso 7: intervalos de confianza**
+g3 <- g1 +
+         geom_vline(xintercept = the_five_percent_quantile, 
+             color      = "#2c3e50", 
+             size       = 1
+             )
+   We can see here that our data is more extreme than the 5% quantile which means our p-value is less than 0.05. This satisfies the traditional, frequentist definition of statistically significant. If we want to actual p-value, we have to determine the percentage of simulated data that are as extreme or more extreme than our observed data.
 
-Calcula el intervalo de confianza al 95%.
 
-```{r}
+p_value <- perm_diffs_df %>% 
+    filter(perm_diffs <= baseline_difference) %>%
+    nrow() / n_sims
+    
+ Our p-value is well below 0.05. This is likely enough evidence for us to claim that there was a statistically significant difference observed between the Next Gen device and the predicate device.
 
-```
+Our marketing team will be thrilled, but we should always be wary that statistically significant does not mean practically important. Domain knowledge should provide the context to interpret the relevance of the observed difference. A difference in mean Pressure of a few mm Hg seems to be enough to claim a statistically significant improvement in our new device vs. the predicate, but is it enough for our marketing team to make a meaningful campaign? In reality, a few mm Hg is noticeable on the bench but is likely lost in the noise of anatomical variation within real patient anatomies.
 
-**Completa la conclusión:**
-
-A partir del bootstrap con XXXX réplicas, estimamos que la mediana de asimetría del Área de Brodmann 44 en chimpancés se encuentra entre XXXX y XXXX con un XXXX% de confianza. Dado que el intervalo incluye 0, [sí/no] hay evidencia estadística de asimetría lateralizada.
+   
+          
+             

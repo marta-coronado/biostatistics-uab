@@ -1,0 +1,519 @@
+---
+title: ""
+subtitle: ""
+author: ""
+date: ""
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, rutgers, "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css", "https://use.fontawesome.com/releases/v7.0.0/css/all.css"]
+    lib_dir: libs
+    self_contained: true
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+      
+---
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE, width = 200)
+#knitr::include_graphics()
+knitr::opts_chunk$set(
+  cache = TRUE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  fig.retina = 5
+
+)
+knitr::opts_chunk$set(
+  comment = "")
+
+library(ggplot2)
+library(readr)
+library(knitr)
+#pagedown::chrome_print("PresentacionBioestadistica.html")
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_accent(
+  base_color = "#1c5253", link_color =  "#DE1144", code_inline_color = "#DE1144",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "400", "400i"),
+  code_font_google   = google_font("Roboto Mono"),
+    
+)
+```
+
+
+```{r xaringanExtra-clipboard, echo=FALSE}
+library(xaringanExtra)
+htmltools::tagList(
+  xaringanExtra::use_clipboard(
+    button_text = "<i class=\"fa fa-clipboard\"></i>",
+    success_text = "<i class=\"fa fa-check\" style=\"color: #90BE6D\"></i>",
+  ),
+  rmarkdown::html_dependency_font_awesome()
+)
+```
+
+
+class: title-slide, animated, fadeIn
+
+.left-top[
+# Inferencia estadística
+
+]
+
+.left-bottom[
+.authors[
+**Bioestadística**
+<br><br><br><br>
+
+Marta Coronado ([marta.coronado@uab.cat](mailto:marta.coronado@uab.cat))  
+]
+
+.footer-info[
+**Grado en Genética | Curso 2026/2027**
+]
+]
+
+.right-panel[]
+
+
+
+<style>
+.title-slide {
+  background-image: none;
+}
+
+/* Contenedor teal superior (solo título) */
+.title-slide .left-top {
+  position: absolute;
+  top: 0; left: 0;
+  width: 60%;
+  height: 62%;
+  background-color: #163a3a;
+  color: white;
+  padding: 50px 45px 30px 65px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;   /* ← esto faltaba */
+  align-items: flex-start;  /* ← con column, flex-end alinearía a la derecha; usa flex-start para pegar a la izquierda */
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+
+/* Contenedor blanco inferior (autores, fecha) */
+.title-slide .left-bottom {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 60%;
+  height: 38%;
+  background-color: white;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px 45px 30px 65px;
+  margin: 0;
+}
+
+.title-slide .right-panel {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 41%;
+  background-color: white;
+  background-image: url('img/1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.title-slide h1 {
+  font-size: 1.9em;
+  line-height: 1.25;
+  margin: 0;
+  font-weight: 400;
+}
+
+.title-slide .subtitle {
+  display: block;   /* ← esto es la clave: sin esto, margin-top se ignora */
+  font-size: 2em;
+  font-weight: bold;
+  color: #7ac142;
+  margin-top: -35px;
+  margin-bottom: 15px;
+}
+
+.title-slide .authors {
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.title-slide .authors a {
+  color: #e8846b;
+  text-decoration: none;
+}
+
+.title-slide .footer-info {
+  font-size: 0.9em;
+  color: #444;
+}
+
+.remark-slide-content h2,
+.remark-slide-content h3,
+.remark-slide-content h4,
+.remark-slide-content h5 {
+  margin-top: 1em;
+  margin-bottom: 0.6em;
+}
+
+.remark-slide-content p,
+.remark-slide-content ul,
+.remark-slide-content ol {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.remark-slide-content li {
+  margin-bottom: 0.1em;
+}
+
+.practica::before {
+  content: "\f303";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+
+.R::before {
+  content: "\f4f7";
+  font-family: "Font Awesome 6 Brands";
+  font-weight: 400;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+</style>
+
+
+
+---
+class: animated, fadeIn
+# Outline
+
+
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+```{r, echo = F, fig.align='center', fig.height=6, fig.width=12}
+library(ggplot2)
+
+# Parámetros
+mu_esp <- 14   # media dieta especial
+mu_nor <- 36   # media dieta normal
+sd_com <- 2.5  # desviación típica (igual en ambas)
+
+# Colores
+col_esp <- "#1B8A1B"  # verde
+col_nor <- "#C2185B"  # magenta
+
+# Datos
+x  <- seq(0, 50, length.out = 1000)
+df <- data.frame(
+  x   = x,
+  esp = dnorm(x, mu_esp, sd_com),
+  nor = dnorm(x, mu_nor, sd_com)
+)
+
+ggplot(df, aes(x)) +
+  geom_line(aes(y = esp), colour = col_esp, linewidth = 1.6) +
+  geom_line(aes(y = nor), colour = col_nor, linewidth = 1.6) +
+  # Títulos sobre cada curva
+  annotate("text", x = mu_esp, y = dnorm(0, sd = sd_com) * 1.08,
+           label = "Dieta especial", colour = col_esp,
+           fontface = "bold", size = 5) +
+  annotate("text", x = mu_nor, y = dnorm(0, sd = sd_com) * 1.08,
+           label = "Dieta normal", colour = col_nor,
+           fontface = "bold", size = 5) +
+  # Eje: marcas cada 5, etiquetas solo en 5, 25 y 45
+  scale_x_continuous(breaks = seq(5, 45, by = 5),
+                     limits = c(0, 50), expand = c(0, 0)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_void(base_size = 14) +
+  theme(
+    axis.line.x  = element_line(colour = "black", linewidth = 0.5),
+    axis.ticks.x = element_line(colour = "black", linewidth = 0.5),
+    axis.ticks.length.x = unit(0.25, "cm"),
+    axis.text.x  = element_text(size = 14, margin = margin(t = 4)),
+    plot.margin  = margin(10, 10, 10, 10)
+  )
+
+```
+
+--
+
+- Como las distribuciones solapan muy poco, es muy fácil ver que hay una diferencia entre estas dos dietas
+  - La mayoria de los ratones en la dieta especial pesan menos que los ratones con la dieta normal
+  
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+- Si cogemos una muestra pequeña de medidas de la dieta especial y normal obtendríamos un p-valor muy pequeño:
+
+.pull-left[
+```{r, echo = F, fig.align='center', fig.height=6, fig.width=6}
+library(ggplot2)
+
+# Colores
+col_a <- "#2DB84D"  # verde
+col_b <- "#E0308F"  # magenta
+
+# Datos (2 puntos por grupo)
+datos <- data.frame(
+  grupo = factor(rep(c("A", "B"), each = 3)),
+  y     = c(2.6, 1.4, 1.9,   # grupo A (verde)
+            6.9, 5.7, 6.2)   # grupo B (magenta)
+)
+
+# Medias por grupo (para la línea horizontal)
+medias <- aggregate(y ~ grupo, data = datos, FUN = mean)
+
+ggplot(datos, aes(x = grupo, y = y)) +
+  # Línea de la media
+  geom_segment(data = medias,
+               aes(x = as.numeric(grupo) - 0.35, xend = as.numeric(grupo) + 0.35,
+                   y = y, yend = y, colour = grupo),
+               linewidth = 1.6) +
+  # Puntos
+  geom_point(aes(fill = grupo), shape = 21, size = 6, stroke = 1.1,
+             colour = "grey20") +
+  scale_fill_manual(values   = c(A = col_a, B = col_b)) +
+  scale_colour_manual(values = c(A = col_a, B = col_b)) +
+  scale_y_continuous(limits = c(0, 10), breaks = c(1, 3, 5, 7, 9),
+                     expand = c(0, 0)) +
+  scale_x_discrete(expand = expansion(add = 0.6)) +
+  labs(x = "p-value = 0.0004") +
+  theme_classic(base_size = 14) +
+  theme(
+    legend.position    = "none",
+    axis.ticks       = element_blank(),
+    axis.text.x        = element_blank(),
+    axis.text.y        = element_blank(),
+    axis.title.y       = element_blank(),
+    axis.title.x       = element_text(size = 16, margin = margin(t = 8))
+  )
+```
+]
+
+.pull-right[
+- Este p-valor pequeño (< 0.05), nos llevaría a rechazar la hipótesis nula de que los dos grupos vienen de la misma distribución.
+]
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+- En otras palabras, rechazamos la hipótesis nula de que todos los datos vinieran de una distribución, intermedia entre la de la dieta especial y la normal.
+
+```{r, echo = F, fig.align='center', fig.height=6, fig.width=12}
+library(ggplot2)
+
+# Parámetros
+mu_esp <- 14   # media dieta especial
+mu_nor <- 36   # media dieta normal
+sd_com <- 2.5  # desviación típica (igual en ambas)
+mu_all <- 25   # NUEVO: media de la distribución azul (todos los datos)
+sd_all <- 4.5  # NUEVO: desviación típica de la distribución azul
+
+# Colores
+col_esp <- "#1B8A1B"  # verde
+col_nor <- "#C2185B"  # magenta
+col_all <- "#1F5FA8"  # NUEVO: azul
+
+# Datos
+x  <- seq(0, 50, length.out = 1000)
+df <- data.frame(
+  x   = x,
+  esp = dnorm(x, mu_esp, sd_com),
+  nor = dnorm(x, mu_nor, sd_com),
+  # NUEVO: la curva azul solo se dibuja a ±3.2 desviaciones típicas;
+  # se multiplica por sd_all/sd_com para que su pico iguale al de las otras dos
+  all = ifelse(abs(x - mu_all) <= 3.2 * sd_all, dnorm(x, mu_all, sd_all) * (sd_all / sd_com), NA)
+)
+
+ggplot(df, aes(x)) +
+  geom_line(aes(y = esp), colour = col_esp, linewidth = 1.6) +
+  geom_line(aes(y = nor), colour = col_nor, linewidth = 1.6) +
+  # NUEVO: distribución azul
+  geom_line(aes(y = all), colour = col_all, linewidth = 1.6, na.rm = TRUE) +
+  # Títulos sobre cada curva
+  annotate("text", x = mu_esp, y = dnorm(0, sd = sd_com) * 1.08,
+           label = "Dieta especial", colour = col_esp,
+           fontface = "bold", size = 5) +
+  annotate("text", x = mu_nor, y = dnorm(0, sd = sd_com) * 1.08,
+           label = "Dieta normal", colour = col_nor,
+           fontface = "bold", size = 5) +
+  # Eje: marcas cada 5, etiquetas solo en 5, 25 y 45
+  scale_x_continuous(breaks = seq(5, 45, by = 5),
+                     limits = c(0, 50), expand = c(0, 0)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05)),
+                     limits = c(0, dnorm(0, sd = sd_com) * 1.4)) +  # NUEVO: límite para dejar sitio al título azul
+  theme_void(base_size = 14) +
+  theme(
+    axis.line.x  = element_line(colour = "black", linewidth = 0.5),
+    axis.ticks.x = element_line(colour = "black", linewidth = 0.5),
+    axis.ticks.length.x = unit(0.25, "cm"),
+    axis.text.x  = element_text(size = 14, margin = margin(t = 4)),
+    plot.margin  = margin(10, 10, 10, 10)
+  )
+```
+
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+- Si volvemos a coger una muestra pequeña de medidas de la dieta especial y normal obtendríamos de nuevo un p-valor muy pequeño:
+
+.pull-left[
+```{r, echo = F, fig.align='center', fig.height=6, fig.width=6}
+library(ggplot2)
+
+# Colores
+col_a <- "#2DB84D"  # verde
+col_b <- "#E0308F"  # magenta
+
+# Datos (2 puntos por grupo)
+datos <- data.frame(
+  grupo = factor(rep(c("A", "B"), each = 3)),
+  y     = c(2.5, 1.7, 2.4,   # grupo A (verde)
+            6.7, 5.8, 6.1)   # grupo B (magenta)
+)
+
+# Medias por grupo (para la línea horizontal)
+medias <- aggregate(y ~ grupo, data = datos, FUN = mean)
+
+ggplot(datos, aes(x = grupo, y = y)) +
+  # Línea de la media
+  geom_segment(data = medias,
+               aes(x = as.numeric(grupo) - 0.35, xend = as.numeric(grupo) + 0.35,
+                   y = y, yend = y, colour = grupo),
+               linewidth = 1.6) +
+  # Puntos
+  geom_point(aes(fill = grupo), shape = 21, size = 6, stroke = 1.1,
+             colour = "grey20") +
+  scale_fill_manual(values   = c(A = col_a, B = col_b)) +
+  scale_colour_manual(values = c(A = col_a, B = col_b)) +
+  scale_y_continuous(limits = c(0, 10), breaks = c(1, 3, 5, 7, 9),
+                     expand = c(0, 0)) +
+  scale_x_discrete(expand = expansion(add = 0.6)) +
+  labs(x = "p-value = 0.0006") +
+  theme_classic(base_size = 14) +
+  theme(
+    legend.position    = "none",
+    axis.ticks       = element_blank(),
+    axis.text.x        = element_blank(),
+    axis.text.y        = element_blank(),
+    axis.title.y       = element_blank(),
+    axis.title.x       = element_text(size = 16, margin = margin(t = 8))
+  )
+```
+]
+
+.pull-right[
+- Hay una gran probabilidad de que la hipótesis nula sea falsa, y esté correctamente rechazada
+]
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+- Si volvemos a coger una muestra pequeña de medidas de la dieta especial y normal obtendríamos de nuevo un p-valor muy pequeño:
+
+.pull-left[
+```{r, echo = F, fig.align='center', fig.height=6, fig.width=6}
+library(ggplot2)
+
+# Parámetros
+mu_esp <- 14   # media dieta especial
+mu_nor <- 36   # media dieta normal
+sd_com <- 2.5  # desviación típica (igual en ambas)
+
+# Colores
+col_esp <- "#1B8A1B"  # verde (curva)
+col_nor <- "#C2185B"  # magenta (curva)
+rel_esp <- "#4CD44C"  # verde (relleno de los círculos)
+rel_nor <- "#F0459A"  # magenta (relleno de los círculos)
+
+# Datos de las curvas
+x  <- seq(0, 50, length.out = 1000)
+df <- data.frame(
+  x   = x,
+  esp = dnorm(x, mu_esp, sd_com),
+  nor = dnorm(x, mu_nor, sd_com)
+)
+
+# Observaciones (3 de cada dieta), ordenadas por x para el solapamiento de los círculos
+obs <- data.frame(
+  x     = c(20.1, 21.7, 22.4, 25.2, 25.7, 27.8),
+  grupo = c("esp", "esp", "nor", "nor", "esp", "nor")
+)
+
+ymax <- dnorm(0, sd = sd_com)   # altura del pico de las curvas (unidad de referencia)
+y_circ <- -0.42 * ymax          # posición vertical de los círculos
+
+ggplot(df, aes(x)) +
+  geom_line(aes(y = esp), colour = col_esp, linewidth = 1.6) +
+  geom_line(aes(y = nor), colour = col_nor, linewidth = 1.6) +
+  # Títulos sobre cada curva
+  annotate("text", x = mu_esp, y = ymax * 1.08, label = "Dieta especial",
+           colour = col_esp, fontface = "bold", size = 5) +
+  annotate("text", x = mu_nor, y = ymax * 1.08, label = "Dieta normal",
+           colour = col_nor, fontface = "bold", size = 5) +
+  # Eje x dibujado a mano (en y = 0): línea, marcas cada 5 y etiquetas en 5 y 45
+  annotate("segment", x = 0, xend = 50, y = 0, yend = 0, linewidth = 0.5) +
+  annotate("segment", x = seq(5, 45, by = 5), xend = seq(5, 45, by = 5),
+           y = 0, yend = -0.05 * ymax, linewidth = 0.5) +
+  annotate("text", x = c(5, 45), y = -0.14 * ymax, label = c("5", "45"), size = 4.5) +
+  # Flechas punteadas desde cada observación hasta el eje
+  geom_segment(data = obs, aes(x = x, xend = x, y = y_circ + 0.09 * ymax, yend = -0.1 * ymax),
+               linetype = "dotted", linewidth = 1) +
+  geom_segment(data = obs, aes(x = x, xend = x, y = -0.09 * ymax, yend = -0.015 * ymax),
+               arrow = arrow(length = unit(0.22, "cm"), type = "closed"), linewidth = 0.8) +
+  # Círculos de las observaciones
+  geom_point(data = obs, aes(y = y_circ, fill = grupo),
+             shape = 21, size = 6, stroke = 1, colour = "grey20") +
+  scale_fill_manual(values = c(esp = rel_esp, nor = rel_nor), guide = "none") +
+  scale_x_continuous(limits = c(0, 50), expand = c(0, 0)) +
+  coord_cartesian(ylim = c(-0.62 * ymax, 1.2 * ymax), expand = FALSE) +
+  theme_void(base_size = 14) +
+  theme(plot.margin = margin(10, 10, 10, 10))
+```
+]
+
+.pull-right[
+- Hay una gran probabilidad de que la hipótesis nula sea falsa, y esté correctamente rechazada
+]
