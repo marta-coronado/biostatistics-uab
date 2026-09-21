@@ -1,0 +1,459 @@
+---
+title: "Problemas de distribución binomial (desarrollados)"
+author: "Bioestadística"
+date: "Septiembre 2026"
+output:
+  html_document:
+    self_contained: true  
+    theme: simplex
+    css: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css
+    toc: yes
+    toc_float:
+      collapsed: true
+fontsize: 14pt
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+# Load useful packages
+library(rmdformats)   # for extra formatting if needed
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+```{=html}
+<style>
+body {
+  font-size: 14px;   /* un poco más grande */
+  color: black;      /* asegura texto en negro */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #D9230F;        /* títulos en rojo */
+}
+
+h3, h4, h5, h6 {
+  color: black;        /* títulos en rojo */
+}
+
+h3 {
+  font-size: 1em;   /* tamaño igual al texto normal */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+
+.handwritten {
+  font-family: 'Handlee', monospace;
+  font-size: 1.1em;
+}
+
+.respuesta {
+  background-color: #F0F0F0;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  line-height: 1.2;
+}
+</style>
+```
+
+## 🧭 Recordatorio: cuándo y cómo usar la binomial
+
+Una variable $Y$ sigue una distribución **binomial** $Y \sim \text{Bin}(n, p)$ cuando:
+
+1. Hay un número **fijo** $n$ de ensayos.
+2. Cada ensayo tiene solo **dos resultados** (éxito / fracaso).
+3. Los ensayos son **independientes**.
+4. La probabilidad de éxito $p$ es **constante** en todos los ensayos.
+
+En ese caso, la probabilidad de obtener exactamente $k$ éxitos es:
+
+$$P(Y = k) = \binom{n}{k} \, p^k \, (1-p)^{n-k}, \qquad \binom{n}{k} = \frac{n!}{k!\,(n-k)!}$$
+
+- $\binom{n}{k}$: número de formas de **colocar** los $k$ éxitos entre los $n$ ensayos.
+- $p^k$: probabilidad de los $k$ éxitos.
+- $(1-p)^{n-k}$: probabilidad de los $n-k$ fracasos.
+
+Además: $E(Y) = np$, $\text{Var}(Y) = np(1-p)$ y $\text{DE}(Y) = \sqrt{np(1-p)}$.
+
+En R: `dbinom(k, n, p)` da $P(Y=k)$ y `pbinom(k, n, p)` da $P(Y \le k)$.
+
+En todos los problemas seguimos los mismos pasos: **(1)** definir qué es $Y$, $n$ y $p$; **(2)** traducir la pregunta a $P(Y = k)$; **(3)** sustituir en la fórmula; **(4)** comprobar con R.
+
+---
+
+## 🌱 Problema 1 - Genética mendeliana
+
+Las semillas del **guisante de jardín** (*Pisum sativum*) pueden ser **amarillas** o **verdes**. Un determinado cruce entre plantas de guisante produce descendencia en la proporción **3 amarillas : 1 verde**. Si se examinan **cuatro** descendientes elegidos al azar de dicho cruce, ¿cuál es la probabilidad de que:
+
+### a) tres sean amarillas y una sea verde? 
+### b) las cuatro sean amarillas? 
+###  c) las cuatro sean del mismo color? 
+
+<br>
+<details>
+<summary>Solución desarrollada</summary>
+
+**Planteamiento**
+
+- Éxito = semilla **amarilla**. Una proporción 3:1 significa que 3 de cada 4 son amarillas, así que $p = 3/4$ (y $1-p = 1/4$).
+- Examinamos $n = 4$ descendientes, independientes entre sí.
+- $Y$ = número de semillas amarillas, $Y \sim \text{Bin}(4, 3/4)$.
+
+**a) Tres amarillas y una verde** $\;\to\; P(Y = 3)$
+
+$$P(Y=3) = \binom{4}{3} \left(\tfrac{3}{4}\right)^3 \left(\tfrac{1}{4}\right)^1 = 4 \cdot \frac{27}{64} \cdot \frac{1}{4} = \frac{27}{64} = 0.4219$$
+
+El 4 es el número de posiciones posibles de la semilla verde (1.ª, 2.ª, 3.ª o 4.ª).
+
+**b) Las cuatro amarillas** $\;\to\; P(Y = 4)$
+
+$$P(Y=4) = \binom{4}{4} \left(\tfrac{3}{4}\right)^4 \left(\tfrac{1}{4}\right)^0 = 1 \cdot \frac{81}{256} \cdot 1 = \frac{81}{256} = 0.3164$$
+
+**c) Las cuatro del mismo color** $\;\to\;$ o las cuatro amarillas ($Y=4$) **o** las cuatro verdes ($Y=0$)
+
+Son sucesos incompatibles (no pueden pasar a la vez), así que se **suman**:
+
+$$P(Y=4) + P(Y=0) = \frac{81}{256} + \binom{4}{0}\left(\tfrac{3}{4}\right)^0\left(\tfrac{1}{4}\right)^4 = \frac{81}{256} + \frac{1}{256} = \frac{82}{256} = 0.3203$$
+
+**Comprobación con R**
+
+```{r p1}
+n <- 4; p <- 3/4
+
+# a) P(Y = 3), a mano y con dbinom
+choose(4, 3) * (3/4)^3 * (1/4)^1
+dbinom(3, size = n, prob = p)
+
+# b) P(Y = 4)
+dbinom(4, size = n, prob = p)
+
+# c) P(Y = 4) + P(Y = 0)
+dbinom(4, size = n, prob = p) + dbinom(0, size = n, prob = p)
+```
+
+| Caso                              | Probabilidad |
+|------------------------------------|--------------:|
+| (a) 3 amarillas y 1 verde          | 0.4219    |
+| (b) 4 amarillas                    | 0.3164    |
+| (c) 4 del mismo color              | 0.3203    |
+
+</details>
+
+
+
+## 🩸 Problema 2 - Grupos sanguíneos
+
+En Estados Unidos, el **34% de la población** tiene **sangre tipo A positivo (A+)** ([link](https://www.statista.com/statistics/1112664/blood-type-distribution-us/)). Consideremos que tomamos una **muestra de tamaño 4**. Sea $Y$ el número de personas en la muestra con sangre tipo **A+**.
+
+### a) $P(Y = 0)$  
+### b) $P(Y = 1)$    
+### c) $P(Y = 2)$  
+### d) $P(0 \le Y \le 2)$  
+
+<br>
+<details>
+<summary>Solución desarrollada</summary>
+
+**Planteamiento**
+
+- Éxito = persona con A+. $p = 0.34$ y $1-p = 0.66$.
+- $n = 4$ personas de una población grande, así que podemos considerarlas independientes.
+- $Y \sim \text{Bin}(4, 0.34)$.
+
+**a) $P(Y = 0)$**: ninguna persona con A+
+
+$$P(Y=0) = \binom{4}{0} \, 0.34^0 \, 0.66^4 = 1 \cdot 1 \cdot 0.1897 = 0.1897 \approx 0.190$$
+
+**b) $P(Y = 1)$**
+
+$$P(Y=1) = \binom{4}{1} \, 0.34^1 \, 0.66^3 = 4 \cdot 0.34 \cdot 0.2875 = 0.3910 \approx 0.391$$
+
+**c) $P(Y = 2)$**
+
+$$P(Y=2) = \binom{4}{2} \, 0.34^2 \, 0.66^2 = 6 \cdot 0.1156 \cdot 0.4356 = 0.3021 \approx 0.302$$
+
+**d) $P(0 \le Y \le 2)$**: como son valores incompatibles, sumamos los tres casos anteriores
+
+$$P(0 \le Y \le 2) = P(Y=0) + P(Y=1) + P(Y=2) = 0.1897 + 0.3910 + 0.3021 = 0.8828 \approx 0.883$$
+
+Es exactamente la probabilidad acumulada hasta 2, es decir, `pbinom(2, 4, 0.34)`.
+
+**Comprobación con R**
+
+```{r p2}
+n <- 4; p <- 0.34
+
+dbinom(0, n, p)   # a)
+dbinom(1, n, p)   # b)
+dbinom(2, n, p)   # c)
+
+sum(dbinom(0:2, n, p))   # d) suma de las tres
+pbinom(2, n, p)          # d) mismo resultado con la acumulada
+```
+
+| Caso                              | Probabilidad |
+|------------------------------------|--------------:|
+| (a) Y = 0          | 0.190    |
+| (b) Y = 1                    | 0.391    |
+| (c) Y = 2              | 0.302    |
+| (d) 0 ≤ Y ≤ 2              | 0.883    |
+
+</details>
+
+## 💊 Problema 3 - Eficacia del tratamiento contra anquilostoma
+
+Un tratamiento farmacológico cura el **90%** de los casos de anquilostoma en niños. Supongamos que se van a tratar **20** niños afectados, y que pueden considerarse una muestra aleatoria de la población. Sea $Y$ el número de niños curados. Calcula la probabilidad de que:
+
+### a) todos, los 20, sean curados.   
+### b) todos menos 1 sean curados.    
+### c) exactamente 18 sean curados.  
+### d) exactamente 80% sean curados.
+
+<br>
+<details>
+<summary>Solución desarrollada</summary>
+
+**Planteamiento**
+
+- Éxito = niño curado. $p = 0.90$ y $1-p = 0.10$.
+- $n = 20$ niños independientes.
+- $Y \sim \text{Bin}(20, 0.9)$.
+
+**a) Todos curados** $\;\to\; P(Y = 20)$
+
+$$P(Y=20) = \binom{20}{20} \, 0.9^{20} \, 0.1^0 = 0.9^{20} = 0.1216$$
+
+**b) Todos menos 1** $\;\to\; P(Y = 19)$ (19 curados y 1 no curado)
+
+$$P(Y=19) = \binom{20}{19} \, 0.9^{19} \, 0.1^1 = 20 \cdot 0.1351 \cdot 0.1 = 0.2702$$
+
+**c) Exactamente 18 curados** $\;\to\; P(Y = 18)$
+
+$$P(Y=18) = \binom{20}{18} \, 0.9^{18} \, 0.1^2 = 190 \cdot 0.1501 \cdot 0.01 = 0.2852$$
+
+donde $\binom{20}{18} = \frac{20 \cdot 19}{2} = 190$.
+
+**d) Exactamente el 80%**: primero pasamos el porcentaje a número de niños, $0.80 \cdot 20 = 16$, así que $\to\; P(Y = 16)$
+
+$$P(Y=16) = \binom{20}{16} \, 0.9^{16} \, 0.1^4 = 4845 \cdot 0.1853 \cdot 0.0001 = 0.0898 \approx 0.09$$
+
+donde $\binom{20}{16} = \binom{20}{4} = \frac{20 \cdot 19 \cdot 18 \cdot 17}{4!} = 4845$.
+
+**Comprobación con R**
+
+```{r p3}
+n <- 20; p <- 0.9
+
+dbinom(20, n, p)   # a) todos
+dbinom(19, n, p)   # b) todos menos 1
+dbinom(18, n, p)   # c) exactamente 18
+dbinom(0.8 * n, n, p)   # d) 80% de 20 = 16
+choose(20, 16)          # el coeficiente binomial de d)
+```
+
+| Caso                              | Probabilidad |
+|------------------------------------|--------------:|
+| (a) 20 curados          | 0.1216    |
+| (b) 19 curados                    | 0.2702    |
+| (c) 18 curados              | 0.2852    |
+| (d) 80% = 16 curados              | 0.09    |
+
+</details>
+
+<br>
+
+## 🐌 Problema 4: Color de la concha en caracoles
+
+La concha del caracol terrestre *Limocolaria martensiana* presenta **dos coloraciones posibles**: *streaked* (rayada) y *pallid* (pálida). En cierta población, el **60%** de los individuos tienen concha *streaked*. Se elige al azar una **muestra de 10 caracoles**. Calcula la probabilidad de que el **porcentaje de caracoles *streaked* en la muestra** sea:
+
+### a) 50%   
+### b) 60%     
+### c) 70%
+### d)  ¿Cuál es la media del número de caracoles con concha *streaked*?  
+### e) ¿Cuál es la desviación estándar del número de caracoles con concha *streaked*?  
+
+<br>
+<details>
+<summary>Solución desarrollada</summary>
+
+**Planteamiento**
+
+- Éxito = caracol *streaked*. $p = 0.60$ y $1-p = 0.40$.
+- $n = 10$ caracoles.
+- $Y$ = número de caracoles *streaked*, $Y \sim \text{Bin}(10, 0.6)$.
+- Ojo: el enunciado pide **porcentajes**, pero la binomial trabaja con **número** de éxitos. Hay que convertir: $50\% \to k = 5$, $60\% \to k = 6$, $70\% \to k = 7$.
+
+**a) 50% $\to P(Y = 5)$**
+
+$$P(Y=5) = \binom{10}{5} \, 0.6^5 \, 0.4^5 = 252 \cdot 0.07776 \cdot 0.01024 = 0.2007$$
+
+**b) 60% $\to P(Y = 6)$**
+
+$$P(Y=6) = \binom{10}{6} \, 0.6^6 \, 0.4^4 = 210 \cdot 0.046656 \cdot 0.0256 = 0.2508$$
+
+**c) 70% $\to P(Y = 7)$**
+
+$$P(Y=7) = \binom{10}{7} \, 0.6^7 \, 0.4^3 = 120 \cdot 0.0279936 \cdot 0.064 = 0.2150$$
+
+**d) Media**
+
+$$E(Y) = np = 10 \cdot 0.6 = 6$$
+
+**e) Desviación estándar**
+
+$$\text{Var}(Y) = np(1-p) = 10 \cdot 0.6 \cdot 0.4 = 2.4 \qquad \text{DE}(Y) = \sqrt{2.4} = 1.55$$
+
+Fíjate en que el valor más probable (k = 6) coincide con la media, como es habitual cuando $np$ es un número entero.
+
+**Comprobación con R**
+
+```{r p4}
+n <- 10; p <- 0.6
+
+# a), b), c): porcentaje -> k = porcentaje * n
+dbinom(c(0.5, 0.6, 0.7) * n, n, p)
+
+# d) y e)
+n * p                    # media
+sqrt(n * p * (1 - p))    # desviación estándar
+```
+
+| Caso                              | Resultado |
+|------------------------------------|--------------:|
+| (a) 50% (k=5)          | 0.2007    |
+| (b) 60% (k=6)                    | 0.2508    |
+| (c) 70% (k=7)              | 0.2150    |
+| (d) Media              | 6    |
+| (e) Desviación estándar        | 1.55    |
+
+</details>
+
+## 🌵 Problema 5: Germinación de semillas de Saguaro
+
+Los estudiantes de una clase de botánica realizaron un experimento sobre la **germinación de semillas de cactus Saguaro**. Cada estudiante plantó **cinco semillas** en un vaso pequeño, lo mantuvo cerca de una ventana y revisó diariamente si habían germinado. Siete días después de la siembra, cada estudiante reportó el número de semillas germinadas de su vaso.  
+
+Sea $Y$ la **variable número de semillas germinadas por estudiante**.
+
+### a) ¿Cuáles son los posibles resultados para la variable $Y$?  
+
+### b) Si queremos entender la variación en $Y$ (diferentes resultados entre estudiantes), ¿cuál sería la explicación principal de esta variación?
+
+### c) Los resultados de la clase al séptimo día fueron los siguientes. Calcula la proporción de semillas germinadas en toda la clase (esto es, una estimación de la probabilidad de germinación).
+
+| Número de semillas germinadas (Y) | Número de estudiantes |
+|-----------------------------------|--------------------:|
+| 0                                 | 17                  |
+| 1                                 | 53                  |
+| 2                                 | 94                  |
+| 3                                 | 79                  |
+| 4                                 | 33                  |
+| 5                                 | 4                   |
+
+
+###  d) Calcula las frecuencias esperadas de cada grupo de semillas germinadas (0 a 5) bajo la hipótesis de que cada estudiante recibe semillas al azar y todas tienen la misma probabilidad de germinar.  
+
+###  e) Dos estudiantes, Fran y Bob, están hablando antes de clase. Todas las semillas de Fran han germinado, pero a Bob no le germinó ninguna. Bob se preguntaba si había hecho algo mal. Con la perspectiva de los 280 estudiantes, ¿qué le dirías a Bob?  
+
+<br>
+<details>
+<summary>Solución desarrollada</summary>
+
+**a) Posibles valores de $Y$**
+
+Cada estudiante planta 5 semillas, y $Y$ cuenta cuántas germinan. Puede no germinar ninguna o germinar todas:
+
+$$Y \in \{0, 1, 2, 3, 4, 5\}$$
+
+**b) Explicación de la variación**
+
+Aunque todos los estudiantes hacen lo mismo, cada semilla germina o no de forma **aleatoria** (con cierta probabilidad $p$). Por tanto, la variación entre estudiantes se debe principalmente al **azar** (variabilidad muestral en un experimento binomial con $n = 5$), no a que unos lo hagan mejor que otros.
+
+**c) Proporción de semillas germinadas en toda la clase**
+
+Se calcula como (semillas germinadas totales) / (semillas plantadas totales).
+
+- Estudiantes: $17 + 53 + 94 + 79 + 33 + 4 = 280$.
+- Semillas plantadas: $280 \cdot 5 = 1400$.
+- Semillas germinadas (cada valor de $Y$ multiplicado por su número de estudiantes):
+
+$$0\cdot17 + 1\cdot53 + 2\cdot94 + 3\cdot79 + 4\cdot33 + 5\cdot4 = 0 + 53 + 188 + 237 + 132 + 20 = 630$$
+
+$$\hat{p} = \frac{630}{1400} = 0.45$$
+
+```{r p5c}
+y   <- 0:5
+obs <- c(17, 53, 94, 79, 33, 4)
+
+N <- sum(obs)                 # estudiantes
+germinadas <- sum(y * obs)    # semillas germinadas totales
+p_hat <- germinadas / (5 * N) # proporción de germinación
+c(N = N, germinadas = germinadas, p_hat = p_hat)
+```
+
+**d) Frecuencias esperadas**
+
+Si cada semilla germina con probabilidad $p = 0.45$ de forma independiente, entonces $Y \sim \text{Bin}(5, 0.45)$. La frecuencia esperada de cada valor es:
+
+$$\text{Esperada}(k) = N \cdot P(Y = k) = 280 \cdot \binom{5}{k} \, 0.45^k \, 0.55^{5-k}$$
+
+Por ejemplo, para $k = 0$ y $k = 2$:
+
+$$P(Y=0) = 0.55^5 = 0.0503 \;\Rightarrow\; 280 \cdot 0.0503 = 14.09$$
+
+$$P(Y=2) = \binom{5}{2} \, 0.45^2 \, 0.55^3 = 10 \cdot 0.2025 \cdot 0.1664 = 0.3369 \;\Rightarrow\; 280 \cdot 0.3369 = 94.33$$
+
+Los demás valores se calculan igual:
+
+```{r p5d}
+p_hat <- 0.45
+prob  <- dbinom(y, size = 5, prob = p_hat)   # P(Y = k), k = 0..5
+esp   <- N * prob                            # frecuencias esperadas
+
+tabla <- data.frame(Y = y,
+                    Observadas = obs,
+                    P_Y = round(prob, 4),
+                    Esperadas = round(esp, 2))
+knitr::kable(tabla)
+sum(esp)   # comprueba que suman 280
+```
+
+| Y | Observadas | Esperadas |
+|---|-----------:|----------:|
+| 0 | 17         | 14.09    |
+| 1 | 53         | 57.65    |
+| 2 | 94         | 94.33    |
+| 3 | 79         | 77.18    |
+| 4 | 33         | 31.57    |
+| 5 | 4          | 5.17     |
+| Total | 280 | 280 |
+
+Las frecuencias observadas y esperadas son muy parecidas, así que el modelo binomial describe bien los datos de la clase.
+
+**e) ¿Qué le diría a Bob?**
+
+Que obtener 0 germinaciones no significa que lo haya hecho mal. Con $p = 0.45$:
+
+$$P(Y=0) = 0.55^5 = 0.0503 \approx 5\%$$
+
+Esto equivale a unos $280 \cdot 0.0503 \approx 14$ estudiantes esperados sin ninguna semilla germinada (en la clase hubo 17). Es un resultado poco frecuente, pero **esperable por azar** en una clase tan grande. A Fran le pasa lo contrario: $P(Y=5) = 0.45^5 = 0.0185 \approx 1.8\%$, unos 5 estudiantes esperados (hubo 4).
+
+```{r p5e}
+dbinom(0, 5, 0.45)         # Bob: 0 germinadas
+dbinom(0, 5, 0.45) * 280   # estudiantes esperados como Bob
+dbinom(5, 5, 0.45)         # Fran: 5 germinadas
+dbinom(5, 5, 0.45) * 280   # estudiantes esperados como Fran
+```
+
+| Pregunta                              | Resultado |
+|------------------------------------|--------------:|
+| (a) Posibles valores de $Y$          | $Y = 0, 1, 2, 3, 4, 5$    |
+| (b) Explicación de la variación                  | Cada estudiante recibe semillas al azar, variabilidad en la germinación   |
+| (c) Promedio germinación              | 0.45    |
+| (e) Bob        | Esperable por azar  |
+
+</details>
+
+<br>
