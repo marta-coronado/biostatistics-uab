@@ -1304,7 +1304,7 @@ class: animated, fadeIn, R
 
 
 ``` r
-pnorm(1.42)        # P(Z ≤ 1.42)
+pnorm(q = 1.42, mean = 0, sd = 1)        # P(Z ≤ 1.42)
 ```
 
 ```
@@ -1314,7 +1314,7 @@ pnorm(1.42)        # P(Z ≤ 1.42)
 --
 
 ``` r
-1 - pnorm(-0.5)   # P(Z ≥ -0.5) = P(Z *≤ 0.5) = 1 - P(Z *≤ -0.5) 
+1 - pnorm(-0.5, mean = 0, sd = 1)   # P(Z ≥ -0.5) = P(Z *≤ 0.5) = 1 - P(Z *≤ -0.5) 
 ```
 
 ```
@@ -1324,7 +1324,7 @@ pnorm(1.42)        # P(Z ≤ 1.42)
 --
 
 ``` r
-pnorm(-0.5, lower.tail = F)
+pnorm(-0.5, mean = 0, sd = 1, lower.tail = F)
 ```
 
 ```
@@ -1475,10 +1475,22 @@ $$
 $$
 P(Z \le -0.8) = P(Z \ge 0.8) = 0.2119
 $$
+
+En `R`:
+
+
+``` r
+pnorm(q = 3100, mean = 3500, sd = 500)  
+```
+
+```
+[1] 0.2118554
+```
+
 ]
 
 .pull-right[
-&lt;img src="6.Normal_files/figure-html/unnamed-chunk-23-1.png" alt="" width="504" /&gt;
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-24-1.png" alt="" width="504" /&gt;
 ]
 
 ---
@@ -1726,7 +1738,7 @@ las longitudes de los peces siguen una **distribución normal**:
 
 &gt; `$$Y \sim N(54,\;4.5^2), \qquad P(58 \le X \le 60)\;=?$$`
 
-&lt;img src="6.Normal_files/figure-html/unnamed-chunk-26-1.png" alt="" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-27-1.png" alt="" width="504" style="display: block; margin: auto;" /&gt;
 
 ---
 class: animated, fadeIn
@@ -1861,7 +1873,7 @@ Para **distribuciones normales “perfectas”**, es decir, distribuciones simé
 
 &gt; Este patrón se conoce como la **regla empírica** o **68–95–99.7%**, y es muy útil para interpretar la variabilidad en datos biológicos, físicos o sociales.
 
-&lt;img src="6.Normal_files/figure-html/unnamed-chunk-28-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-29-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
 
 ---
 class: animated, fadeIn
@@ -1877,7 +1889,7 @@ Para **distribuciones normales “perfectas”**, es decir, distribuciones simé
 &gt; Este patrón se conoce como la **regla empírica** o **68–95–99.7%**, y es muy útil para interpretar la variabilidad en datos biológicos, físicos o sociales.
 
 .pull-left[
-&lt;img src="6.Normal_files/figure-html/unnamed-chunk-29-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
+&lt;img src="6.Normal_files/figure-html/unnamed-chunk-30-1.png" alt="" width="360" style="display: block; margin: auto;" /&gt;
 ]
 
 .pull-right[
@@ -1902,7 +1914,6 @@ Tabla resumen:
 
 **Notas:**
 - En la normal no importa la diferencia entre `\(&lt;\)` y `\(\le\)` porque es continua.  
-- Si es la normal estándar `\(N(0,1)\)` basta con `pnorm(x)` sin `mean` ni `sd`.  
 - `pnorm` acepta valores negativos directamente, ej: `pnorm(-1.5)`.  
 
 ---

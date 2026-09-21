@@ -1268,17 +1268,17 @@ $$P(Z \ge -0.5), \quad \quad \quad P(Z \le 1.42)$$
 
 
 ```{r}
-pnorm(1.42)        # P(Z ≤ 1.42)
+pnorm(q = 1.42, mean = 0, sd = 1)        # P(Z ≤ 1.42)
 ```
 
 --
 ```{r}
-1 - pnorm(-0.5)   # P(Z ≥ -0.5) = P(Z *≤ 0.5) = 1 - P(Z *≤ -0.5) 
+1 - pnorm(-0.5, mean = 0, sd = 1)   # P(Z ≥ -0.5) = P(Z *≤ 0.5) = 1 - P(Z *≤ -0.5) 
 ```
 
 --
 ```{r}
-pnorm(-0.5, lower.tail = F)
+pnorm(-0.5, mean = 0, sd = 1, lower.tail = F)
 ```
 
 
@@ -1571,6 +1571,13 @@ $$
 $$
 P(Z \le -0.8) = P(Z \ge 0.8) = 0.2119
 $$
+
+En `R`:
+
+```{r}
+pnorm(q = 3100, mean = 3500, sd = 500)  
+```
+
 ]
 
 .pull-right[
@@ -2118,7 +2125,6 @@ Tabla resumen:
 
 **Notas:**
 - En la normal no importa la diferencia entre $<$ y $\le$ porque es continua.  
-- Si es la normal estándar $N(0,1)$ basta con `pnorm(x)` sin `mean` ni `sd`.  
 - `pnorm` acepta valores negativos directamente, ej: `pnorm(-1.5)`.  
 
 ---
