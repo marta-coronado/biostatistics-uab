@@ -707,13 +707,7 @@ class: animated, fadeIn
 
 <center>
 
-<iframe width="740" height="420" 
-        src="https://www.youtube.com/embed/u9onO78hDlw" 
-        title="YouTube video player" 
-        frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-        allowfullscreen>
-</iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/u9onO78hDlw?si=df8THZjqaF8HSrQx" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 class: animated, fadeIn

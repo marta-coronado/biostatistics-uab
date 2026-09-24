@@ -305,7 +305,7 @@ class: animated, fadeIn
 
 **Otras limitaciones:**
 - Los datos no siguen una distribución normal
-- La muestra es pequeña
+- La muestra es pequeña (el test de permutación funciona bien con pocos datos; el *bootstrap* necesita muestras razonablemente grandes)
 - Conseguir más datos es caro, lento o directamente imposible (secuenciar más genomas, más pacientes, ...)
 
 --
@@ -1487,7 +1487,7 @@ class: animated, fadeIn
 - Si el nuevo champú no mejora la calidad de la lana, permutar las etiquetas y recalcular los valores no tendría impacto: obtendríamos valores similares en los dos grupos
 
 <br><center>
-$\text{prueba estadística} = \mu_{tratamiento} - \mu_{control} = 5.209 - 5.5 = −0.291$
+$\text{prueba estadística} =  \bar{x}_{tratamiento} - \bar{x}_{control} = 5.209 - 5.5 = -0.291$
 <br><br>
 <img src="img/7.png" width=50%></img>
 </center>
@@ -1652,7 +1652,7 @@ class: animated, fadeIn
 - Para calcular el p-valor, simplemente contamos el número de estadísticos igual o más extremos que nuestro estadístico inicial, y dividimos ese número por el total de estadísticos calculados.
 
 $$
-p-valor = 5 / 1000 = 0.005
+\text{p-valor} = \frac{5}{1000} = 0.005
 $$
 - Si realmente fuera cierto que el nuevo champú no mejora la calidad de la lana, obtener la diferencia inicial que observamos ocurriría con una probabilidad de solo el 0.5%
 - Esa es una probabilidad muy baja. Con nuestro nivel de significación del 5%, rechazamos la hipótesis nula **y tenemos evidencia a favor de la alternativa**: el nuevo champú sí parece mejorar la calidad de la lana.
@@ -1728,11 +1728,12 @@ class: animated, fadeIn
 
 ## Test de permutación
 
-### Resumen: el algoritmo en tres pasos
+### Resumen: el algoritmo en cuatro pasos
 
 1. Determinar y calcular el estadístico de prueba inicial
 2. Construir la distribución aproximada del estadístico
-3. Calcular el p-valor
+3. Distribución nula por permutació
+4. Calcular el p-valor
 
 <br>
 
@@ -2292,7 +2293,7 @@ Diferencia de medias (tratamiento − control) en 1000 réplicas con reemplazami
 
 - **Una cola** ($H_A$: tratamiento > control): proporción de réplicas con diferencia $\le 0$.
 
-- En nuestro caso, **`r sum(boot_diffs <= 0)` de 1000** réplicas son $\le 0$. Si sale 0, se escribe $p < 0.001$ (nunca $p = 0$).
+- En nuestro caso, 0 de 1000** réplicas son $\le 0$. Si sale 0, se escribe $p < 0.001$ (nunca $p = 0$).
 - **Dos colas:** el doble de ese valor.
 ]
 

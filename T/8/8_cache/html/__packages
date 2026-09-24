@@ -34,3 +34,17 @@ UsingR
 kableExtra
 ggthemes
 gghalves
+scales
+tidyverse
+tibble
+tidyr
+purrr
+stringr
+forcats
+lubridate
+janitor
+ggsignif
+ggpolypath
+gganatogram
+ggseqlogo
+ggbeeswarm

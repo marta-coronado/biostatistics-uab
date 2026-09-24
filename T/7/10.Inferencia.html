@@ -264,7 +264,7 @@ $$
 **Pregunta**: hay diferencia en el peso en ratones control *vs.* con una dieta alta en grasas?
 
 **Problema**: la diferencia en las medias puede deberse al azar:
-- Sólo tenemos una muestra de ratones en cada muestra
+- Sólo tenemos una muestra de ratones en cada grupo de dieta
 - Hay variación en los pesos
 
 Saber las reglas de la aleatoriedad/variación nos dirá **cuán probable sería observar una diferencia así si la dieta no tuviera ningún efecto**.
@@ -575,7 +575,7 @@ class: animated, fadeIn
 ### Clasificaciones incorrectas
 
 - **Falso positivo (Error tipo I)**: rechazamos H₀ cuando es verdadera  
-  - Si H₀ es cierta, ocurre en una proporción α de los casos (5% si α = 0.05)  
+  - Si H₀ es cierta, ocurre en una proporción α **de las veces que repitiéramos el estudio** (5% si α = 0.05)
 
 - **Falso negativo (error tipo II)**: no rechazamos H₀ aunque H₀ sea falsa  
   - Suele ocurrir si hay **muy pocos datos** o métodos poco sensibles  
@@ -861,7 +861,7 @@ $$
 ---
 class: animated, fadeIn
 
-## Test de una cola y CI
+## Test de una cola e IC
 
 Queremos probar **si la media poblacional `\(\mu\)` es menor que un valor de referencia `\(\mu_0\)`**:
 $$
@@ -895,7 +895,7 @@ $$
 ---
 class: animated, fadeIn
 
-## Test de una cola y CI
+## Test de una cola e IC
 
 &lt;img src="10.Inferencia_files/figure-html/unnamed-chunk-4-1.png" alt="" width="936" style="display: block; margin: auto;" /&gt;
 
@@ -908,7 +908,7 @@ Ejemplo de **data snooping o HARKing**, hemos cambiado nuestra hipótesis para q
 ---
 class: animated, fadeIn
 
-## Test de una cola y CI: p-valor
+## Test de una cola e IC: p-valor
 
 - Como `\(\mu_0 = 170\)` **queda fuera del intervalo**, **rechazamos `\(H_0\)`** al nivel `\(\alpha = 0.05\)`.
 

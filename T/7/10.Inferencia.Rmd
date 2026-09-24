@@ -323,7 +323,7 @@ $$
 **Pregunta**: hay diferencia en el peso en ratones control *vs.* con una dieta alta en grasas?
 
 **Problema**: la diferencia en las medias puede deberse al azar:
-- Sólo tenemos una muestra de ratones en cada muestra
+- Sólo tenemos una muestra de ratones en cada grupo de dieta
 - Hay variación en los pesos
 
 Saber las reglas de la aleatoriedad/variación nos dirá **cuán probable sería observar una diferencia así si la dieta no tuviera ningún efecto**.
@@ -634,7 +634,7 @@ class: animated, fadeIn
 ### Clasificaciones incorrectas
 
 - **Falso positivo (Error tipo I)**: rechazamos H₀ cuando es verdadera  
-  - Si H₀ es cierta, ocurre en una proporción α de los casos (5% si α = 0.05)  
+  - Si H₀ es cierta, ocurre en una proporción α **de las veces que repitiéramos el estudio** (5% si α = 0.05)
 
 - **Falso negativo (error tipo II)**: no rechazamos H₀ aunque H₀ sea falsa  
   - Suele ocurrir si hay **muy pocos datos** o métodos poco sensibles  
@@ -996,7 +996,7 @@ $$
 ---
 class: animated, fadeIn
 
-## Test de una cola y CI
+## Test de una cola e IC
 
 Queremos probar **si la media poblacional $\mu$ es menor que un valor de referencia $\mu_0$**:
 $$
@@ -1030,69 +1030,60 @@ $$
 ---
 class: animated, fadeIn
 
-## Test de una cola y CI
+## Test de una cola e IC
 
-```{r echo=FALSE, fig.height=5, fig.width=13, fig.align='center'}
-
+```{r echo=FALSE, fig.height=5.5, fig.width=13, fig.align='center'}
 
 library(ggplot2)
 library(ggthemes)
 
-# Datos
-mu0 <- 170          # valor bajo H0
-xbar <- 166.5       # media muestral
-SE <- 2             # error estándar
-alpha <- 0.05
+mu0 <- 170; xbar <- 166.5; SE <- 2
+x_left  <- xbar - 4*SE
+x_right <- xbar + 4*SE
 
-# IC bilateral 95%
-z_bilateral <- 1.96
-x_lower_bi <- xbar - z_bilateral*SE
-x_upper_bi <- xbar + z_bilateral*SE
+tipos <- c("Dos colas: H_A: μ ≠ μ0", "Cola inferior: H_A: μ < μ0", "Cola superior: H_A: μ > μ0")
+df <- data.frame(
+  tipo  = factor(tipos, levels = rev(tipos)),
+  lower = c(xbar - 1.96*SE, -Inf, xbar - 1.645*SE),
+  upper = c(xbar + 1.96*SE, xbar + 1.645*SE, Inf)
+)
+df <- df[1:2, ]   # en esta diapo solo bilateral y cola inferior (en la diapo Resumen, quita esta línea)
 
-# IC unilateral 95% (test inferior)
-z_unilateral <- 1.645
-x_upper_uni <- xbar + z_unilateral*SE
+df$decision <- ifelse(df$lower <= mu0 & df$upper >= mu0,
+                      "μ0 dentro del IC: no rechazamos H0",
+                      "μ0 fuera del IC: rechazamos H0")
+df$etiqueta <- paste0("(", ifelse(is.finite(df$lower), round(df$lower, 2), "-∞"), ", ",
+                           ifelse(is.finite(df$upper), round(df$upper, 2), "∞"), ")")
 
-# Secuencia para curva normal de la media muestral
-x <- seq(xbar - 4*SE, xbar + 4*SE, length=1000)
-y <- dnorm(x, mean=xbar, sd=SE)
-df <- data.frame(x=x, y=y)
+# Intervalos con un extremo infinito: se dibujan hasta el borde con flecha
+df$x_ini <- ifelse(is.finite(df$lower), df$lower, x_left)
+df$x_fin <- ifelse(is.finite(df$upper), df$upper, x_right)
 
-# Gráfico bilateral
-p_bi <- ggplot(df, aes(x=x, y=y)) +
-    geom_line(size=1.2, color="black") +
-    geom_area(data=subset(df, x >= x_lower_bi & x <= x_upper_bi), aes(x=x, y=y), fill="cadetblue3", alpha=0.5) +
-    geom_area(data=subset(df, x < x_lower_bi), aes(x=x, y=y), fill="firebrick3", alpha=0.4) +
-    geom_area(data=subset(df, x > x_upper_bi), aes(x=x, y=y), fill="firebrick3", alpha=0.4) +
-    geom_vline(xintercept = c(x_lower_bi, x_upper_bi), linetype="dashed", color="firebrick3", size=1) +
-    annotate("text", x=x_lower_bi - 1.5, y=max(y)*0.1, label="α/2") +
-    annotate("text", x=x_upper_bi + 1.5, y=max(y)*0.1, label="α/2") +
-    annotate("text", x=xbar, y=max(y)*0.5, label="95% IC", fontface="bold", color="orange4") +
-    labs(title="IC bilateral de 95% (dos colas)",
-         x="Altura (cm)", y="Densidad") +
-    ggthemes::theme_base(base_size = 16) +
-    theme(panel.grid=element_blank(),
-          axis.text=element_text(color="black"),
-          panel.background = element_rect(fill = "white"))
-
-# Gráfico unilateral
-p_uni <- ggplot(df, aes(x=x, y=y)) +
-    geom_line(size=1.2, color="black") +
-    geom_area(data=subset(df, x <= x_upper_uni), aes(x=x, y=y), fill="cadetblue3", alpha=0.5) +
-    geom_area(data=subset(df, x > x_upper_uni), aes(x=x, y=y), fill="firebrick3", alpha=0.4) +
-    geom_vline(xintercept = x_upper_uni, linetype="dashed", color="firebrick3", size=1) +
-    annotate("text", x=x_upper_uni + 0.5, y=max(y)*0.1, label="α") +
-    annotate("text", x=xbar, y=max(y)*0.5, label="95% IC unilateral", fontface="bold", color="orange4") +
-    labs(title="IC unilateral de 95% (cola inferior)",
-         x="Altura (cm)", y="Densidad") +
-    ggthemes::theme_base(base_size = 16) +
-    theme(panel.grid=element_blank(),
-          axis.text=element_text(color="black"),
-          panel.background = element_rect(fill = "white"))
-
-# Mostrar ambos
-library(gridExtra)
-grid.arrange(p_bi, p_uni, ncol=2)
+ggplot(df, aes(y = tipo, color = decision)) +
+  # Intervalos finitos
+  geom_segment(data = subset(df, is.finite(lower) & is.finite(upper)),
+               aes(x = x_ini, xend = x_fin, yend = tipo), size = 1.5) +
+  # Intervalos con -Inf: flecha a la izquierda
+  geom_segment(data = subset(df, !is.finite(lower)),
+               aes(x = x_ini, xend = x_fin, yend = tipo), size = 1.5,
+               arrow = arrow(length = unit(0.25, "cm"), ends = "first")) +
+  # Intervalos con Inf: flecha a la derecha
+  geom_segment(data = subset(df, !is.finite(upper)),
+               aes(x = x_ini, xend = x_fin, yend = tipo), size = 1.5,
+               arrow = arrow(length = unit(0.25, "cm"), ends = "last")) +
+  geom_point(aes(x = xbar), size = 3, color = "black") +
+  geom_text(aes(x = xbar, label = etiqueta), color = "black", vjust = -1.5, size = 5) +
+  geom_vline(xintercept = mu0, linetype = "dashed") +
+  scale_color_manual(values = c("μ0 dentro del IC: no rechazamos H0" = "cadetblue4",
+                                "μ0 fuera del IC: rechazamos H0" = "firebrick3")) +
+  coord_cartesian(xlim = c(x_left, x_right)) +
+  labs(x = "Altura (cm). Punto: media muestral. Línea discontinua: μ0 = 170",
+       y = NULL, color = NULL) +
+  ggthemes::theme_base(base_size = 16) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "bottom")
 ```
 
 --
@@ -1104,7 +1095,7 @@ Ejemplo de **data snooping o HARKing**, hemos cambiado nuestra hipótesis para q
 ---
 class: animated, fadeIn
 
-## Test de una cola y CI: p-valor
+## Test de una cola e IC: p-valor
 
 - Como $\mu_0 = 170$ **queda fuera del intervalo**, **rechazamos $H_0$** al nivel $\alpha = 0.05$.
 
@@ -1172,94 +1163,56 @@ class: animated, fadeIn
 
 ## Resumen: ¿qué representa cada contraste?
 
-```{r echo=FALSE, fig.height=5, fig.width=16, fig.align='center'}
+```{r echo=FALSE, fig.height=8, fig.width=16, fig.align='center'}
 library(ggplot2)
 library(ggthemes)
-library(gridExtra)
 
-# Datos del ejemplo
-mu0  <- 170         # valor bajo H0
-xbar <- 166.5       # media muestral
-SE   <- 2           # error estándar
+mu0 <- 170; xbar <- 166.5; SE <- 2
+x_left  <- xbar - 4*SE
+x_right <- xbar + 4*SE
 
-# Curva normal de la media muestral
-x  <- seq(xbar - 4*SE, xbar + 4*SE, length=1000)
-y  <- dnorm(x, mean=xbar, sd=SE)
-df <- data.frame(x=x, y=y)
-
-# Base común a los tres gráficos
-base <- ggplot(df, aes(x=x, y=y)) +
-    geom_line(size=1.2, color="black") +
-    ggthemes::theme_base(base_size = 14) +
-    theme(panel.grid=element_blank(),
-          axis.text=element_text(color="black"),
-          panel.background = element_rect(fill = "white"),
-          plot.subtitle = element_text(size = 11))
-
-# Línea y etiqueta de mu0 (común a los tres)
-linea_mu0 <- list(
-    geom_vline(xintercept = mu0, color="black", size=1),
-    annotate("text", x=mu0, y=max(y)*0.95, label="mu[0] == 170", parse=TRUE, hjust=-0.1)
+tipos <- c("Dos colas: H_A: μ ≠ μ0", "Cola inferior: H_A: μ < μ0", "Cola superior: H_A: μ > μ0")
+df <- data.frame(
+  tipo  = factor(tipos, levels = rev(tipos)),
+  lower = c(xbar - 1.96*SE, -Inf, xbar - 1.645*SE),
+  upper = c(xbar + 1.96*SE, xbar + 1.645*SE, Inf)
 )
 
-# Subtítulo: IC y decisión
-texto <- function(ic, rechaza) {
-    paste0(ic, "\n", ifelse(rechaza,
-           "mu0 queda fuera del IC: rechazamos H0",
-           "mu0 queda dentro del IC: no rechazamos H0"))
-}
+df$decision <- ifelse(df$lower <= mu0 & df$upper >= mu0,
+                      "μ0 dentro del IC: no rechazamos H0",
+                      "μ0 fuera del IC: rechazamos H0")
+df$etiqueta <- paste0("(", ifelse(is.finite(df$lower), round(df$lower, 2), "-∞"), ", ",
+                           ifelse(is.finite(df$upper), round(df$upper, 2), "∞"), ")")
 
-# 1. Dos colas: H_A: mu != mu0
-z_bi     <- 1.96
-lower_bi <- xbar - z_bi*SE
-upper_bi <- xbar + z_bi*SE
-rech_bi  <- mu0 < lower_bi | mu0 > upper_bi
+# Intervalos con un extremo infinito: se dibujan hasta el borde con flecha
+df$x_ini <- ifelse(is.finite(df$lower), df$lower, x_left)
+df$x_fin <- ifelse(is.finite(df$upper), df$upper, x_right)
 
-p_bi <- base +
-    geom_area(data=subset(df, x >= lower_bi & x <= upper_bi), fill="cadetblue3", alpha=0.5) +
-    geom_area(data=subset(df, x < lower_bi), fill="firebrick3", alpha=0.4) +
-    geom_area(data=subset(df, x > upper_bi), fill="firebrick3", alpha=0.4) +
-    geom_vline(xintercept=c(lower_bi, upper_bi), linetype="dashed", color="firebrick3", size=1) +
-    linea_mu0 +
-    annotate("text", x=lower_bi - 1.5, y=max(y)*0.1, label="α/2") +
-    annotate("text", x=upper_bi + 1.5, y=max(y)*0.1, label="α/2") +
-    annotate("text", x=xbar, y=max(y)*0.5, label="95% IC", fontface="bold", color="orange4") +
-    labs(title=expression(paste("Dos colas: ", H[A], ": ", mu != mu[0])),
-         subtitle=texto(paste0("IC = (", round(lower_bi,2), ", ", round(upper_bi,2), ")"), rech_bi),
-         x="Altura (cm)", y="Densidad")
-
-# 2. Cola inferior: H_A: mu < mu0
-z_uni    <- 1.645
-upper_lo <- xbar + z_uni*SE
-rech_lo  <- upper_lo < mu0
-
-p_lo <- base +
-    geom_area(data=subset(df, x <= upper_lo), fill="cadetblue3", alpha=0.5) +
-    geom_area(data=subset(df, x > upper_lo), fill="firebrick3", alpha=0.4) +
-    geom_vline(xintercept=upper_lo, linetype="dashed", color="firebrick3", size=1) +
-    linea_mu0 +
-    annotate("text", x=upper_lo + 1.5, y=max(y)*0.1, label="α") +
-    annotate("text", x=xbar, y=max(y)*0.5, label="95% IC unilateral", fontface="bold", color="orange4") +
-    labs(title=expression(paste("Cola inferior: ", H[A], ": ", mu < mu[0])),
-         subtitle=texto(paste0("IC = (-Inf, ", round(upper_lo,2), ")"), rech_lo),
-         x="Altura (cm)", y="Densidad")
-
-# 3. Cola superior: H_A: mu > mu0
-lower_up <- xbar - z_uni*SE
-rech_up  <- lower_up > mu0
-
-p_up <- base +
-    geom_area(data=subset(df, x >= lower_up), fill="cadetblue3", alpha=0.5) +
-    geom_area(data=subset(df, x < lower_up), fill="firebrick3", alpha=0.4) +
-    geom_vline(xintercept=lower_up, linetype="dashed", color="firebrick3", size=1) +
-    linea_mu0 +
-    annotate("text", x=lower_up - 1.5, y=max(y)*0.1, label="α") +
-    annotate("text", x=xbar, y=max(y)*0.5, label="95% IC unilateral", fontface="bold", color="orange4") +
-    labs(title=expression(paste("Cola superior: ", H[A], ": ", mu > mu[0])),
-         subtitle=texto(paste0("IC = (", round(lower_up,2), ", Inf)"), rech_up),
-         x="Altura (cm)", y="Densidad")
-
-grid.arrange(p_bi, p_lo, p_up, ncol=3)
+ggplot(df, aes(y = tipo, color = decision)) +
+  # Intervalos finitos
+  geom_segment(data = subset(df, is.finite(lower) & is.finite(upper)),
+               aes(x = x_ini, xend = x_fin, yend = tipo), size = 1.5) +
+  # Intervalos con -Inf: flecha a la izquierda
+  geom_segment(data = subset(df, !is.finite(lower)),
+               aes(x = x_ini, xend = x_fin, yend = tipo), size = 1.5,
+               arrow = arrow(length = unit(0.25, "cm"), ends = "first")) +
+  # Intervalos con Inf: flecha a la derecha
+  geom_segment(data = subset(df, !is.finite(upper)),
+               aes(x = x_ini, xend = x_fin, yend = tipo), size = 1.5,
+               arrow = arrow(length = unit(0.25, "cm"), ends = "last")) +
+  geom_point(aes(x = xbar), size = 3, color = "black") +
+  geom_text(aes(x = xbar, label = etiqueta), color = "black", vjust = -1.5, size = 5) +
+  geom_vline(xintercept = mu0, linetype = "dashed") +
+  scale_color_manual(values = c("μ0 dentro del IC: no rechazamos H0" = "cadetblue4",
+                                "μ0 fuera del IC: rechazamos H0" = "firebrick3")) +
+  coord_cartesian(xlim = c(x_left, x_right)) +
+  labs(x = "Altura (cm). Punto: media muestral. Línea discontinua: μ0 = 170",
+       y = NULL, color = NULL) +
+  ggthemes::theme_base(base_size = 16) +
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "bottom")
 ```
 
 ---
