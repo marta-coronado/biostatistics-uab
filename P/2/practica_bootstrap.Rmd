@@ -1,5 +1,5 @@
 ---
-title: "**Bootstrap:**<br><font color='#A8A8A8' size='5'>práctica en  `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
+title: "**Bootstrap y test de permutación:**<br><font color='#A8A8A8' size='5'>práctica en  `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
 author: "Marta Coronado Zamora"
 date: "Octubre 2026"
 output:
@@ -90,46 +90,76 @@ Por supuesto, si simplemente volviéramos a recoger todos los valores observados
 
 Al finalizar este procedimiento, tenemos una **réplica bootstrap**.
 
-### 🐝💡 Cálculo del Bootstrapping y ejemplo con luciérnagas
+## 🐒🧠 Centros del lenguaje en chimpancés
 
-Supongamos que estamos estudiando la duración de los pulsos de luz de los machos de la luciérnaga *Photinus ignitus*, una especie en la que las hembras prefieren aparearse con machos que emiten pulsos luminosos más largos.  
-Podemos examinar los datos de duración del pulso, recopilados por [Cratsley y Lewis (2003)](https://academic.oup.com/beheco/article-abstract/14/1/135/209237), para estimar la **duración media** de los pulsos y la **incertidumbre** asociada a esta estimación.
+Vamos a trabajar con los datos de 20 chimpancés del estudio de [Cantalupo y Hopkins (2001)](https://www.nature.com/articles/35107134). Este conjunto de datos contiene información sobre la **asimetría cerebral** en chimpancés, centrada en el **Área de Brodmann 44 (BA44)**, que en humanos forma parte del área de Broca, importante para el lenguaje.
+
+Cada fila del dataset corresponde a un chimpancé e incluye:
+
+- **chimpName:** nombre del individuo.  
+- **sex:** sexo del individuo (M = macho, F = hembra).  
+- **asymmetryScore:** medida de asimetría del BA44 entre hemisferio izquierdo y derecho.  
+  - Valores **positivos** indican mayor volumen/actividad en el hemisferio izquierdo.  
+  - Valores **negativos** indican mayor volumen/actividad en el hemisferio derecho.  
+  - Valores **cercanos a 0** indican simetría entre hemisferios.
+
+Estos datos permiten estudiar la **lateralización cerebral** en chimpancés y compararla con la de los humanos.
+
+Los datos están disponibles en: https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/2/chap19e2ChimpBrains.csv
+
+**Nuestra pregunta:** ¿hay evidencia de asimetría en el BA44 de los chimpancés, o es compatible con que, en la población, no haya asimetría?
+
+- $H_0$: la **mediana** poblacional de asimetría es 0 (no hay lateralización).
+- $H_A$: la mediana poblacional de asimetría es distinta de 0 (hay lateralización, hacia un lado u otro).
+
+Vamos a contestarla **sin usar ninguna fórmula ni asumir una distribución concreta**, con el intervalo de confianza *bootstrap*. Recuerda lo que vimos con los IC: **si el IC del 95% no contiene el valor de $H_0$, rechazamos $H_0$ al 5% (dos colas)**. Aquí, el valor de $H_0$ es 0.
 
 #### **Paso 1: leer los datos**
-Lee el fichero que contiene los datos, que tiene formato .csv (`read.csv`) y encabezado (`header=TRUE`) y que se encuentra en: "https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/6/chap04q07FireflyFlash.csv" y guárdalo en un data frame que se llame `firefly`.
+Lee el fichero desde este [enlace](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/2/chap19e2ChimpBrains.csv), que tiene formato .csv (`read.csv`) y encabezado (`header=TRUE`), y guárdalo en un objeto que se llame `chimp`.
 
 ```{r}
 
 ```
 
-Ya que esta tabla contiene únicamente una columna con la duración del pulso de luz (`flash`), añadiremos una nueva columna llamada `id` para identificar a cada luciérnaga.  
-El siguiente código crea un vector numérico desde 1 hasta el número total de filas de la tabla (`nrow`) y lo asigna a la columna `id`.
-
-<i class="fa fa-exclamation-triangle"></i> Indicamos que `id` es un *factor* porque, aunque contiene números, queremos que se interprete como una **variable categórica** (identificador) y no como una variable cuantitativa.
-
-```{r eval = F}
-firefly$id <- 1:nrow(firefly)
-firefly$id <- as.factor(firefly$id)
-head(firefly)
-```
-
-Puedes ver el data frame resultante con `View(firefly)`.
-
-#### **Paso 2: cálculo de estimaciones a partir de los datos**
-
-Ahora vamos a calcular una estimación a partir de los datos. Podemos aplicar *bootstrapping* a cualquier tipo de estimador: una media, una mediana, una desviación estándar, una correlación, un estadístico F, una filogenia... lo que sea. Pero comenzaremos con la **media** por simplicidad.
-
-Calcula la media de la duración del pulso de luz (`flash`) usando la función `mean()` y guárdala en el objeto `sample_estimate`:
+Comprueba que se ha leído bien: mira las primeras filas (`head(chimp)`) y cuántos chimpancés hay (`nrow(chimp`).
 
 ```{r}
 
 ```
 
-Nuestra estimación muestral es que la duración media del pulso de luz en luciérnagas es de **95.94 (!!! r mean)**. Pero esto es solo una estimación basada en *nuestra* muestra.
+Vamos a transformar la columna del nombre de los chimpancés (`chimpName`) a factor, para indicar que es una variable categórica.
 
-No podemos conocer el valor real del parámetro poblacional, pero sí podemos usar **bootstrapping** para entender **cuán lejos** podría estar nuestra estimación del valor verdadero.
+```{r, eval = F}
+chimp$chimpName <- as.factor(chimp$chimpName)
+```
 
-#### **Paso 3: Re-muestreo de nuestros datos (con reemplazo) para generar una réplica bootstrap**
+
+#### **Paso 2: crea un histograma**
+Visualiza la distribución de la asimetría (`asymmetryScore`) con `ggplot` y `geom_histogram`. [Ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#26).
+
+```{r fig.width = 5, fig.height = 3.5, eval = F}
+
+# estructura del histograma:
+ggplot(dataframe, aes(x = variable_en_eje_x)) +
+  geom_histogram()
+
+```
+
+**¿Qué forma tiene la distribución? Con solo 20 datos, ¿te fiarías de asumir que es normal?**
+
+#### **Paso 3: cálculo de la estimación a partir de los datos**
+
+Ahora vamos a calcular una estimación a partir de los datos. Podemos aplicar *bootstrapping* a cualquier tipo de estimador: una media, una mediana, una desviación estándar, una correlación, un estadístico F, una filogenia... lo que sea. Aquí usaremos la **mediana**, que es un buen ejemplo de estadístico sin una fórmula sencilla para su error estándar.
+
+Calcula la **mediana** de la asimetría (`asymmetryScore`) con la función `median()` y guárdala en el objeto `sample_estimate`. Esta mediana será nuestro **estadístico de la muestra**.
+
+```{r}
+
+```
+
+Esta es solo una estimación basada en *nuestra* muestra. No podemos conocer el valor real del parámetro poblacional, pero sí podemos usar **bootstrapping** para entender **cuán lejos** podría estar nuestra estimación del valor verdadero, y en concreto, si 0 es un valor razonable.
+
+#### **Paso 4: re-muestreo de nuestros datos (con reemplazo) para generar una réplica bootstrap**
 
 Primero, vamos a usar la función `sample_n()` para generar una muestra del mismo tamaño que la original.
 
@@ -142,217 +172,294 @@ Completa los "???":
 ```{r eval = FALSE}
 library(dplyr)
 
-resampled_fireflies <- firefly  %>% 
+resampled_chimps <- chimp  %>% 
   sample_n(size = ???, replace = ???)
 
 ```
 
-Para confirmar que el re-muestreo **con reemplazo** funcionó, debemos comprobar que **algunos individuos aparecen más de una vez** y que **otros no aparecen en la muestra re-muestreada**. Ejecuta el siguiente bloque de código y visualiza el gráfico que genera:
+Para confirmar que el re-muestreo **con reemplazo** funcionó, podemos comprobar que **algunos individuos aparecen más de una vez** y que **otros no aparecen en la muestra re-muestreada**. Ejecuta el siguiente bloque de código y visualiza el gráfico que genera:
 
-```{r eval = FALSE}
+```{r eval = FALSE, fig.width = 5, fig.height = 3.5}
 library(ggplot2)
 
-resampled_fireflies                %>%
-  group_by(id, .drop=FALSE)        %>%   # .drop = FALSE  significa que mantenemos el conteo para los individuos con cero, en lugar de perderlos
+resampled_chimps                   %>%
+  group_by(chimpName, .drop=FALSE)        %>%   # .drop = FALSE  significa que mantenemos el conteo para los individuos con cero, en lugar de perderlos
   tally(sort = TRUE)               %>%   # contar cuántas veces aparece cada individuo en el remuestreo, y ordenar de mayor a menor
-  mutate(id = fct_reorder(id, n, .desc = TRUE)) %>%  # indicamos a R que queremos listar los números en orden de número de observaciones, no de 1 a n
+  mutate(id = fct_reorder(chimpName, n, .desc = TRUE)) %>%  # indicamos a R que queremos listar los números en orden de número de observaciones, no de 1 a n
   ggplot(aes(x=id, y = n)) +      # configurar el ggplot
   geom_col() +                     # crear un gráfico de barras
-  labs(title = "Distribución de los individuos remuestreados en nuestro bootstrap")
+   labs(title = "Distribución de los individuos remuestreados en nuestro bootstrap",
+       x = "Chimpancé", y = "# veces remuestreado") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
 
 ```
 
-#### **Paso 4: Estimación a partir de los datos remuestreados**
+#### **Paso 5: estimación a partir de los datos remuestreados**
 
 Ahora que hemos verificado que el remuestreo **con reemplazo** funcionó correctamente (algunos individuos aparecen varias veces y otros no aparecen), vamos a calcular una estimación a partir de estos datos remuestreados.
 
-Calcula la **media** de la duración del pulso de luz usando los datos remuestreados (`resampled_fireflies`):
+Calcula la **mediana** de la asimetría usando los datos remuestreados (`resampled_chimps`):
 
 ```{r}
 
 ```
 
-#### **Paso 4: Estimación a partir de los datos remuestreados**
+**¿Coincide con la mediana de la muestra original? ¿Por qué crees que no?**
 
-Ahora vamos a repetir el proceso muchas veces (**10000**) utilizando la función `rep_sample_n()`. Después, calcularemos la media dentro de cada réplica.
+#### **Paso 6: repetir el proceso 10.000 veces**
+
+Ahora vamos a repetir el proceso muchas veces (**10000**) utilizando la función `rep_sample_n()`, que permite indicar el número de repeticiones (`rep`) que queremos.
 
 Completa los "???":
 
 ```{r eval = F}
 library(infer)
 
-many_resampled_fireflies <- firefly  %>%
+many_resampled_chimps <- chimp  %>%
   rep_sample_n(size =  ???, replace = ???, reps = ???)
 
-View(many_resampled_fireflies)
+View(many_resampled_chimps)
 ```
 
-Con la función `summarize()` calcula la media de cada replica. Para eso, primero agrupa con `group_by` por réplica (`replicate`) y luego calcula la media dentro de `flash` con `summarize` y `mean`. [Ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#63). Guarda el resultado en `firefly_boot`.
+**¿Cuántas filas tiene la tabla resultante? ¿Por qué?** (Fíjate en la columna `replicate`.)
+
+<i class="fa fa-key"></i>: utilitza la función `nrow(df)`.
 
 ```{r}
 
 ```
 
 
-#### **Paso 5: Visualización de la distribución de bootstrap**
+#### **Paso 7: calcular la mediana de cada réplica**
 
-Genera un histograma para **visualizar la distribución de las estimaciones bootstrap**. [Ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#26).
+Con la función `summarize()` calcula la mediana de cada réplica. Para eso, primero agrupa con `group_by` por réplica (`replicate`) y luego calcula la mediana de `asymmetryScore` con `summarize` y `median`. [Ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#66). Guarda el resultado en `chimp_boot`, llamando `median_asymmetry` a la columna con las medianas.
 
 ```{r}
 
 ```
 
-Teníamos una muestra, no la población completa, pero hicimos **remuestreo con reemplazo** para generar una **distribución muestral**.  Este histograma muestra el **error muestral esperado** de una población que podría haber generado nuestra muestra.  Podemos usar esto para tener una idea del **error de muestreo esperado** en la población real, que no exploramos más allá de esta muestra.
+**¿Cuántas filas tiene la tabla resultante `chimp_boot`? ¿Por qué?**
+
+
+
+#### **Paso 8: visualización de la distribución bootstrap**
+
+Genera un histograma para **visualizar la distribución de las medianas bootstrap**.
+
+```{r fig.width = 5, fig.height = 3.5}
+
+```
+
+Teníamos una muestra, no la población completa, pero hicimos **remuestreo con reemplazo** para generar una **distribución muestral**. Este histograma muestra el **error muestral esperado** de una población que podría haber generado nuestra muestra. Podemos usar esto para tener una idea del **error de muestreo esperado** en la población real, que no exploramos más allá de esta muestra.
 
 > Nota: Esto es una **buena guía**, pero no es infalible.  
 > Como partimos de una muestra de la población, la distribución muestral bootstrap **diferirá** de la distribución muestral real de la población, pero sigue siendo una **estimación razonable**.
 
-
-## Intervalo de confianza bootstrap
+#### **Paso 9: intervalo de confianza bootstrap**
 
 Podemos estimar un **intervalo de confianza** específico como la región central que contiene esa proporción de réplicas bootstrap.  
 Por ejemplo, los **límites que abarcan el 95% central** de las réplicas bootstrap, dejando fuera las réplicas más extremas, definen el **intervalo de confianza del 95%**.  
 
-En R, podemos usar la función `quantile()` para encontrar estos **puntos de corte** en la distribución bootstrap. [Ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/1/1.EstadisticaDescriptiva.html#48).
+En R, podemos usar la función `quantile()` para encontrar estos **puntos de corte** en la distribución bootstrap. [Ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/1/1.EstadisticaDescriptiva.html#47).
 
 Completa los "???":
 
 ```{r eval = F}
-firefly_boot_CI <- firefly_boot %>% 
-  summarise(CI         = c("lower 95", "upper 95"),  # añade una columna para indicar qué límite del intervalo de confianza estamos calculando
-            mean_flash = quantile(???, probs = c(???, ???)))  # límites numéricos que separan el 95% central del resto de las réplicas bootstrap
+chimp_boot_CI <- chimp_boot %>% 
+  reframe(CI               = c("lower 95", "upper 95"),  # añade una columna para indicar qué límite del intervalo de confianza estamos calculando
+          median_asymmetry = quantile(???, probs = c(???, ???)))  # límites numéricos que separan el 95% central del resto de las réplicas bootstrap
 
-firefly_boot_CI
+chimp_boot_CI
 ```
 
-Podemos añadir estos intervalos de confianza a nuestro histograma interior usando `geom_vline()` con el siguiente código.
+Podemos añadir estos intervalos de confianza a nuestro histograma anterior usando `geom_vline()` con el siguiente código. Añade además una línea roja en 0, el valor de $H_0$.
 
-```{r eval = F}
-código ggplot histograma +  
-  geom_vline(xintercept = pull(firefly_boot_CI, mean_flash))
+```{r eval = F, fig.width = 5, fig.height = 3.5}
+# código ggplot histograma +  
+  geom_vline(xintercept = pull(chimp_boot_CI, median_asymmetry))
 ```
 
-**¿Cuál es la interpretación del IC anterior?**
+**¿Cuál es la interpretación correcta del IC anterior?** (Pista: recuerda que el 95% es la confianza del *procedimiento*, no la probabilidad de que la mediana poblacional esté en este intervalo concreto.)
+
+**Completa la conclusión:**
+
+A partir del bootstrap con XXXX réplicas, estimamos que la mediana de asimetría del Área de Brodmann 44 en chimpancés se encuentra entre XXXX y XXXX con un XXXX% de confianza. Dado que el intervalo incluye 0, [sí/no] hay evidencia estadística de asimetría lateralizada.
+
+**Reflexiona:** si el intervalo incluye 0, ¿significa que *no hay* asimetría, o solo que *no tenemos evidencia suficiente* para afirmar que la hay? Con solo 20 chimpancés, ¿qué precaución tomarías con un IC bootstrap por percentiles?
 
 
+
+
+<hr>
 
 # Test de permutación
 
-Imagine we have just designed a benchtop experiment in which we intend to measure the pressure (in mm Hg) at which a pair of overlapped stent grafts started to migrate or disconnect when deployed in a large thoracic aneurysm. 2
+## 🐒🐒 Ejemplo: ¿son igual de asimétricos los chimpancés y los bonobos?
 
+Con el *bootstrap* vimos que los 20 chimpancés, por sí solos, no daban evidencia de asimetría en el BA44 (el IC incluía el 0). Ahora queremos **comparar dos grupos**: nuestros 20 chimpancés y otros 20 monos, los **bonobos**.
 
-img migration_model.png
+<i class="fa fa-exclamation-triangle"></i> **Los datos de los bonobos son totalmente inventados**, con fines didácticos. No corresponden a ningún estudio real ni dicen nada sobre los bonobos de verdad.
 
-A common null hypothesis for comparing groups is that there is no difference between them. Under this model, we can treat all the experimental data as one big group instead of 2 different groups. We therefore pool the data from our completed experiment into one big group, shuffle it, and randomly assign data points into two groups of the original size. This is our generative model. After each round of permutation and assignment, we calculate and store the test statistic for the observed effect (difference in means between the two groups). Once many simulations have been completed, we’ll see where our true data falls relative to the virtual data.
+**Nuestra pregunta:** ¿la asimetría del BA44 es distinta en chimpancés y bonobos?
 
-Los datos estan en predict.tsv
+Las hipótesis, que planteamos **antes de mirar los datos**:
 
-actividad 1 - leer el fichero en R
-delimitador es "\t"
-```{r}
-results_tbl <- read.table("predict.tsv")
+- $H_0: \mu_{Chimp} = \mu_{Bonobo}$ (no hay diferencia de asimetría entre especies).
+- $H_A: \mu_{Chimp} \neq \mu_{Bonobo}$ (hay diferencia, en cualquier dirección). Es una hipótesis de **dos colas**, porque no tenemos ninguna razón previa para esperar una dirección.
+
+Una hipótesis nula habitual al comparar grupos es que **no hay diferencia entre ellos**. Bajo este modelo, podemos tratar todos los datos como **un único grupo grande** en lugar de dos grupos distintos. Es decir, juntamos los datos, los **mezclamos**, y asignamos al azar los datos a dos grupos con el tamaño original. Este es nuestro **modelo generativo**. Después de cada permutación, calculamos y guardamos el estadístico de prueba del efecto observado (la **diferencia de medias** entre los dos grupos). Cuando hayamos hecho muchas simulaciones, veremos **dónde cae nuestro dato real** respecto a los datos virtuales.
+
+#### **Paso 1: crear el conjunto de datos**
+Ejecuta el siguiente código. Crea los 20 bonobos ficticios y los junta con los 20 chimpancés en una sola tabla, `monkeys`, con una columna `species` (especie) y otra `asymmetryScore` (asimetría).
+
+Ejecuta el siguiente código:
+
+```{r eval = F}
+# 20 bonobos ficticios (valores inventados)
+bonobo <- data.frame(
+  species        = "Bonobo",
+  asymmetryScore = c(0.71, 0.53, 0.60, 0.38, 0.84, 0.55, 0.05, 0.69, 0.78, 0.50,
+                     0.58, 1.04, 0.44, 0.67, 0.53, 0.81, 0.21, 0.59, 0.77, 0.54)
+)
+
+# Chimpancés reales + bonobos ficticios
+monkeys <- chimp %>%
+  transmute(species = "Chimpanzee", asymmetryScore = asymmetryScore) %>%
+  bind_rows(bonobo)
+
+head(monkeys)
 ```
 
-actividad visualizar con un boxplot básico
+#### **Paso 2: revisar los datos**
+Cuenta cuántos individuos hay de cada especie (`n()`) y calcula la **mediana** de la asimetría de cada especie (con `group_by` y `summarize`).
+
+<i class="fa fa-key"></i> [Esta diapositiva](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#66) muestra ambas funciones en acción.
 
 ```{r}
-boxplot_eda <- results_tbl %>% 
-    ggplot(aes(x=Device, y=Pressure)) +
-    geom_boxplot(
-        alpha  = .6,
-        width  = .4,
-        size   = .8,
-        fatten = .5,
-        fill   = c("#FDE725FF","#20A486FF")) +
-    labs(
-        y        = "Pressure (mm Hg)",
-        title    = "Predicate and Next-Gen Data",
-        subtitle = "Modular Disconnect Pressure"
-    )
 
-boxplot_eda
 ```
 
-cambiar geom_boxplot por geom_density
+**¿Qué especie parece más asimétrica? ¿Crees que la diferencia podría deberse al azar?**
 
-# funcion permutation test
+
+#### **Paso 3: visualizar con un boxplot**
+Completa el siguiente código para hacer un boxplot de la asimetría (`y`=`asymmetryScore`) por especie (`x`=`species`):
+
+```{r eval = F, fig.width = 5, fig.height = 3.5}
+
+ggplot(monkeys, aes(x = ???, y = ???)) +
+    geom_boxplot() 
+```
+
+#### **Paso 4: calcular el estadístico observado**
+Nuestro **estadístico de prueba** es la diferencia de medias entre las dos especies:
+
+$$
+\text{estadístico observado} = \bar{x}_{Chimp} - \bar{x}_{Bonobo}
+$$
+
+Guarda la diferencia (Chimp − Bonobo) en el objeto `baseline_difference`. Puedes utilizar los valores calculados anteriormente.
 
 ```{r}
+
+```
+
+**¿Qué signo tiene la diferencia? ¿Qué significa?**
+
+
+
+#### **Paso 5: generar la distribución nula con permutaciones (10000)**
+
+Vamos a generar el **modelo nulo** con la librería `infer`. Ejecutamos cuatro funciones encadenadas:
+
+- `specify(asymmetryScore ~ species)`: indica la variable respuesta (`asymmetryScore`) y la explicativa (`species`).
+- `hypothesize(null = "???")`: indica la hipótesis nula. Aquí, que la asimetría es **independiente** de la especie (las etiquetas son intercambiables).
+- `generate(reps = ???, type = "???")`: genera las réplicas. Aquí, **10000 permutaciones** de las etiquetas, sin reemplazamiento.
+- `calculate(stat = "diff in means", order = c("Chimp", "Bonobo"))`: calcula la diferencia de medias en cada réplica, en el mismo orden que nuestro estadístico observado.
+
+Ejecuta el código:
+
+```{r eval = F}
 library(infer)
 
-perm <- results_tbl |>
-    specify(Pressure ~ Device) |>
-    hypothesize(null = "independence") |>
-    generate(reps = 10000, type = "permute") |>
-    calculate(perm_diff = "diff in means", order = c("Predicate", "Next_Gen"))
+perm <- monkeys %>%
+  specify(asymmetryScore ~ species) %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 10000, type = "permute") %>%
+  calculate(stat = "diff in means", order = c("Chimpanzee", "Bonobo"))
+
+head(perm)
+```
+
+**¿Cuántas filas tiene `perm`? ¿Qué contiene la columna `stat`?**
+
+
+#### **Paso 6: visualizar la distribución nula y dónde cae nuestro dato**
+Haz un histograma con `perm` de las diferencias de medias permutadas (`x` = `stat`). Prueba con `geom_histogram(binwidth = 0.02)` y ajusta el `binwidth` si hace falta. Guarda el gráfico en `diffs_histogram_plot`.
+
+```{r fig.width = 5, fig.height = 3.5}
 
 ```
 
-Visualiza el histograma
+Acabamos de simular muchos experimentos bajo la hipótesis nula. Estos datos virtuales nos dicen qué diferencias de medias observaríamos **si realmente no hubiera diferencia entre las especies**. Como es de esperar, casi siempre la diferencia está en torno a 0, pero de vez en cuando se ve una diferencia notable **solo por azar**.
 
-```{r}
-#Visualize difference in means as a histogram
-diffs_histogram_plot <- perm_diffs_df %>% ggplot(aes(perm_diffs)) +
-  geom_histogram(fill = "#2c3e50", color = "white", binwidth = .3, alpha = 0.8) +
-    labs(
-        x = "Pressure (mm Hg)",
-        title = "Histogram of Difference in Means",
-        subtitle = "Generated Under Null Hypothesis"
-    )
-```
-hacerlo con las bolitas
+Ahora añade dos líneas verticales discontinuas: una en la diferencia observada (`baseline_difference`) y otra en su valor simétrico (`-baseline_difference`), porque nuestra prueba es de **dos colas**. Guarda el resultado en `g1`.
 
-We just simulated many tests from the null hypothesis. These virtual data give us a good understanding of what sort of difference in means we might observe if there truly was no difference between the groups. As expected, most of the time the difference is around 0. But occasionally there is a noticeable difference in means just due to chance.
-
-But how big was the difference in means from our real world dataset? We’ll call this “baseline difference”.
-
-
-```{r}
-#Evaluate difference in means from true data set
-predicate_pressure_mean <- mean(predicate_tbl$Pressure)
-next_gen_pressure_mean <- mean(next_gen_tbl$Pressure)
-
-baseline_difference <- predicate_pressure_mean - next_gen_pressure_mean
-baseline_difference 
-```
-
-
-```{r}
+```{r eval = F, fig.width = 5, fig.height = 3.5}
 g1 <- diffs_histogram_plot + 
-  geom_vline(xintercept = baseline_difference, 
+  geom_vline(xintercept = c(baseline_difference, -baseline_difference), 
              linetype   = "dotted", 
              color      = "#2c3e50", 
-             size       = 1
-             ) 
+             linewidth  = 1) 
+
+g1
 ```
 
+**¿Es nuestro dato extremo respecto a la distribución nula? ¿Qué sugiere esto?**
 
-It looks like the our benchtop data was pretty extreme relative to the null. We should start to consider the possibility that this effect was not due solely to chance alone. 0.05 is a commonly used threshold for declaring statistical significance. Let’s see if our data is more or less extreme than 0.05 (solid line).
+#### **Paso 7: el umbral del 5%**
+El valor 0.05 es un umbral habitual para declarar significación estadística. Como la prueba es de dos colas, el 5% se reparte entre las dos: **2.5% en cada cola**. Calcula los **cuantiles del 2.5% y del 97.5%** de la distribución simulada, con `quantile()`, y guárdalos en `cutoffs`.
 
+```{r eval = F}
+cutoffs <- quantile(perm$???, probs = c(???, ???))
+cutoffs
+```
 
+Añade ahora estas dos líneas continuas a `g1`:
 
-#Calculate the 5% quantile of the simulated distribution for difference in means
-the_five_percent_quantile <- quantile(perm_diffs_df$perm_diffs, probs = 0.05)
-the_five_percent_quantile
-
-histograma añadiendole 0.05
-
+```{r eval = F, fig.width = 5, fig.height = 3.5}
 g3 <- g1 +
-         geom_vline(xintercept = the_five_percent_quantile, 
+  geom_vline(xintercept = cutoffs, 
              color      = "#2c3e50", 
-             size       = 1
-             )
-   We can see here that our data is more extreme than the 5% quantile which means our p-value is less than 0.05. This satisfies the traditional, frequentist definition of statistically significant. If we want to actual p-value, we have to determine the percentage of simulated data that are as extreme or more extreme than our observed data.
+             linewidth  = 1)
+
+g3
+```
+
+**¿Queda nuestra diferencia observada más allá de esos límites? ¿Qué implica sobre el p-valor?**
 
 
-p_value <- perm_diffs_df %>% 
-    filter(perm_diffs <= baseline_difference) %>%
-    nrow() / n_sims
-    
- Our p-value is well below 0.05. This is likely enough evidence for us to claim that there was a statistically significant difference observed between the Next Gen device and the predicate device.
+#### **Paso 8: calcular el p-valor de dos colas**
+Para obtener el p-valor exacto, necesitamos la **proporción de datos simulados que son tan extremos o más que nuestro dato observado, en cualquiera de las dos direcciones**. Por eso usamos el **valor absoluto** de la diferencia. Completa los "???":
 
-Our marketing team will be thrilled, but we should always be wary that statistically significant does not mean practically important. Domain knowledge should provide the context to interpret the relevance of the observed difference. A difference in mean Pressure of a few mm Hg seems to be enough to claim a statistically significant improvement in our new device vs. the predicate, but is it enough for our marketing team to make a meaningful campaign? In reality, a few mm Hg is noticeable on the bench but is likely lost in the noise of anatomical variation within real patient anatomies.
+```{r eval = F}
+n_sims <- nrow(perm)
 
-   
-          
-             
+p_value <- perm %>% 
+  filter(abs(stat) >= abs(???)) %>%
+  nrow() / n_sims
+
+p_value
+```
+
+$$
+p\text{-valor} = \frac{\#\{|\text{diff}_{perm}| \geq |\text{diff}_{obs}|\}}{n_{perm}}
+$$
+
+> Si ninguna permutación fuera tan extrema, se escribe $p < 1/10000$, **nunca** $p = 0$.
+
+
+
+**Completa la conclusión:**
+
+A partir del test de permutación con XXXX permutaciones, la diferencia de medias observada (Chimpanzee - Bonobo) fue de XXXX. El p-valor de dos colas es XXXX, [menor/mayor] que 0.05, por lo que [rechazamos/no rechazamos] la hipótesis nula: [sí/no] hay evidencia de que la asimetría del BA44 es distinta entre chimpancés y bonobos.
