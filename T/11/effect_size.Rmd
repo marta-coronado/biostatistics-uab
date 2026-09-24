@@ -217,12 +217,13 @@ class: animated, fadeIn
 
 
 
+
 ---
 class: animated, fadeIn
 
 ## Conceptos de potencia estadística
 
-```{r, echo = F, fig.align='center', fig.height=6, fig.width=12}
+```{r, echo = F, fig.align='center', fig.height=4.2, fig.width=12}
 library(ggplot2)
 
 # Parámetros
@@ -267,12 +268,76 @@ ggplot(df, aes(x)) +
 
 ```
 
---
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+```{r, echo = F, fig.align='center', fig.height=6, fig.width=12}
+library(ggplot2)
+
+library(ggplot2)
+
+# Parámetros
+mu_esp <- 14   # media dieta especial
+mu_nor <- 36   # media dieta normal
+sd_com <- 2.5  # desviación típica (igual en ambas)
+
+# Colores
+col_esp <- "#1B8A1B"  # verde (curva)
+col_nor <- "#C2185B"  # magenta (curva)
+rel_esp <- "#4CD44C"  # verde (relleno de los círculos)
+rel_nor <- "#F0459A"  # magenta (relleno de los círculos)
+
+# Datos de las curvas
+x  <- seq(0, 50, length.out = 1000)
+df <- data.frame(
+  x   = x,
+  esp = dnorm(x, mu_esp, sd_com),
+  nor = dnorm(x, mu_nor, sd_com)
+)
+
+# Observaciones (3 de cada dieta), ordenadas por x para el solapamiento de los círculos
+obs <- data.frame(
+  x     = c(10.4, 12.1, 16.2, 34.5, 37.7, 38.6),
+  grupo = c("esp", "esp", "esp", "nor", "nor", "nor")
+)
+
+ymax <- dnorm(0, sd = sd_com)   # altura del pico de las curvas (unidad de referencia)
+y_circ <- -0.42 * ymax          # posición vertical de los círculos
+
+ggplot(df, aes(x)) +
+  geom_line(aes(y = esp), colour = col_esp, linewidth = 1.6) +
+  geom_line(aes(y = nor), colour = col_nor, linewidth = 1.6) +
+  # Títulos sobre cada curva
+  annotate("text", x = mu_esp, y = ymax * 1.08, label = "Dieta especial",
+           colour = col_esp, fontface = "bold", size = 5) +
+  annotate("text", x = mu_nor, y = ymax * 1.08, label = "Dieta normal",
+           colour = col_nor, fontface = "bold", size = 5) +
+  # Eje x dibujado a mano (en y = 0): línea, marcas cada 5 y etiquetas en 5 y 45
+  annotate("segment", x = 0, xend = 50, y = 0, yend = 0, linewidth = 0.5) +
+  annotate("segment", x = seq(5, 45, by = 5), xend = seq(5, 45, by = 5),
+           y = 0, yend = -0.05 * ymax, linewidth = 0.5) +
+ annotate("text", x = seq(5, 45, by = 5), y = -0.1 * ymax, label = seq(5, 45, by = 5), size = 4.5) +
+  # Flechas punteadas desde cada observación hasta el eje
+  geom_segment(data = obs, aes(x = x, xend = x, y = y_circ + 0.09 * ymax, yend = -0.1 * ymax),
+               linetype = "dotted", linewidth = 1) +
+  geom_segment(data = obs, aes(x = x, xend = x, y = -0.09 * ymax, yend = -0.015 * ymax),
+               arrow = arrow(length = unit(0.22, "cm"), type = "closed"), linewidth = 0.8) +
+  # Círculos de las observaciones
+  geom_point(data = obs, aes(y = y_circ, fill = grupo),
+             shape = 21, size = 6, stroke = 1, colour = "grey20") +
+  scale_fill_manual(values = c(esp = rel_esp, nor = rel_nor), guide = "none") +
+  scale_x_continuous(limits = c(0, 50), expand = c(0, 0)) +
+  coord_cartesian(ylim = c(-0.62 * ymax, 1.2 * ymax), expand = FALSE) +
+  theme_void(base_size = 14) +
+  theme(plot.margin = margin(10, 10, 10, 10))
+
+```
 
 - Como las distribuciones solapan muy poco, es muy fácil ver que hay una diferencia entre estas dos dietas
   - La mayoria de los ratones en la dieta especial pesan menos que los ratones con la dieta normal
   
-
 ---
 class: animated, fadeIn
 
@@ -281,7 +346,7 @@ class: animated, fadeIn
 - Si cogemos una muestra pequeña de medidas de la dieta especial y normal obtendríamos un p-valor muy pequeño:
 
 .pull-left[
-```{r, echo = F, fig.align='center', fig.height=6, fig.width=6}
+```{r, echo = F, fig.align='center', fig.height=5, fig.width=6}
 library(ggplot2)
 
 # Colores
@@ -309,7 +374,7 @@ ggplot(datos, aes(x = grupo, y = y)) +
              colour = "grey20") +
   scale_fill_manual(values   = c(A = col_a, B = col_b)) +
   scale_colour_manual(values = c(A = col_a, B = col_b)) +
-  scale_y_continuous(limits = c(0, 10), breaks = c(1, 3, 5, 7, 9),
+  scale_y_continuous(limits = c(0, 8.5), breaks = c(1, 3, 5, 7),
                      expand = c(0, 0)) +
   scale_x_discrete(expand = expansion(add = 0.6)) +
   labs(x = "p-value = 0.0004") +
@@ -398,7 +463,7 @@ class: animated, fadeIn
 - Si volvemos a coger una muestra pequeña de medidas de la dieta especial y normal obtendríamos de nuevo un p-valor muy pequeño:
 
 .pull-left[
-```{r, echo = F, fig.align='center', fig.height=6, fig.width=6}
+```{r, echo = F, fig.align='center', fig.height=5, fig.width=6}
 library(ggplot2)
 
 # Colores
@@ -426,7 +491,7 @@ ggplot(datos, aes(x = grupo, y = y)) +
              colour = "grey20") +
   scale_fill_manual(values   = c(A = col_a, B = col_b)) +
   scale_colour_manual(values = c(A = col_a, B = col_b)) +
-  scale_y_continuous(limits = c(0, 10), breaks = c(1, 3, 5, 7, 9),
+  scale_y_continuous(limits = c(0, 8.5), breaks = c(1, 3, 5, 7),
                      expand = c(0, 0)) +
   scale_x_discrete(expand = expansion(add = 0.6)) +
   labs(x = "p-value = 0.0006") +
@@ -451,7 +516,7 @@ class: animated, fadeIn
 
 ## Conceptos de potencia estadística
 
-- Si volvemos a coger una muestra pequeña de medidas de la dieta especial y normal obtendríamos de nuevo un p-valor muy pequeño:
+- Pero puede ser que ocurra esto, que los datos solapen:
 
 .pull-left[
 ```{r, echo = F, fig.align='center', fig.height=6, fig.width=6}
@@ -497,8 +562,7 @@ ggplot(df, aes(x)) +
   annotate("segment", x = 0, xend = 50, y = 0, yend = 0, linewidth = 0.5) +
   annotate("segment", x = seq(5, 45, by = 5), xend = seq(5, 45, by = 5),
            y = 0, yend = -0.05 * ymax, linewidth = 0.5) +
-  annotate("text", x = c(5, 45), y = -0.14 * ymax, label = c("5", "45"), size = 4.5) +
-  # Flechas punteadas desde cada observación hasta el eje
+annotate("text", x = seq(5, 45, by = 5), y = -0.14 * ymax, label = seq(5, 45, by = 5), size = 4.5) +  # Flechas punteadas desde cada observación hasta el eje
   geom_segment(data = obs, aes(x = x, xend = x, y = y_circ + 0.09 * ymax, yend = -0.1 * ymax),
                linetype = "dotted", linewidth = 1) +
   geom_segment(data = obs, aes(x = x, xend = x, y = -0.09 * ymax, yend = -0.015 * ymax),
@@ -515,5 +579,649 @@ ggplot(df, aes(x)) +
 ]
 
 .pull-right[
-- Hay una gran probabilidad de que la hipótesis nula sea falsa, y esté correctamente rechazada
+
+```{r, echo = F, fig.align='center', fig.height=5, fig.width=6}
+library(ggplot2)
+
+# Colores
+col_a <- "#2DB84D"  # verde
+col_b <- "#E0308F"  # magenta
+
+# Datos (2 puntos por grupo)
+datos <- data.frame(
+  grupo = factor(rep(c("A", "B"), each = 3)),
+  y     = c(4.3, 4.6, 4.8,   # grupo A (verde)
+            4.5, 4.85, 4.9)   # grupo B (magenta)
+)
+
+# Medias por grupo (para la línea horizontal)
+medias <- aggregate(y ~ grupo, data = datos, FUN = mean)
+
+ggplot(datos, aes(x = grupo, y = y)) +
+  # Línea de la media
+  geom_segment(data = medias,
+               aes(x = as.numeric(grupo) - 0.35, xend = as.numeric(grupo) + 0.35,
+                   y = y, yend = y, colour = grupo),
+               linewidth = 1.6) +
+  # Puntos
+  geom_point(aes(fill = grupo), shape = 21, size = 6, stroke = 1.1,
+             colour = "grey20") +
+  scale_fill_manual(values   = c(A = col_a, B = col_b)) +
+  scale_colour_manual(values = c(A = col_a, B = col_b)) +
+  scale_y_continuous(limits = c(0, 8.5), breaks = c(1, 3, 5, 7),
+                     expand = c(0, 0)) +
+  scale_x_discrete(expand = expansion(add = 0.6)) +
+  labs(x = "p-value > 0.05") +
+  theme_classic(base_size = 14) +
+  theme(
+    legend.position    = "none",
+    axis.ticks       = element_blank(),
+    axis.text.x        = element_blank(),
+    axis.text.y        = element_blank(),
+    axis.title.y       = element_blank(),
+    axis.title.x       = element_text(size = 16, margin = margin(t = 8))
+  )
+```
+
 ]
+
+--
+
+- No podemos rechazar *correctamente* la hipótesis nula de que todos los datos vienen de  la misma distribución
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+- Pero puede ser que ocurra esto, que los datos solapen:
+
+.pull-left[
+```{r, echo = F, fig.align='center', fig.height=6, fig.width=6}
+library(ggplot2)
+
+# Parámetros
+mu_esp <- 14   # media dieta especial
+mu_nor <- 36   # media dieta normal
+sd_com <- 2.5  # desviación típica (igual en ambas)
+
+# Colores
+col_esp <- "#1B8A1B"  # verde (curva)
+col_nor <- "#C2185B"  # magenta (curva)
+rel_esp <- "#4CD44C"  # verde (relleno de los círculos)
+rel_nor <- "#F0459A"  # magenta (relleno de los círculos)
+
+# Datos de las curvas
+x  <- seq(0, 50, length.out = 1000)
+df <- data.frame(
+  x   = x,
+  esp = dnorm(x, mu_esp, sd_com),
+  nor = dnorm(x, mu_nor, sd_com)
+)
+
+# Observaciones (3 de cada dieta), ordenadas por x para el solapamiento de los círculos
+obs <- data.frame(
+  x     = c(20.1, 21.7, 22.4, 25.2, 25.7, 27.8),
+  grupo = c("esp", "esp", "nor", "nor", "esp", "nor")
+)
+
+ymax <- dnorm(0, sd = sd_com)   # altura del pico de las curvas (unidad de referencia)
+y_circ <- -0.42 * ymax          # posición vertical de los círculos
+
+ggplot(df, aes(x)) +
+  geom_line(aes(y = esp), colour = col_esp, linewidth = 1.6) +
+  geom_line(aes(y = nor), colour = col_nor, linewidth = 1.6) +
+  # Títulos sobre cada curva
+  annotate("text", x = mu_esp, y = ymax * 1.08, label = "Dieta especial",
+           colour = col_esp, fontface = "bold", size = 5) +
+  annotate("text", x = mu_nor, y = ymax * 1.08, label = "Dieta normal",
+           colour = col_nor, fontface = "bold", size = 5) +
+  # Eje x dibujado a mano (en y = 0): línea, marcas cada 5 y etiquetas en 5 y 45
+  annotate("segment", x = 0, xend = 50, y = 0, yend = 0, linewidth = 0.5) +
+  annotate("segment", x = seq(5, 45, by = 5), xend = seq(5, 45, by = 5),
+           y = 0, yend = -0.05 * ymax, linewidth = 0.5) +
+annotate("text", x = seq(5, 45, by = 5), y = -0.14 * ymax, label = seq(5, 45, by = 5), size = 4.5) +  # Flechas punteadas desde cada observación hasta el eje
+  geom_segment(data = obs, aes(x = x, xend = x, y = y_circ + 0.09 * ymax, yend = -0.1 * ymax),
+               linetype = "dotted", linewidth = 1) +
+  geom_segment(data = obs, aes(x = x, xend = x, y = -0.09 * ymax, yend = -0.015 * ymax),
+               arrow = arrow(length = unit(0.22, "cm"), type = "closed"), linewidth = 0.8) +
+  # Círculos de las observaciones
+  geom_point(data = obs, aes(y = y_circ, fill = grupo),
+             shape = 21, size = 6, stroke = 1, colour = "grey20") +
+  scale_fill_manual(values = c(esp = rel_esp, nor = rel_nor), guide = "none") +
+  scale_x_continuous(limits = c(0, 50), expand = c(0, 0)) +
+  coord_cartesian(ylim = c(-0.62 * ymax, 1.2 * ymax), expand = FALSE) +
+  theme_void(base_size = 14) +
+  theme(plot.margin = margin(10, 10, 10, 10))
+```
+]
+
+.pull-right[
+- En este caso, la probabilidad de rechazar correctamente la hipótesis nula es alta 
+
+- **Potencia** (*power*) es la probabilidad de rechazar correctamente la hipótesis nula
+
+- También puedes decir que **potencia** es la probabilidad de obtener un p-valor pequeño (< 0.05)
+
+]
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+- Si no hubiera diferencia entre la dieta especial y la normal, y compartieran la misma distribución, la hipotesis nula de que las dos distribuciones vienen de la misma distribución sería correcta. 
+- El concepto de *potencia*, no aplica en esta situación 
+
+
+
+```{r, echo = F, fig.align='center', fig.height=5, fig.width=12}
+library(ggplot2)
+
+# Colores
+col_a    <- "#2DB84D"  # verde (dieta especial)
+col_b    <- "#E0308F"  # magenta (dieta normal)
+col_fill <- "#CFE6FA"  # azul claro del área
+
+# Distribución común a los dos grupos
+mu  <- 25
+sdv <- 3
+
+x    <- seq(11, 39, length.out = 500)
+df   <- data.frame(x = x, dens = dnorm(x, mu, sdv))
+ymax <- dnorm(mu, mu, sdv)      # altura del pico (unidad de referencia)
+
+# Observaciones (3 por grupo, mezcladas y ordenadas por x)
+obs <- data.frame(
+  x     = c(20.0, 21.9, 22.3, 25.2, 25.7, 27.7),
+  grupo = c("A",  "A",  "B",  "B",  "A",  "B")
+)
+y_circ <- -0.42 * ymax          # posición vertical de los círculos
+
+ggplot(df, aes(x)) +
+  # Curva común: relleno azul y contorno de los dos colores superpuestos
+  geom_area(aes(y = dens), fill = col_fill) +
+  geom_line(aes(y = dens), colour = col_a, linewidth = 1.6) +
+  geom_line(aes(y = dens), colour = col_b, linewidth = 1.6, alpha = 0.6) +
+  # Títulos y flechas negras hacia la curva
+  annotate("text", x = mu - 5, y = ymax * 1.18, label = "Dieta especial",
+           colour = col_a, fontface = "bold", size = 5) +
+  annotate("text", x = mu + 5, y = ymax * 1.18, label = "Dieta normal",
+           colour = col_b, fontface = "bold", size = 5) +
+  annotate("segment", x = mu - 4, xend = mu - 2.2, y = ymax * 1.08,
+           yend = dnorm(mu - 2.2, mu, sdv) + 0.02 * ymax,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed"), linewidth = 1) +
+  annotate("segment", x = mu + 4, xend = mu + 2.2, y = ymax * 1.08,
+           yend = dnorm(mu + 2.2, mu, sdv) + 0.02 * ymax,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed"), linewidth = 1) +
+  # Eje x a mano: línea, marcas cada 5 y etiquetas en 5 y 45
+  annotate("segment", x = 0, xend = 50, y = 0, yend = 0, linewidth = 0.5) +
+  annotate("segment", x = seq(5, 45, by = 5), xend = seq(5, 45, by = 5),
+           y = 0, yend = -0.05 * ymax, linewidth = 0.5) +
+annotate("text", x = seq(5, 45, by = 5), y = -0.14 * ymax, label = seq(5, 45, by = 5), size = 4.5) +  # Flechas punteadas desde cada observación hasta el eje
+  # Flechas punteadas desde cada observación hasta el eje
+  geom_segment(data = obs, aes(x = x, xend = x, y = y_circ + 0.09 * ymax, yend = -0.1 * ymax),
+               linetype = "dotted", linewidth = 1) +
+  geom_segment(data = obs, aes(x = x, xend = x, y = -0.09 * ymax, yend = -0.015 * ymax),
+               arrow = arrow(length = unit(0.22, "cm"), type = "closed"), linewidth = 0.8) +
+  # Círculos
+  geom_point(data = obs, aes(y = y_circ, fill = grupo),
+             shape = 21, size = 6, stroke = 1, colour = "grey20") +
+  scale_fill_manual(values = c(A = col_a, B = col_b), guide = "none") +
+  scale_x_continuous(limits = c(0, 50), expand = c(0, 0)) +
+  coord_cartesian(ylim = c(-0.62 * ymax, 1.3 * ymax), expand = FALSE) +
+  theme_void(base_size = 14) +
+  theme(plot.margin = margin(10, 10, 10, 10))
+```
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+- Pero si la dieta especial no fuera muy eficaz, aunque hiciera algo, aunque hubiera mucho overlap, tendriamos dos distribuciones diferentes.
+- la potencia, la probabilidad de rechazar la hipotesis nula, sí aplica en esta situación 
+
+
+
+```{r, echo = F, fig.align='center', fig.height=4, fig.width=12}
+library(ggplot2)
+
+# Colores
+col_a    <- "#1B9E1B"  # verde (dieta especial)
+col_b    <- "#C2185B"  # magenta (dieta normal)
+col_fill <- "#CFE6FA"  # azul claro del solapamiento
+
+# Parámetros
+mu_a <- 24
+mu_b <- 26.5
+sdv  <- 3.5
+
+# Datos
+x  <- seq(0, 50, length.out = 1000)
+df <- data.frame(x = x,
+                 a = dnorm(x, mu_a, sdv),
+                 b = dnorm(x, mu_b, sdv))
+df$solape <- pmin(df$a, df$b)      # área común a las dos curvas
+
+ymax <- dnorm(0, sd = sdv)         # altura del pico (unidad de referencia)
+
+# Cada curva se dibuja solo en su media ± 4 sd
+df_a <- subset(df, x >= mu_a - 4 * sdv & x <= mu_a + 4 * sdv)
+df_b <- subset(df, x >= mu_b - 4 * sdv & x <= mu_b + 4 * sdv)
+
+ggplot(df, aes(x)) +
+  # Área de solape
+  geom_ribbon(aes(ymin = 0, ymax = solape), fill = col_fill) +
+  # Curvas (la magenta encima de la verde)
+  geom_line(data = df_a, aes(y = a), colour = col_a, linewidth = 1.6, lineend = "round") +
+  geom_line(data = df_b, aes(y = b), colour = col_b, linewidth = 1.6, lineend = "round") +
+  # Títulos
+  annotate("text", x = 21,   y = ymax * 1.1, label = "Dieta especial",
+           colour = col_a, fontface = "bold", size = 5) +
+  annotate("text", x = 29.5, y = ymax * 1.1, label = "Dieta normal",
+           colour = col_b, fontface = "bold", size = 5) +
+  # Eje x a mano: línea, marcas cada 5 y etiquetas en 5, 25 y 45
+  annotate("segment", x = 0, xend = 50, y = 0, yend = 0, linewidth = 0.6) +
+  annotate("segment", x = seq(5, 45, by = 5), xend = seq(5, 45, by = 5),
+           y = 0, yend = -0.07 * ymax, linewidth = 0.6) +
+annotate("text", x = seq(5, 45, by = 5), y = -0.14 * ymax, label = seq(5, 45, by = 5), size = 4.5) +  # Flechas punteadas desde cada observación hasta el eje
+
+  coord_cartesian(xlim = c(0, 50), ylim = c(-0.95 * ymax, 1.25 * ymax), expand = FALSE) +
+  theme_void(base_size = 14) +
+  theme(plot.margin = margin(10, 10, 10, 10))
+```
+
+
+.pull-left[
+```{r, echo = F, fig.align='center', fig.height=2, fig.width=3}
+library(ggplot2)
+
+# Colores
+col_a <- "#2DB84D"  # verde
+col_b <- "#E0308F"  # magenta
+
+# Datos (2 puntos por grupo)
+datos <- data.frame(
+  grupo = factor(rep(c("A", "B"), each = 3)),
+  y     = c(4.4, 4.2, 4.1,   # grupo A (verde)
+            4.6, 4.5, 4.3)   # grupo B (magenta)
+)
+
+# Medias por grupo (para la línea horizontal)
+medias <- aggregate(y ~ grupo, data = datos, FUN = mean)
+
+ggplot(datos, aes(x = grupo, y = y)) +
+  # Línea de la media
+  geom_segment(data = medias,
+               aes(x = as.numeric(grupo) - 0.35, xend = as.numeric(grupo) + 0.35,
+                   y = y, yend = y, colour = grupo),
+               linewidth = 1.6) +
+  # Puntos
+  geom_point(aes(fill = grupo), shape = 21, size = 6, stroke = 1.1,
+             colour = "grey20") +
+  scale_fill_manual(values   = c(A = col_a, B = col_b)) +
+  scale_colour_manual(values = c(A = col_a, B = col_b)) +
+  scale_y_continuous(limits = c(0, 8.5), breaks = c(1, 3, 5, 7),
+                     expand = c(0, 0)) +
+  scale_x_discrete(expand = expansion(add = 0.6)) +
+  labs(x = "p-value = 0.09") +
+  theme_classic(base_size = 14) +
+  theme(
+    legend.position    = "none",
+    axis.ticks       = element_blank(),
+    axis.text.x        = element_blank(),
+    axis.text.y        = element_blank(),
+    axis.title.y       = element_blank(),
+    axis.title.x       = element_text(size = 16, margin = margin(t = 8))
+  )
+```
+]
+
+.pull-right[
+- Si las distribuciones solapan bastante y tenemos una muestra pequña, tenemos baja potencia estadística
+]
+
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+- Podemos incrementar la potencia incrementando el número de muestras que cogemos
+- Un análisis de potencia nos dirá cuantas medidas tenemos que coger para tener una buena cantidad de potencia
+- Evitar el p-hacking! : añadir alguna muestra más hasta que salga significativo
+  - hay que saber el tamaño de la muestra de antemano
+  
+  > un analisis de potencia determina que tamaño de muestra asegura una probabilidad alta de rechazar correctamente la hipotesis nula de uqe no hay diferencias entre los dos grupos
+
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+```{r, echo = F, fig.align='center', fig.height=4.2, fig.width=12}
+library(ggplot2)
+
+# Parámetros
+mu_esp <- 14   # media dieta especial
+mu_nor <- 36   # media dieta normal
+sd_com <- 2.5  # desviación típica (igual en ambas)
+
+# Colores
+col_esp <- "#1B8A1B"  # verde
+col_nor <- "#C2185B"  # magenta
+
+# Datos
+x  <- seq(0, 50, length.out = 1000)
+df <- data.frame(
+  x   = x,
+  esp = dnorm(x, mu_esp, sd_com),
+  nor = dnorm(x, mu_nor, sd_com)
+)
+
+ggplot(df, aes(x)) +
+  geom_line(aes(y = esp), colour = col_esp, linewidth = 1.6) +
+  geom_line(aes(y = nor), colour = col_nor, linewidth = 1.6) +
+  # Títulos sobre cada curva
+  annotate("text", x = mu_esp, y = dnorm(0, sd = sd_com) * 1.08,
+           label = "Dieta especial", colour = col_esp,
+           fontface = "bold", size = 5) +
+  annotate("text", x = mu_nor, y = dnorm(0, sd = sd_com) * 1.08,
+           label = "Dieta normal", colour = col_nor,
+           fontface = "bold", size = 5) +
+  # Eje: marcas cada 5, etiquetas solo en 5, 25 y 45
+  scale_x_continuous(breaks = seq(5, 45, by = 5),
+                     limits = c(0, 50), expand = c(0, 0)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_void(base_size = 14) +
+  theme(
+    axis.line.x  = element_line(colour = "black", linewidth = 0.5),
+    axis.ticks.x = element_line(colour = "black", linewidth = 0.5),
+    axis.ticks.length.x = unit(0.25, "cm"),
+    axis.text.x  = element_text(size = 14, margin = margin(t = 4)),
+    plot.margin  = margin(10, 10, 10, 10)
+  )
+
+```
+
+La potencia está afectada por dos factores principales:
+1. Cuanto solapan las distribuciones
+2. El tamaño de la muestra
+
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+- Si queremos conseguir una potencia de 0.8, significa que quiero tener al menos un 80% de probabilidades de rechazar correctamente la hipotesis nula:
+  - si solapan muy poco, pero la n es pequeña, tendre una potencia alta
+  - si solapan mucho, pero la n es pequeña, tendre una potencia baja: necesitamos una n mas grande
+  
+---
+
+```{r, echo = F, fig.align='center', fig.height=8, fig.width=12}
+library(ggplot2)
+library(patchwork)   # install.packages("patchwork") si no lo tienes
+
+# Colores
+col_a <- "#1B9E1B"   # verde (dieta especial)
+col_b <- "#C2185B"   # magenta (dieta normal)
+
+# Parámetros de las poblaciones
+mu_a <- 24
+mu_b <- 26.5
+sdv  <- 3.5
+k    <- 12           # nº de experimentos (marcas) por dieta
+
+# Mismos "experimentos" para todos los paneles: solo cambia n
+set.seed(123)
+z_a <- rnorm(k)
+z_b <- rnorm(k)
+
+x    <- seq(0, 50, length.out = 1000)
+ymax <- dnorm(0, sd = sdv)
+
+# Curvas: cada una dibujada solo en su media ± 4 sd
+df_a <- data.frame(x = x, y = dnorm(x, mu_a, sdv))
+df_b <- data.frame(x = x, y = dnorm(x, mu_b, sdv))
+df_a <- subset(df_a, x >= mu_a - 4 * sdv & x <= mu_a + 4 * sdv)
+df_b <- subset(df_b, x >= mu_b - 4 * sdv & x <= mu_b + 4 * sdv)
+
+panel <- function(n, destacar = FALSE) {
+
+  # Medias muestrales: se agrupan alrededor de mu al aumentar n
+  m_a <- data.frame(x = mu_a + z_a * sdv / sqrt(n))
+  m_b <- data.frame(x = mu_b + z_b * sdv / sqrt(n))
+
+  # Estilo: a todo color o desvaído
+  a_curva <- ifelse(destacar, 1,    0.15)
+  a_marca <- ifelse(destacar, 0.45, 0.25)
+  c_eje   <- ifelse(destacar, "black", "grey75")
+  c_texto <- ifelse(destacar, "black", "grey70")
+
+  ggplot() +
+    # Curvas de las poblaciones
+    geom_line(data = df_a, aes(x, y), colour = col_a, linewidth = 1.6,
+              alpha = a_curva, lineend = "round") +
+    geom_line(data = df_b, aes(x, y), colour = col_b, linewidth = 1.6,
+              alpha = a_curva, lineend = "round") +
+    # Marcas: rosa encima del eje, verde debajo
+    geom_segment(data = m_b, aes(x = x, xend = x),
+                 y = 0.03 * ymax, yend = 0.4 * ymax,
+                 colour = col_b, alpha = a_marca, linewidth = 2.5) +
+    geom_segment(data = m_a, aes(x = x, xend = x),
+                 y = -0.03 * ymax, yend = -0.4 * ymax,
+                 colour = col_a, alpha = a_marca, linewidth = 2.5) +
+    # Eje x a mano (sin etiquetas, como en la figura)
+    annotate("segment", x = 0, xend = 50, y = 0, yend = 0,
+             colour = c_eje, linewidth = 0.6) +
+    annotate("segment", x = seq(5, 45, by = 5), xend = seq(5, 45, by = 5),
+             y = 0, yend = -0.06 * ymax, colour = c_eje, linewidth = 0.6) +
+    # Título del panel
+    annotate("text", x = 3, y = ymax * 1.05, hjust = 0,
+             label = paste0("Tamaño muestral = ", n),
+             colour = c_texto, fontface = "bold", size = 5.5) +
+    coord_cartesian(xlim = c(0, 50), ylim = c(-0.55 * ymax, 1.2 * ymax),
+                    expand = FALSE) +
+    theme_void(base_size = 14) +
+    theme(plot.margin = margin(4, 10, 4, 10))
+}
+
+# Los tres paneles apilados
+panel(1, destacar = T) / panel(2, destacar = T) / panel(10, destacar = TRUE)
+```
+
+---
+
+lo primero que decidimos es cuanto podemos queremos: está entre 0 y 1
+
+- decidimos 0.8: 80% de probabilidad de rechazar correctamente H0
+
+la segunda cosa a decidir es la significancia (alpha): valor entre 0.1
+- decidimos 0.05
+
+por ultimo calculamos el solapamiento entre las distancias. 
+- el overlap está afectada por la distancia entre las medias poblacionales y las desviaciones estandard
+
+---
+
+el effect size d:
+
+$$
+estimated difference in the means / pooled estimated standard deviations
+$$
+  ejemplo:
+  
+d = 10/6.5=1.5
+
+---
+
+calculadora de sample size
+
+sample size = 9 ?
+
+---
+
+De los tests al diseño: ¿qué queremos medir realmente?
+
+El mejor análisis no puede compensar un mal diseño experimental.
+Hoy cambiamos la pregunta:
+Antes de analizar, ¿estamos midiendo algo que realmente importa?
+Para ello veremos:
+Qué es un tamaño de efecto y por qué es más informativo que un p-valor.
+La relación entre potencia, variabilidad y n: decidir cuántos datos necesitamos.
+Cómo el diseño experimental influye en el tamaño de efecto detectable.
+En resumen:
+Pasamos de “¿es significativo?” a “¿cuán grande es el efecto y cómo lo detectamos bien?”
+
+---
+Cuidado al interpretar p-valores
+
+
+Un estudio sobre un nuevo fármaco para infartos muestra:
+p < 0,001
+Esto significa únicamente que:
+El efecto observado es poco probable que ocurra por azar si asumimos H0 es cierta.
+❌ No significa que:
+El efecto sea muy importante
+El efecto sea útil en la vida real
+El efecto sea “real sin ninguna duda”
+
+---
+Por qué el p-valor no basta
+
+
+Problema 1: confunde significancia con relevancia.
+Con tamaños muestrales grandes, efectos triviales pueden ser “significativos”.
+Con tamaños pequeños, efectos grandes pueden no serlo.
+Problema 2: depende del diseño.
+El p-valor depende de n, varianza, y del estadístico elegido.
+Es una medida indirecta y muy volátil ante cambios del diseño experimental.
+Problema 3: no responde a la pregunta científica.
+Un p < 0.05 nos dice que el efecto “no parece cosa del azar”, pero no dice si importa, ni cuánto cambia el sistema.
+
+---
+¿Qué es un tamaño de efecto?
+
+
+Idea central: cuantifica cuánto difieren los grupos, no sólo si difieren.
+El tamaño de efecto (effect size) mide la magnitud de la diferencia, asociación o impacto de un factor.
+A diferencia de un p-valor, que responde “¿un efecto tan extremo podría aparecer por azar?”, un tamaño de efecto responde:
+“¿El efecto es pequeño, moderado o grande?”
+Se expresa en unidades interpretable:
+diferencias estandarizadas (Cohen’s d)
+proporciones de varianza (η², R²)
+tablas contingencia (odds ratio, Cramer’s V)
+cambios absolutos (diferencias de medias, ∆)
+
+---
+Qué aporta el tamaño de efecto
+
+
+Interpretabilidad
+Puedes comunicar: “el tratamiento reduce X en un 20%”, o “los grupos difieren 0.8 SD”
+Se puede comparar entre estudios y contextos.
+Base sólida para la toma de decisiones
+En biología, medicina o ciencias sociales, el tamaño del efecto es lo que guía si una intervención es útil, relevante o coste-efectiva.
+Permite planificar estudios
+La potencia estadística requiere especificar un tamaño de efecto esperado.
+Sin tamaño de efecto → no se puede calcular un n adecuado.
+Es estable y generalizable
+No depende fuertemente de n.
+Refleja la estructura real del fenómeno, no el azar de la muestra
+
+---
+
+Ejemplo intuitivo
+
+
+Escenario: 
+Diferencia real entre grupos = 0.1 unidades SD (muy pequeña)
+Estudio A: n = 10 → p = 0.30 (no significativo)
+Estudio B: n = 10 000 → p < 0.0001 (muy significativo)
+Pero en ambos casos:
+El tamaño de efecto es el mismo: 0.1
+Mensaje clave:
+El p-valor cambia radicalmente según n.
+El tamaño de efecto NO → describe el fenómeno biológico
+
+
+---
+Cohen’s d: Regla de oro vs contexto
+
+
+Regla de Cohen (guía rápida)
+d < 0,2 → trivial
+0,2 <= d < 0,5  → pequeno
+0,5 <= d < 0,8  → medio
+d >= 0,8 → grande
+⚠️ Advertencia:
+No caigamos en la misma trampa que con los p-valores:
+No categorices el efecto en “pequeño / medio / grande” de forma rígida.
+La relevancia práctica depende del contexto, el coste y el impacto.
+
+---
+
+Cómo interpretar el tamaño de efecto correctamente: Todo es relativo!
+
+
+1. Investigación previa
+Comparar con estudios anteriores:
+Si lo habitual es d = 0,5 y tu intervención logra d = 1, el efecto es enorme.
+2. Expectativas teóricas
+Según la teoría, ¿qué tamaño de efecto es razonable?
+Ej.: en trastornos difíciles de tratar, un efecto medio ya se considera éxito.
+3. Relevancia práctica
+Un efecto pequeño puede ser muy importante si:
+Es barato
+Fácil de aplicar
+Impacta a muchas personas
+Ej.: la aspirina → efecto pequeño, beneficio enorme.
+
+---
+
+Odds Ratio (OR) (Tablas de contingencia 2x2)
+
+
+Qué mide:
+Compara las odds (probabilidades relativas) del evento entre dos grupos.
+Aplicacion tipica:
+Muy útil en medicina, epidemiología, psicología clínica, genética. Tiene significado causal o clínico cuando el diseño lo permite. Ideal para ensayos clínicos y estudios caso-control.
+Ejemplo en R:	
+
+---
+Tamaño de efecto y potencia (Effect size and Power)
+
+
+Del mismo modo que con una muestra muy grande cualquier cosa puede ser significativa, con una muestra muy pequeña algo con mucho efecto puede no ser significativo.
+Esto se refiere a la probabilidad de cometer errores tipo II o falsos negativos (β).
+Cómo determinamos qué tamaño de muestra no es demasiado grande (costoso a nivel humano y experimental), ni demasiado pequeño (como para no detectar el efecto deseado)?
+
+---
+Análisis de potencia estadística
+
+
+¿Qué probabilidad tenemos de rechazar la hipótesis nula cuando la alternativa es realmente cierta? (es decir, ¿cuál es la probabilidad de detectar un efecto real?)
+
+---
+
+Que n necesita mi experimento?
+
+
+Mayor efecto (Δ en unidades originales), mayor potencia.
+Mayor desviación estándar (σ), menor potencia.
+Más tamaño de muestra (n) (menor σ), mayor potencia.
+
+Zα/2 es la Z asociada al nivel de significación de un test bilateral o de dos colas y representa 1.96 cuando α = 0.05, para α = 0.01 entonces Zα/2 = 2.58
+Zβ es la Z asociada al riesgo de falso negativo (potencia = 1 - β) representa 0.84 si potencia = 80%, o 1.28 si potencia = 90%. DA IGUAL SI ES BILATERAL O UNILATERAL. SIEMPRE ES EL MISMO VALOR.
+α y β se deciden a priori, antes de hacer el experimento!
+
+---
+
+juego power_n
+
+https://dce85.shinyapps.io/power_n/ 
+

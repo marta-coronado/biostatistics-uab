@@ -184,6 +184,14 @@ class: animated, fadeIn
 
 
 
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+&lt;img src="effect_size_files/figure-html/unnamed-chunk-1-1.png" alt="" width="864" style="display: block; margin: auto;" /&gt;
+
 ---
 class: animated, fadeIn
 
@@ -191,12 +199,9 @@ class: animated, fadeIn
 
 &lt;img src="effect_size_files/figure-html/unnamed-chunk-2-1.png" alt="" width="864" style="display: block; margin: auto;" /&gt;
 
---
-
 - Como las distribuciones solapan muy poco, es muy fácil ver que hay una diferencia entre estas dos dietas
   - La mayoria de los ratones en la dieta especial pesan menos que los ratones con la dieta normal
   
-
 ---
 class: animated, fadeIn
 
@@ -242,15 +247,305 @@ class: animated, fadeIn
 
 ## Conceptos de potencia estadística
 
-- Si volvemos a coger una muestra pequeña de medidas de la dieta especial y normal obtendríamos de nuevo un p-valor muy pequeño:
+- Pero puede ser que ocurra esto, que los datos solapen:
 
 .pull-left[
 &lt;img src="effect_size_files/figure-html/unnamed-chunk-6-1.png" alt="" width="432" style="display: block; margin: auto;" /&gt;
 ]
 
 .pull-right[
-- Hay una gran probabilidad de que la hipótesis nula sea falsa, y esté correctamente rechazada
+
+&lt;img src="effect_size_files/figure-html/unnamed-chunk-7-1.png" alt="" width="432" style="display: block; margin: auto;" /&gt;
+
 ]
+
+--
+
+- No podemos rechazar *correctamente* la hipótesis nula de que todos los datos vienen de  la misma distribución
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+- Pero puede ser que ocurra esto, que los datos solapen:
+
+.pull-left[
+&lt;img src="effect_size_files/figure-html/unnamed-chunk-8-1.png" alt="" width="432" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+- En este caso, la probabilidad de rechazar correctamente la hipótesis nula es alta 
+
+- **Potencia** (*power*) es la probabilidad de rechazar correctamente la hipótesis nula
+
+- También puedes decir que **potencia** es la probabilidad de obtener un p-valor pequeño (&lt; 0.05)
+
+]
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+- Si no hubiera diferencia entre la dieta especial y la normal, y compartieran la misma distribución, la hipotesis nula de que las dos distribuciones vienen de la misma distribución sería correcta. 
+- El concepto de *potencia*, no aplica en esta situación 
+
+
+
+&lt;img src="effect_size_files/figure-html/unnamed-chunk-9-1.png" alt="" width="864" style="display: block; margin: auto;" /&gt;
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+- Pero si la dieta especial no fuera muy eficaz, aunque hiciera algo, aunque hubiera mucho overlap, tendriamos dos distribuciones diferentes.
+- la potencia, la probabilidad de rechazar la hipotesis nula, sí aplica en esta situación 
+
+
+
+&lt;img src="effect_size_files/figure-html/unnamed-chunk-10-1.png" alt="" width="864" style="display: block; margin: auto;" /&gt;
+
+
+.pull-left[
+&lt;img src="effect_size_files/figure-html/unnamed-chunk-11-1.png" alt="" width="216" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+- Si las distribuciones solapan bastante y tenemos una muestra pequña, tenemos baja potencia estadística
+]
+
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+- Podemos incrementar la potencia incrementando el número de muestras que cogemos
+- Un análisis de potencia nos dirá cuantas medidas tenemos que coger para tener una buena cantidad de potencia
+- Evitar el p-hacking! : añadir alguna muestra más hasta que salga significativo
+  - hay que saber el tamaño de la muestra de antemano
+  
+  &gt; un analisis de potencia determina que tamaño de muestra asegura una probabilidad alta de rechazar correctamente la hipotesis nula de uqe no hay diferencias entre los dos grupos
+
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+&lt;img src="effect_size_files/figure-html/unnamed-chunk-12-1.png" alt="" width="864" style="display: block; margin: auto;" /&gt;
+
+La potencia está afectada por dos factores principales:
+1. Cuanto solapan las distribuciones
+2. El tamaño de la muestra
+
+
+---
+class: animated, fadeIn
+
+## Conceptos de potencia estadística
+
+- Si queremos conseguir una potencia de 0.8, significa que quiero tener al menos un 80% de probabilidades de rechazar correctamente la hipotesis nula:
+  - si solapan muy poco, pero la n es pequeña, tendre una potencia alta
+  - si solapan mucho, pero la n es pequeña, tendre una potencia baja: necesitamos una n mas grande
+  
+---
+
+&lt;img src="effect_size_files/figure-html/unnamed-chunk-13-1.png" alt="" width="864" style="display: block; margin: auto;" /&gt;
+
+---
+
+lo primero que decidimos es cuanto podemos queremos: está entre 0 y 1
+
+- decidimos 0.8: 80% de probabilidad de rechazar correctamente H0
+
+la segunda cosa a decidir es la significancia (alpha): valor entre 0.1
+- decidimos 0.05
+
+por ultimo calculamos el solapamiento entre las distancias. 
+- el overlap está afectada por la distancia entre las medias poblacionales y las desviaciones estandard
+
+---
+
+el effect size d:
+
+$$
+estimated difference in the means / pooled estimated standard deviations
+$$
+  ejemplo:
+  
+d = 10/6.5=1.5
+
+---
+
+calculadora de sample size
+
+sample size = 9 ?
+
+---
+
+De los tests al diseño: ¿qué queremos medir realmente?
+
+El mejor análisis no puede compensar un mal diseño experimental.
+Hoy cambiamos la pregunta:
+Antes de analizar, ¿estamos midiendo algo que realmente importa?
+Para ello veremos:
+Qué es un tamaño de efecto y por qué es más informativo que un p-valor.
+La relación entre potencia, variabilidad y n: decidir cuántos datos necesitamos.
+Cómo el diseño experimental influye en el tamaño de efecto detectable.
+En resumen:
+Pasamos de “¿es significativo?” a “¿cuán grande es el efecto y cómo lo detectamos bien?”
+
+---
+Cuidado al interpretar p-valores
+
+
+Un estudio sobre un nuevo fármaco para infartos muestra:
+p &lt; 0,001
+Esto significa únicamente que:
+El efecto observado es poco probable que ocurra por azar si asumimos H0 es cierta.
+❌ No significa que:
+El efecto sea muy importante
+El efecto sea útil en la vida real
+El efecto sea “real sin ninguna duda”
+
+---
+Por qué el p-valor no basta
+
+
+Problema 1: confunde significancia con relevancia.
+Con tamaños muestrales grandes, efectos triviales pueden ser “significativos”.
+Con tamaños pequeños, efectos grandes pueden no serlo.
+Problema 2: depende del diseño.
+El p-valor depende de n, varianza, y del estadístico elegido.
+Es una medida indirecta y muy volátil ante cambios del diseño experimental.
+Problema 3: no responde a la pregunta científica.
+Un p &lt; 0.05 nos dice que el efecto “no parece cosa del azar”, pero no dice si importa, ni cuánto cambia el sistema.
+
+---
+¿Qué es un tamaño de efecto?
+
+
+Idea central: cuantifica cuánto difieren los grupos, no sólo si difieren.
+El tamaño de efecto (effect size) mide la magnitud de la diferencia, asociación o impacto de un factor.
+A diferencia de un p-valor, que responde “¿un efecto tan extremo podría aparecer por azar?”, un tamaño de efecto responde:
+“¿El efecto es pequeño, moderado o grande?”
+Se expresa en unidades interpretable:
+diferencias estandarizadas (Cohen’s d)
+proporciones de varianza (η², R²)
+tablas contingencia (odds ratio, Cramer’s V)
+cambios absolutos (diferencias de medias, ∆)
+
+---
+Qué aporta el tamaño de efecto
+
+
+Interpretabilidad
+Puedes comunicar: “el tratamiento reduce X en un 20%”, o “los grupos difieren 0.8 SD”
+Se puede comparar entre estudios y contextos.
+Base sólida para la toma de decisiones
+En biología, medicina o ciencias sociales, el tamaño del efecto es lo que guía si una intervención es útil, relevante o coste-efectiva.
+Permite planificar estudios
+La potencia estadística requiere especificar un tamaño de efecto esperado.
+Sin tamaño de efecto → no se puede calcular un n adecuado.
+Es estable y generalizable
+No depende fuertemente de n.
+Refleja la estructura real del fenómeno, no el azar de la muestra
+
+---
+
+Ejemplo intuitivo
+
+
+Escenario: 
+Diferencia real entre grupos = 0.1 unidades SD (muy pequeña)
+Estudio A: n = 10 → p = 0.30 (no significativo)
+Estudio B: n = 10 000 → p &lt; 0.0001 (muy significativo)
+Pero en ambos casos:
+El tamaño de efecto es el mismo: 0.1
+Mensaje clave:
+El p-valor cambia radicalmente según n.
+El tamaño de efecto NO → describe el fenómeno biológico
+
+
+---
+Cohen’s d: Regla de oro vs contexto
+
+
+Regla de Cohen (guía rápida)
+d &lt; 0,2 → trivial
+0,2 &lt;= d &lt; 0,5  → pequeno
+0,5 &lt;= d &lt; 0,8  → medio
+d &gt;= 0,8 → grande
+⚠️ Advertencia:
+No caigamos en la misma trampa que con los p-valores:
+No categorices el efecto en “pequeño / medio / grande” de forma rígida.
+La relevancia práctica depende del contexto, el coste y el impacto.
+
+---
+
+Cómo interpretar el tamaño de efecto correctamente: Todo es relativo!
+
+
+1. Investigación previa
+Comparar con estudios anteriores:
+Si lo habitual es d = 0,5 y tu intervención logra d = 1, el efecto es enorme.
+2. Expectativas teóricas
+Según la teoría, ¿qué tamaño de efecto es razonable?
+Ej.: en trastornos difíciles de tratar, un efecto medio ya se considera éxito.
+3. Relevancia práctica
+Un efecto pequeño puede ser muy importante si:
+Es barato
+Fácil de aplicar
+Impacta a muchas personas
+Ej.: la aspirina → efecto pequeño, beneficio enorme.
+
+---
+
+Odds Ratio (OR) (Tablas de contingencia 2x2)
+
+
+Qué mide:
+Compara las odds (probabilidades relativas) del evento entre dos grupos.
+Aplicacion tipica:
+Muy útil en medicina, epidemiología, psicología clínica, genética. Tiene significado causal o clínico cuando el diseño lo permite. Ideal para ensayos clínicos y estudios caso-control.
+Ejemplo en R:	
+
+---
+Tamaño de efecto y potencia (Effect size and Power)
+
+
+Del mismo modo que con una muestra muy grande cualquier cosa puede ser significativa, con una muestra muy pequeña algo con mucho efecto puede no ser significativo.
+Esto se refiere a la probabilidad de cometer errores tipo II o falsos negativos (β).
+Cómo determinamos qué tamaño de muestra no es demasiado grande (costoso a nivel humano y experimental), ni demasiado pequeño (como para no detectar el efecto deseado)?
+
+---
+Análisis de potencia estadística
+
+
+¿Qué probabilidad tenemos de rechazar la hipótesis nula cuando la alternativa es realmente cierta? (es decir, ¿cuál es la probabilidad de detectar un efecto real?)
+
+---
+
+Que n necesita mi experimento?
+
+
+Mayor efecto (Δ en unidades originales), mayor potencia.
+Mayor desviación estándar (σ), menor potencia.
+Más tamaño de muestra (n) (menor σ), mayor potencia.
+
+Zα/2 es la Z asociada al nivel de significación de un test bilateral o de dos colas y representa 1.96 cuando α = 0.05, para α = 0.01 entonces Zα/2 = 2.58
+Zβ es la Z asociada al riesgo de falso negativo (potencia = 1 - β) representa 0.84 si potencia = 80%, o 1.28 si potencia = 90%. DA IGUAL SI ES BILATERAL O UNILATERAL. SIEMPRE ES EL MISMO VALOR.
+α y β se deciden a priori, antes de hacer el experimento!
+
+---
+
+juego power_n
+
+https://dce85.shinyapps.io/power_n/ 
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
