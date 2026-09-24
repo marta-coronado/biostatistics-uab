@@ -226,7 +226,7 @@ class: animated, fadeIn
 - IC bilateral
 - Estimación de la media poblacional a partir de una muestra
 - Precisión de la media según el tamaño de la muestra
-- n necesaria
+- Tamaño de muestra necesario
 - IC unilateral
 - Interpretación correcta del IC
 
@@ -2046,7 +2046,7 @@ library(ggthemes)
 set.seed(7)
 
 # mu fijo (solo para la simulación) y error estándar del ejemplo
-mu <- 76.8
+mu <- 75.4
 SE <- 2.87
 z_star <- 1.645   # IC unilateral del 95%
 k <- 30           # número de muestras
