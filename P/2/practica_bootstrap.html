@@ -667,10 +667,10 @@ anteriormente.</p>
 <li><code>specify(asymmetryScore ~ species)</code>: indica la variable
 respuesta (<code>asymmetryScore</code>) y la explicativa
 (<code>species</code>).</li>
-<li><code>hypothesize(null = &quot;???&quot;)</code>: indica la hipótesis nula.
-Aquí, que la asimetría es <strong>independiente</strong> de la especie
-(las etiquetas son intercambiables).</li>
-<li><code>generate(reps = ???, type = &quot;???&quot;)</code>: genera las
+<li><code>hypothesize(null = &quot;independence&quot;)</code>: indica la hipótesis
+nula. Aquí, que la asimetría es <strong>independiente</strong> de la
+especie (las etiquetas son intercambiables).</li>
+<li><code>generate(reps = 10000, type = &quot;permute&quot;)</code>: genera las
 réplicas. Aquí, <strong>10000 permutaciones</strong> de las etiquetas,
 sin reemplazamiento.</li>
 <li><code>calculate(stat = &quot;diff in means&quot;, order = c(&quot;Chimp&quot;, &quot;Bonobo&quot;))</code>:
@@ -690,9 +690,9 @@ nuestro estadístico observado.</li>
 <p><strong>¿Cuántas filas tiene <code>perm</code>? ¿Qué contiene la
 columna <code>stat</code>?</strong></p>
 </div>
-<div id="paso-6-visualizar-la-distribución-nula-y-dónde-cae-nuestro-dato" class="section level4">
+<div id="paso-6-visualizar-la-distribución-nula-y-dónde-cae-nuestro-valor-observado" class="section level4">
 <h4><strong>Paso 6: visualizar la distribución nula y dónde cae nuestro
-dato</strong></h4>
+valor observado</strong></h4>
 <p>Haz un histograma con <code>perm</code> de las diferencias de medias
 permutadas (<code>x</code> = <code>stat</code>). Prueba con
 <code>geom_histogram(binwidth = 0.02)</code> y ajusta el
@@ -712,7 +712,7 @@ de <strong>dos colas</strong>. Guarda el resultado en
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>g1 <span class="ot">&lt;-</span> diffs_histogram_plot <span class="sc">+</span> </span>
 <span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">c</span>(baseline_difference, <span class="sc">-</span>baseline_difference), </span>
 <span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>             <span class="at">linetype   =</span> <span class="st">&quot;dotted&quot;</span>, </span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>             <span class="at">color      =</span> <span class="st">&quot;#2c3e50&quot;</span>, </span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>             <span class="at">color      =</span> <span class="st">&quot;firebrick4&quot;</span>, </span>
 <span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>             <span class="at">linewidth  =</span> <span class="dv">1</span>) </span>
 <span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a></span>
 <span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>g1</span></code></pre></div>
@@ -731,7 +731,7 @@ del 2.5% y del 97.5%</strong> de la distribución simulada, con
 <p>Añade ahora estas dos líneas continuas a <code>g1</code>:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>g3 <span class="ot">&lt;-</span> g1 <span class="sc">+</span></span>
 <span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> cutoffs, </span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>             <span class="at">color      =</span> <span class="st">&quot;#2c3e50&quot;</span>, </span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>             <span class="at">color      =</span> <span class="st">&quot;black&quot;</span>, </span>
 <span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>             <span class="at">linewidth  =</span> <span class="dv">1</span>)</span>
 <span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a></span>
 <span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>g3</span></code></pre></div>

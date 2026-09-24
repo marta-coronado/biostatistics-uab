@@ -373,8 +373,8 @@ Guarda la diferencia (Chimp − Bonobo) en el objeto `baseline_difference`. Pued
 Vamos a generar el **modelo nulo** con la librería `infer`. Ejecutamos cuatro funciones encadenadas:
 
 - `specify(asymmetryScore ~ species)`: indica la variable respuesta (`asymmetryScore`) y la explicativa (`species`).
-- `hypothesize(null = "???")`: indica la hipótesis nula. Aquí, que la asimetría es **independiente** de la especie (las etiquetas son intercambiables).
-- `generate(reps = ???, type = "???")`: genera las réplicas. Aquí, **10000 permutaciones** de las etiquetas, sin reemplazamiento.
+- `hypothesize(null = "independence")`: indica la hipótesis nula. Aquí, que la asimetría es **independiente** de la especie (las etiquetas son intercambiables).
+- `generate(reps = 10000, type = "permute")`: genera las réplicas. Aquí, **10000 permutaciones** de las etiquetas, sin reemplazamiento.
 - `calculate(stat = "diff in means", order = c("Chimp", "Bonobo"))`: calcula la diferencia de medias en cada réplica, en el mismo orden que nuestro estadístico observado.
 
 Ejecuta el código:
@@ -394,7 +394,7 @@ head(perm)
 **¿Cuántas filas tiene `perm`? ¿Qué contiene la columna `stat`?**
 
 
-#### **Paso 6: visualizar la distribución nula y dónde cae nuestro dato**
+#### **Paso 6: visualizar la distribución nula y dónde cae nuestro valor observado**
 Haz un histograma con `perm` de las diferencias de medias permutadas (`x` = `stat`). Prueba con `geom_histogram(binwidth = 0.02)` y ajusta el `binwidth` si hace falta. Guarda el gráfico en `diffs_histogram_plot`.
 
 ```{r fig.width = 5, fig.height = 3.5}
@@ -409,7 +409,7 @@ Ahora añade dos líneas verticales discontinuas: una en la diferencia observada
 g1 <- diffs_histogram_plot + 
   geom_vline(xintercept = c(baseline_difference, -baseline_difference), 
              linetype   = "dotted", 
-             color      = "#2c3e50", 
+             color      = "firebrick4", 
              linewidth  = 1) 
 
 g1
@@ -430,7 +430,7 @@ Añade ahora estas dos líneas continuas a `g1`:
 ```{r eval = F, fig.width = 5, fig.height = 3.5}
 g3 <- g1 +
   geom_vline(xintercept = cutoffs, 
-             color      = "#2c3e50", 
+             color      = "black", 
              linewidth  = 1)
 
 g3
