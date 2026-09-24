@@ -733,6 +733,8 @@ $$
 ---
 class: animated, fadeIn
 
+## Aplicación: probabilidades con la distribución muestral de la media
+
 ### Ejemplo 1: Duración de las bombillas 💡
 
 Sabemos que la duración de las bombillas de una determinada marca sigue una distribución normal:  
@@ -852,6 +854,86 @@ ggplot(df, aes(x=x, y=y)) +
 
 ---
 
+class: animated, fadeIn
+
+### Ejemplo 1: Duración de las bombillas 💡
+
+.pull-left[
+
+**b) Muestra de 100 bombillas**
+
+La media de la muestra se distribuye como:  
+
+$$
+\bar{X} \sim N\left(\mu = 1500, \sigma_{\bar{X}} = \frac{\sigma}{\sqrt{n}} = \frac{160}{\sqrt{100}} = 16 \right)
+$$
+
+Queremos calcular la probabilidad de que la **media de la muestra** sea superior a 1524 horas:  
+
+- Calculamos el valor $z$**, ahora con el error estándar porque trabajamos con la media**:
+
+$$
+z = \frac{\bar{x} - \mu}{\sigma / \sqrt{n}} = \frac{1524 - 1500}{160 / \sqrt{100}} = \frac{1524 - 1500}{16} = 1.5
+$$
+
+- Probabilidad:
+$$
+P(\bar{X} > 1524) = P(Z>1.5) \approx 0.0668
+$$
+
+]
+
+.pull-right[
+
+```{r echo=FALSE, fig.height=3, fig.width=7, fig.align='center'}
+library(ggplot2)
+
+
+mu <- 1500
+sigma <- 160
+x <- seq(mu - 4*sigma, mu + 4*sigma, length=1000)
+y <- dnorm(x, mu, sigma)
+
+df <- data.frame(x, y)
+
+ ggplot(df, aes(x=x, y=y)) +
+  geom_line(color="cadetblue4", size=1.2) +
+  geom_area(data=subset(df, x > 1524), aes(y=y), fill="orange1", alpha=0.5) +
+  labs(title="Probabilidad de una bombilla > 1524 h",
+       x="Duración (horas)", y="Densidad")  +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))  + xlim(c(800,2300))
+
+
+# Parámetros
+mu <- 1500
+sigma <- 160
+n <- 100
+sigma_n <- sigma / sqrt(n)
+
+# Secuencia para densidad
+x <- seq(mu - 4*sigma_n, mu + 4*sigma_n, length=1000)
+y <- dnorm(x, mu, sigma_n)
+df <- data.frame(x, y)
+
+# Gráfico
+ggplot(df, aes(x=x, y=y)) +
+  geom_line(color="cadetblue4", size=1.2) +
+  geom_area(data=subset(df, x > 1524), aes(y=y), fill="orange1", alpha=0.5) +
+  labs(title="Distribución muestral de la media (n=100)",
+       x="Media de duración (horas)", y="Densidad") +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))  + xlim(c(800,2300))
+
+```
+
+]
+
+---
 
 class: animated, fadeIn, practica
 
@@ -1031,12 +1113,18 @@ grid.arrange(p1, p2, p3, p4, p5, ncol=3)
 ```
 ]
 
+--
+
+#### ✨Práctica! App para practicar el cálculo de probabilidades: 
+
+[https://marta-coronado.shinyapps.io/app_normal/](https://marta-coronado.shinyapps.io/app_normal/)
+
 ---
 class: animated, fadeIn
 
 ## Intervalo de confianza
 
-Un **intervalo de confianza (IC)** es un rango de valores **simétrico respecto a la media** que, con un determinado **nivel de confianza**, se utiliza para **estimar un parámetro poblacional desconocido**.
+Un **intervalo de confianza (IC)** es un rango de valores **simétrico respecto a la media muestral** que, con un determinado **nivel de confianza**, se utiliza para **estimar un parámetro poblacional desconocido**.
 
 - Permite cuantificar la **incertidumbre** de la estimación de la media.  
 
@@ -1084,23 +1172,6 @@ class: animated, fadeIn, center
 <center>
 <img src="img/6.png">
 
----
-class: animated, fadeIn, center
-
-<center>
-<img src="img/7.png">
-
----
-class: animated, fadeIn, center
-
-<center>
-<img src="img/8.png">
-
----
-class: animated, fadeIn, center
-
-<center>
-<img src="img/9.png">
 
 ---
 class: animated, fadeIn, center
@@ -1161,7 +1232,7 @@ Se llaman **intervalos de confianza de dos lados** porque proporcionan tanto el 
 ]
 
 .pull-right[
-```{r echo=FALSE, fig.height=3.5, fig.width=5, fig.align='center'}
+```{r echo=FALSE, fig.height=4.5, fig.width=6, fig.align='center'}
 
 library(ggplot2)
 library(grid)
@@ -1188,9 +1259,9 @@ ggplot(df, aes(x=x, y=y)) +
   # Flechas y texto para alpha/2
   annotate("text", x=-z_star-0.7, y=0.05, label="alpha/2", parse=TRUE) +
   annotate("text", x=z_star+0.7, y=0.05, label="alpha/2", parse=TRUE) +
-  # Texto central IC
-  annotate("text", x=0, y=0.25, label=paste0(conf_level*100, "% IC"), fontface="bold", color="orange4") +
-  labs(title="Intervalo de confianza de dos lados",
+  # Texto central
+  annotate("text", x=0, y=0.25, label=paste0(conf_level*100, "%"), fontface="bold", color="orange4") +
+  labs(title="Distribución N(0,1): área central de dos lados",
        x=expression(z), y="Densidad")  +
   ggthemes::theme_base(base_size = 13) +
   theme(panel.grid=element_blank(),
@@ -1209,10 +1280,10 @@ $$
 ---
 class: animated, fadeIn
 
-### Cálculo del IC
+### Cálculo del IC al 95%
 
 .pull-left[
-Queremos saber **entre qué dos valores de $z$ se encuentra el 95% central de la distribución normal estándar** (los valores críticos del IC).
+Queremos saber **entre qué dos valores de $z$ se encuentra el 95% central de la distribución normal estándar del estadístico $Z$ (no de los datos)** (los valores críticos del IC).
 
 - Nivel de confianza deseado: 95% 
 - Área fuera del intervalo: $\alpha = 1 - 0.95 = 0.05$  
@@ -1220,7 +1291,7 @@ Queremos saber **entre qué dos valores de $z$ se encuentra el 95% central de la
 ]
 
 .pull-right[
-```{r echo=FALSE, fig.height=3.5, fig.width=5, fig.align='center'}
+```{r echo=FALSE, fig.height=4.5, fig.width=6, fig.align='center'}
 
 library(ggplot2)
 library(grid)
@@ -1247,9 +1318,9 @@ ggplot(df, aes(x=x, y=y)) +
   # Flechas y texto para alpha/2
   annotate("text", x=-z_star-0.7, y=0.05, label="alpha/2", parse=TRUE) +
   annotate("text", x=z_star+0.7, y=0.05, label="alpha/2", parse=TRUE) +
-  # Texto central IC
-  annotate("text", x=0, y=0.25, label=paste0(conf_level*100, "% IC"), fontface="bold", color="orange4") +
-  labs(title="Intervalo de confianza de dos lados",
+  # Texto central
+  annotate("text", x=0, y=0.25, label=paste0(conf_level*100, "%"), fontface="bold", color="orange4") +
+  labs(title="Distribución N(0,1): área central de dos lados",
        x=expression(z), y="Densidad")  +
   ggthemes::theme_base(base_size = 13) +
   theme(panel.grid=element_blank(),
@@ -1261,10 +1332,10 @@ ggplot(df, aes(x=x, y=y)) +
 ---
 class: animated, fadeIn
 
-### Cálculo del IC
+### Cálculo del IC al 95%
 
 .pull-left[
-Queremos saber **entre qué dos valores de $z$ se encuentra el 95% central de la distribución normal estándar** (los valores críticos del IC).
+Queremos saber **entre qué dos valores de $z$ se encuentra el 95% central de la distribución normal estándar del estadístico $Z$ (no de los datos)** (los valores críticos del IC).
 
 - Nivel de confianza deseado: 95% 
 - Área fuera del intervalo: $\alpha = 1 - 0.95 = 0.05$  
@@ -1273,13 +1344,13 @@ Queremos saber **entre qué dos valores de $z$ se encuentra el 95% central de la
 
 #### Cómo usar la tabla Z (N(0,1))
 
-1. La **tabla Z** nos da el área acumulada **por debajo de un valor Z**.  
+1. La **tabla Z** nos da el área acumulada **por debajo (o por encima) de un valor Z**.  
 2. No nos da directamente el valor que deja un porcentaje **entre dos límites**, pero usando simetría podemos calcularlo.  
 
 ]
 
 .pull-right[
-```{r echo=FALSE, fig.height=3.5, fig.width=5, fig.align='center'}
+```{r echo=FALSE, fig.height=4.5, fig.width=6, fig.align='center'}
 
 library(ggplot2)
 library(grid)
@@ -1306,9 +1377,9 @@ ggplot(df, aes(x=x, y=y)) +
   # Flechas y texto para alpha/2
   annotate("text", x=-z_star-0.7, y=0.05, label="alpha/2", parse=TRUE) +
   annotate("text", x=z_star+0.7, y=0.05, label="alpha/2", parse=TRUE) +
-  # Texto central IC
-  annotate("text", x=0, y=0.25, label=paste0(conf_level*100, "% IC"), fontface="bold", color="orange4") +
-  labs(title="Intervalo de confianza de dos lados",
+  # Texto central
+  annotate("text", x=0, y=0.25, label=paste0(conf_level*100, "%"), fontface="bold", color="orange4") +
+  labs(title="Distribución N(0,1): área central de dos lados",
        x=expression(z), y="Densidad")  +
   ggthemes::theme_base(base_size = 13) +
   theme(panel.grid=element_blank(),
@@ -1321,7 +1392,7 @@ ggplot(df, aes(x=x, y=y)) +
 ---
 class: animated, fadeIn
 
-### Cálculo del IC
+### Cálculo del IC al 95%
 
   - Queremos que el área entre los dos valores centrales sea 0.95 → cada cola tiene 0.025
   
@@ -1335,7 +1406,7 @@ $$
 
 
 .pull-left[
-```{r echo=FALSE, fig.height=3.5, fig.width=5, fig.align='center'}
+```{r echo=FALSE, fig.height=4.5, fig.width=6, fig.align='center'}
 
 library(ggplot2)
 library(grid)
@@ -1362,9 +1433,9 @@ ggplot(df, aes(x=x, y=y)) +
   # Flechas y texto para alpha/2
   annotate("text", x=-z_star-0.7, y=0.05, label="alpha/2", parse=TRUE) +
   annotate("text", x=z_star+0.7, y=0.05, label="alpha/2", parse=TRUE) +
-  # Texto central IC
-  annotate("text", x=0, y=0.25, label=paste0(conf_level*100, "% IC"), fontface="bold", color="orange4") +
-  labs(title="Intervalo de confianza de dos lados",
+  # Texto central
+  annotate("text", x=0, y=0.25, label=paste0(conf_level*100, "%"), fontface="bold", color="orange4") +
+  labs(title="Distribución N(0,1): área central de dos lados",
        x=expression(z), y="Densidad")  +
   ggthemes::theme_base(base_size = 13) +
   theme(panel.grid=element_blank(),
@@ -1383,7 +1454,7 @@ library(knitr)
 library(kableExtra)
 
 # Valores de las filas (0.0 a 3.0 por 0.1)
-rows <- seq(1.5, 2.0, by = 0.1)
+rows <- seq(1.6, 2.0, by = 0.1)
 
 # Valores de las columnas (0.00 a 0.09 por 0.01)
 cols <- seq(0, 0.08, by = 0.01)
@@ -1417,24 +1488,29 @@ kable(head(z_table_df, 17), digits = 4, align = "c",
 ```
 
 > El valor $z$ es 1.96.
+
+Esos valores $\pm z_{\alpha/2}$ son los que multiplican al error estándar en el IC: $\bar{x} \pm z_{\alpha/2}\cdot s/\sqrt{n}$.
 ]
 
 ---
 class: animated, fadeIn
 
-### Cálculo del IC
+### Cálculo del IC al 95%
 
-El intervalo de confianza del 95% está entre:
+Los valores críticos para el 95% son:
 
+.pull-left[
 $$
 -z_{\alpha/2} = -1.96 
 $$
-
+]
+.pull-right[
 $$
 z_{\alpha/2} = +1.96
 $$
+]
 
-```{r echo=FALSE, fig.height=3.5, fig.width=5, fig.align='center'}
+```{r echo=FALSE, fig.height=4.5, fig.width=6, fig.align='center'}
 
 library(ggplot2)
 library(grid)
@@ -1461,9 +1537,9 @@ ggplot(df, aes(x=x, y=y)) +
   # Flechas y texto para alpha/2
   annotate("text", x=-z_star-0.7, y=0.05, label="alpha/2", parse=TRUE) +
   annotate("text", x=z_star+0.7, y=0.05, label="alpha/2", parse=TRUE) +
-  # Texto central IC
-  annotate("text", x=0, y=0.25, label=paste0(conf_level*100, "% IC"), fontface="bold", color="orange4") +
-  labs(title="Intervalo de confianza de dos lados",
+  # Texto central
+  annotate("text", x=0, y=0.25, label=paste0(conf_level*100, "%"), fontface="bold", color="orange4") +
+  labs(title="Distribución N(0,1): área central de dos lados",
        x=expression(z), y="Densidad")  +
   ggthemes::theme_base(base_size = 13) +
   theme(panel.grid=element_blank(),
@@ -1477,10 +1553,12 @@ $$
 IC_{95\%} = \bar{x} \pm 1.96 \cdot \frac{s}{\sqrt{n}}
 $$
 
+El 95% es la confianza del procedimiento: en el 95% de las muestras, el IC contiene a $\mu$.
+ 
 ---
 class: animated, fadeIn
 
-### Cálculo del IC
+### Cálculo del IC al 90%
 
 .pull-left[
 - Nivel de confianza: 90% → $\alpha = 0.10$  
@@ -1495,7 +1573,7 @@ $$
 .pull-right[
 
 
-```{r echo=FALSE, fig.height=3.5, fig.width=5, fig.align='center'}
+```{r echo=FALSE, fig.height=4.5, fig.width=6, fig.align='center'}
 
 library(ggplot2)
 library(grid)
@@ -1520,11 +1598,11 @@ ggplot(df, aes(x=x, y=y)) +
   # Líneas verticales en -z y z
   geom_vline(xintercept = c(-z_star, z_star), linetype="dashed", color="firebrick3", size=1) +
   # Flechas y texto para alpha/2
-  annotate("text", x=-z_star-0.9, y=0.05, label="alpha/2", parse=TRUE) +
-  annotate("text", x=z_star+0.9, y=0.05, label="alpha/2", parse=TRUE) +
-  # Texto central IC
-  annotate("text", x=0, y=0.25, label=paste0(conf_level*100, "% IC"), fontface="bold", color="orange4") +
-  labs(title="Intervalo de confianza de dos lados",
+  annotate("text", x=-z_star-0.7, y=0.05, label="alpha/2", parse=TRUE) +
+  annotate("text", x=z_star+0.7, y=0.05, label="alpha/2", parse=TRUE) +
+  # Texto central
+  annotate("text", x=0, y=0.25, label=paste0(conf_level*100, "%"), fontface="bold", color="orange4") +
+  labs(title="Distribución N(0,1): área central de dos lados",
        x=expression(z), y="Densidad")  +
   ggthemes::theme_base(base_size = 13) +
   theme(panel.grid=element_blank(),
@@ -1587,6 +1665,9 @@ class: animated, fadeIn
 | 95% | 0.05 | 1.96 |
 | 99% | 0.01 | 2.576 |
 
+<br>
+> A mayor nivel de confianza, mayor $z_{\alpha/2}$ y, por tanto, un intervalo más ancho.
+
 ---
 
 class: animated, fadeIn
@@ -1617,17 +1698,17 @@ class: animated, fadeIn
 A partir de la **media muestral $\bar{x}$** y el **error estándar**, podemos calcular:
 
 $$
-IC = (\bar{x} - \text{error}, \bar{x} + \text{error})
+IC = (\bar{x} - \text{m}, \bar{x} + \text{m})
 $$
 
-donde el **error** se calcula como:
+donde el **margen de error** se calcula como:
 
 $$
-\text{error} = z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}
+\text{m} = z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}
 $$
 
 - $z_{\alpha/2}$: valor crítico según el nivel de confianza deseado  
-- $\sigma$: desviación estándar poblacional  
+- $\sigma$: desviación estándar poblacional (si es desconocida, usamos $s$) 
 - $n$: tamaño de la muestra  
 
 <br>
@@ -1648,7 +1729,7 @@ class: animated, fadeIn
 - Nivel de confianza: 95% → $z_{\alpha/2} = 1.96$
 
 $$
-\text{error} = z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}} = 1.96 \times \frac{10}{\sqrt{100}} = 1.96
+\text{m} = z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}} = 1.96 \times \frac{10}{\sqrt{100}} = 1.96
 $$
 
 $$
@@ -1662,50 +1743,37 @@ $$
 class: animated, fadeIn
 
 
-### Estimación de la media poblacional a partir de una muestra
+### Interpretación del nivel de confianza
 
 
-```{r echo=FALSE, fig.height=6, fig.width=9, fig.align='center'}
+```{r echo=FALSE, fig.height=8, fig.width=9, fig.align='center'}
 library(ggplot2)
 library(ggthemes)
+set.seed(7)
 
-# Datos
-x_bar <- 169
-sigma <- 10
-n <- 100
-SE <- sigma / sqrt(n)   # 1
-z_star <- 1.96       
-conf_level <- 0.95
+# Población simulada (mu fijo, solo para la simulación)
+mu <- 170; sigma <- 10; n <- 100
+SE <- sigma / sqrt(n)
+z_star <- 1.96
+k <- 30   # número de muestras
 
-# Límites del IC en valores originales
-x_lower <- x_bar - z_star*SE
-x_upper <- x_bar + z_star*SE
+x_bar <- rnorm(k, mean = mu, sd = SE)
+df <- data.frame(muestra = 1:k, x_bar = x_bar,
+                 lower = x_bar - z_star*SE, upper = x_bar + z_star*SE)
+df$contiene <- ifelse(df$lower <= mu & df$upper >= mu, "Contiene μ", "No contiene μ")
 
-# Secuencia para curva normal de la media muestral
-x <- seq(x_bar - 4*SE, x_bar + 4*SE, length=1000)
-y <- dnorm(x, mean=x_bar, sd=SE)
-df <- data.frame(x=x, y=y)
-
-ggplot(df, aes(x=x, y=y)) +
-    geom_line(size=1.2, color="black") +
-    # Área dentro del IC
-    geom_area(data=subset(df, x >= x_lower & x <= x_upper), aes(x=x, y=y), fill="cadetblue3", alpha=0.5) +
-    # Área de colas (alpha)
-    geom_area(data=subset(df, x < x_lower), aes(x=x, y=y), fill="firebrick3", alpha=0.4) +
-    geom_area(data=subset(df, x > x_upper), aes(x=x, y=y), fill="firebrick3", alpha=0.4) +
-    # Líneas verticales en los límites del IC
-    geom_vline(xintercept = c(x_lower, x_upper), linetype="dashed", color="firebrick3", size=1) +
-    # Texto para alpha/2
-  annotate("text", x=x_lower - 1, y=0.05, label="α/2") +
-annotate("text", x=x_upper + 1, y=0.05, label="α/2") +
-    # Texto central IC
-    annotate("text", x=x_bar, y=0.15, label=paste0(conf_level*100, "% IC"), fontface="bold", color="orange4") +
-    labs(title="Intervalo de confianza de dos lados",
-         x="Altura media (cm)", y="Densidad") +
+ggplot(df, aes(y = muestra, x = x_bar, color = contiene)) +
+    geom_linerange(aes(xmin = lower, xmax = upper), size = 1) +
+    geom_point(size = 2) +
+    geom_vline(xintercept = mu, linetype = "dashed") +
+    scale_color_manual(values = c("Contiene μ" = "cadetblue4", "No contiene μ" = "firebrick3")) +
+    labs(title = "30 intervalos de confianza del 95% (30 muestras distintas)",
+         x = "Altura media (cm)", y = "Muestra", color = NULL) +
     ggthemes::theme_base(base_size = 16) +
-    theme(panel.grid=element_blank(),
-          axis.text=element_text(color="black"),
-          panel.background = element_rect(fill = "white"))
+    theme(panel.grid = element_blank(),
+          axis.text = element_text(color = "black"),
+          panel.background = element_rect(fill = "white"),
+          legend.position = "bottom")
 ```
 ---
 
@@ -1715,10 +1783,10 @@ class: animated, fadeIn
 
 - Cuanto mayor sea $n$, **más precisa** será la media muestral $\bar{X}$
 
-- El **error estándar** disminuye:
+- El **margen de error $m$** disminuye:
 
 $$
-\text{error} = z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}
+\text{m} = z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}
 $$
 
 - IC más estrecho → estimación más precisa
@@ -1745,11 +1813,11 @@ class: animated, fadeIn
 - $z$ crítico: $z_{\alpha/2} = 1.645$  
 
 $$
-\text{error} = z \times \frac{\sigma}{\sqrt{n}} = 1.645 \times \frac{20}{\sqrt{250}} \approx 2.08
+\text{m} = z \times \frac{\sigma}{\sqrt{n}} = 1.645 \times \frac{20}{\sqrt{250}} \approx 2.08
 $$
 
 $$
-IC_{90\%} = (\bar{x} - \text{error}, \bar{x} + \text{error}) = (90 - 2.08, 90 + 2.08) \approx (87.92, 92.08)
+IC_{90\%} = (\bar{x} - \text{m}, \bar{x} + \text{m}) = (90 - 2.08, 90 + 2.08) \approx (87.92, 92.08)
 $$
 
 
@@ -1761,42 +1829,26 @@ class: animated, fadeIn
 
 ### Ejemplo: Tiempo diario dedicado a actividades deportivas 🤸
 
-```{r echo=FALSE, fig.height=6, fig.width=9, fig.align='center'}
+```{r echo=FALSE, fig.height=7, fig.width=9, fig.align='center'}
 library(ggplot2)
 library(ggthemes)
 
-# Datos
-x_bar <- 90
-sigma <- 20
-n <- 250
-z_star <- 1.645       # IC 90%
-conf_level <- 0.9
+x_bar <- 90; sigma <- 20; z_star <- 1.645
+df <- data.frame(n = c(25, 100, 250, 1000))
+df$m <- z_star * sigma / sqrt(df$n)
+df$lower <- x_bar - df$m
+df$upper <- x_bar + df$m
+df$n <- factor(paste0("n = ", df$n), levels = rev(paste0("n = ", df$n)))
 
-SE <- sigma / sqrt(n)
-
-# Límites del IC en valores originales
-x_lower <- x_bar - z_star*SE
-x_upper <- x_bar + z_star*SE
-
-# Secuencia para curva normal de la media muestral
-x <- seq(x_bar - 4*SE, x_bar + 4*SE, length=1000)
-y <- dnorm(x, mean=x_bar, sd=SE)
-df <- data.frame(x=x, y=y)
-
-ggplot(df, aes(x=x, y=y)) +
-    geom_line(size=1.2, color="black") +
-    geom_area(data=subset(df, x >= x_lower & x <= x_upper), aes(x=x, y=y), fill="cadetblue3", alpha=0.5) +
-    geom_area(data=subset(df, x < x_lower), aes(x=x, y=y), fill="firebrick3", alpha=0.4) +
-    geom_area(data=subset(df, x > x_upper), aes(x=x, y=y), fill="firebrick3", alpha=0.4) +
-    geom_vline(xintercept = c(x_lower, x_upper), linetype="dashed", color="firebrick3", size=1) +
-    annotate("text", x=x_lower - 1, y=max(y)*0.1, label="α/2") +
-    annotate("text", x=x_upper + 1, y=max(y)*0.1, label="α/2") +
-    annotate("text", x=x_bar, y=max(y)*0.5, label=paste0(conf_level*100, "% IC"), fontface="bold", color="orange4") +
-    labs(title="Intervalo de confianza de dos lados",
-         x="Media de minutos diarios de actividad deportiva", y="Densidad") +
+ggplot(df, aes(y = n)) +
+    geom_linerange(aes(xmin = lower, xmax = upper), size = 1.5, color = "cadetblue4") +
+    geom_point(aes(x = x_bar), size = 3) +
+    geom_vline(xintercept = x_bar, linetype = "dashed") +
+    labs(title = "IC del 90% según el tamaño de la muestra",
+         x = "Media de minutos diarios de actividad deportiva", y = NULL) +
     ggthemes::theme_base(base_size = 16) +
-    theme(panel.grid=element_blank(),
-          axis.text=element_text(color="black"),
+    theme(panel.grid = element_blank(),
+          axis.text = element_text(color = "black"),
           panel.background = element_rect(fill = "white"))
 ```
 
@@ -1819,7 +1871,7 @@ Queremos estimar la media poblacional $\mu$ de **tiempo diario dedicado a deport
 #### Fórmula para el tamaño de la muestra
 
 $$
-\text{error} = z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}} \le E
+\text{m} = z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}} \le E
 $$
 
 De donde despejamos $n$:
@@ -1873,7 +1925,7 @@ class: animated, fadeIn
 - Forma general:  
 
 $$
-(-\infty, \bar{x} + \text{error}) \quad \text{o} \quad (\bar{x} - \text{error}, \infty)
+(-\infty, \bar{x} + \text{m}) \quad \text{o} \quad (\bar{x} - \text{m}, \infty)
 $$
 
 - Se utiliza **el error estándar (SE)** y un valor $z$ crítico, pero el $z$ **es distinto** que para intervalos bilaterales.  
@@ -1882,7 +1934,7 @@ $$
 
 #### Ejemplo conceptual
 
-Queremos construir un IC del **95%** de manera que podamos afirmar que, basándonos en la muestra, la media poblacional $\mu$ se encuentre **por debajo de** $\bar{x} + \text{error}$.  
+Queremos construir un IC del **95%** de manera que podamos afirmar que, basándonos en la muestra, la media poblacional $\mu$ se encuentre **por debajo de** $\bar{x} + \text{m}$.  
 
 - Calculamos $z$ tal que el área en la **cola derecha = 0.05**  
 
@@ -1894,7 +1946,7 @@ $$
 
 --
 
-De manera similar, que la media poblacional $\mu$ se encuentre **por encima de** $\bar{x} - \text{error}$.  
+De manera similar, que la media poblacional $\mu$ se encuentre **por encima de** $\bar{x} - \text{m}$.  
 
 - Calculamos $z$ tal que el área en la **cola izquierda = 0.05** **(es decir, $z = -1.645$)** 
 
@@ -1911,25 +1963,61 @@ class: animated, fadeIn
 
 ## Intervalos de confianza unilaterales (*one-sided*)
 
-Queremos comprobar el peso medio de los adultos en EEUU para dimensionar un equipamiento (ascensores, sillas, etc.). Solo nos interesa un límite inferior: ¿a partir de qué valor podemos asegurar que se encuentra $\mu$?
+Queremos comprobar el peso medio de los adultos en EEUU para dimensionar un equipamiento (ascensores, sillas, etc.). Solo nos interesa un límite superior: ¿hasta qué valor podemos asegurar que llega $\mu$?
 
 **Datos:**  
 - Muestra de 60 adultos de EEUU  
 - Media muestral: $\bar{x} = 77 \text{ kg}$  
 - Error estándar: $SE = 2.87 \text{ kg}$
 
-**Cálculo del límite inferior de un IC de 95% (*one-sided*):**  
+**Cálculo del límite superior de un IC de 95% (*one-sided*):**  
 
 $$
-\text{límite inferior} = \bar{x} - (1.645 \times SE) = 77 - (1.645 \times 2.87) \approx 72.28
+\text{límite superior} = \bar{x} + (1.645 \times SE) = 77 + (1.645 \times 2.87) \approx 81.72
 $$
+
+> En un IC unilateral todo el área $\alpha$ va en una sola cola, por eso usamos $z_{\alpha}$ (1.645 para el 95%) y no $z_{\alpha/2}$ (1.96).
 
 **Intervalo de confianza:**  
 $$
-(72.28, \infty)
+(-\infty, 81.72)
 $$
 
-> Con un 95% de confianza, el peso promedio de los adultos en EEUU se encuentra por encima de 72.28 kg.
+> Con un 95% de confianza, el peso promedio de los adultos en EEUU se encuentra por debajo de 81.72 kg.
+
+---
+
+class: animated, fadeIn
+
+## Intervalos de confianza unilaterales (*one-sided*)
+
+
+```{r echo=FALSE, fig.height=7, fig.width=9, fig.align='center'}
+library(ggplot2)
+library(ggthemes)
+
+conf_level <- 0.95
+alpha <- 1 - conf_level
+z_star <- qnorm(1 - alpha)
+
+x <- seq(-4, 4, length=1000)
+df <- data.frame(x=x, y=dnorm(x, 0, 1))
+
+ggplot(df, aes(x=x, y=y)) +
+  geom_line(size=1.2, color="black") +
+  geom_area(data=subset(df, x <= z_star), aes(x=x, y=y), fill="cadetblue3", alpha=0.5) +
+  geom_area(data=subset(df, x > z_star), aes(x=x, y=y), fill="firebrick3", alpha=0.4) +
+  geom_vline(xintercept = z_star, linetype="dashed", color="firebrick3", size=1) +
+  annotate("text", x=z_star+0.7, y=0.05, label="alpha", parse=TRUE) +
+  annotate("text", x=0, y=0.25, label=paste0(conf_level*100, "%"), fontface="bold", color="orange4") +
+  scale_x_continuous(breaks=c(-4, 0, z_star, 4), labels=c(-4, 0, round(z_star, 3), 4)) +
+  labs(title="Distribución N(0,1): área de un solo lado",
+       x=expression(z), y="Densidad") +
+  ggthemes::theme_base(base_size = 13) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+```
 
 ---
 class: animated, fadeIn
@@ -1939,45 +2027,54 @@ class: animated, fadeIn
 .pull-left[
 - La interpretación correcta de un IC XX% es: 
 
-> **"Estamos XX% seguros de que el parámetro poblacional se encuentra dentro del intervalo."  **
+> **"Estamos XX% seguros de que el parámetro poblacional se encuentra dentro del intervalo.**
 
 - No se debe decir que hay XX% de probabilidad de que el parámetro esté dentro del intervalo: $\mu$ es un valor fijo, y lo que varía de una muestra a otra es el intervalo. Una vez calculado, el intervalo contiene a $\mu$ o no lo contiene.
 
+
+- El nivel de confianza refleja la **fiabilidad del procedimiento**, es decir, que si repitiéramos el procedimiento muchas veces bajo los mismos supuestos, el IC contendría el parámetro verdadero XX% de las veces. 
+
+
 - Ojo: no es lo mismo que el intervalo que contiene al XX% de los valores individuales (por ejemplo, $\mu \pm 1.96\sigma$). Ese sí describe la población; el IC describe la incertidumbre sobre la media.
 
-- El nivel de confianza refleja la **fiabilidad del procedimiento**, es decir, que si repitiéramos el procedimiento muchas veces bajo los mismos supuestos, el IC contendría el parámetro verdadero XX% de las veces.  
 ]
 
 .pull-right[
-```{r echo=FALSE, fig.height=4, fig.width=6, fig.align='center'}
+```{r echo=FALSE, fig.height=7, fig.width=6, fig.align='center'}
 library(ggplot2)
 library(ggthemes)
+set.seed(7)
 
-
-X_bar <- 77
+# mu fijo (solo para la simulación) y error estándar del ejemplo
+mu <- 76.8
 SE <- 2.87
-z <- 1.645
+z_star <- 1.645   # IC unilateral del 95%
+k <- 30           # número de muestras
 
-# Límite inferior
-lower <- X_bar - z*SE
-# Límite superior infinito
-upper <- Inf
+# Repetimos hasta que fallen 1 o 2 intervalos, para que se vea el caso "no contiene"
+repeat {
+  x_bar <- rnorm(k, mean = mu, sd = SE)
+  if (sum(x_bar + z_star*SE < mu) %in% 1:2) break
+}
 
-x <- seq(lower - 10, X_bar + 3*SE, length=1000)
-y <- dnorm(x, mean=X_bar, sd=SE)
-df <- data.frame(x=x, y=y)
+x0 <- mu - 5*SE   # borde izquierdo (representa -Inf)
+df <- data.frame(muestra = 1:k, x_bar = x_bar, upper = x_bar + z_star*SE)
+df$contiene <- ifelse(df$upper >= mu, "Contiene μ", "No contiene μ")
 
-ggplot(df, aes(x=x, y=y)) +
-  geom_line(size=1.2) +
-  geom_area(data=subset(df, x >= lower), aes(x=x, y=y), fill="orange1", alpha=0.5) +
-  geom_area(data=subset(df, x < lower), aes(x=x, y=y), fill="firebrick3", alpha=0.3) +
-  geom_vline(xintercept=lower, linetype="dashed", color="firebrick3") +
-  annotate("text", x=lower + 5, y=max(y)*0.7, label="IC 95% one-sided", fontface="bold", color="orange1") +
-  labs(title="Intervalo de confianza one-sided (inferior)", x="Peso (kg)", y="Densidad") +
+ggplot(df, aes(y = muestra, color = contiene)) +
+  geom_segment(aes(x = x0, xend = upper), size = 1,
+               arrow = arrow(length = unit(0.15, "cm"), ends = "first")) +
+  geom_point(aes(x = upper), size = 2) +
+  geom_vline(xintercept = mu, linetype = "dashed") +
+  scale_color_manual(values = c("Contiene μ" = "cadetblue4", "No contiene μ" = "firebrick3")) +
+  coord_cartesian(xlim = c(x0, mu + 4*SE)) +
+  labs(title = "30 IC unilaterales del 95% (30 muestras distintas)",
+       x = "Peso medio (kg)", y = "Muestra", color = NULL) +
   ggthemes::theme_base(base_size = 13) +
-  theme(panel.grid=element_blank(),
-        axis.text=element_text(color="black"),
-        panel.background = element_rect(fill = "white"))
+  theme(panel.grid = element_blank(),
+        axis.text = element_text(color = "black"),
+        panel.background = element_rect(fill = "white"),
+        legend.position = "bottom")
 ```
 ]
 
@@ -1994,6 +2091,14 @@ class: animated, fadeIn
 | 90% | 0.10 | 1.645 | **1.28** |
 | 95% | 0.05 | 1.96 | **1.645** |
 | 99% | 0.01 | 2.576 | **2.33** |
+
+
+> Con el mismo nivel de confianza, el IC unilateral usa un $z$ menor, porque todo el $\alpha$ va en una sola cola.
+
+<br>
+
+> A mayor nivel de confianza, mayor $z$ y, por tanto, un intervalo más ancho
+
 
 ---
 class: animated, fadeIn
