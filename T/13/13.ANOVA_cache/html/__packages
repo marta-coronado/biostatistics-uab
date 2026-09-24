@@ -1,0 +1,13 @@
+ggplot2
+readr
+knitr
+dplyr
+xaringanthemer
+xaringanExtra
+kableExtra
+data.table
+carData
+car
+ggstatsplot
+tidyr
+RColorBrewer
