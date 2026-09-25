@@ -316,6 +316,7 @@ class: animated, fadeIn
 ## Variabilidad en las estimaciones
 
 ¿Cómo crees que influye el **tamaño muestral**?
+
 --
 
 ```{r}
