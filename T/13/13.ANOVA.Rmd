@@ -83,7 +83,7 @@ _Perform an appropriate statistical analysis of this experiment._
 
 --
 
-- H<sub>0</sub> y H<sub>1</sub>?
+- H<sub>0</sub> y H<sub>A</sub>?
 - Variable respuesta?
 - Grupos?
 
@@ -175,11 +175,11 @@ $$
 
 ]
 
-.pull-left[
+.pull-right[
 - **Hipótesis alternativa**: las medias de los grupos no son iguales.
 
 $$
-H_1=\text{Al menos una } \mu_i \text{ es diferente}
+H_A=\text{Al menos una } \mu_i \text{ es diferente}
 $$
 <br><br>
 <center>
@@ -219,7 +219,7 @@ _Ejemplos_:
 ]
 
 
-.pull-left[
+.pull-right[
 
 Variable **dependiente** → **Continua**
 
@@ -430,7 +430,7 @@ $$
 
 --
 
-> Muy prorobable que las diferencias que veamos sean debidas al azar
+> Muy probable que las diferencias que veamos sean debidas al azar
 
 ---
 class: animated, fadeIn
@@ -500,7 +500,7 @@ $$
 **Paso 4:** Suma de cuadrados de los dentro grupos (SSW): 
 
 $$
-SS_{dentro}=\sum^{grupos}\sum^{grupo}(x_mi-M_i)^2
+SS_{dentro}=\sum^{grupos}\sum^{grupo}(x_{mi}-M_i)^2
 $$
 
 ]
@@ -612,7 +612,7 @@ class: animated, fadeIn
 
 
 $$
-SS_{dentro}=\sum^{grupos}\sum^{grupo}(x_mi-M_i)^2
+SS_{dentro}=\sum^{grupos}\sum^{grupo}(x_{mi}-M_i)^2
 $$
 
 ---
@@ -683,7 +683,7 @@ $$
 **Paso 4:** Suma de cuadrados de los dentro grupos (SSW): 
 
 $$
-SS_{dentro}=\sum^{grupos}\sum^{grupo}(x_mi-M_i)^2
+SS_{dentro}=\sum^{grupos}\sum^{grupo}(x_{mi}-M_i)^2
 $$
 
 
@@ -942,7 +942,7 @@ class: animated, fadeIn
 $MS_{entre}$: es una estimación de la variabilidad entre las poblaciones. Se suele conocer como "varianza explicada" por el factor que define las poblaciones.
 - Nos dice cuánta diferencia hay entre los grupos, y por tanto refleja el efecto del tratamiento o del factor que estamos estudiando.
 
-$MS_{dentro}$: es una estimación conjunta de la varianza residual dentro de cada población. Esta varianza se supone que es la misma para todas los gupos.
+$MS_{dentro}$: es una estimación conjunta de la varianza residual dentro de cada población. Esta varianza se supone que es la misma para todos los grupos.
 - Es una medida del “ruido” o la variabilidad natural que hay dentro de cada grupo.
 - Nos dice cuánto varían los valores entre sí dentro de los grupos, sin tener en cuenta las diferencias entre grupos.
 
@@ -965,7 +965,7 @@ H_0: \text{los residuos siguen una distribución normal}
 $$
 
 $$
-H_1: \text{los residuos no siguen una distribución normal}
+H_A: \text{los residuos no siguen una distribución normal}
 $$
 
 --
@@ -980,7 +980,7 @@ H_0: \sigma^2_1 = \sigma^2_2 = \dots = \sigma^2_p
 $$
 
 $$
-H_1: \text{existe al menos un par } (i,j) \text{ tal que } \sigma^2_i \neq \sigma^2_j
+H_A: \text{existe al menos un par } (i,j) \text{ tal que } \sigma^2_i \neq \sigma^2_j
 $$
 
 ---
@@ -1278,7 +1278,7 @@ Si no se cumplen los supuestos del ANOVA (normalidad o homogeneidad de varianzas
 
 #### Test no paramétrico: Kruskal-Wallis
 
-Si ninguna transformación funciona, usar un test no paramétrico:
+Si ningúna transformación funciona, usar un test no paramétrico:
 
 ```{r eval = F}
 kruskal.test(y ~ grupo, data = datos)
@@ -1635,7 +1635,7 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-## Hipotesis del ANOVA de dos vías
+## Hipótesis del ANOVA de dos vías
 
 .pull-left[
 Hay **3 hipótesis nulas**:
@@ -1649,7 +1649,7 @@ Hay **3 hipótesis nulas**:
 ]
 
 .pull-right[
-Hay **3 hipotesis alternativas**
+Hay **3 hipótesis alternativas**
 
 1. Hay diferencias significativas entre los grupos del primer factor.
 
@@ -1724,7 +1724,7 @@ class: animated, fadeIn
 
 ## ¿Qué hace el análisis de varianza?
 
-En un analisis de ANOVA de dos vías, la varianza total (suma de cuadrados totales, $SS_{total}$) de la variable dependiente se descompone en:
+En un análisis de ANOVA de dos vías, la varianza total (suma de cuadrados totales, $SS_{total}$) de la variable dependiente se descompone en:
 
 <center>
 <br>
@@ -1817,6 +1817,14 @@ Suma de cuadrados totales
 $SS_{total}=\sum\sum\sum(x_{mij}-\bar{G})^2=$
 $(13.37-10.11)^2+(12.58-10.11)^2+...$
 $...+(6.74-10.11)^+(7.6-10.11)^2=106.63$
+
+```{r, echo = F}
+datos_luz <- datos %>%
+  filter(Escenario == "Solo efecto de la luz")
+
+datos_luz$Lote <- rep(c("Lote1", "Lote2"), each = nrow(datos_luz)/2)
+
+```
 
 ```{r echo = F, eval = F}
 library(dplyr)
@@ -2162,7 +2170,7 @@ class: animated, fadeIn
 
 Suma de cuadrados del factor B (luz)
 
-$SS_{B}=n\times q\times \sum(\bar{B}_i-\bar{G})^2=$
+$SS_{B}=n\times p\times \sum(\bar{B}_i-\bar{G})^2=$
 
 $5 \times 2\times((12.22-10.11)^2+(7.99-10.11)^2)=89.481$
 
@@ -2204,7 +2212,7 @@ SS_B
 
 Grados de libertad
 
-$df_{B}=p-1=2-1=1$
+$df_{B}=q-1=2-1=1$
 
 ]
 
@@ -2222,7 +2230,7 @@ class: animated, fadeIn
 
 Suma de cuadrados del factor B (luz)
 
-$SS_{B}=n\times q\times \sum(\bar{B}_i-\bar{G})^2=$
+$SS_{B}=n\times p\times \sum(\bar{B}_i-\bar{G})^2=$
 
 $5 \times 2\times((12.22-10.11)^2+(7.99-10.11)^2)=89.481$
 
@@ -2264,7 +2272,7 @@ SS_B
 
 Grados de libertad
 
-$df_{B}=p-1=2-1=1$
+$df_{B}=q-1=2-1=1$
 
 **Varianza del factor B (luz)**
 
@@ -2787,7 +2795,7 @@ ggplot(datos, aes(x = Luz, y = Crecimiento, color = Fertilizante, group = Fertil
 ---
 class: animated, fadeIn
 
-## Coeficiente de determinacion de ANOVA (R²)
+## Coeficiente de determinación de ANOVA (R²)
 
 
 - Mide qué proporción de la variabilidad total de la variable dependiente es explicada por los factores incluidos en el modelo.
@@ -2817,7 +2825,7 @@ $R^2=\frac{SS_{modelo}}{SS_{total}} = 1 - \frac{SS_{error}}{SS_{total}}$
 ---
 class: animated, fadeIn
 
-## Coeficiente de determinacion de ANOVA (R²)
+## Coeficiente de determinación de ANOVA (R²)
 
 .pull-left[
 En ANOVA de una vía:
@@ -2852,7 +2860,7 @@ $R^2=\frac{SS_{A}+SS_{B}+SS_{AB}}{SS_{total}} = 1 - \frac{SS_{error}}{SS_{total}
 ---
 class: animated, fadeIn
 
-## Coeficiente de determinacion de ANOVA (R²)
+## Coeficiente de determinación de ANOVA (R²)
  
  | Valor de ($R^2$) | Significado                                                    |
 | -------------- | -------------------------------------------------------------- |
@@ -2864,7 +2872,7 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-## Coeficiente de determinacion de ANOVA (R²) en `R`
+## Coeficiente de determinación de ANOVA (R²) en `R`
 
 La función `lm()`: ajusta una recta que explica una variable dependiente (respuesta) en función de una o más variables independientes (factores).
 
@@ -2889,7 +2897,7 @@ summary(lm(Crecimiento ~ Fertilizante * Luz, data = datos_luz))
 ---
 class: animated, fadeIn
 
-## Coeficiente de determinacion de ANOVA (R²) en `R`
+## Coeficiente de determinación de ANOVA (R²) en `R`
 
 
 ```{r echo = F}
@@ -2931,7 +2939,7 @@ class: animated, fadeIn
 ## Cómo controlamos por el _batch effect_ en ANOVA
 
 ```{r}
-modelo_batch <- aov(Crecimiento ~ Fertilizante * Luz + Lote, data = datos)
+modelo_batch <- aov(Crecimiento ~ Fertilizante * Luz + Lote, data = datos_luz)
 summary(modelo_batch)
 ```
 
@@ -2978,7 +2986,7 @@ anova(aov(Crecimiento ~ Fertilizante * Luz, data = datos_luz),
 ```
 
 
-- Añadir el batch efecto  no implica ningun cambio (el modelo no mejora)
+- Añadir el batch efecto  no implica ningún cambio (el modelo no mejora)
 
 --
 
