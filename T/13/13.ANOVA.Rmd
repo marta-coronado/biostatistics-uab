@@ -1278,7 +1278,7 @@ Si no se cumplen los supuestos del ANOVA (normalidad o homogeneidad de varianzas
 
 #### Test no paramétrico: Kruskal-Wallis
 
-Si ningúna transformación funciona, usar un test no paramétrico:
+Si ninguna transformación funciona, usar un test no paramétrico:
 
 ```{r eval = F}
 kruskal.test(y ~ grupo, data = datos)
