@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>PresentacionBioestadistica_v2.knit</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/rutgers.css" rel="stylesheet" />
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"Press Ctrl+C to Copy"})</script>
+    <link href="libs/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome/css/v4-shims.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v7.0.0/css/all.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+
+class: title-slide, animated, fadeIn
+
+.left-top[
+# Tamaño del efecto y potencia estadística
+
+]
+
+.left-bottom[
+.authors[
+**Bioestadística**
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+Marta Coronado ([marta.coronado@uab.cat](mailto:marta.coronado@uab.cat))  
+]
+
+.footer-info[
+**Grado en Genética | Curso 2026/2027**
+]
+]
+
+.right-panel[]
+
+
+
+&lt;style&gt;
+.title-slide {
+  background-image: none;
+}
+
+/* Contenedor teal superior (solo título) */
+.title-slide .left-top {
+  position: absolute;
+  top: 0; left: 0;
+  width: 60%;
+  height: 62%;
+  background-color: #163a3a;
+  color: white;
+  padding: 50px 45px 30px 65px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;   /* ← esto faltaba */
+  align-items: flex-start;  /* ← con column, flex-end alinearía a la derecha; usa flex-start para pegar a la izquierda */
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+
+/* Contenedor blanco inferior (autores, fecha) */
+.title-slide .left-bottom {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 60%;
+  height: 38%;
+  background-color: white;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px 45px 30px 65px;
+  margin: 0;
+}
+
+.title-slide .right-panel {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 41%;
+  background-color: white;
+  background-image: url('img/1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.title-slide h1 {
+  font-size: 1.9em;
+  line-height: 1.25;
+  margin: 0;
+  font-weight: 400;
+}
+
+.title-slide .subtitle {
+  display: block;   /* ← esto es la clave: sin esto, margin-top se ignora */
+  font-size: 2em;
+  font-weight: bold;
+  color: #7ac142;
+  margin-top: -35px;
+  margin-bottom: 15px;
+}
+
+.title-slide .authors {
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.title-slide .authors a {
+  color: #e8846b;
+  text-decoration: none;
+}
+
+.title-slide .footer-info {
+  font-size: 0.9em;
+  color: #444;
+}
+
+.remark-slide-content h2,
+.remark-slide-content h3,
+.remark-slide-content h4,
+.remark-slide-content h5 {
+  margin-top: 1em;
+  margin-bottom: 0.6em;
+}
+
+.remark-slide-content p,
+.remark-slide-content ul,
+.remark-slide-content ol {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.remark-slide-content li {
+  margin-bottom: 0.1em;
+}
+
+.practica::before {
+  content: "\f303";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+
+.R::before {
+  content: "\f4f7";
+  font-family: "Font Awesome 6 Brands";
+  font-weight: 400;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+&lt;/style&gt;
+
+
+
+---
+class: animated, fadeIn
+
+## De los tests al diseño: ¿qué queremos medir realmente?
+
+El mejor análisis no puede compensar un mal diseño experimental.
+
+Hoy cambiamos la pregunta:
+
+&gt; Antes de analizar, ¿estamos midiendo algo que realmente importa?
+
+Pasamos de **"¿es significativo?"** a **"¿cuán grande es el efecto y cómo lo detectamos bien?"**
+
+---
+class: animated, fadeIn
+
+# Outline
+
+.pull-left[
+1. El p-valor no basta
+2. Tamaño de efecto
+3. Conceptos de potencia estadística
+4. ¿De qué depende la potencia?
+5. Análisis de potencia: ¿qué *n* necesito?
+]
+
+.pull-right[
+**Al terminar sabrás:**
+
+- por qué un p-valor no dice si un efecto importa
+- calcular e interpretar un tamaño de efecto (Cohen's *d*, OR)
+- qué es la potencia y de qué depende
+- calcular el tamaño de muestra de un diseño sencillo
+]
+
+&lt;!-- ========================================================= --&gt;
+&lt;!-- BLOQUE 1: EL P-VALOR NO BASTA                              --&gt;
+&lt;!-- ========================================================= --&gt;
+
+---
+class: animated, fadeIn
+
+## Cuidado al interpretar p-valores
+
+Un estudio sobre un nuevo fármaco para infartos muestra: **p &lt; 0.001**
+
+.pull-left[
+✅ **Esto significa únicamente que:**
+
+- El efecto observado es poco probable que ocurra por azar **si asumimos que H0 es cierta**
+]
+
+.pull-right[
+❌ **No significa que:**
+
+- El efecto sea muy importante
+- El efecto sea útil en la vida real
+- El efecto sea "real sin ninguna duda"
+]
+
+---
+class: animated, fadeIn
+
+## Por qué el p-valor no basta
+
+1. **Confunde significancia con relevancia**
+    - Con tamaños muestrales grandes, efectos triviales pueden ser "significativos"
+    - Con tamaños pequeños, efectos grandes pueden no serlo
+2. **Depende del diseño**
+    - Depende de *n*, de la varianza y del estadístico elegido
+    - Es una medida indirecta y muy volátil ante cambios del diseño experimental
+3. **No responde a la pregunta científica**
+    - p &lt; 0.05 nos dice que el efecto "no parece cosa del azar", pero no dice si importa, ni cuánto cambia el sistema
+
+&lt;!-- ========================================================= --&gt;
+&lt;!-- BLOQUE 2: TAMAÑO DE EFECTO                                 --&gt;
+&lt;!-- ========================================================= --&gt;
+
+---
+class: animated, fadeIn
+
+## ¿Qué es un tamaño de efecto?
+
+**Idea central:** cuantifica *cuánto* difieren los grupos, no solo *si* difieren.
+
+- Mide la magnitud de la diferencia, asociación o impacto de un factor
+- El p-valor responde *"¿un efecto tan extremo podría aparecer por azar?"*
+- El tamaño de efecto responde *"¿el efecto es pequeño, moderado o grande?"*
+
+Se expresa en unidades interpretables:
+
+- diferencias estandarizadas (Cohen's *d*)
+- proporciones de varianza (η², R²)
+- tablas de contingencia (odds ratio, V de Cramer)
+- cambios absolutos (diferencia de medias, Δ)
+
+---
+class: animated, fadeIn
+
+## Qué aporta el tamaño de efecto
+
+- **Interpretabilidad:** puedes comunicar *"el tratamiento reduce X en un 20%"* o *"los grupos difieren 0.8 SD"*, y comparar entre estudios y contextos
+- **Base para decidir:** en biología, medicina o ciencias sociales guía si una intervención es útil, relevante o coste-efectiva
+- **Permite planificar estudios:** la potencia requiere un tamaño de efecto esperado; sin él no se puede calcular un *n* adecuado
+- **Es estable y generalizable:** no depende fuertemente de *n*; refleja la estructura real del fenómeno, no el azar de la muestra
+
+---
+class: animated, fadeIn
+
+## Ejemplo intuitivo
+
+.pull-left[
+**Escenario:** diferencia real entre grupos = 0.1 SD (muy pequeña)
+
+- Estudio A: *n* = 10 por grupo → p ≈ 0.8 (no significativo)
+- Estudio B: *n* = 10 000 por grupo → p &lt; 0.0001 (muy significativo)
+
+Pero en ambos casos el tamaño de efecto es el mismo: **d = 0.1**
+
+&gt; El p-valor cambia radicalmente con *n*. El tamaño de efecto **no**: describe el fenómeno biológico.
+]
+
+.pull-right[
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-d01-1.png" alt="" width="432" /&gt;
+]
+
+---
+class: animated, fadeIn
+
+## Tamaño de efecto: Cohen's *d*
+
+.pull-left[
+`$$d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}$$`
+
+donde `\(s_p\)` es la desviación típica combinada (*pooled*)
+
+**Ejemplo:** diferencia de medias = 10 y `\(s_p\)` = 6.5
+
+`$$d = \frac{10}{6.5} \approx 1.5$$`
+]
+
+.pull-right[
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-d15-1.png" alt="" width="432" /&gt;
+]
+
+---
+class: animated, fadeIn
+
+## Cohen's *d*: regla de oro vs. contexto
+
+.pull-left[
+**Regla de Cohen (guía rápida)**
+
+- d &lt; 0.2 → trivial
+- 0.2 ≤ d &lt; 0.5 → pequeño
+- 0.5 ≤ d &lt; 0.8 → medio
+- d ≥ 0.8 → grande
+]
+
+.pull-right[
+⚠️ **Advertencia**
+
+No caigamos en la misma trampa que con los p-valores: no categorices el efecto en "pequeño / medio / grande" de forma rígida.
+
+La relevancia práctica depende del contexto, el coste y el impacto.
+]
+
+---
+class: animated, fadeIn
+
+## Cómo interpretar el tamaño de efecto: ¡todo es relativo!
+
+1. **Investigación previa**
+    - Comparar con estudios anteriores: si lo habitual es *d* = 0.5 y tu intervención logra *d* = 1, el efecto es enorme
+2. **Expectativas teóricas**
+    - Según la teoría, ¿qué tamaño de efecto es razonable? En trastornos difíciles de tratar, un efecto medio ya se considera éxito
+3. **Relevancia práctica**
+    - Un efecto pequeño puede ser muy importante si es barato, fácil de aplicar o impacta a muchas personas
+    - Ej.: la aspirina → efecto pequeño, beneficio enorme
+
+---
+class: animated, fadeIn
+
+## Odds ratio (OR): tablas de contingencia 2x2
+
+- **Qué mide:** compara las *odds* (probabilidades relativas) del evento entre dos grupos
+- **Aplicación típica:** medicina, epidemiología, psicología clínica, genética; ideal para ensayos clínicos y estudios caso-control
+- **Interpretación:** OR = 1 → sin efecto; OR &lt; 1 → menos odds del evento; OR &gt; 1 → más odds
+
+
+``` r
+# Ejemplo ilustrativo (datos inventados): infarto según tratamiento
+tabla &lt;- matrix(c(30, 70,    # fármaco: 30 con infarto, 70 sin infarto
+                  45, 55),   # placebo: 45 con infarto, 55 sin infarto
+                nrow = 2, byrow = TRUE,
+                dimnames = list(Grupo = c("Fármaco", "Placebo"), Infarto = c("Sí", "No")))
+tabla
+```
+
+```
+         Infarto
+Grupo     Sí No
+  Fármaco 30 70
+  Placebo 45 55
+```
+
+``` r
+(tabla[1, 1] / tabla[1, 2]) / (tabla[2, 1] / tabla[2, 2])   # odds ratio ≈ 0.52
+```
+
+```
+[1] 0.5238095
+```
+
+&lt;!-- ========================================================= --&gt;
+&lt;!-- BLOQUE 3: CONCEPTOS DE POTENCIA                            --&gt;
+&lt;!-- ========================================================= --&gt;
+
+---
+class: animated, fadeIn
+
+## Dos dietas, dos distribuciones
+
+Imaginemos el peso de dos poblaciones de ratones: los alimentados con una **dieta especial** y los alimentados con una **dieta normal**.
+
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-sep-1.png" alt="" width="864" /&gt;
+
+---
+class: animated, fadeIn
+
+## Curvas separadas: la diferencia se ve a simple vista
+
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-sep-obs-1.png" alt="" width="864" /&gt;
+
+- Como las distribuciones solapan muy poco, es muy fácil ver que hay una diferencia entre estas dos dietas
+  - La mayoría de los ratones en la dieta especial pesan menos que los ratones con la dieta normal
+
+---
+class: animated, fadeIn
+
+## Muestra pequeña, p-valor pequeño
+
+- Si cogemos una muestra pequeña de medidas de la dieta especial y normal obtendríamos un p-valor muy pequeño:
+
+.pull-left[
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-m1-1.png" alt="" width="432" /&gt;
+]
+
+.pull-right[
+- Este p-valor pequeño (&lt; 0.05) nos llevaría a rechazar la hipótesis nula de que los dos grupos vienen de la misma distribución
+]
+
+---
+class: animated, fadeIn
+
+## Rechazamos H0: una sola distribución no explica los datos
+
+- En otras palabras, rechazamos la hipótesis nula de que todos los datos vinieran de una distribución intermedia entre la de la dieta especial y la normal
+
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-h0-1.png" alt="" width="864" /&gt;
+
+---
+class: animated, fadeIn
+
+## Otra muestra, otra vez un p-valor pequeño
+
+- Si volvemos a coger una muestra pequeña de medidas de la dieta especial y normal obtendríamos de nuevo un p-valor muy pequeño:
+
+.pull-left[
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-m2-1.png" alt="" width="432" /&gt;
+]
+
+.pull-right[
+- Si repitiéramos el experimento muchas veces, casi siempre obtendríamos un p-valor pequeño: rechazaríamos H0 casi siempre
+]
+
+---
+class: animated, fadeIn
+
+## Pero si las distribuciones solapan, puede ocurrir esto
+
+.pull-left[
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-sol-obs-1.png" alt="" width="432" /&gt;
+]
+
+.pull-right[
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-m3-1.png" alt="" width="432" /&gt;
+]
+
+--
+
+- No rechazamos H0, aunque en realidad **sí hay diferencia**: es un **falso negativo** (error de tipo II)
+
+---
+class: animated, fadeIn
+
+## Potencia estadística
+
+.pull-left[
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-sol-obs2-1.png" alt="" width="432" /&gt;
+]
+
+.pull-right[
+- **Potencia** (*power*) es la probabilidad de rechazar correctamente la hipótesis nula
+
+- También puedes decir que **potencia** es la probabilidad de obtener un p-valor pequeño (&lt; 0.05) **cuando sí hay una diferencia real**
+
+- Potencia = 1 − β, donde β es la probabilidad de un falso negativo
+
+- Con estas dos distribuciones y 3 datos por grupo, la potencia es solo de **0.1**
+]
+
+---
+class: animated, fadeIn
+
+## Sin diferencia real, la potencia no aplica
+
+- Si no hubiera diferencia entre la dieta especial y la normal, y compartieran la misma distribución, la hipótesis nula de que las dos muestras vienen de la misma distribución sería correcta
+- El concepto de *potencia* no aplica en esta situación: si H0 es cierta, solo la rechazaremos por error con probabilidad α
+
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-comun-1.png" alt="" width="864" /&gt;
+
+---
+class: animated, fadeIn
+
+## Diferencia pequeña y muestra pequeña: potencia baja
+
+- Pero si la dieta especial no fuera muy eficaz, aunque hiciera algo, aunque hubiera mucho solapamiento, tendríamos dos distribuciones diferentes
+- La potencia, la probabilidad de rechazar la hipótesis nula, sí aplica en esta situación
+
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-sol-1.png" alt="" width="864" /&gt;
+
+.pull-left[
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-m4-1.png" alt="" width="259.2" /&gt;
+]
+
+.pull-right[
+- Si las distribuciones solapan bastante y tenemos una muestra pequeña, tenemos **baja potencia estadística**
+]
+
+&lt;!-- ========================================================= --&gt;
+&lt;!-- BLOQUE 4: ¿DE QUÉ DEPENDE LA POTENCIA?                     --&gt;
+&lt;!-- ========================================================= --&gt;
+
+---
+class: animated, fadeIn
+
+## La potencia depende de dos factores
+
+.pull-left[
+.center[**Poco solapamiento**]
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-f1-1.png" alt="" width="432" /&gt;
+]
+
+.pull-right[
+.center[**Mucho solapamiento**]
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-f2-1.png" alt="" width="432" /&gt;
+]
+
+1. Cuánto solapan las distribuciones (distancia entre medias y desviación típica)
+2. El tamaño de la muestra
+
+---
+class: animated, fadeIn
+
+## Objetivo: una potencia de 0.8
+
+- Si queremos conseguir una potencia de 0.8, significa que queremos tener al menos un 80% de probabilidad de rechazar correctamente la hipótesis nula:
+  - si solapan muy poco, aunque la *n* sea pequeña, tendré una potencia alta
+  - si solapan mucho y la *n* es pequeña, tendré una potencia baja: necesitamos una *n* más grande
+
+---
+class: animated, fadeIn
+
+## Efecto del tamaño de muestra
+
+Cada marca es la **media de una muestra** de tamaño *n* (el experimento se repite muchas veces). Con más *n*, las medias se concentran alrededor de la media poblacional y solapan menos.
+
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-n-1.png" alt="" width="864" style="display: block; margin: auto;" /&gt;
+
+---
+class: animated, fadeIn
+
+## Tamaño de efecto y potencia
+
+- Del mismo modo que con una muestra muy grande cualquier cosa puede ser significativa, con una muestra muy pequeña algo con mucho efecto puede no ser significativo
+- Esto se refiere a la probabilidad de cometer **errores de tipo II** o falsos negativos (β); la potencia es 1 − β
+- ¿Cómo determinamos qué tamaño de muestra no es demasiado grande (costoso a nivel humano y experimental), ni demasiado pequeño (como para no detectar el efecto deseado)?
+
+&lt;!-- ========================================================= --&gt;
+&lt;!-- BLOQUE 5: ANÁLISIS DE POTENCIA                             --&gt;
+&lt;!-- ========================================================= --&gt;
+
+---
+class: animated, fadeIn
+
+## Análisis de potencia
+
+- ¿Qué probabilidad tenemos de rechazar la hipótesis nula cuando la alternativa es realmente cierta? (es decir, ¿cuál es la probabilidad de detectar un efecto real?)
+- Un análisis de potencia nos dirá cuántas medidas tenemos que coger para tener una buena potencia
+
+&gt; Un análisis de potencia determina qué tamaño de muestra asegura una probabilidad alta de rechazar correctamente la hipótesis nula de que no hay diferencias entre los dos grupos
+
+---
+class: animated, fadeIn
+
+## Tres decisiones antes de calcular *n*
+
+1. **Potencia** (entre 0 y 1): decidimos 0.8, es decir, un 80% de probabilidad de rechazar correctamente H0
+2. **Significancia** α (entre 0 y 1): decidimos 0.05
+3. **Solapamiento** entre las distribuciones: depende de la distancia entre las medias poblacionales y de las desviaciones típicas, y se resume en el tamaño de efecto *d*
+
+`$$d = \frac{\text{diferencia estimada de las medias}}{\text{desviación típica combinada estimada}} \qquad \text{ejemplo: } d = \frac{10}{6.5} \approx 1.5$$`
+
+α y β se deciden **a priori**, antes de hacer el experimento
+
+---
+class: animated, fadeIn
+
+## ¿Qué *n* necesita mi experimento?
+
+- Mayor efecto (Δ en unidades originales) → mayor potencia
+- Mayor desviación estándar (σ) → menor potencia
+- Más tamaño de muestra (*n*) → mayor potencia
+
+`$$n = \frac{2\,(Z_{\alpha/2} + Z_{\beta})^2}{d^2} \quad \text{por grupo}$$`
+
+- `\(Z_{\alpha/2}\)`: es la Z asociada al nivel de significación de un test bilateral: 1.96 si α = 0.05; 2.58 si α = 0.01
+- `\(Z_{\beta}\)`: es la Z asociada al riesgo de falso negativo (potencia = 1 − β): 0.84 si potencia = 80%; 1.28 si potencia = 90%. Es el mismo valor en un test unilateral y en uno bilateral
+
+---
+class: animated, fadeIn
+
+## Calculadora de tamaño de muestra
+
+.pull-left[
+
+``` r
+power.t.test(delta = 1.5, sd = 1,
+             sig.level = 0.05, power = 0.8)
+```
+
+```
+
+     Two-sample t test power calculation 
+
+              n = 8.06031
+          delta = 1.5
+             sd = 1
+      sig.level = 0.05
+          power = 0.8
+    alternative = two.sided
+
+NOTE: n is number in *each* group
+```
+
+- *n* = 8.06 → **9 por grupo** (siempre se redondea hacia arriba)
+- La fórmula con Z da ≈ 7: es una aproximación normal, y con muestras pequeñas la *t* necesita más datos
+]
+
+.pull-right[
+&lt;img src="PresentacionBioestadistica_v2_files/figure-html/fig-pot-n-1.png" alt="" width="432" /&gt;
+]
+
+---
+class: animated, fadeIn
+
+## Evitar el p-hacking
+
+- **p-hacking:** añadir alguna muestra más hasta que salga significativo
+- Hay que saber el tamaño de la muestra **de antemano**: por eso el análisis de potencia se hace antes del experimento
+
+---
+class: animated, fadeIn
+
+## Juego: ¿cómo cambian el efecto, la desviación y *n* la potencia?
+
+&lt;https://dce85.shinyapps.io/power_n/&gt;
+
+---
+class: animated, fadeIn
+
+## Resumen
+
+- Un p-valor pequeño no dice si el efecto **importa**: hace falta un **tamaño de efecto** (Cohen's *d*, OR)
+- **Potencia** = probabilidad de rechazar H0 cuando hay una diferencia real (1 − β)
+- Depende del **solapamiento** entre distribuciones (diferencia de medias y desviación típica) y del **tamaño de muestra**
+- Se decide **a priori**: potencia (0.8), α (0.05) y tamaño de efecto esperado → *n*
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

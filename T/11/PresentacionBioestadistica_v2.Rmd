@@ -75,7 +75,7 @@ htmltools::tagList(
 class: title-slide, animated, fadeIn
 
 .left-top[
-# Inferencia estadística
+# Tamaño del efecto y potencia estadística
 
 ]
 
@@ -616,8 +616,8 @@ class: animated, fadeIn
 
 Cada marca es la **media de una muestra** de tamaño *n* (el experimento se repite muchas veces). Con más *n*, las medias se concentran alrededor de la media poblacional y solapan menos.
 
-```{r fig-n, echo=FALSE, fig.height=5.6, fig.width=12}
-fig_n(c(1, 2, 10))
+```{r fig-n, echo=FALSE, fig.height=6.5, fig.width=12, fig.align='center'}
+fig_n(c(1, 2, 10, 50))
 ```
 
 ---

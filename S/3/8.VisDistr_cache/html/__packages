@@ -13,3 +13,9 @@ dplyr
 kableExtra
 ggthemes
 patchwork
+gghalves
+infer
+tibble
+prettydoc
+shiny
+pwr
