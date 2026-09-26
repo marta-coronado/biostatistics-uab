@@ -359,7 +359,7 @@ class: animated, fadeIn
 
 - En todos los casos, la variable que queremos testar ha de ser **numérica cuantitativa** y **seguir una distribución normal** (*test de Shapiro, QQ-plots*)
 
--  En el caso de un t-test de muestras independientes, las **varianzas** de los dos grupos deben ser **equivalentes (homogéneas)** (*test de Levene*)
+-  En el caso de un t-test de muestras independientes, idealmente las **varianzas** de los dos grupos serían **equivalentes (homogéneas)** (*test de Levene*), pero por defecto usaremos siempre la versión de **Welch**, que corrige automáticamente aunque las varianzas sean distintas.
 
 <center>
 <img src="img/tipos.png" width=50%>
@@ -403,13 +403,13 @@ class: animated, fadeIn
   
 ]
 
-.pull-left[
+.pull-right[
 **Hipótesis alternativa**
 
 - La media de la muestra no es igual al valor de referencia
 
   $$
-  H_1: \ \bar{x} \neq \mu_0
+  H_A: \ \bar{x} \neq \mu_0
   $$
   
 ]
@@ -462,13 +462,13 @@ class: animated, fadeIn
   
 ]
 
-.pull-left[
+.pull-right[
 **Hipótesis alternativa**
 
 - La media de los grupos no son iguales
 
   $$
-  H_1: \ \bar{x}_1 \neq \bar{x}_2
+  H_A: \ \bar{x}_1 \neq \bar{x}_2
   $$
 
 ]
@@ -525,14 +525,14 @@ $$
 
 ]
 
-.pull-left[
+.pull-right[
 **Hipótesis alternativa**
 
 - La media de la diferencia entre 
 los pares no es 0
 
 $$
-  H_1: \ \bar{x} \neq 0
+  H_A: \ \bar{x} \neq 0
 $$
 
 ]
@@ -551,7 +551,7 @@ En los tres tipos de t-test, las hipótesis pueden ser de dos tipos:
 - Las hipótesis pueden ser **indirectas**, o de dos colas, cuando la **hipótesis alternativa no especifica dirección**, sólo indica que hay **diferencia**
 
 $$
-  H_1: \ \bar{x} \neq \mu_0 \quad \quad \quad H_1: \ \bar{x}_1 \neq \bar{x}_2 \quad \quad \quad H_1: \bar{x} \neq 0
+  H_A: \ \bar{x} \neq \mu_0 \quad \quad \quad H_A: \ \bar{x}_1 \neq \bar{x}_2 \quad \quad \quad H_A: \bar{x} \neq 0
 $$
 
 > Las usamos cuando **no sabemos, a priori, si el efecto será positivo o negativo** 
@@ -563,11 +563,11 @@ $$
 - Las hipótesis son **dirigidas**, o unilaterales, cuando **sí se especifica dirección** (mayor o menor)
 
 $$
-  H_1: \ \bar{x} > \mu_0 \quad \quad \quad H_1: \ \bar{x}_1 > \bar{x}_2 \quad \quad \quad H_1: \bar{x} > 0
+  H_A: \ \bar{x} > \mu_0 \quad \quad \quad H_A: \ \bar{x}_1 > \bar{x}_2 \quad \quad \quad H_A: \bar{x} > 0
 $$
 
 $$
-  H_1: \ \bar{x} < \mu_0 \quad \quad \quad H_1: \ \bar{x}_1 < \bar{x}_2 \quad \quad \quad H_1: \bar{x} < 0
+  H_A: \ \bar{x} < \mu_0 \quad \quad \quad H_A: \ \bar{x}_1 < \bar{x}_2 \quad \quad \quad H_A: \bar{x} < 0
 $$
 
 > Las usamos cuando tenemos una expectativa clara sobre el efecto
@@ -582,7 +582,7 @@ class: animated, fadeIn
 
   - La **diferencia entre las medias** (o valor de referencia)
   
-  - La **desviación estándard de la media** (error estándard)
+  - La **desviación estándar de la media** (error estándar)
   
 <center>
 <img src="img/calculo.png" width=60%>
@@ -603,11 +603,11 @@ donde:
 
 - $\mu$: valor de referencia
 
-- $s$: desviación estándard de la muestra
+- $s$: desviación estándar de la muestra
 
-- $\sqrt{n}$: tamaño de la muestra
+- $n$: tamaño de la muestra
 
-- $\frac{s}{\sqrt{n}}$ es el error estándard
+- $\frac{s}{\sqrt{n}}$ es el error estándar
 
 ]
 
@@ -629,7 +629,7 @@ class: animated, fadeIn
 
   - **Hipótesis nula ($H_0$)**:  los ratones alimentados con la dieta especial **no difieren en peso** respecto a otros ratones; la muestra proviene de una población con media $\mu_0$.
 
-  - **Hipótesis alternativa ($H_1$)**: la dieta **tiene un efecto sobre el peso**;  la muestra proviene de una población con media diferente a $\mu_0$.
+  - **Hipótesis alternativa ($H_A$)**: la dieta **tiene un efecto sobre el peso**;  la muestra proviene de una población con media diferente a $\mu_0$.
 
 ]
 
@@ -970,7 +970,7 @@ class: animated, fadeIn
 
 - **Significancia**: valor $\alpha$ - típicamente 0.05
 
--  Como la hipótesis es **bilateral** ($H_1: \bar{x} \ne \mu_0$), tenemos que tener en cuenta que el **nivel de significancia $\alpha$ se reparte entre las dos colas** de la distribución `t`.  Por lo tanto, para un $\alpha = 0.05$ bilateral, cada cola tendrá $\alpha/2 = 0.025$.
+-  Como la hipótesis es **bilateral** ($H_A: \bar{x} \ne \mu_0$), tenemos que tener en cuenta que el **nivel de significancia $\alpha$ se reparte entre las dos colas** de la distribución `t`.  Por lo tanto, para un $\alpha = 0.05$ bilateral, cada cola tendrá $\alpha/2 = 0.025$.
 
 <center>
 ```{r, echo = F, fig.height=3, fig.width=4}
@@ -1153,7 +1153,7 @@ class: animated, fadeIn
 Si nuestra hipótesis alternativa hubiera sido direccional (**una cola**), el resultado sería también significativo, y el p-valor sería aún menor:
 
 $$
-H_0: \ \bar{x} = \mu_0 \qquad H_1: \ \bar{x} > \mu_0
+H_0: \ \bar{x} = \mu_0 \qquad H_A: \ \bar{x} > \mu_0
 $$
 
 El valor crítico `t` para 19 grados de libertad y $\alpha$ de 0.05 es $t_{19,0.05}=1.7291$

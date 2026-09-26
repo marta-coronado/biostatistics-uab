@@ -90,7 +90,7 @@ $$
 
 - Intervalos de confianza utilizando la distribución `t` para una sola muestra:
 
-> Para una muestra de tamaño $n$ con una media $\bar{x}$ y desviación estándard $s$, el IC bilateral con un nivel de confianza $100(1-\alpha)$% es:
+> Para una muestra de tamaño $n$ con una media $\bar{x}$ y desviación estánda $s$, el IC bilateral con un nivel de confianza $100(1-\alpha)$% es:
 
 $$
 (\bar{x} \pm t_{df}\times\frac{s}{\sqrt{n}})
@@ -248,7 +248,7 @@ $$
 **Varianzas desiguales (t-test de Welch)**
 
 $$
-t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_1^2}{n_1}+\frac{s_s^2}{n_2}}}
+t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}}}
 $$
 
 - Los grados de libertad se calculan con la fórmula de Welch-Satterthwaite:
@@ -354,17 +354,11 @@ class: animated, fadeIn
 - Valor t crítico: **2.447**
 - Prueba bilateral
 
-Se acepta la hipótesis nula:
+No rechazamos la hipótesis nula:
+$$t_{crit} \ge |t|$$
 
-$$
-t_{crit} \ge t
-$$
-
-Se acepta la hipótesis alternativa:
-
-$$
-t_{crit} < t
-$$
+Rechazamos la hipótesis nula (evidencia a favor de H<sub>A</sub>):
+$$t_{crit} < |t|$$
 
 ]
 
@@ -508,8 +502,9 @@ class: animated, fadeIn
 |----------------|---------------|-------------------------|-----------------------------|
 | **1 muestra** | $t = \frac{\bar{x}-\mu_0}{s/\sqrt{n}}$ | $n-1$ | $\bar{x} \pm t_{df} \frac{s}{\sqrt{n}}$ |
 | **Pareado** | $t = \frac{\bar{x}_{dif}}{s_{dif}/\sqrt{n}}$ | $n-1$ | $\bar{x}_{dif} \pm t_{df} \frac{s_{dif}}{\sqrt{n}}$ |
-| **2 muestras independientes** | $t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s^2_1/n_1 + s^2_2/n_2}}$ | $n_1 + n_2 - 2$ | $(\bar{x}_1 - \bar{x}_2) \pm t_{df} \, \sqrt{s^2_1/n_1 + s^2_2/n_2}$ |
+| **2 muestras independientes*** | $t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s^2_1/n_1 + s^2_2/n_2}}$ | Welch-Satterthwaite | $(\bar{x}_1 - \bar{x}_2) \pm t_{df} \, \sqrt{s^2_1/n_1 + s^2_2/n_2}$ |
 
+<small>*Fórmula de Welch (por defecto en R). Si asumimos varianzas iguales, $df = n_1+n_2-2$ y se usa $s_p^2$ en vez de $s_1^2, s_2^2$ por separado (ver diapositivas anteriores).</small>
 
 ---
 class: animated, fadeIn
