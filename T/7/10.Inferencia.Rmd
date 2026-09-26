@@ -346,7 +346,7 @@ $$
 
 --
 
-#### Hipótesis alternativa (H₁)
+#### Hipótesis alternativa (H<sub>A</sub>)
 - Existe una diferencia entre los dos grupos de dieta.  
 - Modelo alternativo: 
 
@@ -610,7 +610,7 @@ class: animated, fadeIn
 
 Si realizamos un test y decidimos **rechazar o no H₀**, existen cuatro posibles resultados:
 
-| Decisión | H₀ cierta | H_A cierta |
+| Decisión | H₀ cierta | H<sub>A</sub> cierta |
 |--------------------|---------------|-----------------|
 | **No rechazamos H₀**   | Correcto (1-α)   | Error tipo II (β), falso negativo        |
 | **Rechazamos H₀**       | Error tipo I (α), falso positivo       | Correcto (1-β) = potencia   |
@@ -947,7 +947,7 @@ class: animated, fadeIn
 
 - Si queremos probar **si la media poblacional $\mu$ es distinta de un valor de referencia $\mu_0$**:  
 $$
-  H_0: \mu = \mu_0 \quad \text{vs.} \quad H_A: \mu \neq \mu_0
+  H_0: \mu = \mu_0 \quad \text{vs.} \quad H<sub>A</sub>: \mu \neq \mu_0
 $$
 
 - Entonces, **rechazamos H₀** al nivel de significancia $\alpha$ **si el intervalo de confianza del $100(1-\alpha)\%$ para $\mu$  no contiene $\mu_0$**.
@@ -956,7 +956,7 @@ $$
 
 Supongamos que queremos probar si la altura media de la clase difiere de 170 cm.
 
-- Hipótesis: $H_0: \mu = 170 \quad \text{vs.} \quad H_A: \mu \neq 170$
+- Hipótesis: $H_0: \mu = 170 \quad \text{vs.} \quad H<sub>A</sub>: \mu \neq 170$
 
 - Tomamos una muestra de 50 estudiantes y obtenemos una media muestral $\bar{x}=166.5\text{ cm}$ y un error estándar $SE = 2\text{ cm}$.
 
@@ -1000,7 +1000,7 @@ class: animated, fadeIn
 
 Queremos probar **si la media poblacional $\mu$ es menor que un valor de referencia $\mu_0$**:
 $$
-  H_0: \mu = \mu_0 \quad \text{vs.} \quad H_A: \mu \lt \mu_0
+  H_0: \mu = \mu_0 \quad \text{vs.} \quad H<sub>A</sub>: \mu \lt \mu_0
 $$
 
 
@@ -1014,7 +1014,7 @@ $$
 
 Supongamos que queremos probar si la altura media de la clase es menor a 170 cm.
 
-- Hipótesis: $H_0: \mu = 170 \quad \text{vs.} \quad H_A: \mu \lt 170$
+- Hipótesis: $H_0: \mu = 170 \quad \text{vs.} \quad H<sub>A</sub>: \mu \lt 170$
 
 - Tomamos una muestra de 50 estudiantes y obtenemos una media muestral $\bar{x}=166.5\text{ cm}$ y un error estándar $SE = 2\text{ cm}$.
 
@@ -1041,7 +1041,7 @@ mu0 <- 170; xbar <- 166.5; SE <- 2
 x_left  <- xbar - 4*SE
 x_right <- xbar + 4*SE
 
-tipos <- c("Dos colas: H_A: μ ≠ μ0", "Cola inferior: H_A: μ < μ0", "Cola superior: H_A: μ > μ0")
+tipos <- c("Dos colas: H<sub>A</sub>: μ ≠ μ0", "Cola inferior: H<sub>A</sub>: μ < μ0", "Cola superior: H<sub>A</sub>: μ > μ0")
 df <- data.frame(
   tipo  = factor(tipos, levels = rev(tipos)),
   lower = c(xbar - 1.96*SE, -Inf, xbar - 1.645*SE),
@@ -1124,7 +1124,7 @@ class: animated, fadeIn
 
 Queremos probar **si la media poblacional $\mu$ es distinta de un valor de referencia $\mu_0$**:  
 $$
-  H_0: \mu = \mu_0 \quad \text{vs.} \quad H_A: \mu \neq \mu_0
+  H_0: \mu = \mu_0 \quad \text{vs.} \quad H<sub>A</sub>: \mu \neq \mu_0
 $$
 
 - Rechazamos H₀ al nivel $\alpha$ si $\mu_0$ queda fuera del IC bilateral:
@@ -1136,7 +1136,7 @@ $$
 
 Queremos probar **si la media poblacional $\mu$ es menor que un valor de referencia $\mu_0$**:
 $$
-  H_0: \mu = \mu_0 \quad \text{vs.} \quad H_A: \mu \lt \mu_0
+  H_0: \mu = \mu_0 \quad \text{vs.} \quad H<sub>A</sub>: \mu \lt \mu_0
 $$
 
 
@@ -1148,7 +1148,7 @@ $$
 
 Queremos probar **si la media poblacional $\mu$ es mayor que un valor de referencia $\mu_0$**:
 $$
-  H_0: \mu = \mu_0 \quad \text{vs.} \quad H_A: \mu \gt \mu_0
+  H_0: \mu = \mu_0 \quad \text{vs.} \quad H<sub>A</sub>: \mu \gt \mu_0
 $$
 
 
@@ -1171,7 +1171,7 @@ mu0 <- 170; xbar <- 166.5; SE <- 2
 x_left  <- xbar - 4*SE
 x_right <- xbar + 4*SE
 
-tipos <- c("Dos colas: H_A: μ ≠ μ0", "Cola inferior: H_A: μ < μ0", "Cola superior: H_A: μ > μ0")
+tipos <- c("Dos colas: H<sub>A</sub>: μ ≠ μ0", "Cola inferior: H<sub>A</sub>: μ < μ0", "Cola superior: H<sub>A</sub>: μ > μ0")
 df <- data.frame(
   tipo  = factor(tipos, levels = rev(tipos)),
   lower = c(xbar - 1.96*SE, -Inf, xbar - 1.645*SE),

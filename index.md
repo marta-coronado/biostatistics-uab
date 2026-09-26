@@ -18,12 +18,15 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Tema 4: Distribuciones de probabilidad](T/4/4.ProbRmd.html)
 - [Tema 5: Distribución normal](T/5/6.Normal.html)
 - [Tema 6: Intervalos de confianza](T/6/9.Intervaloconfianza.html)
+- [Tema 7: Inferencia estadística](T/7/10.Inferencia.html)
+- [Tema 8: Bootstrap y test de permutación](T/8/8.html)
 
 ---
 
 ## 🗣️ Seminarios
 - [Seminario 1: La importancia de mostrar los datos](S/1/S1.html)
 - [Seminario 2: Distribución de Poisson](S/2/7.Poisson.html)
+- [Seminario 3: Visualización de distribuciones](S/3/8.VisDistr.html)
 
 ---
 
@@ -36,6 +39,7 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 ## ✏️️ Problemas
 - [Problemas 1: Estadística descriptiva](PA/PA1/Problemas_Estadistica_Descriptiva.html)
 - [Problemas 2: Distribución binomial](PA/PA2/Problemas_Binomial.html)
+- [Problemas 3: Distribución normal](PA/PA3/Problemas_Normal.html)
 
    
 ---

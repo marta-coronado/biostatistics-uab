@@ -1,0 +1,494 @@
+---
+title: "Problemas de distribución normal (desarrollados)"
+author: "Bioestadística"
+date: "Octubre 2026"
+output:
+  html_document:
+    self_contained: true  
+    theme: simplex
+    css: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css
+    toc: yes
+    toc_float:
+      collapsed: true
+fontsize: 14pt
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+# Load useful packages
+library(rmdformats)   # for extra formatting if needed
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5)
+library(ggplot2)
+```
+
+```{=html}
+<style>
+body {
+  font-size: 14px;   /* un poco más grande */
+  color: black;      /* asegura texto en negro */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #D9230F;        /* títulos en rojo */
+}
+
+h3, h4, h5, h6 {
+  color: black;        /* títulos en rojo */
+}
+
+h3 {
+  font-size: 1em;   /* tamaño igual al texto normal */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+
+.handwritten {
+  font-family: 'Handlee', monospace;
+  font-size: 1.1em;
+}
+
+.respuesta {
+  background-color: #F0F0F0;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  line-height: 1.2;
+}
+</style>
+```
+
+## 🧭 Recordatorio: cuándo y cómo usar la normal
+
+Una variable $X$ sigue una distribución **normal** $X \sim N(\mu, \sigma^2)$ cuando su histograma es aproximadamente simétrico y con forma de campana alrededor de la media $\mu$, con una dispersión dada por la desviación estándar $\sigma$.
+
+Para no trabajar directamente con $X$, la **tipificamos**: restamos la media y dividimos por la desviación estándar, y así obtenemos una variable $Z$ que sigue una **normal estándar** $N(0,1)$:
+
+$$Z = \frac{X - \mu}{\sigma}$$
+
+- $P(Z \le z)$ se lee directamente en la **tabla de la normal estándar** (o con `pnorm(z)` en R).
+- Para pasar de $X$ a $Z$: $z = \dfrac{x - \mu}{\sigma}$.
+- Para pasar de un percentil $Z$ a la escala original: $x = \mu + z\cdot\sigma$.
+
+Además, tres resultados clave que casi nunca hace falta buscar en la tabla, la **regla empírica**:
+
+$$P(-1<Z<1) \approx 0.68 \qquad P(-2<Z<2) \approx 0.95 \qquad P(-3<Z<3) \approx 0.997$$
+
+En R: `pnorm(x, mean, sd)` da $P(X \le x)$ y `qnorm(p, mean, sd)` da el valor $x$ tal que $P(X \le x) = p$ (el percentil $p$). Con `mean = 0` y `sd = 1` (los valores por defecto) trabajamos directamente con $Z$.
+
+En todos los problemas seguimos los mismos pasos: **(1)** identificar $\mu$ y $\sigma$ (o trabajar en la escala $Z$); **(2)** traducir la pregunta a una probabilidad de tipo $P(X \le x)$, $P(X > x)$ o un percentil; **(3)** tipificar si hace falta y consultar la tabla o aplicar la regla empírica; **(4)** comprobar con R.
+
+---
+
+## 📏 Problema 1 - Estimar la desviación estándar a partir de un histograma
+
+Se midió la presión arterial (promedio de las mediciones sistólica y diastólica) de 38 personas. El promedio fue 94.5 mm Hg. Se muestra un histograma de los datos.
+
+```{r, echo = F, fig.align='center', fig.height=3, fig.width=5}
+library(ggplot2)
+
+# Definir intervalos y frecuencias
+intervalos <- c("75-80", "80-85", "85-90", "90-95", "95-100", "100-105", "105-110", "110-115")
+frecuencias <- c(1, 3, 6, 10, 7, 6, 4, 1)
+
+# Calcular puntos medios de cada intervalo
+midpoints <- c(77.5, 82.5, 87.5, 92.5, 97.5, 102.5, 107.5, 112.5)
+
+# Generar datos individuales simulados a partir de las frecuencias
+valores <- rep(midpoints, frecuencias)
+
+# Crear data frame
+df <- data.frame(valores)
+
+# Histograma
+ggplot(df, aes(x = valores)) +
+    geom_histogram(binwidth = 5, fill = "cadetblue4", color = "black", boundary = 75, closed = "left") +
+      scale_x_continuous(breaks = seq(70, 120, by = 10)) +
+  scale_y_continuous(breaks = seq(1, 10, by = 1)) +
+    labs(x = "Presión sanguínea (mmHg)", y = "Frecuencia") +
+  ggthemes::theme_base(base_size = 16) +
+  theme(panel.grid=element_blank(),
+        axis.text=element_text(color="black"),
+        panel.background = element_rect(fill = "white"))
+
+```
+
+Asumiendo que la variable sigue razonablemente bien una distribución normal, proporciona una estimación aproximada de la desviación estándar de la presión arterial en estos datos.
+
+<details>
+<summary>Solución desarrollada</summary>
+
+**No hay tabla ni fórmula que dé un único valor exacto**: la pregunta pide una *estimación visual*, y para eso usamos la regla empírica al revés.
+
+**Idea.** Si los datos son aproximadamente normales, sabemos que:
+
+- el 68% de las observaciones caen dentro de $\mu \pm 1\sigma$
+- el 95% caen dentro de $\mu \pm 2\sigma$
+
+Así que podemos mirar el histograma, encontrar el rango que contiene aproximadamente el 68% (o el 95%) de las barras, y despejar $\sigma$.
+
+**Aplicándolo a este histograma** (media $\mu = 94.5$, $n=38$):
+
+- Casi todas las observaciones caen entre 75 y 115, un rango de 40 mm Hg. Si asumimos que ese rango cubre aproximadamente el 95% de los datos ($\mu \pm 2\sigma$), entonces:
+
+$$4\sigma \approx 40 \;\Rightarrow\; \sigma \approx 10$$
+
+- Si en cambio nos fijamos en dónde se concentra el "cuerpo" central de la distribución (los intervalos 85-90, 90-95, 95-100, que juntos suman $6+10+7=23$ de 38 observaciones, un 60.5%, bastante cerca del 68% esperado dentro de $\mu \pm 1\sigma$), ese rango va de 85 a 100, un ancho de 15 alrededor de un centro próximo a la media:
+
+$$2\sigma \approx 15 \;\Rightarrow\; \sigma \approx 7.5$$
+
+Las dos aproximaciones no coinciden exactamente (es normal, el método es solo visual y aproximado), pero la segunda, basada en el 68%, suele ser más fiable porque el centro de la distribución está mejor definido que las colas.
+
+**Conclusión:** una estimación razonable de la desviación estándar es $\sigma \approx 7.5\text{-}7.75$ mm Hg. Cualquier valor en ese entorno (por ejemplo, entre 7 y 8.5) se consideraría una buena estimación, ya que no existe un único valor "correcto": el objetivo del ejercicio es practicar la lógica de la regla empírica, no obtener un número exacto.
+
+**Para comparar**, así se vería la comprobación si tuviéramos los datos individuales (aquí, simulados a partir del punto medio de cada intervalo, que es solo una aproximación):
+
+```{r p1}
+# valores simulados con el punto medio de cada intervalo (aproximación)
+sd(valores)
+```
+
+</details>
+
+## 📐 Problema 2 - Usando la tabla de la normal estándar
+
+Usando la tabla de la distribución normal estándar, encuentra la proporción de observaciones que cumplen cada uno de los siguientes enunciados. En cada caso, dibuja una curva normal estándar e indica el área bajo la curva que corresponde a la respuesta.
+
+```{r, echo = F}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+# Valores de las filas (0.0 a 3.0 por 0.1)
+rows <- seq(0, 3.0, by = 0.1)
+
+# Valores de las columnas (0.00 a 0.09 por 0.01)
+cols <- seq(0, 0.09, by = 0.01)
+
+# Generar tabla
+z_table <- sapply(cols, function(c){
+  sapply(rows, function(r){
+    pnorm(r + c)
+  })
+})
+
+# Convertir a data frame y agregar columna de fila
+z_table_df <- as.data.frame(z_table)
+z_table_df <- cbind(Z = rows, z_table_df)
+
+# Nombres de columnas tipo tabla Z
+colnames(z_table_df) <- c("Z", paste0("0.0", 0:9))
+
+# Mostrar tabla
+# --- Tabla bonita ---
+kable(z_table_df, digits = 4, align = "c",
+      caption = "Tabla: Probabilidades acumuladas P(Z ≤ z)") %>%
+  kable_styling(
+    full_width = FALSE,   # evita que ocupe todo el ancho
+    position = "center",  # centra la tabla
+    font_size = 14
+  ) %>%
+  row_spec(0, bold = TRUE, background = "#e6f2ff") %>%  # encabezado en gris claro
+  column_spec(1, bold = TRUE, background = "#e6f2ff") 
+
+```
+
+### a) $P(Z > 0.62)$  
+### b) $P(Z \le 0.93)$    
+### c) $P(0.56 < Z \le 2.80)$ 
+
+<details>
+<summary>Solución desarrollada</summary>
+
+**Planteamiento**
+
+La tabla de la normal estándar da directamente $P(Z \le z)$. Para obtener otras probabilidades, hay que combinar ese valor con la propiedad de que el área total bajo la curva es 1, y con la simetría de la curva respecto a 0.
+
+Una pequeña función para visualizar el área pedida en cada caso (no hace falta para resolver el problema, pero ayuda a comprobar que la zona sombreada es la correcta):
+
+```{r shade-fun}
+shade_normal <- function(lo = -4, hi = 4, titulo = "") {
+  x <- seq(-4, 4, length.out = 500)
+  d <- data.frame(x = x, y = dnorm(x))
+  area <- subset(d, x >= lo & x <= hi)
+  ggplot(d, aes(x, y)) +
+    geom_line() +
+    geom_area(data = area, aes(x, y), fill = "cadetblue3", alpha = 0.6) +
+    labs(title = titulo, x = "Z", y = "Densidad") +
+    theme_minimal(base_size = 13)
+}
+```
+
+**a) $P(Z > 0.62)$**
+
+La tabla da el área **a la izquierda** de $z$. Como el área total es 1, el área a la derecha es el complementario:
+
+$$P(Z > 0.62) = 1 - P(Z \le 0.62) = 1 - 0.7324 = 0.2676$$
+
+```{r p2a, fig.height=2.5, fig.width=4}
+shade_normal(0.62, 4, "P(Z > 0.62)")
+1 - pnorm(0.62)
+```
+
+**b) $P(Z \le 0.93)$**
+
+Este caso se lee **directamente** de la tabla, sin ninguna transformación:
+
+$$P(Z \le 0.93) = 0.8238$$
+
+```{r p2b, fig.height=2.5, fig.width=4}
+shade_normal(-4, 0.93, "P(Z ≤ 0.93)")
+pnorm(0.93)
+```
+
+**c) $P(0.56 < Z \le 2.80)$**
+
+Es el área entre dos valores. Se calcula como la diferencia entre las dos áreas acumuladas: todo lo que hay a la izquierda de 2.80, menos lo que hay a la izquierda de 0.56 (así nos quedamos solo con la franja entre ambos):
+
+$$P(0.56 < Z \le 2.80) = P(Z \le 2.80) - P(Z \le 0.56) = 0.9974 - 0.7123 = 0.2851$$
+
+```{r p2c, fig.height=2.5, fig.width=4}
+shade_normal(0.56, 2.80, "P(0.56 < Z ≤ 2.80)")
+pnorm(2.80) - pnorm(0.56)
+```
+
+| Caso                              | Probabilidad |
+|------------------------------------|--------------|
+| (a) $P(Z > 0.62)$            | 0.2676    |
+| (b) $P(Z \le 0.93)$                    | 0.8238    |
+| (c) $P(0.56 < Z \le 2.80)$               | 0.2851    |
+
+</details>
+
+
+## 🔔 Problema 3 - La regla empírica
+
+Da una respuesta aproximada a las siguientes preguntas. No necesitas consultar la tabla de la distribución Normal, puedes usar en su lugar la regla empírica. Puedes comprobar tu respuesta con la tabla de la Normal si quieres.
+
+### a) $P(-2 < Z < 2)$   
+### b) $P(Z > 2)$    
+### c) $P(Z < -2)$  
+### d) $P(-1 < Z < 1)$
+### e) $P(Z > 1)$   
+### f) $P(Z < -1)$    
+### g) $P(Z > 0)$  
+### h) $P(Z < 0)$
+### i) $P(0 < Z < 1)$  
+### j) $P(0 < Z < 2)$
+### k) $P(1 <Z< 2)$  
+### l) $P(-2 < Z < -1)$
+
+<details>
+<summary>Solución desarrollada</summary>
+
+**Punto de partida: la regla empírica**
+
+$$P(-1<Z<1) \approx 0.68 \qquad P(-2<Z<2) \approx 0.95$$
+
+A partir de estos dos datos, y de dos propiedades de la curva normal —el área total es 1, y es **simétrica** respecto a 0 (por lo que $P(Z>0)=P(Z<0)=0.50$)—, se pueden derivar todos los demás casos sin usar la tabla.
+
+**a) y d): directas de la regla empírica**
+
+$$P(-2 < Z < 2) = 0.95 \qquad\qquad P(-1 < Z < 1) = 0.68$$
+
+**b) y c): las colas de fuera de $\pm 2$**
+
+Fuera del intervalo $(-2,2)$ queda el $1-0.95=0.05$ del área, repartido a partes iguales entre las dos colas por simetría:
+
+$$P(Z>2) = P(Z<-2) = \frac{1-0.95}{2} = \frac{0.05}{2} = 0.025$$
+
+**e) y f): las colas de fuera de $\pm 1$**
+
+Igual que antes, pero con el 68%:
+
+$$P(Z>1) = P(Z<-1) = \frac{1-0.68}{2} = \frac{0.32}{2} = 0.16$$
+
+**g) y h): simetría respecto al 0**
+
+La curva es simétrica y el área total es 1, así que cada mitad vale 0.5:
+
+$$P(Z>0) = P(Z<0) = 0.50$$
+
+**i), j), k) y l): áreas "entre" dos valores, restando las colas conocidas**
+
+La idea general: el área entre 0 y un valor positivo $a$ es lo que queda de la mitad derecha ($P(Z>0)=0.50$) una vez quitada la cola que sobra ($P(Z>a)$):
+
+$$P(0 < Z < 1) = P(Z>0) - P(Z>1) = 0.50 - 0.16 = 0.34$$
+
+$$P(0 < Z < 2) = P(Z>0) - P(Z>2) = 0.50 - 0.025 = 0.475$$
+
+Para el tramo entre 1 y 2, restamos la cola más lejana ($P(Z>2)$) de la más cercana ($P(Z>1)$), porque la región entre 1 y 2 es la que queda de $P(Z>1)$ al quitarle $P(Z>2)$:
+
+$$P(1 < Z < 2) = P(Z>1) - P(Z>2) = 0.16 - 0.025 = 0.135$$
+
+Y por simetría, la región entre $-2$ y $-1$ tiene la misma área que la de entre 1 y 2 (es su reflejo):
+
+$$P(-2 < Z < -1) = P(1 < Z < 2) = 0.135$$
+
+**Comprobación con la tabla exacta (`pnorm`)**
+
+Los valores de la regla empírica son redondeos (por ejemplo, el 95% exacto correspondería a $z=1.96$, no a $z=2$), así que la tabla da cifras ligeramente distintas, pero muy próximas:
+
+```{r p3}
+c(a = pnorm(2) - pnorm(-2), b = 1 - pnorm(2), d = pnorm(1) - pnorm(-1), e = 1 - pnorm(1))
+```
+
+| Caso | Probabilidad |
+|------------------------------------|--------------|
+| (a) $P(-2 < Z < 2)$ | 0.95 |
+| (b) $P(Z > 2)$ | 0.025 |
+| (c) $P(Z < -2)$ | 0.025 |
+| (d) $P(-1 < Z < 1)$ | 0.68 |
+| (e) $P(Z > 1)$ | 0.16 |
+| (f) $P(Z < -1)$ | 0.16 |
+| (g) $P(Z > 0)$ | 0.50 |
+| (h) $P(Z < 0)$ | 0.50 |
+| (i) $P(0 < Z < 1) = P(Z>0) - P(Z>1) = 0.50 - 0.16$ | 0.34 |
+| (j) $P(0 < Z < 2) = P(Z>0) - P(Z>2) = 0.50 - 0.025$ | 0.475 |
+| (k) $P(1 < Z < 2) = P(Z>1) - P(Z>2) = 0.16 - 0.025$ | 0.135 |
+| (l) $P(-2 < Z < -1) = P(1 < Z < 2)$ | 0.135 |
+</details>
+
+## 🤰 Problema 4 - Duración de los embarazos
+
+La duración de los embarazos humanos, desde la concepción hasta el nacimiento, varía según una distribución que es aproximadamente Normal con media $\mu = 266$ días y desviación estándar $\sigma = 16$ días.
+
+### a. ¿Qué porcentaje de embarazos dura menos de 240 días (aprox. 8 meses)?  
+### b. ¿Qué porcentaje de embarazos dura entre 240 y 270 días (aprox. entre 8 y 9 meses)? 
+### c. ¿Cuánto duran como mínimo el 20% de los embarazos más largos (es decir, el percentil 80)?
+
+<details>
+<summary>Solución desarrollada</summary>
+
+**Planteamiento**
+
+$X$ = duración del embarazo, $X \sim N(266, 16^2)$. Para usar la tabla de la normal estándar, tipificamos con $z = \dfrac{x-\mu}{\sigma}$.
+
+**a) $P(X < 240)$**
+
+$$z = \frac{240 - 266}{16} = \frac{-26}{16} = -1.625$$
+
+$$P(X < 240) = P(Z < -1.625) = 0.0521$$
+
+**b) $P(240 < X < 270)$**
+
+Necesitamos tipificar los dos extremos:
+
+$$z_1 = \frac{240-266}{16} = -1.625 \qquad z_2 = \frac{270-266}{16} = 0.25$$
+
+$$P(240 < X < 270) = P(Z < 0.25) - P(Z < -1.625) = 0.5987 - 0.0521 = 0.5466$$
+
+**c) Percentil 80**
+
+Aquí vamos en la dirección contraria: buscamos el valor de $X$ que deja el 80% de las observaciones por debajo (por tanto, el 20% más largo queda por encima, que es justo lo que pide el enunciado). Primero encontramos en la tabla el valor de $z$ tal que $P(Z<z) = 0.80$:
+
+$$z_{0.80} \approx 0.84$$
+
+y deshacemos la tipificación para volver a la escala de días:
+
+$$x = \mu + z\cdot\sigma = 266 + 0.84\cdot 16 = 279.47 \text{ días}$$
+
+**Comprobación con R**
+
+```{r p4}
+mu <- 266; sigma <- 16
+
+# a) P(X < 240)
+pnorm(240, mean = mu, sd = sigma)
+
+# b) P(240 < X < 270)
+pnorm(270, mu, sigma) - pnorm(240, mu, sigma)
+
+# c) percentil 80
+qnorm(0.80, mu, sigma)
+```
+
+| Pregunta | Respuesta aproximada |
+|:--------:|:---------|
+| a) $P(X < 240)$ | **0.0521 (5.21%)** |
+| b) $P(240 < X < 270)$ | **0.5466 (54.66%)**  |
+| c) Longitud mínima del 20% más largo (percentil 80) | **≈ 279.47 días**  |
+</details>
+
+## 🩺 Problema 5 - Colesterol HDL
+
+El colesterol HDL se suele presentar en mg/dL. Supongamos que en la población española tiene una distribución $N(38,25)$.
+
+### a) ¿Qué porcentaje de la población tiene más de 38 mg/dL?  
+### b) ¿Qué porcentaje de la población tiene entre 33 y 43 mg/dL?
+### c) ¿Qué valor HDL tiene el percentil 70 de la población? 
+### d) Se decide considerar HDL bajo cuando esté por debajo del percentil 10. ¿Por debajo de qué valor de HDL se considerará que es bajo? 
+
+<details>
+<summary>Solución desarrollada</summary>
+
+**Planteamiento: ¡cuidado con la notación!**
+
+$N(38,25)$ significa $N(\mu, \sigma^2)$, es decir, media $\mu=38$ y **varianza** $\sigma^2=25$ (no desviación estándar). Por tanto:
+
+$$\sigma = \sqrt{25} = 5 \text{ mg/dL}$$
+
+Es un error habitual confundir el segundo parámetro con la desviación estándar directamente; conviene comprobar siempre si el enunciado da $\sigma$ o $\sigma^2$.
+
+**a) $P(X > 38)$**
+
+38 es exactamente la media, y la normal es simétrica respecto a su media, así que:
+
+$$P(X > 38) = 0.50$$
+
+(sin necesidad de tipificar ni de tabla: la mitad de la población está por encima de la media, y la otra mitad por debajo).
+
+**b) $P(33 < X < 43)$**
+
+Tipificamos los dos extremos:
+
+$$z_1 = \frac{33-38}{5} = -1 \qquad z_2 = \frac{43-38}{5} = 1$$
+
+Es decir, 33 y 43 son exactamente $\mu - 1\sigma$ y $\mu + 1\sigma$. Por la regla empírica (o la tabla):
+
+$$P(33 < X < 43) = P(-1 < Z < 1) = 0.6826$$
+
+**c) Percentil 70**
+
+Buscamos $z_{0.70}$ tal que $P(Z<z)=0.70$:
+
+$$z_{0.70} \approx 0.5244$$
+
+y deshacemos la tipificación:
+
+$$x = \mu + z\cdot\sigma = 38 + 0.5244\cdot 5 = 40.62 \text{ mg/dL}$$
+
+**d) Percentil 10**
+
+Ahora el percentil está por debajo de la media, así que $z$ será negativo:
+
+$$z_{0.10} \approx -1.2816$$
+
+$$x = 38 + (-1.2816)\cdot 5 = 31.59 \text{ mg/dL}$$
+
+**Comprobación con R**
+
+```{r p5}
+mu <- 38; sigma <- sqrt(25)   # ojo: la varianza es 25, la sd es 5
+
+# a) P(X > 38)
+1 - pnorm(38, mu, sigma)
+
+# b) P(33 < X < 43)
+pnorm(43, mu, sigma) - pnorm(33, mu, sigma)
+
+# c) percentil 70
+qnorm(0.70, mu, sigma)
+
+# d) percentil 10
+qnorm(0.10, mu, sigma)
+```
+
+| Caso | Resultado |
+|------|-----------|
+| a) P(X > 38) | 0.5000 |
+| b) P(33 < X < 43) | 0.6826 |
+| c) Percentil 70 (X) | 40.6 |
+| d) Percentil 10 (X) | 31.6 |
+</details>
