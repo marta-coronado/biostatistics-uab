@@ -668,11 +668,6 @@ Dependiendo de cómo esté estructurado tu proyecto, necesitarás **extraer mues
 - Útil cuando se quiere **garantizar la representación de cada subgrupo y reducir la variabilidad**.
 ]
 
----
-class: animated, fadeIn
-
-<center>
-<img src="img/gru.png">
 
 ---
 class: animated, fadeIn
