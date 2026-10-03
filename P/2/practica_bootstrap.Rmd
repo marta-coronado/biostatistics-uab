@@ -121,7 +121,7 @@ Lee el fichero desde este [enlace](https://raw.githubusercontent.com/marta-coron
 
 ```
 
-Comprueba que se ha leído bien: mira las primeras filas (`head(chimp)`) y cuántos chimpancés hay (`nrow(chimp`).
+Comprueba que se ha leído bien: mira las primeras filas (`head(chimp)`) y cuántos chimpancés hay (`nrow(chimp)`).
 
 ```{r}
 
@@ -223,7 +223,7 @@ View(many_resampled_chimps)
 
 **¿Cuántas filas tiene la tabla resultante? ¿Por qué?** (Fíjate en la columna `replicate`.)
 
-<i class="fa fa-key"></i>: utilitza la función `nrow(df)`.
+<i class="fa fa-key"></i>: utiliza la función `nrow(df)`.
 
 ```{r}
 
@@ -312,7 +312,6 @@ Una hipótesis nula habitual al comparar grupos es que **no hay diferencia entre
 #### **Paso 1: crear el conjunto de datos**
 Ejecuta el siguiente código. Crea los 20 bonobos ficticios y los junta con los 20 chimpancés en una sola tabla, `monkeys`, con una columna `species` (especie) y otra `asymmetryScore` (asimetría).
 
-Ejecuta el siguiente código:
 
 ```{r eval = F}
 # 20 bonobos ficticios (valores inventados)
@@ -331,7 +330,7 @@ head(monkeys)
 ```
 
 #### **Paso 2: revisar los datos**
-Cuenta cuántos individuos hay de cada especie (`n()`) y calcula la **mediana** de la asimetría de cada especie (con `group_by` y `summarize`).
+Cuenta cuántos individuos hay de cada especie (`n()`) y calcula la **media** de la asimetría de cada especie (con `group_by` y `summarize`).
 
 <i class="fa fa-key"></i> [Esta diapositiva](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#66) muestra ambas funciones en acción.
 
@@ -375,7 +374,7 @@ Vamos a generar el **modelo nulo** con la librería `infer`. Ejecutamos cuatro f
 - `specify(asymmetryScore ~ species)`: indica la variable respuesta (`asymmetryScore`) y la explicativa (`species`).
 - `hypothesize(null = "independence")`: indica la hipótesis nula. Aquí, que la asimetría es **independiente** de la especie (las etiquetas son intercambiables).
 - `generate(reps = 10000, type = "permute")`: genera las réplicas. Aquí, **10000 permutaciones** de las etiquetas, sin reemplazamiento.
-- `calculate(stat = "diff in means", order = c("Chimp", "Bonobo"))`: calcula la diferencia de medias en cada réplica, en el mismo orden que nuestro estadístico observado.
+- `calculate(stat = "diff in means", order = c("Chimpanzee", "Bonobo"))`: calcula la diferencia de medias en cada réplica, en el mismo orden que nuestro estadístico observado.
 
 Ejecuta el código:
 
@@ -403,7 +402,7 @@ Haz un histograma con `perm` de las diferencias de medias permutadas (`x` = `sta
 
 Acabamos de simular muchos experimentos bajo la hipótesis nula. Estos datos virtuales nos dicen qué diferencias de medias observaríamos **si realmente no hubiera diferencia entre las especies**. Como es de esperar, casi siempre la diferencia está en torno a 0, pero de vez en cuando se ve una diferencia notable **solo por azar**.
 
-Ahora añade dos líneas verticales discontinuas: una en la diferencia observada (`baseline_difference`) y otra en su valor simétrico (`-baseline_difference`), porque nuestra prueba es de **dos colas**. Guarda el resultado en `g1`.
+Ahora añade dos líneas verticales punteadas: una en la diferencia observada (`baseline_difference`) y otra en su valor simétrico (`-baseline_difference`), porque nuestra prueba es de **dos colas**. Guarda el resultado en `g1`.
 
 ```{r eval = F, fig.width = 5, fig.height = 3.5}
 g1 <- diffs_histogram_plot + 
@@ -417,29 +416,7 @@ g1
 
 **¿Es nuestro dato extremo respecto a la distribución nula? ¿Qué sugiere esto?**
 
-#### **Paso 7: el umbral del 5%**
-El valor 0.05 es un umbral habitual para declarar significación estadística. Como la prueba es de dos colas, el 5% se reparte entre las dos: **2.5% en cada cola**. Calcula los **cuantiles del 2.5% y del 97.5%** de la distribución simulada, con `quantile()`, y guárdalos en `cutoffs`.
-
-```{r eval = F}
-cutoffs <- quantile(perm$???, probs = c(???, ???))
-cutoffs
-```
-
-Añade ahora estas dos líneas continuas a `g1`:
-
-```{r eval = F, fig.width = 5, fig.height = 3.5}
-g3 <- g1 +
-  geom_vline(xintercept = cutoffs, 
-             color      = "black", 
-             linewidth  = 1)
-
-g3
-```
-
-**¿Queda nuestra diferencia observada más allá de esos límites? ¿Qué implica sobre el p-valor?**
-
-
-#### **Paso 8: calcular el p-valor de dos colas**
+#### **Paso 7: calcular el p-valor de dos colas**
 Para obtener el p-valor exacto, necesitamos la **proporción de datos simulados que son tan extremos o más que nuestro dato observado, en cualquiera de las dos direcciones**. Por eso usamos el **valor absoluto** de la diferencia. Completa los "???":
 
 ```{r eval = F}

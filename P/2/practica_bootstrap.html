@@ -396,7 +396,7 @@ que tiene formato .csv (<code>read.csv</code>) y encabezado
 <code>chimp</code>.</p>
 <p>Comprueba que se ha leído bien: mira las primeras filas
 (<code>head(chimp)</code>) y cuántos chimpancés hay
-(<code>nrow(chimp</code>).</p>
+(<code>nrow(chimp)</code>).</p>
 <p>Vamos a transformar la columna del nombre de los chimpancés
 (<code>chimpName</code>) a factor, para indicar que es una variable
 categórica.</p>
@@ -497,7 +497,7 @@ repeticiones (<code>rep</code>) que queremos.</p>
 <span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="fu">View</span>(many_resampled_chimps)</span></code></pre></div>
 <p><strong>¿Cuántas filas tiene la tabla resultante? ¿Por qué?</strong>
 (Fíjate en la columna <code>replicate</code>.)</p>
-<p><i class="fa fa-key"></i>: utilitza la función
+<p><i class="fa fa-key"></i>: utiliza la función
 <code>nrow(df)</code>.</p>
 </div>
 <div id="paso-7-calcular-la-mediana-de-cada-réplica" class="section level4">
@@ -613,7 +613,6 @@ respecto a los datos virtuales.</p>
 junta con los 20 chimpancés en una sola tabla, <code>monkeys</code>, con
 una columna <code>species</code> (especie) y otra
 <code>asymmetryScore</code> (asimetría).</p>
-<p>Ejecuta el siguiente código:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># 20 bonobos ficticios (valores inventados)</span></span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>bonobo <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">species        =</span> <span class="st">&quot;Bonobo&quot;</span>,</span>
@@ -631,7 +630,7 @@ una columna <code>species</code> (especie) y otra
 <div id="paso-2-revisar-los-datos" class="section level4">
 <h4><strong>Paso 2: revisar los datos</strong></h4>
 <p>Cuenta cuántos individuos hay de cada especie (<code>n()</code>) y
-calcula la <strong>mediana</strong> de la asimetría de cada especie (con
+calcula la <strong>media</strong> de la asimetría de cada especie (con
 <code>group_by</code> y <code>summarize</code>).</p>
 <p><i class="fa fa-key"></i> <a href="https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#66">Esta
 diapositiva</a> muestra ambas funciones en acción.</p>
@@ -673,7 +672,7 @@ especie (las etiquetas son intercambiables).</li>
 <li><code>generate(reps = 10000, type = &quot;permute&quot;)</code>: genera las
 réplicas. Aquí, <strong>10000 permutaciones</strong> de las etiquetas,
 sin reemplazamiento.</li>
-<li><code>calculate(stat = &quot;diff in means&quot;, order = c(&quot;Chimp&quot;, &quot;Bonobo&quot;))</code>:
+<li><code>calculate(stat = &quot;diff in means&quot;, order = c(&quot;Chimpanzee&quot;, &quot;Bonobo&quot;))</code>:
 calcula la diferencia de medias en cada réplica, en el mismo orden que
 nuestro estadístico observado.</li>
 </ul>
@@ -704,7 +703,7 @@ datos virtuales nos dicen qué diferencias de medias observaríamos
 Como es de esperar, casi siempre la diferencia está en torno a 0, pero
 de vez en cuando se ve una diferencia notable <strong>solo por
 azar</strong>.</p>
-<p>Ahora añade dos líneas verticales discontinuas: una en la diferencia
+<p>Ahora añade dos líneas verticales punteadas: una en la diferencia
 observada (<code>baseline_difference</code>) y otra en su valor
 simétrico (<code>-baseline_difference</code>), porque nuestra prueba es
 de <strong>dos colas</strong>. Guarda el resultado en
@@ -719,39 +718,20 @@ de <strong>dos colas</strong>. Guarda el resultado en
 <p><strong>¿Es nuestro dato extremo respecto a la distribución nula?
 ¿Qué sugiere esto?</strong></p>
 </div>
-<div id="paso-7-el-umbral-del-5" class="section level4">
-<h4><strong>Paso 7: el umbral del 5%</strong></h4>
-<p>El valor 0.05 es un umbral habitual para declarar significación
-estadística. Como la prueba es de dos colas, el 5% se reparte entre las
-dos: <strong>2.5% en cada cola</strong>. Calcula los <strong>cuantiles
-del 2.5% y del 97.5%</strong> de la distribución simulada, con
-<code>quantile()</code>, y guárdalos en <code>cutoffs</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>cutoffs <span class="ot">&lt;-</span> <span class="fu">quantile</span>(perm<span class="sc">$</span>???, <span class="at">probs =</span> <span class="fu">c</span>(???, ???))</span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>cutoffs</span></code></pre></div>
-<p>Añade ahora estas dos líneas continuas a <code>g1</code>:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>g3 <span class="ot">&lt;-</span> g1 <span class="sc">+</span></span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> cutoffs, </span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>             <span class="at">color      =</span> <span class="st">&quot;black&quot;</span>, </span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>             <span class="at">linewidth  =</span> <span class="dv">1</span>)</span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>g3</span></code></pre></div>
-<p><strong>¿Queda nuestra diferencia observada más allá de esos límites?
-¿Qué implica sobre el p-valor?</strong></p>
-</div>
-<div id="paso-8-calcular-el-p-valor-de-dos-colas" class="section level4">
-<h4><strong>Paso 8: calcular el p-valor de dos colas</strong></h4>
+<div id="paso-7-calcular-el-p-valor-de-dos-colas" class="section level4">
+<h4><strong>Paso 7: calcular el p-valor de dos colas</strong></h4>
 <p>Para obtener el p-valor exacto, necesitamos la <strong>proporción de
 datos simulados que son tan extremos o más que nuestro dato observado,
 en cualquiera de las dos direcciones</strong>. Por eso usamos el
 <strong>valor absoluto</strong> de la diferencia. Completa los
 “???”:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="fu">nrow</span>(perm)</span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> perm <span class="sc">%&gt;%</span> </span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">abs</span>(stat) <span class="sc">&gt;=</span> <span class="fu">abs</span>(???)) <span class="sc">%&gt;%</span></span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>  <span class="fu">nrow</span>() <span class="sc">/</span> n_sims</span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>p_value</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="fu">nrow</span>(perm)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> perm <span class="sc">%&gt;%</span> </span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">abs</span>(stat) <span class="sc">&gt;=</span> <span class="fu">abs</span>(???)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="fu">nrow</span>() <span class="sc">/</span> n_sims</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>p_value</span></code></pre></div>
 <p><span class="math display">\[
 p\text{-valor} = \frac{\#\{|\text{diff}_{perm}| \geq
 |\text{diff}_{obs}|\}}{n_{perm}}

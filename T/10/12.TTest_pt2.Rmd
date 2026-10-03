@@ -68,6 +68,7 @@ class: animated, fadeIn
 
 - Comprobar normalidad (test de Shapiro)
 
+- Versión no paramétrica: test de Wilcoxon
 <style>
 .title-slide {
   background-image: url('img/1.png');
@@ -78,7 +79,7 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-## Intervalos de confianza para la media poblacional con la distribución t
+## Intervalos de confianza para la media poblacional con la distribución `t`
 
 - Tema 9: IC utilizando la distribución normal (muestras grandes)
 
@@ -88,28 +89,28 @@ $$
 
 --
 
-- Intervalos de confianza utilizando la distribución `t` para una sola muestra:
+- Intervalos de confianza utilizando la distribución `t` para una sola muestra ($df = n-1$):
 
-> Para una muestra de tamaño $n$ con una media $\bar{x}$ y desviación estánda $s$, el IC bilateral con un nivel de confianza $100(1-\alpha)$% es:
+> Para una muestra de tamaño $n$ con una media $\bar{x}$ y desviación estándar $s$, el IC bilateral con un nivel de confianza $100(1-\alpha)$% es:
 
 $$
-(\bar{x} \pm t_{df}\times\frac{s}{\sqrt{n}})
+(\bar{x} \pm t_{\alpha/2,\,n-1}\times\frac{s}{\sqrt{n}})
 $$
 
 --
 
-> Un intervalo de confianza de una cola será:
+> Un intervalo de confianza de una cola (con $t_{\alpha,\,n-1}$) será:
 
 .pull-left[
-**IC superior:**
+**Límite superior:**
 $$
-\bar{x} + t_{df}\times\frac{s}{\sqrt{n}}
+\left(-\infty,\ \bar{x} + t_{\alpha,\,n-1}\times\frac{s}{\sqrt{n}}\right]
 $$
 ]
 .pull-right[
-**IC inferior:**
+**Límite inferior:**
 $$
-\bar{x} - t_{df}\times\frac{s}{\sqrt{n}}
+\left[\bar{x} - t_{\alpha,\,n-1}\times\frac{s}{\sqrt{n}},\ +\infty\right)
 $$
 ]
 
@@ -121,7 +122,7 @@ $$
 
 class: animated, fadeIn
 
-## Intervalos de confianza para la media poblacional con la distribución t
+## Intervalos de confianza para la media poblacional con la distribución `t`
 
 <center>
 <img src="img/CriticalRegion.png" width=80%>
@@ -131,13 +132,13 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-## Intervalos de confianza para la media poblacional con la distribución t
+## Intervalos de confianza para la media poblacional con la distribución `t`
 
 - Para muestras pareadas:
 
 <center>
 
-$(\bar{x}_{dif} \pm t_{df} \frac{s_{dif}}{\sqrt{n}})$
+$(\bar{x}_{dif} \pm t_{\alpha/2,\,n-1} \frac{s_{dif}}{\sqrt{n}})$
 
 --
 
@@ -146,13 +147,13 @@ Grados de libertad: $n-1$ (igual que una muestra)
 ---
 class: animated, fadeIn
 
-## Intervalos de confianza para la media poblacional con la distribución t
+## Intervalos de confianza para la media poblacional con la distribución `t`
 
 - Para muestras independientes:
 
 <center>
 
-$((\bar{x}_{1}-\bar{x}_2) \pm t_{df}\times SE)$
+$((\bar{x}_{1}-\bar{x}_2) \pm t_{\alpha/2,\,df}\times SE)$
 
 </center>
 
@@ -162,7 +163,7 @@ $$
 SE_{\bar{x}_1 - \bar{x}_2}=\sqrt{\frac{s^2_1}{n_1}+\frac{s^2_2}{n_2}}
 $$
 
-Los grados de libertad se calculan como $n_1+n_2-2$.
+Con este $SE$ (Welch), los grados de libertad se calculan con la fórmula de Welch–Satterthwaite. Solo si asumimos varianzas iguales (y usamos $s_p^2$) son $n_1+n_2-2$.
 
 ---
 class: animated, fadeIn
@@ -178,15 +179,15 @@ La fórmula para realizar el t-test es diferente **dependiendo de si los grupos 
 
 </center>
 
-> Para saber si las varianzas son iguales o no, podemos utilizar el **test de Levene**
+> Para saber si las varianzas son iguales o no, podemos utilizar el **test de Levene**. En la práctica, Welch funciona bien tanto si las varianzas son iguales como si no, por eso es la opción por defecto en `R`.
 
 
 ---
 class: animated, fadeIn
 
-### Test de Levene para homogeneidad de varianza
+### Test de Levene para homogeneidad de varianzas
 
-Si el p-valor del test de Levene es mayor a 0.05, se asume que las varianzas son iguales ($H_0$)
+Si el p-valor del test de Levene es mayor que 0.05, no tenemos evidencia de que las varianzas sean distintas (no rechazamos $H_0$: varianzas iguales)
 
 --
 
@@ -195,6 +196,7 @@ Si el p-valor del test de Levene es mayor a 0.05, se asume que las varianzas son
 ```{r}
 url <- 'https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/mice_pheno.csv'
 mice <- read.csv(url)
+mice <- na.omit(mice)  # eliminamos los ratones sin peso (NA)
 mice[23:28,] # muestra unas filas específicas
 
 # install.packages("car")
@@ -205,13 +207,13 @@ library(car)
 ---
 class: animated, fadeIn
 
-### Test de Levene para homogeneidad de varianza
+### Test de Levene para homogeneidad de varianzas
 
-Si el p-valor del test de Levene es mayor a 0.05, se asume que las varianzas son iguales ($H_0$)
+Si el p-valor del test de Levene es mayor que 0.05, no tenemos evidencia de que las varianzas sean distintas (no rechazamos $H_0$: varianzas iguales)
 
 
 
-#### Test de Levene en R
+#### Test de Levene en `R`
 
 ```{r}
 mice[24:27,] # muestra unas filas específicas
@@ -263,14 +265,14 @@ $$
 --
 
 <br>
-> En los problemas "a mano" se calculan los gl como $n_1+n_2-2$, generalmente asumen que la varianza es igual entre muestras (_se cumplen los requisitos para la inferencia_)
+> En los problemas "a mano" se calculan los g.l. como $n_1+n_2-2$, porque se asume que las varianzas son iguales (y por tanto se usa $s_p^2$ en el cálculo de `t`)
 
 ---
 class: animated, fadeIn
 
 ## Calcular t-test para muestras independientes en `R`
 
-- Por defecto, la función `t.test()` asume que las varianzas no son iguales (`var.equal=FALSE`), por lo que ejecuta el **t-test de Welch**.
+- Por defecto, la función `t.test()` no asume que las varianzas sean iguales (`var.equal=FALSE`), por lo que ejecuta el **t-test de Welch**.
 
 - Para ejecutar el t-test si las varianzas son iguales (*two sample t-test*):
 
@@ -283,9 +285,9 @@ class: animated, fadeIn
 
 ## Calcular t-test para muestras independientes en `R`
 
-- Por defecto, la función `t.test()` asume que las varianzas no son iguales (`var.equal=FALSE`), por lo que ejecuta el **t-test de Welch**.
+- Por defecto, la función `t.test()` no asume que las varianzas sean iguales (`var.equal=FALSE`), por lo que ejecuta el **t-test de Welch**.
 
-- Para ejecutar el t-test si las varianzas no son iguales (*two sample t-test*):
+- Para ejecutar el t-test si las varianzas no son iguales (*Welch two sample t-test*):
 
 ```{r}
 t.test(Bodyweight ~ Diet, data = mice, var.equal = FALSE)
@@ -297,7 +299,7 @@ class: animated, fadeIn
 ## Repaso: leer grados de libertad y $t_{crit}$
 
 .pull-left[
-- Nivel de significancia: $\alpha=0.05$
+- Nivel de significación: $\alpha=0.05$
 - Grados de libertad: $df=6$
 - Valor t crítico: ?
 - Prueba bilateral
@@ -349,7 +351,7 @@ class: animated, fadeIn
 ## Repaso: leer grados de libertad y $t_{crit}$
 
 .pull-left[
-- Nivel de significancia: $\alpha=0.05$
+- Nivel de significación: $\alpha=0.05$
 - Grados de libertad: $df=6$
 - Valor t crítico: **2.447**
 - Prueba bilateral
@@ -411,17 +413,17 @@ class: animated, fadeIn
 
 ### Comprobar si la distribución sigue una normal
 
-- Previamente hemos aprendido a cómo saber si una distribución sigue una normal **gráficamente**
+- Previamente hemos aprendido a comprobar si una distribución sigue una normal **gráficamente**
   - QQ-plots
   
 --
 
-- Hay test que permiten saber si los datos siguen una distribución normal (**analítica**)
-  - Kolmogorov-Smirnov test
+- Hay tests que permiten saber si los datos siguen una distribución normal (**analítica**)
+  - Kolmogorov-Smirnov test (con la corrección de Lilliefors si estimamos $\mu$ y $\sigma$ de la muestra)
   - Shapiro-Wilk test
   - Anderson-Darling test
 
-> Si el p-valor de los test es mayor a 0.05, se asume que los datos siguen una normal ($H_0$)
+> Si el p-valor de los tests es mayor que 0.05, no tenemos evidencia de que los datos no sigan una normal (no rechazamos $H_0$: los datos son normales)
 
 ---
 class: animated, fadeIn
@@ -429,8 +431,8 @@ class: animated, fadeIn
 ### Desventajas de los tests de normalidad
 
 1. El cálculo del p-valor depende del tamaño de muestra: 
-  - si la muestra es pequeña, el p-valor puede ser > 0.05
-  - si la muestra es grande, el p-valor puede ser < 0.05
+  - si la muestra es pequeña, el test tiene poca potencia: el p-valor puede ser > 0.05 aunque haya desviaciones reales
+  - si la muestra es grande, el test detecta desviaciones mínimas que no afectan al t-test: el p-valor puede ser < 0.05
   
 <center>
 <img src="img/normalidad.png" width=60%>
@@ -447,6 +449,7 @@ class: animated, fadeIn
 ### Test de normalidad en `R`
 
 ```{r}
+set.seed(123)
 datos_normales <- rnorm(5000, mean=170, sd=10)
 ```
 
@@ -454,8 +457,8 @@ datos_normales <- rnorm(5000, mean=170, sd=10)
 ```{r echo = F, fig.height=3, fig.width=3, fig.align='center'}
 
 ggplot(data.frame(x=datos_normales), aes(x = x)) +
-    geom_histogram(aes(y = ..density..), fill = "salmon", alpha = 0.6) +  # área bajo la curva
-      geom_density( size = 1, color = "salmon") +  # área bajo la curva
+    geom_histogram(aes(y = after_stat(density)), fill = "salmon", alpha = 0.6) +  # área bajo la curva
+      geom_density(linewidth = 1, color = "salmon") +  # área bajo la curva
 
   labs(    title = "Histograma", x = "Datos normales",
        y = "Densidad") +
@@ -466,7 +469,7 @@ ggplot(data.frame(x=datos_normales), aes(x = x)) +
 
 ggplot(data.frame(x=datos_normales), aes(sample = x)) +
   stat_qq(color = "cadetblue4") +
-  stat_qq_line(distribution = qnorm, dparams = list(mean = 0, sd = 1), color = "firebrick4", linetype = "dashed", size = 1) +
+  stat_qq_line(distribution = qnorm, dparams = list(mean = 0, sd = 1), color = "firebrick4", linetype = "dashed", linewidth = 1) +
   labs(
     title = "QQ-plot",
     x = "Cuantiles teóricos",
@@ -500,9 +503,9 @@ class: animated, fadeIn
 
 | Tipo de t-test | Estadístico t | Grados de libertad (df) | Intervalo de confianza (IC) |
 |----------------|---------------|-------------------------|-----------------------------|
-| **1 muestra** | $t = \frac{\bar{x}-\mu_0}{s/\sqrt{n}}$ | $n-1$ | $\bar{x} \pm t_{df} \frac{s}{\sqrt{n}}$ |
-| **Pareado** | $t = \frac{\bar{x}_{dif}}{s_{dif}/\sqrt{n}}$ | $n-1$ | $\bar{x}_{dif} \pm t_{df} \frac{s_{dif}}{\sqrt{n}}$ |
-| **2 muestras independientes*** | $t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s^2_1/n_1 + s^2_2/n_2}}$ | Welch-Satterthwaite | $(\bar{x}_1 - \bar{x}_2) \pm t_{df} \, \sqrt{s^2_1/n_1 + s^2_2/n_2}$ |
+| **1 muestra** | $t = \frac{\bar{x}-\mu_0}{s/\sqrt{n}}$ | $n-1$ | $\bar{x} \pm t_{\alpha/2,\,df} \frac{s}{\sqrt{n}}$ |
+| **Pareado** | $t = \frac{\bar{x}_{dif}}{s_{dif}/\sqrt{n}}$ | $n-1$ | $\bar{x}_{dif} \pm t_{\alpha/2,\,df} \frac{s_{dif}}{\sqrt{n}}$ |
+| **2 muestras independientes*** | $t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s^2_1/n_1 + s^2_2/n_2}}$ | Welch-Satterthwaite | $(\bar{x}_1 - \bar{x}_2) \pm t_{\alpha/2,\,df} \, \sqrt{s^2_1/n_1 + s^2_2/n_2}$ |
 
 <small>*Fórmula de Welch (por defecto en R). Si asumimos varianzas iguales, $df = n_1+n_2-2$ y se usa $s_p^2$ en vez de $s_1^2, s_2^2$ por separado (ver diapositivas anteriores).</small>
 

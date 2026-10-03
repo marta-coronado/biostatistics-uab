@@ -1,0 +1,305 @@
+---
+title: "**Bootstrap y test de permutación:**<br><font color='#A8A8A8' size='5'>soluciones de la práctica en  `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
+author: "Marta Coronado Zamora"
+date: "Octubre 2026"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5, fig.align = 'center', fig.height = 3, fig.width = 3)
+library(dplyr)
+library(ggplot2)
+library(prettydoc)
+library(tidyverse)
+library(infer)
+set.seed(2026)  # para que los resultados sean reproducibles
+```
+
+<style>
+  @import url(https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,500,500i,700,700i);
+  @import url("https://use.fontawesome.com/releases/v5.10.1/css/all.css");
+  body {
+    font-family: 'Fira Sans','Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+  }
+  strong {
+    color: #DE1144;
+  }
+  .sol {
+    background-color: #F3F7FB;
+    border-left: 4px solid #2C7BB6;
+    padding: 8px 12px;
+    margin: 10px 0;
+  }
+</style>
+
+> Las respuestas a las preguntas aparecen en recuadros azules. Los valores numéricos se han obtenido con `set.seed(2026)`: si repites el remuestreo sin semilla, tus números pueden variar ligeramente.
+
+# Bootstrap
+
+## 🐒🧠 Centros del lenguaje en chimpancés
+
+#### **Paso 1: leer los datos**
+
+```{r}
+chimp <- read.csv("https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/2/chap19e2ChimpBrains.csv", header = TRUE)
+```
+
+```{r}
+head(chimp)
+nrow(chimp)
+```
+
+```{r}
+chimp$chimpName <- as.factor(chimp$chimpName)
+```
+
+#### **Paso 2: crea un histograma**
+
+```{r fig.width = 5, fig.height = 3.5}
+ggplot(chimp, aes(x = asymmetryScore)) +
+  geom_histogram(binwidth = 0.1, color = "white") +
+  labs(x = "Asimetría BA44", y = "Frecuencia")
+```
+
+<div class="sol">
+La distribución es **asimétrica a la derecha**: la mayoría de valores se concentran entre −0.3 y 0.4, y hay unos pocos chimpancés con valores muy altos (0.71, 1.12, 1.19). Con solo 20 datos y esta cola derecha, **no es prudente asumir normalidad**. Por eso usamos la mediana (robusta a valores extremos) y el bootstrap (que no asume ninguna distribución).
+</div>
+
+#### **Paso 3: cálculo de la estimación a partir de los datos**
+
+```{r}
+sample_estimate <- median(chimp$asymmetryScore)
+sample_estimate
+```
+
+#### **Paso 4: re-muestreo de nuestros datos (con reemplazo) para generar una réplica bootstrap**
+
+```{r}
+resampled_chimps <- chimp  %>% 
+  sample_n(size = nrow(chimp), replace = TRUE)
+```
+
+```{r fig.width = 5, fig.height = 3.5}
+resampled_chimps                   %>%
+  group_by(chimpName, .drop = FALSE) %>%
+  tally(sort = TRUE)               %>%
+  mutate(id = fct_reorder(chimpName, n, .desc = TRUE)) %>%
+  ggplot(aes(x = id, y = n)) +
+  geom_col() +
+  labs(title = "Distribución de los individuos remuestreados en nuestro bootstrap",
+       x = "Chimpancé", y = "# veces remuestreado") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+```
+
+<div class="sol">
+Algunos chimpancés aparecen 2 o más veces y otros tienen 0: el remuestreo con reemplazo ha funcionado. (En promedio, cada réplica bootstrap deja fuera ~37% de los individuos originales.)
+</div>
+
+#### **Paso 5: estimación a partir de los datos remuestreados**
+
+```{r}
+median(resampled_chimps$asymmetryScore)
+```
+
+<div class="sol">
+En general **no coincide** con la mediana original (`r sample_estimate`). La réplica bootstrap es una muestra distinta (unos individuos repetidos, otros ausentes), así que su mediana varía por azar. Esa variación entre réplicas es precisamente lo que usamos para medir la incertidumbre de la estimación.
+</div>
+
+#### **Paso 6: repetir el proceso 10.000 veces**
+
+```{r}
+many_resampled_chimps <- chimp  %>%
+  rep_sample_n(size = nrow(chimp), replace = TRUE, reps = 10000)
+
+# View(many_resampled_chimps)
+head(many_resampled_chimps)
+```
+
+```{r}
+nrow(many_resampled_chimps)
+```
+
+<div class="sol">
+Tiene **`r format(nrow(many_resampled_chimps), big.mark = ".", decimal.mark = ",")` filas** = 20 chimpancés × 10.000 réplicas. La columna `replicate` (de 1 a 10.000) indica a qué réplica bootstrap pertenece cada fila.
+</div>
+
+#### **Paso 7: calcular la mediana de cada réplica**
+
+```{r}
+chimp_boot <- many_resampled_chimps %>%
+  group_by(replicate) %>%
+  summarize(median_asymmetry = median(asymmetryScore))
+
+head(chimp_boot)
+nrow(chimp_boot)
+```
+
+<div class="sol">
+`chimp_boot` tiene **10.000 filas**: una mediana por cada réplica bootstrap.
+</div>
+
+#### **Paso 8: visualización de la distribución bootstrap**
+
+```{r fig.width = 5, fig.height = 3.5}
+boot_hist <- ggplot(chimp_boot, aes(x = median_asymmetry)) +
+  geom_histogram(binwidth = 0.02, color = "white") +
+  labs(x = "Mediana bootstrap de la asimetría", y = "Frecuencia")
+
+boot_hist
+```
+
+<div class="sol">
+El histograma es muy "a saltos": con n = 20 la mediana es la media de los valores 10º y 11º ordenados, y solo puede tomar un número limitado de valores distintos. Es una característica de la mediana bootstrap con muestras pequeñas, no un error.
+</div>
+
+#### **Paso 9: intervalo de confianza bootstrap**
+
+```{r}
+chimp_boot_CI <- chimp_boot %>% 
+  reframe(CI               = c("lower 95", "upper 95"),
+          median_asymmetry = quantile(median_asymmetry, probs = c(0.025, 0.975)))
+
+chimp_boot_CI
+```
+
+```{r fig.width = 5, fig.height = 3.5}
+boot_hist +
+  geom_vline(xintercept = pull(chimp_boot_CI, median_asymmetry)) +
+  geom_vline(xintercept = 0, color = "red")
+```
+
+```{r include = FALSE}
+ci_low  <- round(chimp_boot_CI$median_asymmetry[1], 3)
+ci_high <- round(chimp_boot_CI$median_asymmetry[2], 3)
+```
+
+<div class="sol">
+**Interpretación:** si repitiéramos el estudio muchas veces y construyéramos un IC bootstrap del 95% en cada ocasión, aproximadamente el 95% de esos intervalos contendrían la verdadera mediana poblacional. El 95% se refiere al **procedimiento**: para *este* intervalo concreto, la mediana poblacional está dentro o no lo está; no decimos que haya un 95% de probabilidad.
+
+**Conclusión:** a partir del bootstrap con **10.000** réplicas, estimamos que la mediana de asimetría del Área de Brodmann 44 en chimpancés se encuentra entre **`r ci_low`** y **`r ci_high`** con un **95%** de confianza. Dado que el intervalo incluye 0, **no** hay evidencia estadística de asimetría lateralizada (no rechazamos $H_0$ al 5%, dos colas).
+
+**Reflexión:** que el IC incluya 0 **no demuestra que no haya asimetría**; solo indica que *no tenemos evidencia suficiente* para afirmarla. El intervalo es compatible tanto con ausencia de asimetría como con una asimetría positiva moderada (hasta ~`r ci_high`). Con solo 20 chimpancés hay que ser prudente: el IC bootstrap por percentiles tiende a ser **demasiado estrecho** (cobertura real < 95%) con muestras pequeñas, y con la mediana la distribución bootstrap es muy discreta. Lo ideal sería aumentar el tamaño muestral o usar métodos corregidos (p. ej., BCa).
+</div>
+
+<hr>
+
+# Test de permutación
+
+## 🐒🐒 Ejemplo: ¿son igual de asimétricos los chimpancés y los bonobos?
+
+#### **Paso 1: crear el conjunto de datos**
+
+```{r}
+bonobo <- data.frame(
+  species        = "Bonobo",
+  asymmetryScore = c(0.71, 0.53, 0.60, 0.38, 0.84, 0.55, 0.05, 0.69, 0.78, 0.50,
+                     0.58, 1.04, 0.44, 0.67, 0.53, 0.81, 0.21, 0.59, 0.77, 0.54)
+)
+
+monkeys <- chimp %>%
+  transmute(species = "Chimpanzee", asymmetryScore = asymmetryScore) %>%
+  bind_rows(bonobo)
+
+head(monkeys)
+```
+
+#### **Paso 2: revisar los datos**
+
+```{r}
+monkeys_summary <- monkeys %>%
+  group_by(species) %>%
+  summarize(n    = n(),
+            mean = mean(asymmetryScore))
+
+monkeys_summary
+```
+
+<div class="sol">
+Hay 20 individuos de cada especie. Los **bonobos** parecen más asimétricos (más lateralizados hacia la izquierda): su media (~0.59) es claramente mayor que la de los chimpancés (~0.19). Podría deberse al azar con muestras de 20, y eso es justamente lo que evaluaremos con el test de permutación.
+</div>
+
+#### **Paso 3: visualizar con un boxplot**
+
+```{r fig.width = 5, fig.height = 3.5}
+ggplot(monkeys, aes(x = species, y = asymmetryScore)) +
+  geom_boxplot()
+```
+
+#### **Paso 4: calcular el estadístico observado**
+
+```{r}
+baseline_difference <- monkeys_summary$mean[monkeys_summary$species == "Chimpanzee"] -
+                       monkeys_summary$mean[monkeys_summary$species == "Bonobo"]
+baseline_difference
+```
+
+<div class="sol">
+La diferencia es **negativa** (`r round(baseline_difference, 3)`): en promedio, los chimpancés tienen una asimetría menor que los bonobos, es decir, los bonobos (ficticios) están más lateralizados hacia el hemisferio izquierdo.
+</div>
+
+#### **Paso 5: generar la distribución nula con permutaciones (10000)**
+
+```{r}
+perm <- monkeys %>%
+  specify(asymmetryScore ~ species) %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 10000, type = "permute") %>%
+  calculate(stat = "diff in means", order = c("Chimpanzee", "Bonobo"))
+
+head(perm)
+nrow(perm)
+```
+
+<div class="sol">
+`perm` tiene **10.000 filas**, una por permutación. La columna `stat` contiene la **diferencia de medias (Chimpanzee − Bonobo)** calculada tras mezclar al azar las etiquetas de especie, es decir, diferencias que esperaríamos si $H_0$ fuera cierta.
+</div>
+
+#### **Paso 6: visualizar la distribución nula y dónde cae nuestro valor observado**
+
+```{r fig.width = 5, fig.height = 3.5}
+diffs_histogram_plot <- ggplot(perm, aes(x = stat)) +
+  geom_histogram(binwidth = 0.02, color = "white") +
+  labs(x = "Diferencia de medias permutada (Chimp − Bonobo)", y = "Frecuencia")
+
+diffs_histogram_plot
+```
+
+```{r fig.width = 5, fig.height = 3.5}
+g1 <- diffs_histogram_plot + 
+  geom_vline(xintercept = c(baseline_difference, -baseline_difference), 
+             linetype   = "dotted", 
+             color      = "firebrick4", 
+             linewidth  = 1) 
+
+g1
+```
+
+<div class="sol">
+Sí, nuestro valor observado (`r round(baseline_difference, 3)`) cae en el **extremo** de la distribución nula: muy pocas permutaciones dan una diferencia tan grande en valor absoluto. Esto sugiere que una diferencia así sería muy poco probable si no hubiera diferencia real entre especies.
+</div>
+
+
+#### **Paso 7: calcular el p-valor de dos colas**
+
+```{r}
+n_sims <- nrow(perm)
+
+p_value <- perm %>% 
+  filter(abs(stat) >= abs(baseline_difference)) %>%
+  nrow() / n_sims
+
+p_value
+```
+
+```{r}
+# Alternativa con infer:
+perm %>% get_p_value(obs_stat = baseline_difference, direction = "two-sided")
+```
+
+<div class="sol">
+**Conclusión:** a partir del test de permutación con **10.000** permutaciones, la diferencia de medias observada (Chimpanzee − Bonobo) fue de **`r round(baseline_difference, 3)`**. El p-valor de dos colas es **`r if (p_value == 0) "< 0.0001" else p_value`**, **menor** que 0.05, por lo que **rechazamos** la hipótesis nula: **sí** hay evidencia de que la asimetría del BA44 es distinta entre chimpancés y bonobos (recordando que los datos de bonobos son inventados).
+</div>
