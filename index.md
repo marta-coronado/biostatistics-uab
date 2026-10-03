@@ -20,6 +20,8 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Tema 6: Intervalos de confianza](T/6/9.Intervaloconfianza.html)
 - [Tema 7: Inferencia estadística](T/7/10.Inferencia.html)
 - [Tema 8: Bootstrap y test de permutación](T/8/8.html)
+- [Tema 9a: Prueba de t-test](T/9/11.TTest.html)
+- [Tema 9b: Prueba de t-test](T/10/12.TTest_pt2.html)
 
 ---
 
@@ -33,6 +35,9 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 ## 💻 Prácticas de ordenador
 - [Práctica 1: Estadística descriptiva y visualización de datos - Introducción a `R` y `ggplot2`](P/1/PracticaR.html)
 - <a href="P/1/PracticaR.Rmd" download>Descarga el documento `Rmd` de la Práctica 1 aquí</a>.
+- [Práctica 2: Bootstrap y test de permutación en `R`](P/2/practica_bootstrap.html)
+- <a href="P/2/practica_bootstrap.Rmd" download>Descarga el documento `Rmd` de la Práctica 2 aquí</a>.
+
 
 ---
 
