@@ -677,7 +677,7 @@ class: animated, fadeIn
 
 - Comprobar normalidad (test de Shapiro)
 
-- Versión no paramétrica: test de Wilcoxon
+- Versión no paramétrica: test de Mann-Whitney (Wilcoxon de suma de rangos)
 &lt;style&gt;
 .title-slide {
   background-image: url(&#39;img/1.png&#39;);
@@ -711,16 +711,23 @@ $$
 &gt; Un intervalo de confianza de una cola (con `\(t_{\alpha,\,n-1}\)`) será:
 
 .pull-left[
+
 **Límite superior:**
+
 $$
-\left(-\infty,\ \bar{x} + t_{\alpha,\,n-1}\times\frac{s}{\sqrt{n}}\right]
+\mu \le \bar{x} + t_{\alpha, n-1}\times\frac{s}{\sqrt{n}}
 $$
+
 ]
+
 .pull-right[
+
 **Límite inferior:**
+
 $$
-\left[\bar{x} - t_{\alpha,\,n-1}\times\frac{s}{\sqrt{n}},\ +\infty\right)
+\mu \ge \bar{x} - t_{\alpha, n-1}\times\frac{s}{\sqrt{n}}
 $$
+
 ]
 
 ???
@@ -734,7 +741,7 @@ class: animated, fadeIn
 ## Intervalos de confianza para la media poblacional con la distribución `t`
 
 &lt;center&gt;
-&lt;img src=&quot;img/CriticalRegion.png&quot; width=80%&gt;
+&lt;img src=&quot;img/CriticalRegion.png&quot; width=77%&gt;
 &lt;/center&gt;
 
 
@@ -1367,6 +1374,8 @@ class: animated, fadeIn
 ### Comprobar si la distribución sigue una normal
 
 - Previamente hemos aprendido a comprobar si una distribución sigue una normal **gráficamente**
+&lt;br&gt;
+
   - QQ-plots
   
 --
@@ -1443,6 +1452,117 @@ class: animated, fadeIn
 | **2 muestras independientes*** | `\(t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s^2_1/n_1 + s^2_2/n_2}}\)` | Welch-Satterthwaite | `\((\bar{x}_1 - \bar{x}_2) \pm t_{\alpha/2,\,df} \, \sqrt{s^2_1/n_1 + s^2_2/n_2}\)` |
 
 &lt;small&gt;*Fórmula de Welch (por defecto en R). Si asumimos varianzas iguales, `\(df = n_1+n_2-2\)` y se usa `\(s_p^2\)` en vez de `\(s_1^2, s_2^2\)` por separado (ver diapositivas anteriores).&lt;/small&gt;
+
+---
+class: animated, fadeIn
+
+## Versión no paramétrica: test de Mann-Whitney
+
+- El **test de Mann-Whitney** (también llamado **test de Wilcoxon de suma de rangos**) contrasta si hay diferencias entre **dos muestras independientes**.
+
+- Es la alternativa **no paramétrica** al **t-test de muestras independientes**.
+
+- Lo especial: **no requiere que los datos sigan una distribución normal**. En lugar de los valores, utiliza sus **rangos** (posiciones al ordenarlos).
+
+- Es útil cuando la muestra es **pequeña** y no podemos comprobar la normalidad, o cuando hay **valores atípicos** (*outliers*).
+
+&gt; Para **muestras pareadas**, la alternativa al t-test es el **test de Wilcoxon de rangos con signo**.
+
+---
+class: animated, fadeIn
+
+## Test de Mann-Whitney: suma de rangos
+
+.pull-left[
+
+1. **Juntamos** los valores de los dos grupos.
+
+2. Los **ordenamos** de menor a mayor y les asignamos un **rango** (1 al más pequeño). Si hay empates, se asigna el rango medio.
+
+3. **Sumamos los rangos** de cada grupo por separado (`\(R_1\)` y `\(R_2\)`).
+
+4. Calculamos el estadístico: `\(U = R_1 - \frac{n_1(n_1+1)}{2}\)`
+
+&gt; Si `\(H_0\)` es cierta, los rangos altos y bajos estarán repartidos entre los dos grupos y `\(U \approx \frac{n_1 n_2}{2}\)`. Si un grupo acumula los rangos altos (o bajos), hay evidencia contra `\(H_0\)`.
+
+]
+
+.pull-right[
+&lt;center&gt;
+&lt;!-- imagen --&gt;
+]
+
+---
+class: animated, fadeIn
+
+## Supuestos e hipótesis
+
+#### Supuestos
+
+- Necesitamos **dos muestras independientes** (p. ej., tratamiento vs. control).
+
+- Las observaciones son **independientes** entre sí.
+
+- La variable es al menos **ordinal** (se puede ordenar).
+
+- **No** es necesario que la variable siga una **distribución normal**. Si las distribuciones de los dos grupos tienen una **forma parecida**, podemos interpretar el resultado como una diferencia de **medianas**.
+
+#### Hipótesis
+
+- **Hipótesis nula (`\(H_0\)`)**: en la población, los dos grupos tienen la **misma distribución** (ninguno tiende a tener valores mayores que el otro).
+
+- **Hipótesis alternativa (`\(H_A\)`)**: en la población, los valores de un grupo **tienden a ser mayores** que los del otro.
+
+---
+class: animated, fadeIn
+
+## Test de Mann-Whitney en `R`
+
+**Ejemplo**: peso de los ratones con dieta control (`chow`) vs. dieta alta en grasa (`hf`).
+
+.pull-left[
+
+``` r
+wilcox.test(Bodyweight ~ Diet, 
+            data = mice,
+            alternative = &quot;two.sided&quot;)
+```
+
+```
+## 
+## 	Wilcoxon rank sum test with continuity correction
+## 
+## data:  Bodyweight by Diet
+## W = 64908, p-value = 4.735e-11
+## alternative hypothesis: true location shift is not equal to 0
+```
+
+
+``` r
+tapply(mice$Bodyweight, mice$Diet, median)
+```
+
+```
+##  chow    hf 
+## 26.97 29.92
+```
+]
+
+.pull-right[
+
+- `R` lo llama `W`, pero es la **U de Mann-Whitney** del grupo `chow`.
+
+- Si `\(H_0\)` fuera cierta, esperaríamos `\(U \approx \frac{n_1 n_2}{2} = \frac{448 \times 393}{2} = 88032\)`.
+
+- Obtenemos `\(W = 64908\)`, mucho menor: los ratones `chow` tienden a ocupar los rangos bajos (pesan menos).
+
+- Con p &lt; 0.05, rechazamos `\(H_0\)`: el peso de los ratones difiere según la dieta.
+
+&gt; Para **muestras pareadas** (Wilcoxon de rangos con signo) se usa la misma función con `paired = TRUE`: `wilcox.test(despues, antes, paired = TRUE)`.
+
+&gt; En la práctica, nadie hace un test de Wilcoxon a mano 😉: el test lo hace `R`. Lo importante es entender la idea de los rangos y saber interpretar la salida.
+
+]
 
 ---
 class: animated, fadeIn
