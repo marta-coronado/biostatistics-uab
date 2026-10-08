@@ -388,6 +388,20 @@ distribución concreta</strong>, con el intervalo de confianza
 <em>bootstrap</em>. Recuerda lo que vimos con los IC: <strong>si el IC
 del 95% no contiene el valor de <span class="math inline">\(H_0\)</span>, rechazamos <span class="math inline">\(H_0\)</span> al 5% (dos colas)</strong>. Aquí, el
 valor de <span class="math inline">\(H_0\)</span> es 0.</p>
+<div id="paso-0-carga-las-librerías" class="section level4">
+<h4><strong>Paso 0: carga las librerías</strong></h4>
+<p>Recuerda cargar las librerías de <code>R</code> necesarias:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(prettydoc)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">library</span>(car)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="fu">library</span>(boot)</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="fu">library</span>(infer)</span></code></pre></div>
+</div>
 <div id="paso-1-leer-los-datos" class="section level4">
 <h4><strong>Paso 1: leer los datos</strong></h4>
 <p>Lee el fichero desde este <a href="https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/2/chap19e2ChimpBrains.csv">enlace</a>,
@@ -400,16 +414,16 @@ que tiene formato .csv (<code>read.csv</code>) y encabezado
 <p>Vamos a transformar la columna del nombre de los chimpancés
 (<code>chimpName</code>) a factor, para indicar que es una variable
 categórica.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>chimp<span class="sc">$</span>chimpName <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(chimp<span class="sc">$</span>chimpName)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>chimp<span class="sc">$</span>chimpName <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(chimp<span class="sc">$</span>chimpName)</span></code></pre></div>
 </div>
 <div id="paso-2-crea-un-histograma" class="section level4">
 <h4><strong>Paso 2: crea un histograma</strong></h4>
 <p>Visualiza la distribución de la asimetría
 (<code>asymmetryScore</code>) con <code>ggplot</code> y
 <code>geom_histogram</code>. <a href="https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#26">Ejemplo</a>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># estructura del histograma:</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">ggplot</span>(dataframe, <span class="fu">aes</span>(<span class="at">x =</span> variable_en_eje_x)) <span class="sc">+</span></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># estructura del histograma:</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">ggplot</span>(dataframe, <span class="fu">aes</span>(<span class="at">x =</span> variable_en_eje_x)) <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
 <p><strong>¿Qué forma tiene la distribución? Con solo 20 datos, ¿te
 fiarías de asumir que es normal?</strong></p>
 </div>
@@ -438,8 +452,10 @@ generar una réplica bootstrap</strong></h4>
 <p>Primero, vamos a usar la función <code>sample_n()</code> para generar
 una muestra del mismo tamaño que la original.</p>
 <ul>
-<li>El muestreo será <strong>con reemplazo</strong>, es decir, cada
-observación vuelve a la bolsa después de ser seleccionada.</li>
+<li>El muestreo será <strong>con reemplazo</strong>
+(<code>replace</code>), es decir, cada observación vuelve a la bolsa
+después de ser seleccionada. El argumento <code>replace</code> puede
+tomar <code>TRUE</code> o <code>FALSE</code>.</li>
 <li>Tomamos una muestra re-muestreada del <strong>mismo tamaño</strong>
 que la muestra original, no un subconjunto más pequeño.
 <ul>
@@ -449,26 +465,26 @@ número de filas que tenemos.</li>
 </ul></li>
 </ul>
 <p>Completa los “???”:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>resampled_chimps <span class="ot">&lt;-</span> chimp  <span class="sc">%&gt;%</span> </span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="fu">sample_n</span>(<span class="at">size =</span> ???, <span class="at">replace =</span> ???)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>resampled_chimps <span class="ot">&lt;-</span> chimp  <span class="sc">%&gt;%</span> </span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="fu">sample_n</span>(<span class="at">size =</span> ???, <span class="at">replace =</span> ???)</span></code></pre></div>
 <p>Para confirmar que el re-muestreo <strong>con reemplazo</strong>
 funcionó, podemos comprobar que <strong>algunos individuos aparecen más
 de una vez</strong> y que <strong>otros no aparecen en la muestra
 re-muestreada</strong>. Ejecuta el siguiente bloque de código y
-visualiza el gráfico que genera:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>resampled_chimps                   <span class="sc">%&gt;%</span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="fu">group_by</span>(chimpName, <span class="at">.drop=</span><span class="cn">FALSE</span>)        <span class="sc">%&gt;%</span>   <span class="co"># .drop = FALSE  significa que mantenemos el conteo para los individuos con cero, en lugar de perderlos</span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="fu">tally</span>(<span class="at">sort =</span> <span class="cn">TRUE</span>)               <span class="sc">%&gt;%</span>   <span class="co"># contar cuántas veces aparece cada individuo en el remuestreo, y ordenar de mayor a menor</span></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">fct_reorder</span>(chimpName, n, <span class="at">.desc =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span>  <span class="co"># indicamos a R que queremos listar los números en orden de número de observaciones, no de 1 a n</span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>id, <span class="at">y =</span> n)) <span class="sc">+</span>      <span class="co"># configurar el ggplot</span></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span>                     <span class="co"># crear un gráfico de barras</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>   <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribución de los individuos remuestreados en nuestro bootstrap&quot;</span>,</span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Chimpancé&quot;</span>, <span class="at">y =</span> <span class="st">&quot;# veces remuestreado&quot;</span>) <span class="sc">+</span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>))</span></code></pre></div>
+visualiza el gráfico que genera (no has de modificar nada):</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>resampled_chimps                   <span class="sc">%&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="fu">group_by</span>(chimpName, <span class="at">.drop=</span><span class="cn">FALSE</span>)        <span class="sc">%&gt;%</span>   <span class="co"># .drop = FALSE  significa que mantenemos el conteo para los individuos con cero, en lugar de perderlos</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="fu">tally</span>(<span class="at">sort =</span> <span class="cn">TRUE</span>)               <span class="sc">%&gt;%</span>   <span class="co"># contar cuántas veces aparece cada individuo en el remuestreo, y ordenar de mayor a menor</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">fct_reorder</span>(chimpName, n, <span class="at">.desc =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span>  <span class="co"># indicamos a R que queremos listar los números en orden de número de observaciones, no de 1 a n</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>id, <span class="at">y =</span> n)) <span class="sc">+</span>      <span class="co"># configurar el ggplot</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span>                     <span class="co"># crear un gráfico de barras</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>   <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribución de los individuos remuestreados en nuestro bootstrap&quot;</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Chimpancé&quot;</span>, <span class="at">y =</span> <span class="st">&quot;# veces remuestreado&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>))</span></code></pre></div>
 </div>
 <div id="paso-5-estimación-a-partir-de-los-datos-remuestreados" class="section level4">
 <h4><strong>Paso 5: estimación a partir de los datos
@@ -477,8 +493,8 @@ remuestreados</strong></h4>
 reemplazo</strong> funcionó correctamente (algunos individuos aparecen
 varias veces y otros no aparecen), vamos a calcular una estimación a
 partir de estos datos remuestreados.</p>
-<p>Calcula la <strong>mediana</strong> de la asimetría usando los datos
-remuestreados (<code>resampled_chimps</code>):</p>
+<p>Calcula la <strong>mediana</strong> de la asimetría usando la tabla
+de los datos remuestreados (<code>resampled_chimps</code>):</p>
 <p><strong>¿Coincide con la mediana de la muestra original? ¿Por qué
 crees que no?</strong></p>
 </div>
@@ -489,12 +505,12 @@ crees que no?</strong></p>
 <code>rep_sample_n()</code>, que permite indicar el número de
 repeticiones (<code>rep</code>) que queremos.</p>
 <p>Completa los “???”:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">library</span>(infer)</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>many_resampled_chimps <span class="ot">&lt;-</span> chimp  <span class="sc">%&gt;%</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="fu">rep_sample_n</span>(<span class="at">size =</span>  ???, <span class="at">replace =</span> ???, <span class="at">reps =</span> ???)</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="fu">View</span>(many_resampled_chimps)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">library</span>(infer)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>many_resampled_chimps <span class="ot">&lt;-</span> chimp  <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">rep_sample_n</span>(<span class="at">size =</span>  ???, <span class="at">replace =</span> ???, <span class="at">reps =</span> ???)</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="fu">View</span>(many_resampled_chimps)</span></code></pre></div>
 <p><strong>¿Cuántas filas tiene la tabla resultante? ¿Por qué?</strong>
 (Fíjate en la columna <code>replicate</code>.)</p>
 <p><i class="fa fa-key"></i>: utiliza la función
@@ -543,22 +559,25 @@ las réplicas bootstrap, dejando fuera las réplicas más extremas, definen
 el <strong>intervalo de confianza del 95%</strong>.</p>
 <p>En R, podemos usar la función <code>quantile()</code> para encontrar
 estos <strong>puntos de corte</strong> en la distribución bootstrap. <a href="https://marta-coronado.github.io/biostatistics-uab/T/1/1.EstadisticaDescriptiva.html#47">Ejemplo</a>.</p>
+<p>La función <code>quantile</code> espera recibir en <code>x</code> un
+vector numérico y en <code>probs</code> los puntos de corte inferior y
+superior.</p>
 <p>Completa los “???”:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>chimp_boot_CI <span class="ot">&lt;-</span> chimp_boot <span class="sc">%&gt;%</span> </span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">reframe</span>(<span class="at">CI               =</span> <span class="fu">c</span>(<span class="st">&quot;lower 95&quot;</span>, <span class="st">&quot;upper 95&quot;</span>),  <span class="co"># añade una columna para indicar qué límite del intervalo de confianza estamos calculando</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>          <span class="at">median_asymmetry =</span> <span class="fu">quantile</span>(???, <span class="at">probs =</span> <span class="fu">c</span>(???, ???)))  <span class="co"># límites numéricos que separan el 95% central del resto de las réplicas bootstrap</span></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>chimp_boot_CI</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>chimp_boot_CI <span class="ot">&lt;-</span> chimp_boot <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">reframe</span>(<span class="at">CI               =</span> <span class="fu">c</span>(<span class="st">&quot;lower 95&quot;</span>, <span class="st">&quot;upper 95&quot;</span>),  <span class="co"># añade una columna para indicar qué límite del intervalo de confianza estamos calculando</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>          <span class="at">median_asymmetry =</span> <span class="fu">quantile</span>(<span class="at">x =</span> ???, <span class="at">probs =</span> <span class="fu">c</span>(???, ???)))  <span class="co"># límites numéricos que separan el 95% central del resto de las réplicas bootstrap</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>chimp_boot_CI</span></code></pre></div>
 <p>Podemos añadir estos intervalos de confianza a nuestro histograma
 anterior usando <code>geom_vline()</code> con el siguiente código. Añade
 además una línea roja en 0, el valor de <span class="math inline">\(H_0\)</span>.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># código ggplot histograma +  </span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">pull</span>(chimp_boot_CI, median_asymmetry))</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># código ggplot histograma +  </span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">pull</span>(chimp_boot_CI, median_asymmetry)) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;firebrick4&quot;</span>)</span></code></pre></div>
 <p><strong>¿Cuál es la interpretación correcta del IC anterior?</strong>
 (Pista: recuerda que el 95% es la confianza del <em>procedimiento</em>,
 no la probabilidad de que la mediana poblacional esté en este intervalo
-concreto.)</p>
-<p><strong>Completa la conclusión:</strong></p>
+concreto.). <strong>Completa la conclusión:</strong></p>
 <p>A partir del bootstrap con XXXX réplicas, estimamos que la mediana de
 asimetría del Área de Brodmann 44 en chimpancés se encuentra entre XXXX
 y XXXX con un XXXX% de confianza. Dado que el intervalo incluye 0,
@@ -613,19 +632,19 @@ respecto a los datos virtuales.</p>
 junta con los 20 chimpancés en una sola tabla, <code>monkeys</code>, con
 una columna <code>species</code> (especie) y otra
 <code>asymmetryScore</code> (asimetría).</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># 20 bonobos ficticios (valores inventados)</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>bonobo <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">species        =</span> <span class="st">&quot;Bonobo&quot;</span>,</span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">asymmetryScore =</span> <span class="fu">c</span>(<span class="fl">0.71</span>, <span class="fl">0.53</span>, <span class="fl">0.60</span>, <span class="fl">0.38</span>, <span class="fl">0.84</span>, <span class="fl">0.55</span>, <span class="fl">0.05</span>, <span class="fl">0.69</span>, <span class="fl">0.78</span>, <span class="fl">0.50</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>                     <span class="fl">0.58</span>, <span class="fl">1.04</span>, <span class="fl">0.44</span>, <span class="fl">0.67</span>, <span class="fl">0.53</span>, <span class="fl">0.81</span>, <span class="fl">0.21</span>, <span class="fl">0.59</span>, <span class="fl">0.77</span>, <span class="fl">0.54</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>)</span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co"># Chimpancés reales + bonobos ficticios</span></span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>monkeys <span class="ot">&lt;-</span> chimp <span class="sc">%&gt;%</span></span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">species =</span> <span class="st">&quot;Chimpanzee&quot;</span>, <span class="at">asymmetryScore =</span> asymmetryScore) <span class="sc">%&gt;%</span></span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>  <span class="fu">bind_rows</span>(bonobo)</span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="fu">head</span>(monkeys)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># 20 bonobos ficticios (valores inventados)</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>bonobo <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="at">species        =</span> <span class="st">&quot;Bonobo&quot;</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="at">asymmetryScore =</span> <span class="fu">c</span>(<span class="fl">0.71</span>, <span class="fl">0.53</span>, <span class="fl">0.60</span>, <span class="fl">0.38</span>, <span class="fl">0.84</span>, <span class="fl">0.55</span>, <span class="fl">0.05</span>, <span class="fl">0.69</span>, <span class="fl">0.78</span>, <span class="fl">0.50</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>                     <span class="fl">0.58</span>, <span class="fl">1.04</span>, <span class="fl">0.44</span>, <span class="fl">0.67</span>, <span class="fl">0.53</span>, <span class="fl">0.81</span>, <span class="fl">0.21</span>, <span class="fl">0.59</span>, <span class="fl">0.77</span>, <span class="fl">0.54</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>)</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co"># Chimpancés reales + bonobos ficticios</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>monkeys <span class="ot">&lt;-</span> chimp <span class="sc">%&gt;%</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">species =</span> <span class="st">&quot;Chimpanzee&quot;</span>, <span class="at">asymmetryScore =</span> asymmetryScore) <span class="sc">%&gt;%</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>  <span class="fu">bind_rows</span>(bonobo)</span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="fu">head</span>(monkeys)</span></code></pre></div>
 </div>
 <div id="paso-2-revisar-los-datos" class="section level4">
 <h4><strong>Paso 2: revisar los datos</strong></h4>
@@ -642,8 +661,8 @@ podría deberse al azar?</strong></p>
 <p>Completa el siguiente código para hacer un boxplot de la asimetría
 (<code>y</code>=<code>asymmetryScore</code>) por especie
 (<code>x</code>=<code>species</code>):</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">ggplot</span>(monkeys, <span class="fu">aes</span>(<span class="at">x =</span> ???, <span class="at">y =</span> ???)) <span class="sc">+</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>() </span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">ggplot</span>(???, <span class="fu">aes</span>(<span class="at">x =</span> ???, <span class="at">y =</span> ???)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>() </span></code></pre></div>
 </div>
 <div id="paso-4-calcular-el-estadístico-observado" class="section level4">
 <h4><strong>Paso 4: calcular el estadístico observado</strong></h4>
@@ -652,9 +671,9 @@ medias entre las dos especies:</p>
 <p><span class="math display">\[
 \text{estadístico observado} = \bar{x}_{Chimp} - \bar{x}_{Bonobo}
 \]</span></p>
-<p>Guarda la diferencia (Chimp − Bonobo) en el objeto
+<p>Guarda la diferencia (Chimp - Bonobo) en el objeto
 <code>baseline_difference</code>. Puedes utilizar los valores calculados
-anteriormente.</p>
+en el paso 2.</p>
 <p><strong>¿Qué signo tiene la diferencia? ¿Qué significa?</strong></p>
 </div>
 <div id="paso-5-generar-la-distribución-nula-con-permutaciones-10000" class="section level4">
@@ -677,15 +696,15 @@ calcula la diferencia de medias en cada réplica, en el mismo orden que
 nuestro estadístico observado.</li>
 </ul>
 <p>Ejecuta el código:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">library</span>(infer)</span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>perm <span class="ot">&lt;-</span> monkeys <span class="sc">%&gt;%</span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="fu">specify</span>(asymmetryScore <span class="sc">~</span> species) <span class="sc">%&gt;%</span></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="fu">hypothesize</span>(<span class="at">null =</span> <span class="st">&quot;independence&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>  <span class="fu">generate</span>(<span class="at">reps =</span> <span class="dv">10000</span>, <span class="at">type =</span> <span class="st">&quot;permute&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>  <span class="fu">calculate</span>(<span class="at">stat =</span> <span class="st">&quot;diff in means&quot;</span>, <span class="at">order =</span> <span class="fu">c</span>(<span class="st">&quot;Chimpanzee&quot;</span>, <span class="st">&quot;Bonobo&quot;</span>))</span>
-<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="fu">head</span>(perm)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">library</span>(infer)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>perm <span class="ot">&lt;-</span> monkeys <span class="sc">%&gt;%</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="fu">specify</span>(asymmetryScore <span class="sc">~</span> species) <span class="sc">%&gt;%</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="fu">hypothesize</span>(<span class="at">null =</span> <span class="st">&quot;independence&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  <span class="fu">generate</span>(<span class="at">reps =</span> <span class="dv">10000</span>, <span class="at">type =</span> <span class="st">&quot;permute&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  <span class="fu">calculate</span>(<span class="at">stat =</span> <span class="st">&quot;diff in means&quot;</span>, <span class="at">order =</span> <span class="fu">c</span>(<span class="st">&quot;Chimpanzee&quot;</span>, <span class="st">&quot;Bonobo&quot;</span>))</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="fu">head</span>(perm)</span></code></pre></div>
 <p><strong>¿Cuántas filas tiene <code>perm</code>? ¿Qué contiene la
 columna <code>stat</code>?</strong></p>
 </div>
@@ -708,13 +727,13 @@ observada (<code>baseline_difference</code>) y otra en su valor
 simétrico (<code>-baseline_difference</code>), porque nuestra prueba es
 de <strong>dos colas</strong>. Guarda el resultado en
 <code>g1</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>g1 <span class="ot">&lt;-</span> diffs_histogram_plot <span class="sc">+</span> </span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">c</span>(baseline_difference, <span class="sc">-</span>baseline_difference), </span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>             <span class="at">linetype   =</span> <span class="st">&quot;dotted&quot;</span>, </span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>             <span class="at">color      =</span> <span class="st">&quot;firebrick4&quot;</span>, </span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>             <span class="at">linewidth  =</span> <span class="dv">1</span>) </span>
-<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>g1</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>g1 <span class="ot">&lt;-</span> diffs_histogram_plot <span class="sc">+</span> </span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">c</span>(baseline_difference, <span class="sc">-</span>baseline_difference), </span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>             <span class="at">linetype   =</span> <span class="st">&quot;dotted&quot;</span>, </span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>             <span class="at">color      =</span> <span class="st">&quot;firebrick4&quot;</span>, </span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>             <span class="at">linewidth  =</span> <span class="dv">1</span>) </span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>g1</span></code></pre></div>
 <p><strong>¿Es nuestro dato extremo respecto a la distribución nula?
 ¿Qué sugiere esto?</strong></p>
 </div>
@@ -725,13 +744,13 @@ datos simulados que son tan extremos o más que nuestro dato observado,
 en cualquiera de las dos direcciones</strong>. Por eso usamos el
 <strong>valor absoluto</strong> de la diferencia. Completa los
 “???”:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="fu">nrow</span>(perm)</span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> perm <span class="sc">%&gt;%</span> </span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">abs</span>(stat) <span class="sc">&gt;=</span> <span class="fu">abs</span>(???)) <span class="sc">%&gt;%</span></span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="fu">nrow</span>() <span class="sc">/</span> n_sims</span>
-<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>p_value</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="fu">nrow</span>(perm)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> perm <span class="sc">%&gt;%</span> </span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">abs</span>(stat) <span class="sc">&gt;=</span> <span class="fu">abs</span>(???)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>  <span class="fu">nrow</span>() <span class="sc">/</span> n_sims</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>p_value</span></code></pre></div>
 <p><span class="math display">\[
 p\text{-valor} = \frac{\#\{|\text{diff}_{perm}| \geq
 |\text{diff}_{obs}|\}}{n_{perm}}
@@ -741,9 +760,9 @@ p\text{-valor} = \frac{\#\{|\text{diff}_{perm}| \geq
 <span class="math inline">\(p = 0\)</span>.</p>
 </blockquote>
 <p><strong>Completa la conclusión:</strong></p>
-<p>A partir del test de permutación con XXXX permutaciones, la
-diferencia de medias observada (Chimpanzee - Bonobo) fue de XXXX. El
-p-valor de dos colas es XXXX, [menor/mayor] que 0.05, por lo que
+<p>La diferencia de medias observada (Chimpanzee - Bonobo) fue de XXXX.
+A partir del test de permutación con XXXX permutaciones, hemos obtenido
+un p-valor de dos colas. Como es XXXX, [menor/mayor] que 0.05,
 [rechazamos/no rechazamos] la hipótesis nula: [sí/no] hay evidencia de
 que la asimetría del BA44 es distinta entre chimpancés y bonobos.</p>
 </div>

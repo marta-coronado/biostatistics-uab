@@ -114,6 +114,23 @@ Los datos están disponibles en: https://raw.githubusercontent.com/marta-coronad
 
 Vamos a contestarla **sin usar ninguna fórmula ni asumir una distribución concreta**, con el intervalo de confianza *bootstrap*. Recuerda lo que vimos con los IC: **si el IC del 95% no contiene el valor de $H_0$, rechazamos $H_0$ al 5% (dos colas)**. Aquí, el valor de $H_0$ es 0.
 
+#### **Paso 0: carga las librerías**
+Recuerda cargar las librerías de `R` necesarias:
+
+```{r}
+library(dplyr)
+library(tibble)
+library(ggplot2)
+library(prettydoc)
+library(data.table)
+library(ggpubr)
+library(car)
+library(boot)
+library(tidyverse)
+library(infer)
+```
+
+
 #### **Paso 1: leer los datos**
 Lee el fichero desde este [enlace](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/2/chap19e2ChimpBrains.csv), que tiene formato .csv (`read.csv`) y encabezado (`header=TRUE`), y guárdalo en un objeto que se llame `chimp`.
 
@@ -163,7 +180,7 @@ Esta es solo una estimación basada en *nuestra* muestra. No podemos conocer el 
 
 Primero, vamos a usar la función `sample_n()` para generar una muestra del mismo tamaño que la original.
 
-- El muestreo será **con reemplazo**, es decir, cada observación vuelve a la bolsa después de ser seleccionada.
+- El muestreo será **con reemplazo** (`replace`), es decir, cada observación vuelve a la bolsa después de ser seleccionada. El argumento `replace` puede tomar `TRUE` o `FALSE`.
 - Tomamos una muestra re-muestreada del **mismo tamaño** que la muestra original, no un subconjunto más pequeño.
   - Para obtener el tamaño de la muestra original, podemos usar la función `nrow` sobre la tabla de datos, ya que contará el número de filas que tenemos.
 
@@ -177,7 +194,7 @@ resampled_chimps <- chimp  %>%
 
 ```
 
-Para confirmar que el re-muestreo **con reemplazo** funcionó, podemos comprobar que **algunos individuos aparecen más de una vez** y que **otros no aparecen en la muestra re-muestreada**. Ejecuta el siguiente bloque de código y visualiza el gráfico que genera:
+Para confirmar que el re-muestreo **con reemplazo** funcionó, podemos comprobar que **algunos individuos aparecen más de una vez** y que **otros no aparecen en la muestra re-muestreada**. Ejecuta el siguiente bloque de código y visualiza el gráfico que genera (no has de modificar nada):
 
 ```{r eval = FALSE, fig.width = 5, fig.height = 3.5}
 library(ggplot2)
@@ -198,7 +215,7 @@ resampled_chimps                   %>%
 
 Ahora que hemos verificado que el remuestreo **con reemplazo** funcionó correctamente (algunos individuos aparecen varias veces y otros no aparecen), vamos a calcular una estimación a partir de estos datos remuestreados.
 
-Calcula la **mediana** de la asimetría usando los datos remuestreados (`resampled_chimps`):
+Calcula la **mediana** de la asimetría usando la tabla de los datos remuestreados (`resampled_chimps`):
 
 ```{r}
 
@@ -262,12 +279,14 @@ Por ejemplo, los **límites que abarcan el 95% central** de las réplicas bootst
 
 En R, podemos usar la función `quantile()` para encontrar estos **puntos de corte** en la distribución bootstrap. [Ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/1/1.EstadisticaDescriptiva.html#47).
 
+La función `quantile` espera recibir en `x` un vector numérico y en `probs` los puntos de corte inferior y superior.
+
 Completa los "???":
 
 ```{r eval = F}
 chimp_boot_CI <- chimp_boot %>% 
   reframe(CI               = c("lower 95", "upper 95"),  # añade una columna para indicar qué límite del intervalo de confianza estamos calculando
-          median_asymmetry = quantile(???, probs = c(???, ???)))  # límites numéricos que separan el 95% central del resto de las réplicas bootstrap
+          median_asymmetry = quantile(x = ???, probs = c(???, ???)))  # límites numéricos que separan el 95% central del resto de las réplicas bootstrap
 
 chimp_boot_CI
 ```
@@ -276,12 +295,11 @@ Podemos añadir estos intervalos de confianza a nuestro histograma anterior usan
 
 ```{r eval = F, fig.width = 5, fig.height = 3.5}
 # código ggplot histograma +  
-  geom_vline(xintercept = pull(chimp_boot_CI, median_asymmetry))
+  geom_vline(xintercept = pull(chimp_boot_CI, median_asymmetry)) +
+  geom_vline(xintercept = 0, color = "firebrick4")
 ```
 
-**¿Cuál es la interpretación correcta del IC anterior?** (Pista: recuerda que el 95% es la confianza del *procedimiento*, no la probabilidad de que la mediana poblacional esté en este intervalo concreto.)
-
-**Completa la conclusión:**
+**¿Cuál es la interpretación correcta del IC anterior?** (Pista: recuerda que el 95% es la confianza del *procedimiento*, no la probabilidad de que la mediana poblacional esté en este intervalo concreto.). **Completa la conclusión:**
 
 A partir del bootstrap con XXXX réplicas, estimamos que la mediana de asimetría del Área de Brodmann 44 en chimpancés se encuentra entre XXXX y XXXX con un XXXX% de confianza. Dado que el intervalo incluye 0, [sí/no] hay evidencia estadística de asimetría lateralizada.
 
@@ -346,7 +364,7 @@ Completa el siguiente código para hacer un boxplot de la asimetría (`y`=`asymm
 
 ```{r eval = F, fig.width = 5, fig.height = 3.5}
 
-ggplot(monkeys, aes(x = ???, y = ???)) +
+ggplot(???, aes(x = ???, y = ???)) +
     geom_boxplot() 
 ```
 
@@ -357,7 +375,7 @@ $$
 \text{estadístico observado} = \bar{x}_{Chimp} - \bar{x}_{Bonobo}
 $$
 
-Guarda la diferencia (Chimp − Bonobo) en el objeto `baseline_difference`. Puedes utilizar los valores calculados anteriormente.
+Guarda la diferencia (Chimp - Bonobo) en el objeto `baseline_difference`. Puedes utilizar los valores calculados en el paso 2.
 
 ```{r}
 
@@ -416,6 +434,7 @@ g1
 
 **¿Es nuestro dato extremo respecto a la distribución nula? ¿Qué sugiere esto?**
 
+
 #### **Paso 7: calcular el p-valor de dos colas**
 Para obtener el p-valor exacto, necesitamos la **proporción de datos simulados que son tan extremos o más que nuestro dato observado, en cualquiera de las dos direcciones**. Por eso usamos el **valor absoluto** de la diferencia. Completa los "???":
 
@@ -439,4 +458,4 @@ $$
 
 **Completa la conclusión:**
 
-A partir del test de permutación con XXXX permutaciones, la diferencia de medias observada (Chimpanzee - Bonobo) fue de XXXX. El p-valor de dos colas es XXXX, [menor/mayor] que 0.05, por lo que [rechazamos/no rechazamos] la hipótesis nula: [sí/no] hay evidencia de que la asimetría del BA44 es distinta entre chimpancés y bonobos.
+La diferencia de medias observada (Chimpanzee - Bonobo) fue de XXXX. A partir del test de permutación con XXXX permutaciones, hemos obtenido un p-valor de dos colas. Como es XXXX, [menor/mayor] que 0.05, [rechazamos/no rechazamos] la hipótesis nula: [sí/no] hay evidencia de que la asimetría del BA44 es distinta entre chimpancés y bonobos.

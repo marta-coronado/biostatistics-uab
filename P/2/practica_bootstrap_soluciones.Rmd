@@ -169,7 +169,7 @@ chimp_boot_CI
 ```{r fig.width = 5, fig.height = 3.5}
 boot_hist +
   geom_vline(xintercept = pull(chimp_boot_CI, median_asymmetry)) +
-  geom_vline(xintercept = 0, color = "red")
+  geom_vline(xintercept = 0, color = "firebrick4")
 ```
 
 ```{r include = FALSE}
