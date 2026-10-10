@@ -246,14 +246,15 @@ class: animated, fadeIn
 2. Tamaño de efecto
 3. Conceptos de potencia estadística
 4. ¿De qué depende la potencia?
-5. Análisis de potencia: ¿qué *n* necesito?
+5. Medir el tamaño de efecto: Cohen's *d*
+6. Análisis de potencia: ¿qué *n* necesito?
 ]
 
 .pull-right[
 **Al terminar sabrás:**
 
 - por qué un p-valor no dice si un efecto importa
-- calcular e interpretar un tamaño de efecto (Cohen's *d*, OR)
+- calcular e interpretar un tamaño de efecto (Cohen's *d*)
 - qué es la potencia y de qué depende
 - calcular el tamaño de muestra de un diseño sencillo
 ]
@@ -280,7 +281,7 @@ Un estudio sobre un nuevo fármaco para infartos muestra: **p < 0.001**
 
 - El efecto sea muy importante
 - El efecto sea útil en la vida real
-- El efecto sea "real sin ninguna duda"
+- El efecto sea real
 ]
 
 ---
@@ -312,6 +313,8 @@ class: animated, fadeIn
 - El p-valor responde *"¿un efecto tan extremo podría aparecer por azar?"*
 - El tamaño de efecto responde *"¿el efecto es pequeño, moderado o grande?"*
 
+<br>
+
 Se expresa en unidades interpretables:
 
 - diferencias estandarizadas (Cohen's *d*)
@@ -328,103 +331,6 @@ class: animated, fadeIn
 - **Base para decidir:** en biología, medicina o ciencias sociales guía si una intervención es útil, relevante o coste-efectiva
 - **Permite planificar estudios:** la potencia requiere un tamaño de efecto esperado; sin él no se puede calcular un *n* adecuado
 - **Es estable y generalizable:** no depende fuertemente de *n*; refleja la estructura real del fenómeno, no el azar de la muestra
-
----
-class: animated, fadeIn
-
-## Ejemplo intuitivo
-
-.pull-left[
-**Escenario:** diferencia real entre grupos = 0.1 SD (muy pequeña)
-
-- Estudio A: *n* = 10 por grupo → p ≈ 0.8 (no significativo)
-- Estudio B: *n* = 10 000 por grupo → p < 0.0001 (muy significativo)
-
-Pero en ambos casos el tamaño de efecto es el mismo: **d = 0.1**
-
-> El p-valor cambia radicalmente con *n*. El tamaño de efecto **no**: describe el fenómeno biológico.
-]
-
-.pull-right[
-```{r fig-d01, echo=FALSE, fig.height=3.5, fig.width=6}
-fig_solape(mu_esp = 24.8, mu_nor = 25.2, sd = 4)
-```
-]
-
----
-class: animated, fadeIn
-
-## Tamaño de efecto: Cohen's *d*
-
-.pull-left[
-$$d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}$$
-
-donde $s_p$ es la desviación típica combinada (*pooled*)
-
-**Ejemplo:** diferencia de medias = 10 y $s_p$ = 6.5
-
-$$d = \frac{10}{6.5} \approx 1.5$$
-]
-
-.pull-right[
-```{r fig-d15, echo=FALSE, fig.height=3.5, fig.width=6}
-fig_solape(mu_esp = 20, mu_nor = 30, sd = 6.5)
-```
-]
-
----
-class: animated, fadeIn
-
-## Cohen's *d*: regla de oro vs. contexto
-
-.pull-left[
-**Regla de Cohen (guía rápida)**
-
-- d < 0.2 → trivial
-- 0.2 ≤ d < 0.5 → pequeño
-- 0.5 ≤ d < 0.8 → medio
-- d ≥ 0.8 → grande
-]
-
-.pull-right[
-⚠️ **Advertencia**
-
-No caigamos en la misma trampa que con los p-valores: no categorices el efecto en "pequeño / medio / grande" de forma rígida.
-
-La relevancia práctica depende del contexto, el coste y el impacto.
-]
-
----
-class: animated, fadeIn
-
-## Cómo interpretar el tamaño de efecto: ¡todo es relativo!
-
-1. **Investigación previa**
-    - Comparar con estudios anteriores: si lo habitual es *d* = 0.5 y tu intervención logra *d* = 1, el efecto es enorme
-2. **Expectativas teóricas**
-    - Según la teoría, ¿qué tamaño de efecto es razonable? En trastornos difíciles de tratar, un efecto medio ya se considera éxito
-3. **Relevancia práctica**
-    - Un efecto pequeño puede ser muy importante si es barato, fácil de aplicar o impacta a muchas personas
-    - Ej.: la aspirina → efecto pequeño, beneficio enorme
-
----
-class: animated, fadeIn
-
-## Odds ratio (OR): tablas de contingencia 2x2
-
-- **Qué mide:** compara las *odds* (probabilidades relativas) del evento entre dos grupos
-- **Aplicación típica:** medicina, epidemiología, psicología clínica, genética; ideal para ensayos clínicos y estudios caso-control
-- **Interpretación:** OR = 1 → sin efecto; OR < 1 → menos odds del evento; OR > 1 → más odds
-
-```{r or-ejemplo, echo=TRUE}
-# Ejemplo ilustrativo (datos inventados): infarto según tratamiento
-tabla <- matrix(c(30, 70,    # fármaco: 30 con infarto, 70 sin infarto
-                  45, 55),   # placebo: 45 con infarto, 55 sin infarto
-                nrow = 2, byrow = TRUE,
-                dimnames = list(Grupo = c("Fármaco", "Placebo"), Infarto = c("Sí", "No")))
-tabla
-(tabla[1, 1] / tabla[1, 2]) / (tabla[2, 1] / tabla[2, 2])   # odds ratio ≈ 0.52
-```
 
 <!-- ========================================================= -->
 <!-- BLOQUE 3: CONCEPTOS DE POTENCIA                            -->
@@ -586,7 +492,7 @@ class: animated, fadeIn
 
 .pull-left[
 - Ya vimos este esquema en el tema de inferencia
-- Ahora podemos leerlo también en clave de **potencia**: la potencia es el área bajo $H_a$ a la derecha de *c*, es decir, $1-\beta$
+- Ahora podemos leerlo también en clave de **potencia**: la potencia es el área bajo $H_A$ a la derecha de *c*, es decir, $1-\beta$
 ]
 
 .pull-right[
@@ -639,7 +545,7 @@ ggplot(df, aes(x)) +
 ```
 ]
 
-**Compromiso:** si movemos *c* a la derecha, α baja pero β sube (y la potencia baja). La única forma de reducir β **sin subir α** es aumentar *n* o el tamaño de efecto — que es justo lo que veremos ahora.
+**Compromiso:** si movemos *c* a la derecha, α baja pero β sube (y la potencia baja). La única forma de reducir β **sin subir α** es aumentar *n* o el tamaño de efecto.
 
 ---
 class: animated, fadeIn
@@ -692,6 +598,69 @@ class: animated, fadeIn
 - Esto se refiere a la probabilidad de cometer **errores de tipo II** o falsos negativos (β); la potencia es 1 − β
 - ¿Cómo determinamos qué tamaño de muestra no es demasiado grande (costoso a nivel humano y experimental), ni demasiado pequeño (como para no detectar el efecto deseado)?
 
+> Para responder, primero necesitamos resumir en un número cuánto solapan las distribuciones: el **tamaño de efecto**
+
+<!-- ========================================================= -->
+<!-- MEDIR EL TAMAÑO DE EFECTO: COHEN'S d         -->
+<!-- ========================================================= -->
+
+---
+class: animated, fadeIn
+
+## Tamaño de efecto: Cohen's *d*
+
+.pull-left[
+$$d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}$$
+
+donde $s_p$ es la desviación típica combinada (*pooled*)
+
+**Ejemplo:** diferencia de medias = 10 y $s_p$ = 6.5
+
+$$d = \frac{10}{6.5} \approx 1.5$$
+]
+
+.pull-right[
+```{r fig-d15, echo=FALSE, fig.height=3.5, fig.width=6}
+fig_solape(mu_esp = 20, mu_nor = 30, sd = 6.5)
+```
+]
+
+---
+class: animated, fadeIn
+
+## Cohen's *d*: regla de oro vs. contexto
+
+.pull-left[
+**Regla de Cohen (guía rápida)**
+
+- d < 0.2 → trivial
+- 0.2 ≤ d < 0.5 → pequeño
+- 0.5 ≤ d < 0.8 → medio
+- d ≥ 0.8 → grande
+]
+
+.pull-right[
+⚠️ **Advertencia**
+
+No caigamos en la misma trampa que con los p-valores: no categorices el efecto en "pequeño / medio / grande" de forma rígida.
+
+La relevancia práctica depende del contexto, el coste y el impacto.
+]
+
+---
+class: animated, fadeIn
+
+## Cómo interpretar el tamaño de efecto: ¡todo es relativo!
+
+1. **Investigación previa**
+    - Comparar con estudios anteriores: si lo habitual es *d* = 0.5 y tu intervención logra *d* = 1, el efecto es enorme
+2. **Expectativas teóricas**
+    - Según la teoría, ¿qué tamaño de efecto es razonable? En trastornos difíciles de tratar, un efecto medio ya se considera éxito
+3. **Relevancia práctica**
+    - Un efecto pequeño puede ser muy importante si es barato, fácil de aplicar o impacta a muchas personas
+    - Ej.: la aspirina → efecto pequeño, beneficio enorme
+
+
 <!-- ========================================================= -->
 <!-- BLOQUE 5: ANÁLISIS DE POTENCIA                             -->
 <!-- ========================================================= -->
@@ -701,10 +670,23 @@ class: animated, fadeIn
 
 ## Análisis de potencia
 
-- ¿Qué probabilidad tenemos de rechazar la hipótesis nula cuando la alternativa es realmente cierta? (es decir, ¿cuál es la probabilidad de detectar un efecto real?)
-- Un análisis de potencia nos dirá cuántas medidas tenemos que coger para tener una buena potencia
+Ya sabemos **medir** el tamaño de efecto. Volvemos a la pregunta: ¿qué *n* necesito?
 
 > Un análisis de potencia determina qué tamaño de muestra asegura una probabilidad alta de rechazar correctamente la hipótesis nula de que no hay diferencias entre los dos grupos
+
+--
+
+.pull-left[
+Relaciona **cuatro** cantidades:
+
+- Significancia **α**
+- **Potencia** (1 − β)
+- **Tamaño de efecto** (*d*)
+- Tamaño de muestra ***n***
+
+]
+
+
 
 ---
 class: animated, fadeIn
@@ -757,24 +739,29 @@ fig_potencia_n(d = 1.5)
 ---
 class: animated, fadeIn
 
-## Evitar el p-hacking
+## ¿Cómo cambian el efecto, la desviación y *n* la potencia?
 
-- **p-hacking:** añadir alguna muestra más hasta que salga significativo
-- Hay que saber el tamaño de la muestra **de antemano**: por eso el análisis de potencia se hace antes del experimento
-
----
-class: animated, fadeIn
-
-## Juego: ¿cómo cambian el efecto, la desviación y *n* la potencia?
-
-<https://dce85.shinyapps.io/power_n/>
+<https://marta-coronado.shinyapps.io/power_n/>
 
 ---
 class: animated, fadeIn
 
 ## Resumen
 
-- Un p-valor pequeño no dice si el efecto **importa**: hace falta un **tamaño de efecto** (Cohen's *d*, OR)
+- Un p-valor pequeño no dice si el efecto **importa**: hace falta un **tamaño de efecto** (Cohen's *d*)
 - **Potencia** = probabilidad de rechazar H0 cuando hay una diferencia real (1 − β)
 - Depende del **solapamiento** entre distribuciones (diferencia de medias y desviación típica) y del **tamaño de muestra**
 - Se decide **a priori**: potencia (0.8), α (0.05) y tamaño de efecto esperado → *n*
+
+---
+class: animated, fadeIn
+
+## Contacto
+
+<div style="margin-top: 20vh; text-align:center;">
+
+| Marta Coronado Zamora | David Castellano | 
+|:-:|:-:|
+| <a href="mailto:marta.coronado@uab.cat"><i class="fa fa-paper-plane fa-fw"></i> marta.coronado@uab.cat</a> | <a href="mailto:david.castellano@uab.cat"><i class="fa fa-paper-plane fa-fw"></i>&nbsp; david.castellano@uab.cat</a> | 
+| <a href="https://bsky.app/profile/geneticament.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @geneticament.bsky.social</a> |                 <a href="https://bsky.app/profile/castellanoed.bsky.social"><i class="fab fa-bluesky fa-fw"></i>&nbsp; @castellanoed.bsky.social</a> |
+| <a href="https://www.uab.cat"><i class="fa fa-map-marker fa-fw"></i>&nbsp; Universitat Autònoma de Barcelona</a> |    <a href="https://gutengroup.mcb.arizona.edu/"> <i class="fa fa-map-marker fa-fw"></i>&nbsp; University of Arizona</a> |
