@@ -717,6 +717,35 @@ fig_potencia_n(d = 1.5)
 ---
 class: animated, fadeIn
 
+## Al revés: ¿qué potencia tiene mi experimento?
+
+Si el *n* ya está fijado (un experimento ya hecho, o un presupuesto limitado), despejamos $Z_\beta$ de la misma relación:
+
+.pull-left[
+$$Z_\beta = d\,\sqrt{\frac{n}{2}} - Z_{\alpha/2} \qquad\qquad \text{Potencia} = P(Z \le Z_\beta)$$
+
+**Ejemplo:** *d* = 0.8, *n* = 20 por grupo, α = 0.05
+
+$$Z_\beta = 0.8 \times \sqrt{\frac{20}{2}} - 1.96 = 2.53 - 1.96 = 0.57$$
+
+$$\text{Potencia} = P(Z \le 0.57) = 0.72$$
+
+> Con 20 por grupo no llegamos al 80%
+]
+
+.pull-right[
+```{r calc-pot, echo=TRUE}
+power.t.test(n = 20, delta = 0.8, sd = 1,
+             sig.level = 0.05)$power
+```
+
+- Ahora damos `n` y no damos `power`: `R` calcula la potencia
+- `R` da 0.69, algo menos que a mano: igual que con *n*, la *t* es un poco más exigente que la normal con muestras pequeñas
+]
+
+---
+class: animated, fadeIn
+
 ## ¿Cómo cambian el efecto, la desviación y *n* la potencia?
 
 <https://marta-coronado.shinyapps.io/power_n/>

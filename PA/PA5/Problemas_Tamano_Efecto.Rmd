@@ -1,0 +1,217 @@
+---
+title: "Problemas de tamaño del efecto y potencia"
+author: "Bioestadística"
+date: "Octubre 2026"
+output:
+  html_document:
+    self_contained: true
+    theme: simplex
+    css: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css
+    toc: yes
+    toc_float:
+      collapsed: true
+fontsize: 14pt
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+# Load useful packages
+library(rmdformats)   # for extra formatting if needed
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+```{=html}
+<style>
+body {
+  font-size: 14px;   /* un poco más grande */
+  color: black;      /* asegura texto en negro */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #D9230F;        /* títulos en rojo */
+}
+
+h3, h4, h5, h6 {
+  color: black;        /* títulos en rojo */
+}
+
+h3 {
+  font-size: 1em;   /* tamaño igual al texto normal */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+
+.handwritten {
+  font-family: 'Handlee', monospace;
+  font-size: 1.1em;
+}
+
+.respuesta {
+  background-color: #F0F0F0;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  line-height: 1.2;
+}
+</style>
+```
+
+---
+
+## 🌽 Problema 1 - El maíz de Darwin
+
+En *The Effects of Cross and Self Fertilisation in the Vegetable Kingdom* (1876), Charles Darwin quiso comprobar si las plantas obtenidas por **fecundación cruzada** crecían más que las obtenidas por **autofecundación** (es decir, si había **depresión por endogamia**). Cultivó **15 plantas** de maíz (*Zea mays*) de cada tipo y midió su altura en pulgadas:
+
+| | Fecundación cruzada | Autofecundación |
+|---|:-:|:-:|
+| *n* | 15 | 15 |
+| Media (pulgadas) | 20.19 | 17.58 |
+| Desviación típica | 3.62 | 2.05 |
+
+Un t-test de muestras independientes da **p = 0.02**.
+
+### a) ¿Cuál es la diferencia de medias entre los dos grupos?
+### b) Calcula la desviación típica combinada $s_p$ y la *d* de Cohen. ¿Es un efecto pequeño, medio o grande?
+### c) Queremos repetir el experimento. ¿Cuántas plantas por grupo necesitamos para una potencia del 80% (α = 0.05)? ¿Y del 90%?
+### d) Darwin usó 15 plantas por grupo y obtuvo un resultado significativo. Con lo que has calculado en (c), ¿era su experimento suficientemente grande? ¿Tuvo algo de suerte?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Caso                              | Resultado |
+|------------------------------------|--------------:|
+| (a) Diferencia de medias | 2.61 pulgadas |
+| (b) $s_p$ / *d* | 2.94 / 0.89 (grande) |
+| (c) *n* para potencia 80% / 90% | 20 / 27 por grupo |
+| (d) | No del todo: con 15 plantas la potencia era menor del 80%. Aunque el efecto es grande, Darwin tuvo algo de suerte |
+
+</details>
+
+
+## 🐭 Problema 2 - Ratones con dieta alta en grasa
+
+Volvemos a los datos de ratones que usamos en clase: el peso corporal (en gramos) de ratones alimentados con dieta control (`chow`) o con dieta alta en grasa (`hf`). Esta vez separamos los datos por sexo:
+
+| | Hembras `chow` | Hembras `hf` | Machos `chow` | Machos `hf` |
+|---|:-:|:-:|:-:|:-:|
+| *n* | 225 | 200 | 223 | 193 |
+| Media (g) | 23.89 | 26.27 | 30.96 | 34.85 |
+| Desviación típica (g) | 3.42 | 5.08 | 4.43 | 5.59 |
+
+Los t-tests dan **p = 2.2 × 10⁻⁸** en hembras y **p = 2.6 × 10⁻¹⁴** en machos.
+
+### a) Los dos p-valores son extremadamente pequeños. ¿Significa eso que la dieta tiene un efecto enorme sobre el peso?
+### b) Calcula la *d* de Cohen en hembras y en machos. ¿En qué sexo es mayor el efecto de la dieta?
+### c) Con más de 200 ratones por grupo, la potencia del estudio es prácticamente 1. ¿Cuántos ratones por grupo habrían bastado para tener una potencia del 80% en cada sexo?
+### d) Un laboratorio pequeño solo puede usar **5 ratones por grupo**. Con lo que has calculado en (c), ¿esperas que detecte el efecto de la dieta?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Caso                              | Resultado |
+|------------------------------------|--------------:|
+| (a) | No: el p-valor es pequeño sobre todo porque *n* es muy grande. Para saber si el efecto es grande hay que calcular el tamaño de efecto |
+| (b) Hembras: $s_p$ / *d* | 4.28 / 0.56 (medio) |
+| (b) Machos: $s_p$ / *d* | 5.00 / 0.78 (medio, casi grande) |
+| (c) *n* para potencia 80% (hembras / machos) | 50 / 26 por grupo |
+| (d) | Probablemente no: 5 ratones por grupo está muy lejos de los 50 (hembras) o 26 (machos) necesarios. Lo más probable es un falso negativo |
+
+</details>
+
+
+## 🌱 Problema 3 - "No significativo" no quiere decir "sin efecto"
+
+En un experimento clásico (Dobson, 1983) se comparó el **peso seco** (en g) de plantas cultivadas en condiciones control y con dos tratamientos distintos, con **10 plantas por grupo**:
+
+| | Control | Tratamiento 1 | Tratamiento 2 |
+|---|:-:|:-:|:-:|
+| *n* | 10 | 10 | 10 |
+| Media (g) | 5.03 | 4.66 | 5.53 |
+| Desviación típica (g) | 0.58 | 0.79 | 0.44 |
+
+Al comparar cada tratamiento con el control, se obtiene **p = 0.25** para el tratamiento 1 y **p = 0.047** para el tratamiento 2.
+
+### a) Un estudiante concluye: *"el tratamiento 1 no tiene ningún efecto sobre el peso de las plantas"*. Calcula la *d* de Cohen del tratamiento 1 frente al control. ¿Estás de acuerdo con el estudiante?
+### b) ¿Cuántas plantas por grupo harían falta para detectar ese efecto con una potencia del 80% (α = 0.05)? ¿Era suficiente con 10?
+### c) Repite los apartados (a) y (b) para el tratamiento 2. ¿Por qué con el mismo *n* uno sale significativo y el otro no?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Caso                              | Resultado |
+|------------------------------------|--------------:|
+| (a) Tratamiento 1: $s_p$ / *d* | 0.69 / 0.53 (medio) |
+| (a) ¿De acuerdo? | No: el efecto estimado es medio. Simplemente, el experimento no tenía potencia suficiente para detectarlo |
+| (b) *n* para potencia 80%, tratamiento 1 | 56 por grupo: con 10 plantas, ni de lejos |
+| (c) Tratamiento 2: $s_p$ / *d* | 0.51 / 0.97 (grande) |
+| (c) *n* para potencia 80%, tratamiento 2 | 17 por grupo |
+| (c) ¿Por qué? | El efecto del tratamiento 2 es casi el doble de grande, así que es más fácil de detectar con el mismo *n* |
+
+</details>
+
+
+## 🧪 Problema 4 - Diseña tu experimento
+
+Queremos probar una **nueva dieta** en ratones hembra y ver si cambia su peso respecto a la dieta control. Antes del experimento decidimos que una diferencia de **menos de 2 g** no sería biológicamente relevante. Como estimación de la desviación típica usamos la del Problema 2 (hembras): $s_p = 4.28$ g.
+
+### a) ¿Cuál es el tamaño de efecto *d* que queremos ser capaces de detectar?
+### b) ¿Cuántos ratones por grupo necesitamos para una potencia del 80% con α = 0.05?
+### c) El comité de ética solo autoriza **30 ratones por grupo**. ¿Es suficiente? ¿Merece la pena hacer el experimento así?
+### d) ¿Cuántos ratones necesitaríamos si queremos ser más exigentes con los falsos positivos (α = 0.01, potencia 80%)? ¿Y si mantenemos α = 0.05 pero queremos una potencia del 90%?
+### e) Propón al menos una forma de aumentar la potencia sin aumentar el número de ratones.
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Caso                              | Resultado |
+|------------------------------------|--------------:|
+| (a) *d* | 2 / 4.28 = 0.47 |
+| (b) *n* para potencia 80% | 71 por grupo |
+| (c) | No: 30 ratones es menos de la mitad de los necesarios, así que la potencia quedaría muy por debajo del 80%. Habría que replantear el diseño |
+| (d) *n* con α = 0.01, potencia 80% | 106 por grupo |
+| (d) *n* con α = 0.05, potencia 90% | 96 por grupo |
+| (e) | Reducir la variabilidad (σ): ratones de la misma cepa, edad y condiciones; medir con más precisión; usar un diseño pareado (medir el mismo ratón antes y después) |
+
+</details>
+
+## 🎮 Problema 5 - Juega con la app
+
+Abre la app de clase: <https://marta-coronado.shinyapps.io/power_n/>. Vamos a usarla para el experimento del maíz de Darwin (Problema 1). Pon **Δ = 2.6**, **σ = 2.9** y **α = 0.05**.
+
+### a) Pon *n* = 15 (como Darwin). ¿Qué *d* indica la app? ¿Coincide con la del Problema 1? ¿Qué potencia tenía el experimento de Darwin?
+### b) Mueve el deslizador de *n* hasta que la potencia llegue al 80%. ¿Qué *n* necesitas? ¿Coincide con la que calculaste en el Problema 1? ¿Qué potencia tienes con una planta menos?
+### c) Vuelve a *n* = 15. Imagina que Darwin hubiera cultivado plantas más homogéneas, con σ = 2. ¿Qué pasa con la potencia? ¿Cuántas plantas por grupo necesitaría ahora?
+### d) Vuelve a σ = 2.9 y pon *n* = 5. Fíjate en los dos gráficos y luego sube a *n* = 50. ¿Qué cambia en el gráfico de arriba? ¿Y en el de abajo? ¿Cuánto vale el error estándar (EE) en cada caso?
+### e) Con *n* = 21, cambia α de 0.05 a 0.01. ¿Qué les pasa a las líneas discontinuas y a la potencia? ¿Cuántas plantas por grupo necesitarías ahora?
+### f) Pon Δ = 0. ¿Qué potencia aparece, cambies como cambies *n*? ¿Por qué?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Caso                              | Resultado |
+|------------------------------------|--------------:|
+| (a) *d* / potencia | 0.90 (≈ 0.89 del Problema 1) / 0.659 |
+| (b) *n* para potencia 80% | 21 por grupo (potencia 0.809), una más que con la fórmula: la app usa la distribución *t*, más exigente que la normal con muestras pequeñas. Con *n* = 20 la potencia es 0.789 |
+| (c) Potencia con σ = 2 y *n* = 15 / *n* necesaria | 0.930 / 11 por grupo: reducir la variabilidad aumenta mucho la potencia |
+| (d) Gráfico de arriba | No cambia: las poblaciones no dependen de *n* |
+| (d) Gráfico de abajo | Las curvas se estrechan y solapan menos: EE = 1.83 con *n* = 5 y EE = 0.58 con *n* = 50 |
+| (e) α = 0.01 | Las líneas discontinuas se alejan (de ±1.81 a ±2.42), la potencia baja a 0.583 y hacen falta 31 plantas por grupo |
+| (f) Δ = 0 | La potencia es siempre α (0.05): si no hay diferencia real, solo rechazamos H0 por error (falso positivo) |
+
+</details>
+
+<br>
+
+## 📚 Fuentes
+
+- Darwin, C. (1876). *The Effects of Cross and Self Fertilisation in the Vegetable Kingdom*. John Murray, London. Datos analizados por R. A. Fisher en *The Design of Experiments* (1935). Disponibles en R: `HistData::ZeaMays`.
+- Irizarry, R. A. y Love, M. I. (2016). *Data Analysis for the Life Sciences*. Leanpub. Datos de ratones: [`mice_pheno.csv`](https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/mice_pheno.csv) (paquete `dagdata`).
+- Dobson, A. J. (1983). *An Introduction to Statistical Modelling*. Chapman and Hall, London. Disponibles en R: `PlantGrowth`.

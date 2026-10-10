@@ -1,0 +1,12 @@
+ggplot2
+readr
+knitr
+xaringanthemer
+xaringanExtra
+dplyr
+kableExtra
+data.table
+carData
+car
+ggstatsplot
+tidyr
