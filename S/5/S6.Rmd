@@ -1,7 +1,7 @@
 ---
 title: "Problemas de t-test"
 author: "Bioestadística"
-date: "Octubre 2025"
+date: "Octubre 2026"
 output:
   html_document:
     self_contained: true  
@@ -119,7 +119,7 @@ $$
 
 | Caso | Resultado |
 |:------:|:-----------:|
-| $\mu$ | 20 |
+| $\bar{x}$ | 20 |
 | $s$  | 3 |
 </details>
 
@@ -152,7 +152,7 @@ Nueva York es conocida como "la ciudad que nunca duerme". Se preguntó a una mue
 | b)     | Independencia: la muestra es aleatoria. El min/max sugieren que no hay outliers. $t=-1.75$, $df=24$ |
 | c)  |  $t_{crit}=2.06$ |
 | d) | No rechazamos la $H_0$ |
-| e) | $t_{crit}=1.71$, quedaría fuera del IC ($[7.4665,7.9935]$) |
+| e) | $t_{crit}=1.71$, IC90% $=(7.47, 7.99)$: el 8 quedaría fuera. No contradice d): el IC del 90% corresponde a un test bilateral con $\alpha=0.10$ ($p=0.092<0.10$). El IC que corresponde a $\alpha=0.05$ es el del 95%, $(7.41, 8.05)$, que sí contiene el 8 |
 
 </details>
 
@@ -196,9 +196,9 @@ Georgianna afirma que en una ciudad reconocida por su escuela de música, los ni
 <summary>Respuestas</summary>
 | Caso | Resultado |
 |:------:|:-----------:|
-| a) | $H_0:\ \mu = 5$, $H_1:\ \mu < 5$   |
-| b) | $t_{stat} = -0.81$, $t_{crit} = -1.729$. IC95%= $(-\infty, 5.45)$  |
-| c) | No rechazamos $H_0$. El IC contiene 5 años. |
+| a) | $H_0:\ \mu = 5$, $H_1:\ \mu < 5$; $t_{stat} = -0.81$, $df=19$, $t_{crit} = -1.729$, $p=0.21$ → No rechazamos $H_0$ |
+| b) | IC95% $=(3.57, 5.63)$ años (unilateral, coherente con $H_1$: $(-\infty, 5.45)$) |
+| c) | Sí concuerdan: no rechazamos $H_0$ y el IC contiene 5 años. |
 
 </details>
 
@@ -209,14 +209,14 @@ Un investigador de mercado quiere evaluar los ahorros en seguros de automóvil e
 Fórmula esencial:
 
 $$
-N \ge (\frac{t_{crit}\times\sigma}{E})^2
+N \ge (\frac{z_{crit}\times\sigma}{E})^2
 $$
 
 <details>
 <summary>Respuestas</summary>
 | Caso | Resultado |
 |:------:|:-----------:|
-| $t_{crit}$ | $t_{crit}=1.96$ (si la muestra es grande)  |
+| $z_{crit}$ | $z_{crit}=1.96$ ($\sigma$ conocida) |
 | $n$ mínima | 384.16 -> 385 |
 
 </details>
@@ -230,7 +230,7 @@ Consideremos un conjunto limitado de datos climáticos, examinando las diferenci
 La diferencia en el número de días con temperaturas superiores a 90°F (número de días en 2018 − número de días en 1948) se calculó para cada una de las 197 ubicaciones. El promedio de estas diferencias fue de 2,9 días con una desviación estándar de 17,2 días. Nos interesa determinar si estos datos proporcionan evidencia sólida de que hubo más días en 2018 con temperaturas superiores a 90°F en las estaciones meteorológicas de la NOAA.
 
 <center>
-<img src="img/p1.png" width=50%>
+<img src="img/p1.PNG" width=50%>
 </center>
 
 ### a) ¿Existe una relación entre las observaciones recogidas en 1948 y en 2018? ¿O las observaciones en los dos grupos son independientes? Explica.
@@ -253,12 +253,12 @@ La diferencia en el número de días con temperaturas superiores a 90°F (númer
 | Caso | Resultado |
 |:------:|:-----------:|
 | a) | Los datos son pareados  |
-| b) | $H_0: \mu_{dif}=0$,  $H_1: \mu_{dif}\ne0$ |
+| b) | $H_0: \mu_{dif}=0$,  $H_1: \mu_{dif}>0$ (más días en 2018; $dif$ = 2018 − 1948) |
 | c) | N de almenos 30. Localizaciones muestreadas de manera aleatoria. No outliers extremos (histograma) |
-| d) | $SE=1.225$, $t=2.366$, $t_{crit}=1.96$ |
-| e) | Rechazamos $H_0$ |
+| d) | $SE=1.225$, $t=2.366$, $df=196$, $t_{crit}=1.653$ (unilateral, $p=0.0095$) |
+| e) | $t > t_{crit}$ → Rechazamos $H_0$: hay evidencia de que en 2018 hubo, en promedio, más días por encima de 90°F |
 | f) | Error de tipo 1, ya que puede ser que erróneamente rechamos $H_0$. |
-| g) | No, porque hemos rechazado la $H_0$ |
+| g) | No, porque hemos rechazado la $H_0$. El IC que corresponde a un test unilateral con $\alpha=0.05$ es el del 90%: $(0.88, 4.92)$ días, que no contiene el 0 |
 
 
 </details>
@@ -270,21 +270,19 @@ Se hipotetiza que el color azul-verde de la cáscara de los huevos de muchas esp
 
 ### a) Se midió la croma azul-verde (BGC) de los huevos el día de la puesta; BGC se refiere a la proporción de la reflectancia total que se encuentra en la región azul-verde del espectro, siendo un valor más alto indicativo de un color azul-verde más intenso. En el grupo con alimento suplementario, la croma BGC tenía $\bar{x}=0.594$ y $s=0.010$. En el grupo control, la croma BGC tenía $\bar{x}=0.586$ y $s=0.009$. Una prueba t pareada resultó en $t=2.28$ y $p-valor=0.038$. Interpreta los resultados en el contexto de los datos.
 
-### b) En general, se sabe que las aves más saludables también ponen huevos más pesados. También se midió la masa del huevo en ambos grupos: grupo con alimento suplementario: $\bar{x}=1.70$ gramos y $s=0.11$ gramos; grupo control: $\bar{x}=0.586$ gramos y $s=0.009$. El estadístico de prueba de una prueba t pareada fue $t=2.64$ con valor $p-valor= 0.019$. Calcula e interpreta un intervalo de confianza del 95% para la diferencia media poblacional en la masa del huevo entre los grupos.
+### b) En general, se sabe que las aves más saludables también ponen huevos más pesados. También se midió la masa del huevo en ambos grupos: grupo con alimento suplementario: $\bar{x}=1.70$ gramos y $s=0.11$ gramos; grupo control: $\bar{x}=1.62$ gramos y $s=0.10$ gramos. El estadístico de prueba de una prueba t pareada fue $t=2.64$ con valor $p-valor= 0.019$. Calcula e interpreta un intervalo de confianza del 95% para la diferencia media poblacional en la masa del huevo entre los grupos.
 
 
 <details>
 <summary>Respuestas</summary>
 | Caso | Resultado |
 |:------:|:-----------:|
-| a) | Rechazamos $H_0$ |
-| b) | Con un 95% de confianza, el intervalo (0.215,2.01)g contiene la diferencia de la media poblacional |
+| a) | $p=0.038<0.05$ → Rechazamos $H_0$: las hembras con alimento suplementario ponen huevos de un azul-verde más intenso, lo que apoya que el color refleja la condición de la hembra |
+| b) | $dif=0.08$ g, $SE=0.08/2.64=0.030$, $t_{crit}=2.131$ ($df=15$). IC95% $=(0.015, 0.145)$ g: con un 95% de confianza, los huevos de las hembras suplementadas pesan en promedio entre 0.015 y 0.145 g más que los del control |
 
 
 </details>
 
-
-# Problemas t-test muestras independientes
 
 ## Problema 9
 
@@ -303,7 +301,7 @@ A principios de la década de 1990, investigadores en el Reino Unido recopilaron
 
 ### a) ¿Existen estructuras subyacentes en estos datos que deban considerarse en el análisis? Explica.
 
-### b) ¿Cuáles son las hipótesis para evaluar si el número de personas presentes el viernes 6 es diferente del número presente el viernes 13?
+### b) ¿Cuáles son las hipótesis para evaluar si el número de coches el viernes 6 es diferente del número de coches el viernes 13?
 
 ### c) Verifica las condiciones necesarias para llevar a cabo la prueba de hipótesis del apartado (b).
 
@@ -317,7 +315,7 @@ A principios de la década de 1990, investigadores en el Reino Unido recopilaron
 <details> <summary>Respuestas</summary> 
 | Caso | Resultado | 
 |:------:|:-----------:| 
-| a) | Datos pareados (los mismos meses se comparan) | 
+| a) | Datos pareados (cada par compara el viernes 6 y el 13 del mismo mes en la misma intersección) | 
 | b) | $H_0: \mu_{diff}=0$, $H_1: \mu_{diff} \ne 0$ | 
 | c) | Independencia razonable; normalidad: no outliers extremos significativos | 
 | d) | $t = 4.93$, $df = 9$, $t_{crit}=2.26$ | 
@@ -352,11 +350,13 @@ Estadístico | Viernes 6 | Viernes 13 | Diferencia |
 
 | Caso | Resultado | 
 |:------:|:-----------:| 
-| a) | $H_0: \mu_{diff}=0$, $H_1: \mu_{diff} \ne 0$; $t = -2.71$, $df = 5$, $t_crit = 2.57$ → Rechazamos $H_0$ | 
+| a) | $H_0: \mu_{diff}=0$, $H_1: \mu_{diff} \ne 0$; $t = -2.71$, $df = 5$, $t_{crit} = 2.57$, $p=0.042$ → Rechazamos $H_0$ | 
 | b) | IC 95% para la diferencia promedio: $(-6.49, -0.17)$ | 
 | c) | No podemos concluir causalidad; sí hay diferencia observacional, pero no implica que salir el viernes 13 sea inherentemente más riesgoso | 
 </details>
 
+
+# Problemas t-test muestras independientes
 
 ## Problema 11
 
@@ -377,8 +377,8 @@ Los pollitos recién nacidos fueron asignados aleatoriamente a seis grupos, y ca
 <details> <summary>Respuestas</summary> 
 | Caso | Resultado | 
 |:------:|:-----------:| 
-| a) | Linaza: media 218.75 g, simétrica, más variabilidad; Haba: media 160.20 g, simétrica, menos variabilidad | 
-| b) | $H_0: \mu_{ls} = \mu_{hb}$, $H_1: \mu_{ls} \ne \mu_{hb}$; $t = 3.02$, $df = 20$ → Rechazamos $H_0$ | 
+| a) | Linaza: media 218.75 g, aproximadamente simétrica, más variabilidad; Haba: media 160.20 g, ligeramente asimétrica a la derecha, menos variabilidad. Sin outliers | 
+| b) | $H_0: \mu_{ls} = \mu_{hb}$, $H_1: \mu_{ls} \ne \mu_{hb}$; $t = 3.02$, $df = 9$ (conservador), $t_{crit}=2.26$, $p=0.015$ → Rechazamos $H_0$ | 
 | c) | Posible error Tipo I, ya que rechazamos $H_0$ | 
 </details>
 
@@ -399,12 +399,18 @@ Resultados:
 
 Se quiere evaluar si existe evidencia de que la ingesta promedio difiere entre los grupos. Se asume que se cumplen las condiciones de inferencia.
 
+### a) Escribe las hipótesis, con palabras y con símbolos.
+
+### b) Calcula el estadístico de prueba, los grados de libertad y el valor t crítico ($\alpha=0.05$). ¿Cuál es la conclusión?
+
+### c) Interpreta el resultado en el contexto del estudio.
+
 
 <details> <summary>Respuestas</summary>
 | Caso | Resultado | 
 |:------:|:-----------:| 
 | a) | $H_0: \mu_T = \mu_C$, $H_1: \mu_T \ne \mu_C$ | 
-| b) | $t = 2.24$, $df = 42$, $t_{crit}=2.018$ → Rechazamos $H_0$ | 
+| b) | $t = 2.24$, $df = 21$ (conservador), $t_{crit}=2.08$, $p=0.036$ → Rechazamos $H_0$ | 
 | c) | Los pacientes del grupo distraído (tratamiento) consumen más galletas que los del grupo control | </details>
 
 

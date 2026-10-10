@@ -1,0 +1,468 @@
+---
+title: "Problemas de distribución de Poisson (desarrollados)"
+author: "Bioestadística"
+date: "Octubre 2026"
+output:
+  html_document:
+    self_contained: true
+    theme: simplex
+    css: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css
+    toc: yes
+    toc_float:
+      collapsed: true
+fontsize: 14pt
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+# Load useful packages
+library(rmdformats)   # for extra formatting if needed
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+```{=html}
+<style>
+body {
+  font-size: 14px;   /* un poco más grande */
+  color: black;      /* asegura texto en negro */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #D9230F;        /* títulos en rojo */
+}
+
+h3, h4, h5, h6 {
+  color: black;        /* títulos en rojo */
+}
+
+h3 {
+  font-size: 1em;   /* tamaño igual al texto normal */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+
+.handwritten {
+  font-family: 'Handlee', monospace;
+  font-size: 1.1em;
+}
+
+.respuesta {
+  background-color: #F0F0F0;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  line-height: 1.2;
+}
+</style>
+```
+
+## 🧭 Recordatorio: cuándo y cómo usar la Poisson
+
+Una variable $X$ sigue una distribución de **Poisson** $X \sim \text{Poisson}(\lambda)$ cuando:
+
+1. **Contamos eventos** en un dominio fijado (un intervalo de tiempo, una superficie, un volumen...).
+2. Los eventos ocurren de forma **independiente**.
+3. La **tasa** media de eventos $\lambda$ es **constante**.
+4. No hay un máximo fijo: $X$ puede valer $0, 1, 2, \dots$
+
+En ese caso, la probabilidad de observar exactamente $k$ eventos es:
+
+$$P(X = k) = \frac{e^{-\lambda} \, \lambda^k}{k!}$$
+
+Si la tasa es $\lambda$ eventos **por unidad** (de tiempo, de superficie...) y observamos $t$ unidades, el número esperado de eventos es $\mu = \lambda t$, y usamos $\mu$ en lugar de $\lambda$ en la fórmula.
+
+Además: $E(X) = \lambda$, $\text{Var}(X) = \lambda$ y $\text{DE}(X) = \sqrt{\lambda}$. **La media y la varianza son iguales.**
+
+La Poisson también **aproxima la binomial** cuando $n$ es muy grande y $p$ muy pequeña, con $\lambda = np$.
+
+En R: `dpois(k, lambda)` da $P(X=k)$ y `ppois(k, lambda)` da $P(X \le k)$. Para colas superiores, recuerda:
+
+| Pregunta     | Significado    | Expresión | R                           |
+| ------------ | -------------- | --------- | --------------------------------------- |
+| $P(X \le k)$ | "como mucho k" | $P(X \le k)$ | `ppois(k, lambda)`                      |
+| $P(X < k)$   | "menos de k"   | $P(X \le k-1)$ | `ppois(k-1, lambda)`                    |
+| $P(X \ge k)$ | "al menos k"   | $1 - P(X \le k-1)$ | `ppois(k-1, lambda, lower.tail = FALSE)` |
+| $P(X > k)$   | "más de k"     | $1 - P(X \le k)$ | `ppois(k, lambda, lower.tail = FALSE)`   |
+
+En todos los problemas seguimos los mismos pasos: **(1)** definir qué es $X$ y cuál es $\lambda$ (o $\mu = \lambda t$); **(2)** traducir la pregunta a $P(X = k)$, $P(X \le k)$...; **(3)** sustituir en la fórmula; **(4)** comprobar con R.
+
+---
+
+## 🍺 Problema 1 - Las levaduras de Student
+
+William S. Gosset, que publicaba con el seudónimo **"Student"**, trabajaba como químico en la cervecera Guinness. Para controlar la fermentación necesitaba contar células de levadura con un **hemocitómetro**: un portaobjetos con una cuadrícula de **400 cuadrados** diminutos. En uno de sus experimentos (Student, 1907, serie D) contó en total **1,872 células** en los 400 cuadrados. Si las células están bien mezcladas en el líquido, el número de células por cuadrado $X$ sigue una distribución de Poisson.
+
+### a) ¿Cuál es el número medio de células por cuadrado ($\lambda$)? ¿Y la desviación estándar?
+### b) ¿Cuál es la probabilidad de que un cuadrado esté vacío? ¿Cuántos cuadrados vacíos esperarías de los 400? (Student no encontró ninguno.)
+### c) $P(X = 4)$
+### d) $P(X \le 2)$
+### e) $P(X \ge 3)$
+
+<br>
+<details>
+<summary>Solución desarrollada</summary>
+
+**Planteamiento**
+
+- Contamos eventos (células) en un dominio fijo (un cuadrado del hemocitómetro). Si el líquido está bien mezclado, cada célula cae en un sitio al azar, independientemente de las demás.
+- $X$ = número de células en un cuadrado, $X \sim \text{Poisson}(\lambda)$.
+
+**a) Media y desviación estándar**
+
+$$\lambda = \frac{1872 \text{ células}}{400 \text{ cuadrados}} = 4.68 \text{ células por cuadrado} \qquad \text{DE} = \sqrt{4.68} = 2.16$$
+
+Nos hará falta varias veces $e^{-4.68} = 0.00928$.
+
+**b) Cuadrado vacío**
+
+$$P(X=0) = \frac{e^{-4.68} \, 4.68^0}{0!} = e^{-4.68} = 0.0093$$
+
+Recuerda que $4.68^0 = 1$ y $0! = 1$: la probabilidad de cero eventos es simplemente $e^{-\lambda}$.
+
+Número esperado de cuadrados vacíos: $400 \cdot 0.0093 = 3.7$. Student no observó ninguno: es una diferencia pequeña, compatible con el azar (si esperamos 3.7, observar 0 no es tan raro).
+
+**c) $P(X = 4)$**
+
+$$P(X=4) = \frac{e^{-4.68} \, 4.68^4}{4!} = \frac{0.00928 \cdot 479.71}{24} = 0.1855$$
+
+**d) $P(X \le 2)$**: "como mucho 2" significa 0, 1 o 2 células. Sumamos:
+
+$$P(X=1) = e^{-4.68} \cdot 4.68 = 0.0434 \qquad P(X=2) = \frac{e^{-4.68} \cdot 4.68^2}{2!} = \frac{0.00928 \cdot 21.90}{2} = 0.1016$$
+
+$$P(X \le 2) = 0.0093 + 0.0434 + 0.1016 = 0.1543$$
+
+**e) $P(X \ge 3)$**: "al menos 3" son infinitos valores (3, 4, 5...), así que usamos el **complementario**:
+
+$$P(X \ge 3) = 1 - P(X \le 2) = 1 - 0.1543 = 0.8457$$
+
+**Comprobación con R**
+
+```{r p1}
+lambda <- 1872 / 400
+lambda
+sqrt(lambda)
+
+# b) P(X = 0), a mano y con dpois, y cuadrados vacíos esperados
+exp(-lambda) * lambda^0 / factorial(0)
+dpois(0, lambda)
+400 * dpois(0, lambda)
+
+# c) P(X = 4)
+dpois(4, lambda)
+
+# d) P(X <= 2)
+sum(dpois(0:2, lambda))
+ppois(2, lambda)
+
+# e) P(X >= 3) = 1 - P(X <= 2)
+1 - ppois(2, lambda)
+ppois(2, lambda, lower.tail = FALSE)
+```
+
+| Caso                              | Resultado |
+|------------------------------------|--------------:|
+| (a) λ / DE          | 4.68 / 2.16    |
+| (b) X = 0 / cuadrados vacíos esperados | 0.0093 / 3.7 |
+| (c) X = 4           | 0.1855    |
+| (d) X ≤ 2           | 0.1543    |
+| (e) X ≥ 3           | 0.8457    |
+
+</details>
+
+
+## 👶 Problema 2 - Fenilcetonuria en Cataluña
+
+La **fenilcetonuria** (PKU) es una enfermedad metabólica hereditaria (autosómica recesiva) que se detecta con la prueba del talón. Fue la primera enfermedad incluida en el Programa de Cribado Neonatal de Cataluña, en 1969. Según el balance de los 50 años del programa (Marín-Soria et al., 2020), la prevalencia de PKU en Cataluña es de **1 de cada 16,399 recién nacidos**, y en **2019** se cribaron **62,041 recién nacidos**. Sea $X$ el número de recién nacidos con PKU detectados en un año.
+
+### a) ¿Qué distribución sigue exactamente $X$? ¿Por qué podemos aproximarla por una Poisson? ¿Con qué parámetro?
+### b) ¿Cuál es el número esperado de casos al año? ¿Y la desviación estándar?
+### c) Calcula $P(X = 3)$.
+### d) ¿Cuál es la probabilidad de que en un año se detecten 2 casos o más?
+### e) Un año no se detecta **ningún caso**. ¿Es un resultado esperable por azar?
+
+<br>
+<details>
+<summary>Solución desarrollada</summary>
+
+**a) Distribución**
+
+Cada recién nacido es un ensayo con dos resultados (PKU / no PKU), con $p = 1/16399$, y hay $n = 62041$ ensayos independientes. Así que, exactamente:
+
+$$X \sim \text{Bin}(62041, \; 1/16399)$$
+
+Como $n$ es **muy grande** y $p$ **muy pequeña**, la binomial se puede aproximar por una Poisson con
+
+$$\lambda = np = \frac{62041}{16399} = 3.78 \;\Rightarrow\; X \approx \text{Poisson}(3.78)$$
+
+La ventaja: con la binomial tendríamos que calcular números como $\binom{62041}{3}$, mientras que con la Poisson el cálculo es inmediato.
+
+**b) Media y desviación estándar**
+
+$$E(X) = \lambda = 3.78 \text{ casos al año} \qquad \text{DE}(X) = \sqrt{3.78} = 1.95$$
+
+(Con la binomial: $\text{DE} = \sqrt{np(1-p)} = 1.95$, prácticamente igual porque $1 - p \approx 1$.)
+
+**c) $P(X = 3)$**
+
+Nos hará falta $e^{-3.78} = 0.0228$.
+
+$$P(X=3) = \frac{e^{-3.78} \, 3.78^3}{3!} = \frac{0.0228 \cdot 54.15}{6} = 0.2053$$
+
+(Con la binomial exacta también sale $0.2053$: la aproximación es excelente. Lo comprobamos en el código de R de abajo.)
+
+**d) $P(X \ge 2)$**: "2 o más" son infinitos valores, así que usamos el **complementario**:
+
+$$P(X=0) = e^{-3.78} = 0.0228 \qquad P(X=1) = e^{-3.78} \cdot 3.78 = 0.0861$$
+
+$$P(X \ge 2) = 1 - P(X \le 1) = 1 - (0.0228 + 0.0861) = 1 - 0.1088 = 0.8912$$
+
+**e) Ningún caso en un año**
+
+$$P(X = 0) = e^{-3.78} = 0.0228$$
+
+Solo en un **2.3%** de los años esperaríamos no detectar ningún caso. Es un resultado **poco probable** por azar: podría valer la pena revisar si ha habido algún problema (en la toma de muestras, en el análisis...). Más adelante en el curso formalizaremos este razonamiento con los **contrastes de hipótesis**.
+
+**Comprobación con R**
+
+```{r p3}
+n <- 62041; p <- 1/16399
+lambda <- n * p
+lambda
+sqrt(lambda)
+
+# c) Poisson vs binomial
+dpois(3, lambda)
+dbinom(3, n, p)
+
+# d) P(X >= 2) = 1 - P(X <= 1)
+ppois(1, lambda, lower.tail = FALSE)
+
+# e) P(X = 0)
+dpois(0, lambda)
+```
+
+| Caso                              | Resultado |
+|------------------------------------|--------------:|
+| (a) Distribución          | Bin(62041, 1/16399) ≈ Poisson(3.78)    |
+| (b) Media / DE            | 3.78 / 1.95 |
+| (c) X = 3                 | 0.2053 |
+| (d) X ≥ 2                 | 0.8912    |
+| (e) X = 0                 | 0.0228 (poco probable) |
+
+</details>
+
+
+## 🧬 Problema 3 - Mutaciones en el experimento de evolución a largo plazo
+
+Desde 1988, el laboratorio de Richard Lenski mantiene **12 poblaciones independientes** de *Escherichia coli* en el llamado *Long-Term Evolution Experiment* (LTEE). Mediante experimentos de acumulación de mutaciones, Lee et al. (2012, *PNAS*) estimaron que la tasa de mutación de *E. coli* es de aproximadamente **0.001 mutaciones por genoma y generación**. Consideremos las primeras **2,000 generaciones** del experimento. Sea $X$ el número de mutaciones que acumula el linaje de una población a lo largo de esas generaciones.
+
+### a) ¿Cuál es el número esperado de mutaciones por linaje en 2,000 generaciones? ¿Y la desviación estándar?
+### b) ¿Cuál es la probabilidad de que un linaje no acumule ninguna mutación?
+### c) ¿Cuál es la probabilidad de que un linaje acumule 4 o más mutaciones?
+### d) De las 12 poblaciones, ¿en cuántas esperas que el linaje no tenga ninguna mutación?
+### e) ¿Cuál es la probabilidad de que al menos una de las 12 poblaciones tenga un linaje sin ninguna mutación?
+
+<br>
+<details>
+<summary>Solución desarrollada</summary>
+
+**Planteamiento**
+
+Es la misma lógica que el ejemplo de la leucemia de la clase: tenemos una **tasa por unidad** (por generación) y la escalamos al **número de unidades** observadas.
+
+- Tasa: $\lambda = 0.001$ mutaciones por generación.
+- Intervalo: $t = 2000$ generaciones.
+- $X \sim \text{Poisson}(\mu = \lambda t)$.
+
+**a) Media y desviación estándar**
+
+$$\mu = \lambda t = 0.001 \cdot 2000 = 2 \text{ mutaciones} \qquad \text{DE} = \sqrt{2} = 1.41$$
+
+**b) Ninguna mutación**
+
+$$P(X = 0) = e^{-2} = 0.1353$$
+
+**c) 4 o más mutaciones**: complementario
+
+$$P(X=1) = e^{-2} \cdot 2 = 0.2707 \qquad P(X=2) = \frac{e^{-2} \cdot 2^2}{2!} = 0.2707 \qquad P(X=3) = \frac{e^{-2} \cdot 2^3}{3!} = 0.1804$$
+
+$$P(X \ge 4) = 1 - P(X \le 3) = 1 - (0.1353 + 0.2707 + 0.2707 + 0.1804) = 1 - 0.8571 = 0.1429$$
+
+**d) Poblaciones sin mutaciones**
+
+Ahora cambiamos de pregunta: en cada una de las 12 poblaciones, el linaje "tiene 0 mutaciones" (éxito) o no, con probabilidad $q = 0.1353$ (apartado b). Sea $Y$ el número de poblaciones sin mutaciones:
+
+$$Y \sim \text{Bin}(12, \; 0.1353)$$
+
+¡Combinamos las dos distribuciones! La Poisson nos da la probabilidad de un evento en **cada** población, y la binomial cuenta **en cuántas** de las 12 poblaciones ocurre.
+
+$$E(Y) = n q = 12 \cdot 0.1353 = 1.62 \text{ poblaciones}$$
+
+**e) Al menos una población sin mutaciones**
+
+$$P(Y \ge 1) = 1 - P(Y = 0) = 1 - (1 - 0.1353)^{12} = 1 - 0.8647^{12} = 1 - 0.1747 = 0.8253$$
+
+**Comprobación con R**
+
+```{r p4}
+mu <- 0.001 * 2000
+mu
+sqrt(mu)
+
+# b) P(X = 0)
+q <- dpois(0, mu)
+q
+
+# c) P(X >= 4) = P(X > 3)
+ppois(3, mu, lower.tail = FALSE)
+
+# d) número esperado de poblaciones sin mutaciones
+12 * q
+
+# e) P(Y >= 1) = 1 - P(Y = 0), con Y ~ Bin(12, q)
+1 - dbinom(0, size = 12, prob = q)
+```
+
+| Caso                              | Resultado |
+|------------------------------------|--------------:|
+| (a) Media / DE          | 2 / 1.41    |
+| (b) X = 0               | 0.1353    |
+| (c) X ≥ 4               | 0.1429    |
+| (d) Poblaciones sin mutación esperadas | 1.62 |
+| (e) Al menos 1 población sin mutación | 0.8253 |
+
+</details>
+
+
+## 🔬 Problema 4 - ¿Siguen las levaduras de Student una Poisson?
+
+Volvemos al experimento de Student (1907). En otra de sus series (serie B) obtuvo los siguientes recuentos de células de levadura en los **400 cuadrados** del hemocitómetro:
+
+| Células por cuadrado (X) | Número de cuadrados |
+|--------------------------|--------------------:|
+| 0                        | 103                 |
+| 1                        | 143                 |
+| 2                        | 98                  |
+| 3                        | 42                  |
+| 4                        | 8                   |
+| 5                        | 4                   |
+| 6                        | 2                   |
+
+### a) Calcula el número medio de células por cuadrado. Esta será nuestra estimación de $\lambda$.
+### b) Calcula la varianza del número de células por cuadrado. ¿Qué esperarías si los datos siguen una Poisson?
+### c) Calcula las frecuencias esperadas de cada categoría (0, 1, 2, 3, 4 y 5 o más) bajo el modelo de Poisson y compáralas con las observadas.
+### d) ¿Las células se distribuyen al azar en el hemocitómetro?
+### e) Imagina que en otra muestra la media es 1.3 células por cuadrado, pero la varianza es 4. ¿Qué podría estar pasando con las células?
+
+<br>
+<details>
+<summary>Solución desarrollada</summary>
+
+**a) Media**
+
+Es una tabla de frecuencias: cada valor de $X$ se multiplica por el número de cuadrados en que aparece.
+
+- Cuadrados: $103 + 143 + 98 + 42 + 8 + 4 + 2 = 400$.
+- Células totales: $0\cdot103 + 1\cdot143 + 2\cdot98 + 3\cdot42 + 4\cdot8 + 5\cdot4 + 6\cdot2 = 0 + 143 + 196 + 126 + 32 + 20 + 12 = 529$.
+
+$$\hat{\lambda} = \bar{x} = \frac{529}{400} = 1.32 \text{ células por cuadrado}$$
+
+**b) Varianza**
+
+$$s^2 = \frac{\sum f_i (x_i - \bar{x})^2}{N - 1} = \frac{\sum f_i x_i^2 - N\bar{x}^2}{N-1}$$
+
+$$\sum f_i x_i^2 = 0 + 143 + 4\cdot98 + 9\cdot42 + 16\cdot8 + 25\cdot4 + 36\cdot2 = 143 + 392 + 378 + 128 + 100 + 72 = 1213$$
+
+$$s^2 = \frac{1213 - 400 \cdot 1.3225^2}{399} = \frac{1213 - 699.60}{399} = 1.29$$
+
+En una Poisson la **media y la varianza son iguales** ($\lambda$). Aquí $s^2 = 1.29 \approx \bar{x} = 1.32$ (cociente varianza/media $\approx 0.97$), tal como esperaríamos.
+
+**c) Frecuencias esperadas**
+
+Bajo el modelo $X \sim \text{Poisson}(1.3225)$:
+
+$$\text{Esperada}(k) = N \cdot P(X = k) = 400 \cdot \frac{e^{-1.3225} \, 1.3225^k}{k!}$$
+
+Por ejemplo:
+
+$$P(X=0) = e^{-1.3225} = 0.2665 \;\Rightarrow\; 400 \cdot 0.2665 = 106.59$$
+
+$$P(X=1) = e^{-1.3225} \cdot 1.3225 = 0.3524 \;\Rightarrow\; 400 \cdot 0.3524 = 140.96$$
+
+$$P(X=2) = \frac{e^{-1.3225} \cdot 1.3225^2}{2} = 0.2330 \;\Rightarrow\; 400 \cdot 0.2330 = 93.21$$
+
+Para la **última categoría** agrupamos "5 o más" (observadas: $4 + 2 = 6$), porque la Poisson no tiene máximo y así las probabilidades suman 1:
+
+$$P(X \ge 5) = 1 - P(X \le 4) = 0.0114 \;\Rightarrow\; 400 \cdot 0.0114 = 4.56$$
+
+```{r p5}
+x   <- 0:6
+obs <- c(103, 143, 98, 42, 8, 4, 2)
+N   <- sum(obs)
+
+# a) y b) media y varianza a partir de la tabla de frecuencias
+media <- sum(x * obs) / N
+varianza <- sum(obs * (x - media)^2) / (N - 1)
+c(media = media, varianza = varianza, cociente = varianza / media)
+
+# c) agrupamos 5 y 6 en la categoría "5 o más"
+obs_agr <- c(obs[1:5], sum(obs[6:7]))
+prob <- c(dpois(0:4, media), ppois(4, media, lower.tail = FALSE))
+esp  <- N * prob
+
+tabla <- data.frame(X = c(0:4, ">=5"),
+                    Observadas = obs_agr,
+                    P_X = round(prob, 4),
+                    Esperadas = round(esp, 2))
+knitr::kable(tabla)
+sum(esp)   # comprueba que suman 400
+
+# Los datos originales también están en el paquete HistData:
+# library(HistData); subset(Yeast, sample == "B")
+```
+
+| X | Observadas | Esperadas |
+|---|-----------:|----------:|
+| 0 | 103        | 106.59   |
+| 1 | 143        | 140.96   |
+| 2 | 98         | 93.21    |
+| 3 | 42         | 41.09    |
+| 4 | 8          | 13.59    |
+| ≥ 5 | 6        | 4.56     |
+| Total | 400 | 400 |
+
+**d) ¿Distribución al azar?**
+
+Sí. Las frecuencias observadas y esperadas son muy parecidas, y la varianza es prácticamente igual a la media. Los datos son compatibles con que las células se distribuyen **al azar** e independientemente unas de otras en el hemocitómetro. Este fue precisamente uno de los resultados de Student: el error al contar células se comporta como una Poisson, así que la incertidumbre del recuento es $\sqrt{\lambda}$. (Más adelante veremos cómo cuantificar formalmente este ajuste con un test de bondad de ajuste $\chi^2$.)
+
+**e) Varianza mucho mayor que la media**
+
+Si la media es 1.3 pero la varianza es 4 (cociente $\approx 3 \gg 1$), los datos **no** siguen una Poisson. Hay más cuadrados vacíos y más cuadrados con muchas células de lo esperado por azar: las células están **agregadas** (en grumos). En el caso de la levadura, esto puede pasar si la muestra no se ha mezclado bien, o si las células hijas quedan unidas a la célula madre tras la gemación.
+
+En resumen:
+
+| Varianza / media | Patrón espacial |
+|---|---|
+| ≈ 1 | Aleatorio (Poisson) |
+| > 1 | Agregado |
+| < 1 | Regular (uniforme), p. ej. por repulsión o competencia |
+
+| Pregunta                              | Resultado |
+|------------------------------------|--------------:|
+| (a) Media ($\hat{\lambda}$)          | 1.32    |
+| (b) Varianza                         | 1.29 (≈ media)   |
+| (d) ¿Al azar?                        | Sí, los datos se ajustan bien a una Poisson |
+| (e) Varianza ≫ media                 | Células agregadas (en grumos) |
+
+</details>
+
+<br>
+
+## 📚 Fuentes
+
+- Student (1907). On the error of counting with a haemacytometer. *Biometrika* 5(3/4): 351–360. (Datos disponibles en R: `HistData::Yeast`.)
+- Marín-Soria J.L. et al. (2020). 50 años del Programa de Cribado Neonatal en Cataluña. *Revista Española de Salud Pública* 94: e202012177.
+- Lee H. et al. (2012). Rate and molecular spectrum of spontaneous mutations in the bacterium *Escherichia coli* as determined by whole-genome sequencing. *PNAS* 109(41): E2774–E2783.
