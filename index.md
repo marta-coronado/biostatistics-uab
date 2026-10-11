@@ -22,6 +22,8 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Tema 8: Bootstrap y test de permutación](T/8/8.html)
 - [Tema 9a: Prueba de t-test](T/9/11.TTest.html)
 - [Tema 9b: Prueba de t-test](T/10/12.TTest_pt2.html)
+- [Tema 10: Tamaño del efecto](T/11/11.html)
+- [Tema 11: ANOVA](T/12/13.ANOVA_ampliado.html)
 
 ---
 
@@ -29,6 +31,8 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Seminario 1: La importancia de mostrar los datos](S/1/S1.html)
 - [Seminario 2: Distribución de Poisson](S/2/7.Poisson.html)
 - [Seminario 3: Visualización de distribuciones](S/3/8.VisDistr.html)
+- [Seminario 4: Pensamiento estadístico](S/4/S5_soluciones.html)
+- [Seminario 5: Problemas de t-test](S/5/S6.html)
 
 ---
 
@@ -45,6 +49,8 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Problemas 1: Estadística descriptiva](PA/PA1/Problemas_Estadistica_Descriptiva.html)
 - [Problemas 2: Distribución binomial](PA/PA2/Problemas_Binomial.html)
 - [Problemas 3: Distribución normal](PA/PA3/Problemas_Normal.html)
+- [Problemas 4: Distribución de Poisson](PA/PA3/Problemas_Normal.html)
+- [Problemas 5: Problemas de t-test](S/5/S6.html)
 
    
 ---
