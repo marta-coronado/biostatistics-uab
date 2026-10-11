@@ -1,0 +1,194 @@
+---
+title: "**Soluciones P1:**<br><font color='#A8A8A8' size='5'>Introducción a `R` y `ggplot2`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
+author: "Marta Coronado Zamora"
+date: "Septiembre 2026"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5)
+library(dplyr)
+library(ggplot2)
+library(prettydoc)
+```
+
+<style>
+  @import url(https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,500,500i,700,700i);
+  @import url(https://use.fontawesome.com/releases/v7.0.0/css/all.css);
+  body {
+    font-family: 'Fira Sans','Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+  }
+  strong {
+    color: #DE1144;
+  }
+</style>
+
+### Actividad 1.1
+
+Fijamos el directorio de trabajo (la ruta depende de cada ordenador) y lo comprobamos.
+
+```{r, eval = F}
+setwd("C:/Users/usuario/Desktop/Bioestadistica")
+getwd()
+```
+
+### Actividad 1.2
+
+Leemos el CSV directamente desde la URL.
+
+```{r}
+expressionData <- read.csv("https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/1/data/GSE68849_expression.csv")
+```
+
+### Actividad 1.3
+
+Tabla de 100 filas y 4 columnas: sujeto, tratamiento (control/influenza), gen y nivel de expresión.
+
+```{r}
+head(expressionData)
+dim(expressionData)
+```
+
+```{r, eval = F}
+View(expressionData)
+```
+
+### Actividad 1.4
+
+```{r}
+str(expressionData)
+```
+
+| Variable           | Tipo de variable | Tipo específico | Observaciones |
+|--------------------|------------------|-----------------|---------------|
+| _Subject_          | Cualitativa      | Nominal         | Identificador de la muestra (10 sujetos) |
+| _Treatment_        | Cualitativa      | Nominal         | 2 categorías: control / influenza |
+| _Gene_             | Cualitativa      | Nominal         | 10 genes |
+| _Expression level_ | Cuantitativa     | Continua        | Nivel de expresión (`num`) |
+
+### Actividad 1.5
+
+```{r}
+mean(expressionData$expression_level)
+median(expressionData$expression_level)
+sd(expressionData$expression_level)
+```
+
+La media (≈ 3947) es muy superior a la mediana (≈ 132): la distribución está muy sesgada a la derecha por unos pocos valores muy altos.
+
+### Actividad 1.6
+
+Hay 10 genes distintos.
+
+```{r}
+expressionData %>%
+  select(gene) %>%
+  distinct() %>%
+  count()
+```
+
+### Actividad 1.7
+
+```{r}
+expressionData_GSM1684096 <- expressionData %>%
+  filter(subject == "GSM1684096")
+
+expressionData_GSM1684096
+```
+
+### Actividad 1.8
+
+El sujeto `GSM1684104` es del grupo infectado; filtramos por gen y sujeto y nos quedamos con la expresión.
+
+```{r}
+expressionData %>%
+  filter(gene == "IFNA5", subject == "GSM1684104") %>%
+  select(expression_level)
+```
+
+### Actividad 1.9
+
+La expresión media es mucho mayor en el grupo infectado.
+
+```{r}
+expressionData %>%
+  group_by(treatment) %>%
+  summarize(media = mean(expression_level))
+```
+
+### Actividad 1.10
+
+```{r}
+expressionData <- expressionData %>%
+  mutate(expression_category = case_when(
+    expression_level < 10 ~ "bajo",
+    expression_level >= 10 & expression_level < 100 ~ "moderado",
+    expression_level >= 100 & expression_level < 1000 ~ "alto",
+    expression_level >= 1000 ~ "muy alto"
+  ))
+
+head(expressionData)
+```
+
+### Actividad 1.11 (opcional)
+
+Los genes con expresión `muy alto` solo aparecen en el grupo de influenza.
+
+```{r}
+expressionData %>%
+  filter(expression_category == "muy alto") %>%
+  count(treatment)
+```
+
+### Actividad 1.12
+
+**Paso 1.** Heatmap básico: sujetos en el eje `x`, genes en el eje `y` y color según `log(expression_level)`.
+
+```{r}
+exp.heatmap <- ggplot(data = expressionData,
+                      mapping = aes(x = subject,
+                                    y = gene,
+                                    fill = log(expression_level))) +
+  geom_tile()
+
+exp.heatmap
+```
+
+**Paso 2.** Títulos de los ejes y etiquetas del eje `x` giradas 45°.
+
+```{r}
+exp.heatmap <- exp.heatmap +
+  labs(x = "Sujeto", y = "") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
+
+exp.heatmap
+```
+
+Separamos control e infectados con `facet_grid()`; `scales` y `space` eliminan las columnas vacías.
+
+```{r}
+exp.heatmap <- exp.heatmap +
+  facet_grid(. ~ treatment, scales = "free_x", space = "free_x")
+
+exp.heatmap
+```
+
+Escala de color `viridis`.
+
+```{r}
+library(viridis)
+exp.heatmap <- exp.heatmap +
+  scale_fill_viridis()
+
+exp.heatmap
+```
+
+**¿Qué genes están sobreexpresados en el grupo infectado?**
+
+<div style="background-color:#F0F0F0">
+&emsp;<i class="fas fa-comment-dots"></i> Los cinco interferones de tipo I: **IFNA13, IFNA16, IFNA2, IFNA5 e IFNW1**. Su expresión es unas 100 veces mayor en las células infectadas, lo que concuerda con la respuesta antiviral de las células dendríticas plasmocitoides. El resto de genes (MIR1976, MSR1, RASSF1, SPIN1, ZNF451) no cambian entre grupos.
+</div>
