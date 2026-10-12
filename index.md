@@ -50,8 +50,9 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Problemas 2: Distribución binomial](PA/PA2/Problemas_Binomial.html)
 - [Problemas 3: Distribución normal](PA/PA3/Problemas_Normal.html)
 - [Problemas 4: Distribución de Poisson](PA/PA4/Problemas_Poisson.html)
-- [Problemas 5: Problemas de t-test](S/5/S6.html)
-- [Problemas 6: Problemas tamaño del efecto](PA/PA5/Problemas_Tamano_Efecto.html)
+- [Problemas 5: Problemas de intervalo de confianza](PA/PA6/Problemas_Intervalos_Confianza.html)
+- [Problemas 6: Problemas de t-test](S/5/S6.html)
+- [Problemas 7: Problemas tamaño del efecto](PA/PA5/Problemas_Tamano_Efecto.html)
 
    
 ---
