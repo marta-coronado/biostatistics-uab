@@ -1,0 +1,230 @@
+---
+title: "Problemas de intervalos de confianza"
+author: "Bioestadística"
+date: "Octubre 2026"
+output:
+  html_document:
+    self_contained: true
+    theme: simplex
+    css: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css
+    toc: yes
+    toc_float:
+      collapsed: true
+fontsize: 14pt
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+# Load useful packages
+library(rmdformats)   # for extra formatting if needed
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+```{=html}
+<style>
+body {
+  font-size: 14px;   /* un poco más grande */
+  color: black;      /* asegura texto en negro */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #D9230F;        /* títulos en rojo */
+}
+
+h3, h4, h5, h6 {
+  color: black;        /* títulos en rojo */
+}
+
+h3 {
+  font-size: 1em;   /* tamaño igual al texto normal */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+
+.handwritten {
+  font-family: 'Handlee', monospace;
+  font-size: 1.1em;
+}
+
+.respuesta {
+  background-color: #F0F0F0;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  line-height: 1.2;
+}
+</style>
+```
+
+
+---
+
+Para estos problemas necesitarás la **tabla Z** (normal estándar) y la **tabla t** de Student. Recuerda:
+
+- Si conocemos $\sigma$ (la desviación típica de la población), usamos $z$: $\;\bar{x} \pm z_{\alpha/2} \cdot \dfrac{\sigma}{\sqrt{n}}$
+- Si no la conocemos y la estimamos con $s$, usamos $t$ con $gl = n - 1$: $\;\bar{x} \pm t_{gl,\,\alpha/2} \cdot \dfrac{s}{\sqrt{n}}$
+
+## 🪰 Problema 1 - Las alas de la mosca doméstica
+
+En un estudio clásico con miles de moscas domésticas (*Musca domestica*) se vio que la **longitud del ala** sigue una distribución normal con una desviación típica de $\sigma = 0.39$ mm. Tomamos esta $\sigma$ como **conocida**.
+
+Ahora medimos el ala de **25 moscas** de una población nueva, criada en el laboratorio, y obtenemos una media de $\bar{x} = 4.62$ mm.
+
+### a) Calcula el error estándar de la media.
+### b) Construye el intervalo de confianza del 95% para la longitud media del ala en la población nueva. Interprétalo.
+### c) Construye también los IC del 90% y del 99%. Calcula la amplitud de cada intervalo. ¿Qué pasa con la amplitud al aumentar el nivel de confianza? ¿Por qué?
+### d) En la población de referencia, la longitud media del ala es de 4.55 mm. Según el IC del 95%, ¿es compatible la población nueva con una media de 4.55 mm?
+### e) Queremos estimar la longitud media del ala con un **error máximo permitido** de **0.1 mm** y un 95% de confianza. ¿Cuántas moscas tendríamos que medir? ¿Y si queremos un error máximo de la mitad (0.05 mm)?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Caso                              | Resultado |
+|------------------------------------|--------------:|
+| (a) *SE* | 0.39 / √25 = 0.078 mm |
+| (b) IC 95% | 4.62 ± 0.153 = (4.467, 4.773) mm |
+| (c) IC 90% / amplitud | (4.492, 4.748) / 0.257 mm |
+| (c) IC 99% / amplitud | (4.419, 4.821) / 0.402 mm |
+| (c) | A más confianza, mayor $z_{\alpha/2}$ y por tanto un intervalo más ancho |
+| (d) | Sí: 4.55 está dentro del IC del 95% |
+| (e) *n* para *E* = 0.1 / *E* = 0.05 | $n \ge 58.4$ → 59 / $n \ge 233.7$ → 234 moscas: para reducir el error a la mitad hace falta multiplicar *n* por 4 |
+
+</details>
+
+
+## 🐭 Problema 2 - Glucosa en ratones *knockout*
+
+Se ha generado una cepa de ratones *knockout* para un gen que se sospecha que participa en el metabolismo de la glucosa. Medimos la **glucosa en sangre en ayunas** (mg/dL) de **10 ratones** de la cepa:
+
+| Ratón | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Glucosa (mg/dL) | 112 | 98 | 125 | 104 | 118 | 109 | 121 | 101 | 115 | 107 |
+
+No conocemos la desviación típica de la población.
+
+### a) Calcula la media y la desviación típica de la muestra.
+### b) ¿Por qué no podemos usar la $z$ para construir el intervalo? ¿Qué distribución usamos, y con cuántos grados de libertad? ¿Qué valor crítico corresponde a un IC del 95%?
+### c) Construye el IC del 95% para la glucosa media de la cepa *knockout* e interprétalo.
+### d) En los ratones *wild type* de la misma cepa, la glucosa media en ayunas es de **100 mg/dL**. ¿Qué sugiere el IC sobre el efecto del *knockout*? ¿Qué esperarías de un t-test de una muestra con $H_0: \mu = 100$ y $\alpha = 0.05$?
+### e) Un compañero construye el intervalo con $z = 1.96$ en lugar de con la $t$. ¿Su intervalo es más ancho o más estrecho? ¿Por qué es un error?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Caso                              | Resultado |
+|------------------------------------|--------------:|
+| (a) $\bar{x}$ / *s* | 111 / 8.82 mg/dL |
+| (b) | No conocemos σ, la estimamos con *s* y *n* es pequeño → *t* de Student con *gl* = 9; $t_{9,\,0.025} = 2.262$ |
+| (c) IC 95% | 111 ± 6.31 = (104.69, 117.31) mg/dL |
+| (d) | El 100 queda fuera del IC: la glucosa media de los *knockout* parece mayor que la de los *wild type*. Un t-test rechazaría $H_0$ con α = 0.05 (p = 0.003) |
+| (e) | Más estrecho: (105.53, 116.47). Con *n* pequeño, la *z* no tiene en cuenta la incertidumbre de estimar σ con *s*, así que da una falsa sensación de precisión |
+
+</details>
+
+
+## 🧬 Problema 3 - Leer un intervalo publicado
+
+Un artículo estudia la **longitud de los telómeros** en leucocitos de pacientes con una enfermedad rara. Con una muestra de **16 pacientes**, los autores dan el siguiente resultado:
+
+> *"La longitud media de los telómeros fue de 6.0 kb (IC 95%: 5.2–6.8 kb)."*
+
+### a) ¿Cuál es la media muestral? ¿Cuál es el margen de error?
+### b) Los autores usaron la distribución $t$. A partir del margen de error, calcula el error estándar y la desviación típica de la muestra.
+### c) Calcula el IC del 90% y el del 99% con los mismos datos.
+### d) Indica si cada una de las afirmaciones siguientes es verdadera o falsa, y por qué:
+1. Hay una probabilidad del 95% de que la media poblacional esté entre 5.2 y 6.8 kb.
+2. El 95% de los pacientes tiene telómeros de entre 5.2 y 6.8 kb.
+3. Si repitiéramos el estudio muchas veces con 16 pacientes distintos, aproximadamente el 95% de los intervalos que obtendríamos contendrían la media poblacional.
+4. Estamos seguros al 100% de que la media de la muestra es 6.0 kb.
+5. Con 64 pacientes en lugar de 16, el IC del 95% sería aproximadamente la mitad de ancho.
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Caso                              | Resultado |
+|------------------------------------|--------------:|
+| (a) $\bar{x}$ / *m* | 6.0 kb (centro del intervalo) / 0.8 kb (mitad de la amplitud) |
+| (b) *SE* / *s* | 0.8 / 2.131 = 0.375 kb / 0.375 × √16 = 1.50 kb |
+| (c) IC 90% | 6.0 ± 1.753 × 0.375 = (5.34, 6.66) kb |
+| (c) IC 99% | 6.0 ± 2.947 × 0.375 = (4.89, 7.11) kb |
+| (d) 1 | Falsa: μ es fija. Una vez calculado, el IC la contiene o no. El 95% es la fiabilidad del método |
+| (d) 2 | Falsa: el IC habla de la **media**, no de los individuos (los valores individuales varían mucho más, con *s* = 1.5 kb) |
+| (d) 3 | Verdadera: esta es precisamente la interpretación del nivel de confianza |
+| (d) 4 | Verdadera: $\bar{x}$ la hemos calculado. La incertidumbre está en μ, no en $\bar{x}$ |
+| (d) 5 | Verdadera (aproximadamente): *SE* = *s*/√*n* y √64 = 2 × √16. Además, la *t* con 63 *gl* es algo menor, así que sería incluso un poco más estrecho |
+
+</details>
+
+
+## 🐟 Problema 4 - Mercurio en el atún: intervalos unilaterales
+
+La normativa europea fija un **contenido máximo de mercurio de 1 mg/kg** en el atún. Un laboratorio de control alimentario analiza **50 latas** de un mismo lote y obtiene $\bar{x} = 0.82$ mg/kg y $s = 0.35$ mg/kg.
+
+Al laboratorio no le interesa saber si el mercurio puede ser «demasiado bajo». Solo quiere un **límite superior**: ¿hasta qué valor puede llegar la media del lote?
+
+### a) ¿Por qué tiene sentido un intervalo unilateral? ¿Qué valor crítico usamos para un IC unilateral del 95%? ¿Por qué no es 1.96?
+### b) Con $n = 50$ podemos usar la aproximación normal. Calcula el límite superior del IC unilateral del 95%. ¿Podemos afirmar, con un 95% de confianza, que el lote cumple la normativa?
+### c) Otro laboratorio, con menos presupuesto, analiza solo **8 latas** y obtiene la misma media y la misma desviación típica. Ahora hay que usar la $t$. Calcula el límite superior del IC unilateral del 95%. ¿Puede afirmar que el lote cumple la normativa?
+### d) Los dos laboratorios tienen la misma $\bar{x}$ y la misma $s$. ¿Por qué llegan a conclusiones diferentes?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Caso                              | Resultado |
+|------------------------------------|--------------:|
+| (a) | Solo nos preocupa que el mercurio sea demasiado **alto**. Todo α va en una cola: $z_{0.05} = 1.645$ (1.96 deja 0.025 en cada cola, que corresponde al bilateral) |
+| (b) *SE* / límite superior | 0.35 / √50 = 0.0495 / 0.82 + 1.645 × 0.0495 = 0.901 mg/kg → IC (−∞, 0.901) |
+| (b) ¿Cumple? | Sí: con un 95% de confianza, la media del lote está por debajo de 0.901 mg/kg < 1 mg/kg |
+| (c) *SE* / $t_{7,\,0.05}$ / límite superior | 0.35 / √8 = 0.124 / 1.895 / 0.82 + 1.895 × 0.124 = 1.054 mg/kg → IC (−∞, 1.054) |
+| (c) ¿Cumple? | No puede afirmarlo: el límite superior supera 1 mg/kg (que no es lo mismo que demostrar que el lote **no** cumple) |
+| (d) | Con *n* = 8, el *SE* es mayor (√8 < √50) y el valor crítico de la *t* con 7 *gl* (1.895) es mayor que el de la *z* (1.645). Hay más incertidumbre, así que el intervalo es más ancho |
+
+</details>
+
+
+## 😴 Problema 5 - Los somníferos de Student: datos pareados
+
+En 1908, William Gosset (*Student*) usó estos datos para presentar la distribución $t$. Se probaron **dos somníferos** en los **mismos 10 pacientes** y se midieron las **horas de sueño extra** respecto a una noche sin fármaco:
+
+| Paciente | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Fármaco 1 | 0.7 | −1.6 | −0.2 | −1.2 | −0.1 | 3.4 | 3.7 | 0.8 | 0.0 | 2.0 |
+| Fármaco 2 | 1.9 | 0.8 | 1.1 | 0.1 | −0.1 | 4.4 | 5.5 | 1.6 | 4.6 | 3.4 |
+
+### a) ¿Son muestras independientes o pareadas? ¿Por qué?
+### b) Calcula la diferencia (Fármaco 2 − Fármaco 1) para cada paciente y, a partir de las diferencias, $\bar{x}_{dif}$, $s_{dif}$ y el error estándar.
+### c) Construye el IC del 95% para la diferencia media de horas de sueño entre los dos fármacos. Interprétalo.
+### d) ¿El IC contiene el 0? ¿Qué conclusión sacarías de un t-test pareado con $\alpha = 0.05$? ¿Y con $\alpha = 0.01$? (Pista: construye también el IC del 99%.)
+### e) Un estudiante no se da cuenta de que los datos son pareados y los analiza como dos grupos independientes. R le da un IC del 95% para la diferencia de medias de **(−0.21, 3.37)** horas. ¿Qué conclusión sacaría? ¿Por qué su intervalo es tan diferente del tuyo?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Caso                              | Resultado |
+|------------------------------------|--------------:|
+| (a) | Pareadas: los dos fármacos se probaron en los mismos pacientes |
+| (b) Diferencias | 1.2, 2.4, 1.3, 1.3, 0.0, 1.0, 1.8, 0.8, 4.6, 1.4 |
+| (b) $\bar{x}_{dif}$ / $s_{dif}$ / *SE* | 1.58 / 1.23 / 0.389 horas |
+| (c) IC 95% ($t_{9,\,0.025} = 2.262$) | 1.58 ± 0.88 = (0.70, 2.46) horas |
+| (d) IC 99% ($t_{9,\,0.005} = 3.250$) | 1.58 ± 1.26 = (0.32, 2.84) horas |
+| (d) | Ninguno de los dos IC contiene el 0 → se rechaza $H_0$ tanto con α = 0.05 como con α = 0.01 (de hecho, p = 0.003): el fármaco 2 da más horas de sueño |
+| (e) | El 0 está dentro del intervalo, así que concluiría (mal) que no hay diferencia. Al tratarlos como independientes, la gran variabilidad **entre pacientes** (unos duermen mucho más que otros) entra en el *SE*. Con datos pareados esa variabilidad se elimina al restar, y el IC es mucho más estrecho |
+
+</details>
+
+<br>
+
+## 📚 Fuentes
+
+- Sokal, R. R. y Hunter, P. E. (1955). A morphometric analysis of DDT-resistant and non-resistant house fly strains. *Annals of the Entomological Society of America*, 48: 499–507. Datos de longitud del ala usados en Sokal y Rohlf, *Biometry*.
+- Student (1908). The probable error of a mean. *Biometrika*, 6: 1–25. Datos originales de Cushny, A. R. y Peebles, A. R. (1905). Disponibles en R: `sleep`.
+- Reglamento (UE) 2023/915 sobre contenidos máximos de determinados contaminantes en los alimentos (mercurio en el atún: 1.0 mg/kg).
+- Los datos de los Problemas 2, 3 y 4 son inventados para el ejercicio.
