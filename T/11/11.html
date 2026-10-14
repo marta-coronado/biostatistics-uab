@@ -886,6 +886,41 @@ donde `\(s_p\)` es la desviación típica combinada (*pooled*)
 ]
 
 ---
+class: animated, fadeIn, R
+
+## Cohen&#39;s *d* en `R`
+
+.pull-left[
+La función `cohens_d()` del paquete **`effectsize`** calcula la *d* de Cohen directamente. Hay que instalar el paquete una sola vez (`install.packages(&quot;effectsize&quot;)`) y cargarlo en cada sesión con `library()`.
+
+Se escribe con la misma fórmula que `t.test()`: `respuesta ~ grupos`. Por defecto usa la desviación típica combinada `\(s_p\)`.
+
+**Ejemplo:** peso seco de plantas control (`ctrl`) y con un tratamiento (`trt2`), 10 plantas por grupo (`PlantGrowth`)
+]
+
+.pull-right[
+
+
+
+``` r
+library(effectsize)
+
+cohens_d(weight ~ group, data = plantas)
+```
+
+```
+Cohen&#39;s d |         95% CI
+--------------------------
+-0.95     | [-1.87, -0.01]
+
+- Estimated using pooled SD.
+```
+
+- *d* = −0.95: el signo solo indica el orden de la resta (`ctrl` − `trt2`); lo que importa es el **valor absoluto** → efecto grande
+- Además da el **IC 95%** de *d*: con 10 plantas por grupo, la estimación es muy imprecisa
+]
+
+---
 class: animated, fadeIn
 
 ## Cohen&#39;s *d*: regla de oro vs. contexto
@@ -936,7 +971,7 @@ Ya sabemos **medir** el tamaño de efecto. Volvemos a la pregunta: ¿qué *n* ne
 
 --
 
-Relaciona **cuatro** cantidades: si fijamos tres, obtenemos la cuarta.
+Relaciona **cuatro** cantidades:
 
 - Significancia **α**
 - **Potencia** (1 − β)
@@ -1007,6 +1042,7 @@ NOTE: n is number in *each* group
 ```
 
 - *n* = 8.06 → **9 por grupo** (siempre se redondea hacia arriba)
+- Como *d* ya está en desviaciones típicas, damos `delta = d` y `sd = 1` (por ejemplo, la *d* que da `cohens_d()`)
 - La fórmula con Z da ≈ 7: es una aproximación normal, y con muestras pequeñas la *t* necesita más datos
 ]
 

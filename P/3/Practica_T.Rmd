@@ -1,7 +1,7 @@
 ---
 title: "**Pruebas de t:**<br><font color='#A8A8A8' size='5'>práctica en  `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
 author: "Marta Coronado Zamora"
-date: "Noviembre 2025"
+date: "Noviembre 2026"
 output:
   prettydoc::html_pretty:
     theme: leonids
@@ -16,20 +16,20 @@ library(tibble)
 library(ggplot2)
 # install.packages("prettydoc")
 library(prettydoc)
-library(data.table)
-library(ggpubr)
+library(ggsignif)
 library(car)
+library(effectsize)
 ```
 
 <style>
   @import url(https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,500,500i,700,700i);
   @import url(https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css);
   @import url("https://use.fontawesome.com/releases/v5.10.1/css/all.css");
-  
+
   body {
     font-family: 'Fira Sans','Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Microsoft YaHei', 'Songti SC', serif;
   }
-  
+
   /* Make bold syntax compile to RU-red */
   strong {
     color: #DE1144;
@@ -38,34 +38,68 @@ library(car)
 </style>
 
 
-# La distribución `t` 
+# La distribución `t`
 
 Como genetistas, la estadística es una herramienta que nos permite diseñar los mejores experimentos posibles y poner a prueba nuestras hipótesis.  
 La **prueba `t` (`t`-test)** es el inicio de nuestro recorrido estadístico. Es una prueba sencilla, y aunque quizás no la utilices con frecuencia, la teoría que hay detrás sienta las bases de muchos métodos estadísticos más avanzados.
 
-## Teoría del test `t`
+## Teoría del `t`-test
 
-El **test `t`** (o **test `t` de Student**) es una prueba estadística básica que se utiliza para evaluar si las medias de dos grupos son diferentes entre sí. En este test, la **hipótesis nula (H₀)** establece que las dos medias son iguales (es decir, que no hay diferencia entre ellas).
+El **`t`-test** (o **`t`-test de Student**) es una prueba estadística básica que se utiliza para evaluar si las medias de dos grupos son diferentes entre sí. En este test, la **hipótesis nula (H₀)** establece que las dos medias son iguales (es decir, que no hay diferencia entre ellas).
 
-El test `t` solo debe usarse si se cumplen las siguientes **suposiciones (asunciones):**
+El `t`-test de muestras independientes solo debe usarse si se cumplen las siguientes **suposiciones (asunciones):**
 
-1. Las dos distribuciones cuyas medias comparamos deben ser **normales**.  
-2. Las **varianzas** de los dos grupos deben ser **iguales**.
+1. Las observaciones son **independientes** entre sí.
+2. Los datos de **cada grupo** siguen una distribución **normal**.
+3. Las **varianzas** de los dos grupos son **iguales**. Si no lo son, usamos una variante del `t`-test, el **`t`-test de Welch**, que no necesita esta suposición.
 
-Si las suposiciones del test `t` no se cumplen, los resultados pueden ser engañosos. 
+Si las suposiciones del `t`-test no se cumplen, los resultados pueden ser engañosos.
 
-La **robustez** del test `t` aumenta con el tamaño de la muestra y es mayor cuando los grupos tienen tamaños similares.  
+La **robustez** del `t`-test aumenta con el tamaño de la muestra y es mayor cuando los grupos tienen tamaños similares.
+
+## Leer ficheros separados por tabuladores: `read.table()`
+
+En esta práctica, todos los datos están en **ficheros de texto separados por tabuladores** (extensión `.txt`): cada fila es una observación, y las columnas están separadas por un tabulador (la tecla <kbd>Tab</kbd>). Así se ve, por ejemplo, el principio del fichero `ToothGrowth.txt`:
+
+```
+len	supp	dose
+4.2	VC	0.5
+11.5	VC	0.5
+7.3	VC	0.5
+```
+
+Hasta ahora habíamos leído ficheros `.csv` (separados por comas) con `read.csv()`. Para leer ficheros separados por tabuladores utilizaremos la función `read.table()`, que tiene la siguiente forma ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#21)):
+
+```{r eval = F}
+mis_datos <- read.table(file = "ruta_al_fichero.txt", header = TRUE, sep = "\t")
+```
+
+- `file`: la ruta al fichero. Puede ser un fichero de tu ordenador o un enlace URL.
+- `header = TRUE`: la primera fila del fichero contiene los **nombres de las columnas** (el encabezado).
+- `sep = "\t"`: las columnas están separadas por **tabuladores**. `"\t"` es la forma de escribir un tabulador en `R`.
+
+<i class="fa fa-exclamation-triangle"></i> Si te olvidas de `sep = "\t"`, `read.table()` separa las columnas por cualquier espacio en blanco. Si te olvidas de `header = TRUE`, los nombres de las columnas se leerán como si fueran la primera fila de datos. Comprueba siempre el resultado con `head()` o `str()`.
+
+Todos los ficheros de esta práctica están en la carpeta [`data`](https://github.com/marta-coronado/biostatistics-uab/tree/main/P/3/data). No hace falta que los descargues: `R` puede leerlos directamente desde el enlace URL.
 
 ### Ejemplo de `t`-test con dos muestras independientes: evaluar el crecimiento de los dientes
 
-Utilizaremos el dataset `ToothGrowth` (es un `data.frame` ya disponible en `R`). Se midió la respuesta **medida es la longitud de los odontoblastos** (células responsables del crecimiento dental, `len`) en 60 cobayas. Cada animal recibió uno de tres niveles de dosis de vitamina C (0.5, 1 y 2 mg/día, `dose`) mediante uno de dos métodos de administración: jugo de naranja (OJ) u ácido ascórbico (una forma de vitamina C, codificada como VC, `supp`).
+Utilizaremos el dataset `ToothGrowth`. La **variable respuesta** es la **longitud de los odontoblastos** (células responsables del crecimiento dental, `len`) en 60 cobayas. Cada animal recibió uno de tres niveles de dosis de vitamina C (0.5, 1 y 2 mg/día, `dose`) mediante uno de dos métodos de administración: zumo de naranja (`OJ`) o ácido ascórbico (una forma de vitamina C, codificada como `VC`), en la columna `supp`.
+
+Lee el fichero [`ToothGrowth.txt`](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/data/ToothGrowth.txt) con `read.table()` y guárdalo en un objeto que se llame `dientes`. El enlace URL es: `https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/data/ToothGrowth.txt`. Comprueba con `head()` que se ha leído bien (tres columnas: `len`, `supp` y `dose`).
 
 ```{r}
-library(DT)
-datatable(ToothGrowth)
+
 ```
 
-Utilizaremos la dosis de 0.5 mg/día para hacer la prueba. Para ello, tenemos que hacer un subset de los datos. Utiliza la función `filter()` para filtrar cuando la dosis (`dose`) es igual a `0.5` y guárdalo en un nuevo objeto. [Ejemplo de filter.](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#25)
+Puedes ver la tabla completa de manera interactiva con la función `datatable()`:
+
+```{r eval = F}
+library(DT)
+datatable(dientes)
+```
+
+Utilizaremos la dosis de 0.5 mg/día para hacer la prueba. Para ello, tenemos que hacer un subset de los datos. Utiliza la función `filter()` para filtrar cuando la dosis (`dose`) es igual a `0.5` y guárdalo en un nuevo objeto. [Ejemplo de filter.](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#27)
 
 ```{r}
 library(tidyverse)
@@ -74,15 +108,21 @@ library(tidyverse)
 
 #### 1. Comprobación de normalidad
 
-Antes de aplicar tests paramétricos como el `t`-test, es importante verificar si la variable respuesta, la **longitud de los odontoblastos** (`len`), sigue una **distribución normal**.  Para ello, podemos aplicar la prueba de Shapiro. Recuerda que se ejecuta como `shapiro.test(vector_datos)`, y que podemos acceder al vector de datos numérico con la nomenclatura `dataframe$columna`. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/12/12.TTest_pt2.html#27) 
+Antes de aplicar tests paramétricos como el `t`-test, es importante verificar si la variable respuesta, la **longitud de los odontoblastos** (`len`), sigue una **distribución normal** en **cada uno de los dos grupos** (`OJ` y `VC`). Para ello, podemos aplicar el test de Shapiro-Wilk. Recuerda que se ejecuta como `shapiro.test(vector_datos)`. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/10/12.TTest_pt2.html#28)
 
-¿Cuál es la conclusión del test?
+Para obtener el vector numérico de un grupo, filtra el grupo con `filter()` y extrae la columna con `pull()`:
+
+```{r eval = F}
+df %>% filter(columna_grupo == "grupo") %>% pull(columna_respuesta)
+```
+
+Guarda los vectores de `len` de cada grupo (`OJ` y `VC`) en dos objetos y aplica el test de Shapiro-Wilk a cada uno. ¿Cuál es la conclusión del test?
 
 ```{r}
 
 ```
 
-Otra forma de evaluar si los datos siguen una distribución normal es de manera **gráfica**, mediante un **QQ-plot** (quantile-quantile plot).   En la práctica 2 creamos una función `QQ_plot()` que genera automáticamente el gráfico a partir de cualquier vector numérico. 
+Otra forma de evaluar si los datos siguen una distribución normal es de manera **gráfica**, mediante un **QQ-plot** (*quantile-quantile plot*). En la práctica 2 creamos una función `QQ_plot()` que genera automáticamente el gráfico a partir de cualquier vector numérico.
 
 <i class="fa fa-cogs"></i> **Ejecuta el siguiente bloque de código para cargar la función `QQ_plot()`.**
 
@@ -90,9 +130,9 @@ Otra forma de evaluar si los datos siguen una distribución normal es de manera 
 # Función para crear QQ-plot con ggplot2
 QQ_plot <- function(vector_datos) {
   library(ggplot2)
-  # Crear data frame con el vector numerico pasado como argumento
+  # Crear data frame con el vector numérico pasado como argumento
   df <- data.frame(valor = vector_datos)
-  
+
   # QQ-plot con ggplot2
   ggplot(df, aes(sample = valor)) +
     stat_qq() +
@@ -100,32 +140,42 @@ QQ_plot <- function(vector_datos) {
     theme_classic() +
     labs(
       title = "QQ-plot",
-      x = "Quantiles teóricos",
-      y = "Quantiles de la muestra"
+      x = "Cuantiles teóricos",
+      y = "Cuantiles de la muestra"
     )
 }
 
 ```
 
-Genera el QQ-plot (`QQ_plot(vector_numerico)`). ¿Tienes evidencia de que sigue una distribución normal?
+Genera el QQ-plot de cada grupo (`QQ_plot(vector_numerico)`). ¿Tienes evidencia de que siguen una distribución normal?
 
 ```{r}
 
 ```
 
 
-#### 2.Comprobación de homogeneidad de varianzas
+#### 2. Comprobación de homogeneidad de varianzas
 
-El test de Levene nos permite evaluar si las varianzas son iguales o no. Recuerda que tenemos que cargar la librería `car` primero, antes de poder aplicar la función `leveneTest()`. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/12/12.TTest_pt2.html#14)
+El test de Levene nos permite evaluar si las varianzas son iguales o no. Recuerda que tenemos que cargar la librería `car` primero, antes de poder aplicar la función `leveneTest()`. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/10/12.TTest_pt2.html#14)
 
-La función de Levene tiene la siguiente forma: 
+La función de Levene tiene la siguiente forma:
  `leveneTest(variable_respuesta ~ grupos, data = data_frame)`
 
 ```{r}
 
 ```
 
-Como otro método gráfico, podemos utilizar los boxplots para visualizar como se distribuyen los datos. [Tienes un ejemplo de boxplot aquí.](https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#17) 
+Como otro método gráfico, podemos utilizar los boxplots para visualizar cómo se distribuyen los datos. [Tienes un ejemplo de boxplot aquí.](https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#17)
+
+Completa la siguiente plantilla: sustituye cada `___` por el nombre del data frame y de las columnas que van en el eje x (los **grupos**) y en el eje y (la **variable respuesta**). En `fill` pon la misma columna que en `x`, para que cada grupo tenga un color. En `labs()` puedes escribir los títulos de los ejes que quieras.
+
+```{r eval = F}
+ggplot(data = ___, aes(x = ___, y = ___, fill = ___)) +
+  geom_boxplot() +
+  theme_classic() +
+  theme(legend.position = "none") +
+  labs(x = "___", y = "___")
+```
 
 ```{r}
 
@@ -133,9 +183,9 @@ Como otro método gráfico, podemos utilizar los boxplots para visualizar como s
 
 #### 3. Aplicar el `t`-test
 
-Una vez comprobados los supuestos, podemos hacer el `t.test`. Podemos utilizar la función  `t.test` con el modelo con la expresión: `variable_respuesta ~ grupos, data = dataframe, var.equal=TRUE`. `var.equal` es `FALSE` si el test de Levene ha dado significativo.
+Una vez comprobados los supuestos, podemos hacer el `t`-test con la función `t.test()` y la expresión: `variable_respuesta ~ grupos, data = dataframe, var.equal = TRUE`. Si el test de Levene ha dado significativo (varianzas distintas), usamos `var.equal = FALSE`, y `R` hace el `t`-test de Welch.
 
-El modelo se escribe como has hecho para el test de Levene de antes. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/12/12.TTest_pt2.html#18)
+El modelo se escribe como has hecho para el test de Levene de antes. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/10/12.TTest_pt2.html#20)
 
 ```{r}
 
@@ -145,60 +195,118 @@ El modelo se escribe como has hecho para el test de Levene de antes. [Ejemplo.](
 
 
 
-Podemos mejorar el boxplot de antes añadiéndole el resultado del `t`-test. [Lo vimos en esta diapositiva.](https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#24)
+Podemos mejorar el boxplot de antes añadiéndole el resultado del `t`-test con la función `geom_signif()` del paquete `ggsignif`. [Lo vimos en esta diapositiva.](https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#24)
 
-En este aso el método es `t.test`, y en `comparisons` indicamos los dos grupos que queremos comprar, en este caso `OJ` y `VC` (los grupos que vemos en el eje x).
+En este caso, el test es `t.test`, y en `comparisons` indicamos los dos grupos que queremos comparar, en este caso `OJ` y `VC` (los grupos que vemos en el eje x). Con `test.args` le indicamos que las varianzas son iguales, como en el `t`-test que has hecho.
 
-Añade la capa siguiente al boxplot que hiciste antes:
+Añade la capa `geom_signif()` al final del boxplot que hiciste antes (rellena otra vez los `___`):
 
 ```{r eval = F}
-library(ggpubr)
+library(ggsignif)
 
-# código ggplot del boxplot anterior + 
-stat_compare_means(method = "t.test", label = "p.signif",comparisons = list(c("OJ", "VC")))
+ggplot(data = ___, aes(x = ___, y = ___, fill = ___)) +
+  geom_boxplot() +
+  theme_classic() +
+  theme(legend.position = "none") +
+  labs(x = "___", y = "___") +
+  geom_signif(comparisons = list(c("OJ", "VC")),
+              test = "t.test", test.args = list(var.equal = TRUE))
 ```
+
+```{r}
+
+```
+
+#### 4. Tamaño del efecto: *d* de Cohen
+
+El `t`-test nos dice **si** hay una diferencia entre los dos grupos, pero no **cuán grande** es. Un p-valor pequeño no significa que el efecto sea grande o importante: también depende del tamaño de la muestra. Para medir la magnitud de la diferencia, calculamos el **tamaño del efecto**. [Lo vimos en esta diapositiva.](https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#21)
+
+Para dos grupos independientes, usamos la ***d* de Cohen**: la diferencia de medias medida en desviaciones típicas.
+
+$$d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}$$
+
+donde $s_p$ es la **desviación típica combinada** (*pooled*) de los dos grupos:
+
+$$s_p = \sqrt{\frac{(n_1 - 1)\,s_1^2 + (n_2 - 1)\,s_2^2}{n_1 + n_2 - 2}}$$
+
+No hace falta que lo calcules a mano: la función `cohens_d()` del paquete `effectsize` lo hace por nosotros ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#22)). Se escribe con la misma fórmula que `t.test()` y `leveneTest()`, y por defecto utiliza la desviación típica combinada $s_p$:
+
+```{r eval = F}
+library(effectsize)
+
+cohens_d(variable_respuesta ~ grupos, data = dataframe)
+```
+
+```{r}
+
+```
+
+Además del valor de *d*, `cohens_d()` da su **intervalo de confianza del 95%**: con muestras pequeñas, la estimación del tamaño del efecto también es incierta.
+
+**¿Es un efecto pequeño, medio o grande? ¿Qué te dice el intervalo de confianza?** Recuerda la guía orientativa de Cohen: *d* < 0.2 trivial; 0.2 ≤ *d* < 0.5 pequeño; 0.5 ≤ *d* < 0.8 medio; *d* ≥ 0.8 grande. Pero no la apliques de forma rígida: la relevancia de un efecto depende siempre del contexto. (La función `interpret_cohens_d(d)` aplica esta guía automáticamente.)
+
+
+
+#### 5. Potencia estadística
+
+La **potencia** es la probabilidad de rechazar correctamente H₀ cuando hay una diferencia real (1 − β). Con la función `power.t.test()` podemos hacer un **análisis de potencia**: relaciona el tamaño de muestra (`n`, **por grupo**), la diferencia de medias (`delta`), la desviación típica (`sd`), la significación (`sig.level`) y la potencia (`power`). Si le damos todos los valores menos uno, `R` calcula el que falta. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#29)
+
+Como la *d* de Cohen ya está medida en desviaciones típicas, podemos darle directamente `delta = d` y `sd = 1` (como hicimos en las diapositivas).
+
+**a) ¿Qué potencia tenía este experimento?** Le damos `n` (10 cobayas por grupo), `delta` (la *d* que has calculado) y `sd = 1`, y no le damos `power`:
+
+```{r eval = F}
+power.t.test(n = 10, delta = d, sd = 1, sig.level = 0.05)
+```
+
+```{r}
+
+```
+
+**b) Queremos repetir el experimento. ¿Cuántas cobayas por grupo necesitaríamos para tener una potencia del 80%?** Ahora le damos `power = 0.8` y no le damos `n`. Recuerda: el número de individuos **siempre se redondea hacia arriba**. ¿Y para una potencia del 90%?
+
+```{r}
+
+```
+
+**¿Tenía el experimento con 10 cobayas por grupo suficiente potencia?**
+
 
 
 ### Ejemplo de `t`-test con datos pareados: peso de ratones antes y después de un tratamiento
 
-Vamos a utilizar los siguientes datos con los pesos de ratones antes y después de un tratamiento:
+Vamos a utilizar los pesos (en g) de 10 ratones antes y después de un tratamiento. Los datos están en el fichero [`peso_ratones.txt`](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/data/peso_ratones.txt), que tiene tres columnas: el identificador del ratón (`id`), el momento de la medida (`grupo`: `antes` o `despues`) y el peso (`peso`).
+
+Lee el fichero con `read.table()` y guárdalo en un objeto que se llame `peso_ratones`. Comprueba con `head()` que se ha leído bien.
 
 ```{r}
-# Peso ratones antes
-antes <-c(200.1, 190.9, 192.7, 213, 241.4, 196.9, 172.2, 185.5, 205.2, 193.7)
 
-# Peso ratones después
-despues <-c(392.9, 393.2, 345.1, 393, 434, 427.9, 422, 383.9, 392.3, 352.2)
-
-# Crear el dataframe
-peso_ratones <- data.frame( 
-   id = rep(seq(1,10,1), 2),
-                grupo = rep(c("antes", "despues"), each = 10),
-                peso = c(antes,  despues)
-                )
-# Visualiza el dataframe
-peso_ratones
 ```
 
-Para un `t`-test pareado vamos a utilizar tanto el dataframe (`peso_ratones`) como los dos vectores de peso antes y después que tenemos. 
+Para un `t`-test pareado necesitamos **dos vectores** con los pesos de antes y de después. Extráelos con `filter()` y `pull()`, como hiciste antes con los grupos `OJ` y `VC`, y guárdalos en dos objetos (`antes` y `despues`). El orden de los ratones (`id`) es el mismo en los dos vectores, así que el primer valor de `antes` y el primer valor de `despues` corresponden al mismo ratón.
+
+```{r}
+
+```
 
 
 #### 1. Comprobación de normalidad
 
-Tenemos que comprobar si la diferencia de medias sigue una distribución normal. Tenemos que calcular la diferencia de medias. Para ello, simplemente podemos restar los vectores `despues - antes`. Puedes guardarte el vector resultante en un nuevo objeto:
+En un `t`-test pareado, lo que tiene que seguir una distribución normal son las **diferencias** entre cada par de valores (después − antes de cada ratón). Para calcularlas, simplemente podemos restar los vectores `despues - antes`. Guarda el vector resultante en un nuevo objeto:
 
 
 ```{r}
 
 ```
 
-¿Cuál es la conclusión del test de normalidad?
+Aplica el test de Shapiro-Wilk a las diferencias. ¿Cuál es la conclusión del test de normalidad?
 
 ```{r}
 
 ```
 
-Genera el qqplot para la diferencia de medias. Tienes evidencia de que sigue una distribución normal?
+Genera el QQ-plot de las diferencias. ¿Tienes evidencia de que siguen una distribución normal?
+
 ```{r}
 
 ```
@@ -206,15 +314,15 @@ Genera el qqplot para la diferencia de medias. Tienes evidencia de que sigue una
 
 #### 2. Comprobación de homogeneidad de varianzas
 
-En el caso de un *`t`-test* **pareado**, no es necesario comprobar la homogeneidad de varianzas, ya que las observaciones no son independientes entre los dos grupos.  
+En el caso de un `t`-test **pareado**, no es necesario comprobar la homogeneidad de varianzas, ya que las observaciones no son independientes entre los dos grupos.  
 El test se basa en las **diferencias entre cada par de valores**, por lo que lo relevante es que **las diferencias sigan una distribución normal**, no que las varianzas de los grupos originales sean iguales.
 
 
 #### 3. `t`-test pareado
 
-Una vez comprobados los supuestos, podemos hacer el `t.test`. Esta vez utilizaremos el argumento `paired=TRUE` para indicar que hacemos el `t`-test pareado. 
+Una vez comprobados los supuestos, podemos hacer el `t`-test. Esta vez utilizaremos el argumento `paired = TRUE` para indicar que hacemos el `t`-test pareado.
 
-<i class="fa fa-exclamation-triangle"></i> Importante: la nomenclatura cambia, y no podemos utilizar el método modelo que hicimos antes (`variable_respuesta ~ grupo`) en este tipo de test. La nomenclatura es: `vector_valores_despues, vector_valores_antes, paired=TRUE`.
+<i class="fa fa-exclamation-triangle"></i> Importante: la nomenclatura cambia, y no podemos utilizar la fórmula que usamos antes (`variable_respuesta ~ grupos`) en este tipo de test. La nomenclatura es: `t.test(vector_valores_despues, vector_valores_antes, paired = TRUE)`.
 
 ```{r}
 
@@ -225,70 +333,80 @@ Una vez comprobados los supuestos, podemos hacer el `t.test`. Esta vez utilizare
 
 Podemos visualizar el `t`-test pareado con el siguiente código:
 
-```{r}
+```{r eval = F}
 # Gráfico pareado
-ggplot(peso_ratones, aes(x = grupo, y = peso, group=id)) +
+ggplot(peso_ratones, aes(x = grupo, y = peso, group = id)) +
     geom_line(color = "grey") +
     geom_point(aes(color = grupo), size = 3) +
     theme_classic(base_size = 14) +
     theme(legend.position = "none")
 ```
 
+```{r}
+
+```
+
 
 # <i class="fa fa-rocket"></i> Analiza un dataset científico real
 
-Queremos practicar con **datasets reales**, extraído de literatura científica. Tienes disponibles **3 datasets** para elegir para hacer una prueba de `t`-test de muestras independientes, y **1 dataset** para hacer una prueba de `t`-test de datos pareados.  Dispones del **artículo de investigación correspondiente** y de una **breve descripción** de los datos.
+Queremos practicar con **datasets reales**, extraídos de la literatura científica. Tienes disponibles **3 datasets** para elegir para hacer un `t`-test de muestras independientes, y **1 dataset** para hacer un `t`-test de datos pareados. Dispones del **artículo de investigación correspondiente** y de una **breve descripción** de los datos.
 
 Datasets de: _Whitlock, Michael C, and Dolph Schluter. 2020. The Analysis of Biological Data. Third Edition_.
 
-Puedes elegir **cualquiera de los siguientes 3 datasets** para realizar un **`t`-test de muestras independientes**. Comprueba los supuestos, realiza el `t`-test y utiliza `ggplot2` para visualizar los datos utilizando el código anterior. ¿Cuáles son tus conclusiones?
+Puedes elegir **cualquiera de los siguientes 3 datasets** para realizar un **`t`-test de muestras independientes**. Comprueba los supuestos, realiza el `t`-test, calcula el tamaño del efecto y la potencia, y utiliza `ggplot2` para visualizar los datos utilizando el código anterior. ¿Cuáles son tus conclusiones?
 
 
 ### 🎨👂 Oír colores
-Algunas personas experimentan uno de sus sentidos a través de otro. Por ejemplo, pueden **escuchar el nombre “Bob” y ver el color gris**. Saenz y Koch se interesaron en ver cómo este tipo de percepción impactaba en la capacidad de completar tareas complejas multisensoriales. Compararon personas con y sin este tipo único de percepción sensorial (conocidos como **sinestésicos**) con un grupo de personas sin estas habilidades, mediante un test que involucraba **patrones temporales rítmicos similares al código Morse**.  
+Algunas personas experimentan uno de sus sentidos a través de otro. Por ejemplo, pueden **escuchar el nombre "Bob" y ver el color gris**. Saenz y Koch se interesaron en ver cómo este tipo de percepción impactaba en la capacidad de completar tareas complejas multisensoriales. Compararon un grupo de personas con este tipo único de percepción sensorial (conocidas como **sinestésicas**) con un grupo de personas sin estas habilidades (`controls`), mediante un test que involucraba **patrones temporales rítmicos similares al código Morse** (`score`).
 
-- **Enlace a los datos:** [chap02q10Synesthetes.csv](https://raw.githubusercontent.com/marta-coronado/TAB-data-figs/refs/heads/main/P2_datasets/chap02q10Synesthetes.csv)  
+- **Enlace a los datos:** [chap02q10Synesthetes.txt](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/data/chap02q10Synesthetes.txt)
 - [Leer el estudio](https://www.sciencedirect.com/science/article/pii/S0960982208007343)
 
 ### ⏳ ¿Funciona el ayuno intermitente?
-Por alguna razón, **restringir la ingesta de alimentos** a menudo incrementa la esperanza de vida. Para comprobarlo, Mattison et al. alimentaron a **17 monos rhesus** (7 hembras, 10 machos) con una dieta reducida al 30% de la nutrición normal, y a otros **17 monos rhesus** (8 hembras, 9 machos) con una dieta nutritiva normal.  
+Por alguna razón, **restringir la ingesta de alimentos** a menudo incrementa la esperanza de vida. Para comprobarlo, Mattison et al. alimentaron a **17 monos rhesus** (7 hembras, 10 machos) con una dieta con un 30% menos de calorías que la normal (`reduced`), y a otros **17 monos rhesus** (8 hembras, 9 machos) con una dieta nutritiva normal (`control`). La variable respuesta es la esperanza de vida en años (`lifespan`).
 
-- **Enlace a los datos:** [chap02q35FoodReductionLifespan.csv](https://raw.githubusercontent.com/marta-coronado/TAB-data-figs/refs/heads/main/P2_datasets/chap02q35FoodReductionLifespan.csv)  
+- **Enlace a los datos:** [chap02q35FoodReductionLifespan.txt](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/data/chap02q35FoodReductionLifespan.txt)
 - [Leer el estudio](https://www.nature.com/articles/nature11432)
 
 
 ### 💞🧬 ¿Un gen para la monogamia?
-El gen del **receptor de vasopresina V1a** se expresa a niveles más altos en el **cerebro anterior** de especies de lirones monógamos que en especies promiscuas. Para ver si la expresión de este gen influía en la monogamia, Lim et al aumentaron experimentalmente la expresión de V1a en el cerebro anterior de **11 machos de lirón de pradera**, una especie solitaria y promiscua, y compararon el **porcentaje de tiempo** que estos machos y los controles pasaban acurrucados con una hembra colocada junto a ellos (como medida de monogamia).  
+El gen del **receptor de vasopresina V1a** se expresa a niveles más altos en el **cerebro anterior** de especies de topillos monógamas que en especies promiscuas. Para ver si la expresión de este gen influía en la monogamia, Lim et al. aumentaron experimentalmente la expresión de V1a en el cerebro anterior de **11 machos de topillo de campo** (*Microtus pennsylvanicus*), una especie solitaria y promiscua (`enhanced`), y compararon el **porcentaje de tiempo** (`percent`) que estos machos y los controles (`control`) pasaban acurrucados con una hembra colocada junto a ellos (como medida de monogamia).
 
-<i class="fa fa-exclamation-triangle"></i> Estos datos no seguirán una distribución normal. Puedes hacer un test de Wilcoxon en su lugar (`wilcox.test()`), la fórmula se escribe igual que en la del `t.test()`, solo que en vez de `t.test()` es `wilcox.test()`.
+<i class="fa fa-exclamation-triangle"></i> Estos datos son porcentajes, con muchos valores cerca del 100%. Comprueba con cuidado los supuestos (sobre todo con los QQ-plots y el test de Levene). Si no se cumple la normalidad, puedes hacer un test de Wilcoxon en su lugar (`wilcox.test()`): la fórmula se escribe igual que en `t.test()`, solo que en vez de `t.test()` es `wilcox.test()`.
 
-- **Enlace a los datos:** [chap03q15VasopressinVoles.csv](https://raw.githubusercontent.com/marta-coronado/TAB-data-figs/refs/heads/main/P2_datasets/chap03q15VasopressinVoles.csv)  
+- **Enlace a los datos:** [chap03q15VasopressinVoles.txt](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/data/chap03q15VasopressinVoles.txt)
 - [Leer el estudio](https://www.nature.com/articles/nature02539)
 
-<i class="fa fa-key"></i> Puedes leer los datos directamente de los enlaces anteriores:
+<i class="fa fa-key"></i> Lee los datos directamente de los enlaces anteriores con `read.table()`, igual que has hecho con `ToothGrowth.txt`:
 
 ```{r eval = F}
-data <- read.csv("github_url.csv")
+mis_datos <- read.table("url_del_fichero.txt", header = TRUE, sep = "\t")
 ```
+
+<i class="fa fa-info-circle"></i> `power.t.test()` supone que los dos grupos tienen el mismo número de observaciones. Si tu dataset tiene grupos de tamaño distinto, usa como `n` el tamaño del grupo **más pequeño**: obtendrás una potencia aproximada (un poco por debajo de la real).
 
 Pasos para hacer el `t`-test:
 
 ```{r}
 # lee los datos
 
-# head() o View() de los datos 
+# head() o View() de los datos
 
-# comprobación de normalidad
+# comprobación de normalidad (en cada grupo)
 
-# qqplot
+# QQ-plot
 
 # comprobación de homogeneidad de varianzas
 
-# `t`-test
+# t-test
 
 # interpretación del test
 
-# boxplot con significancia
+# tamaño del efecto (cohens_d) e interpretación
+
+# potencia del estudio y n necesaria para una potencia del 80%
+
+# boxplot con significación (usa la plantilla de antes)
 ```
 
 ```{r}
@@ -297,42 +415,37 @@ Pasos para hacer el `t`-test:
 
 
 Utiliza el siguiente conjunto de datos para hacer un `t`-test pareado.
- 
+
 ### 🕷️💨 Correr con menos peso
 
-Los machos de las arañas del género *Tidarren* son diminutos y pesan aproximadamente **un 1% del peso de las hembras**. Justo antes de la madurez sexual, los machos **se amputan voluntariamente uno de sus dos órganos reproductores**.  
-¿Podría esto permitirles **moverse más rápido**?
+Los machos de las arañas del género *Tidarren* son diminutos y pesan aproximadamente **un 1% del peso de las hembras**. Justo antes de la madurez sexual, los machos **se amputan voluntariamente uno de sus dos órganos reproductores** (pedipalpos).  
+¿Podría esto permitirles **moverse más rápido**? Se midió la velocidad (`speed`, en cm/s) de **16 machos** (`spider`) antes (`before`) y después (`after`) de la amputación (`treatment`).
 
-- **Enlace a los datos:** [chap03e2SpiderAmputation.csv](https://raw.githubusercontent.com/marta-coronado/TAB-data-figs/refs/heads/main/P2_datasets/chap03e2SpiderAmputation.csv)  
+- **Enlace a los datos:** [chap03e2SpiderAmputation.txt](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/data/chap03e2SpiderAmputation.txt)
 - [Leer el estudio](https://www.pnas.org/content/101/14/4883)
 
-Como ya tienes el `data.frame`, te recomiendo que extraigas dos vectores: uno con los valores de velocidad de antes y otro con el después con la función `filter()`. Así podras calcular la diferencia de medias como vimos con el ejemplo de antes.
-
-Ejemplo para obtener vector numérico:
-```{r eval = F}
-df %>% filter(columna_grupo=="condicion_a_filtrar") %>% pull(columna_respuesta)
-```
+Como en el ejemplo de los ratones, extrae dos vectores con `filter()` y `pull()`: uno con los valores de velocidad de antes y otro con los de después. Así podrás calcular las diferencias entre cada par de valores.
 
 Pasos para hacer el `t`-test:
 
 ```{r}
 # lee los datos
 
-# head() o View() de los datos 
+# head() o View() de los datos
 
-# filtra: datos de speed antes y datos de speed de despues
+# filtra: datos de speed de antes y datos de speed de después
 
-# calcula la diferencia de medias
+# calcula las diferencias (después - antes)
 
-# comprobación de normalidad
+# comprobación de normalidad (de las diferencias)
 
-# qqplot
+# QQ-plot
 
-# `t`-test
+# t-test pareado
 
 # interpretación del test
 
-# ggplot2 grafico pareado
+# ggplot2 gráfico pareado
 ```
 
 ```{r}

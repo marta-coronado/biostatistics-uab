@@ -27,8 +27,8 @@ knitr::opts_chunk$set(
   fig.retina = 5,
   fig.align = "center",
   comment = "",
-  # si cambias R/figuras.R, las figuras cacheadas se regeneran solas
-  cache.extra = tools::md5sum("R/figuras.R")
+  # si cambias figuras.R, las figuras cacheadas se regeneran solas
+  cache.extra = tools::md5sum("figuras.R")
 )
 
 library(ggplot2)
@@ -599,6 +599,35 @@ fig_solape(mu_esp = 20, mu_nor = 30, sd = 6.5)
 ]
 
 ---
+class: animated, fadeIn, R
+
+## Cohen's *d* en `R`
+
+.pull-left[
+La función `cohens_d()` del paquete **`effectsize`** calcula la *d* de Cohen directamente. Hay que instalar el paquete una sola vez (`install.packages("effectsize")`) y cargarlo en cada sesión con `library()`.
+
+Se escribe con la misma fórmula que `t.test()`: `respuesta ~ grupos`. Por defecto usa la desviación típica combinada $s_p$.
+
+**Ejemplo:** peso seco de plantas control (`ctrl`) y con un tratamiento (`trt2`), 10 plantas por grupo (`PlantGrowth`)
+]
+
+.pull-right[
+```{r cohens-d-datos, echo=FALSE}
+plantas <- subset(PlantGrowth,
+                  group %in% c("ctrl", "trt2"))
+```
+
+```{r cohens-d}
+library(effectsize)
+
+cohens_d(weight ~ group, data = plantas)
+```
+
+- *d* = −0.95: el signo solo indica el orden de la resta (`ctrl` − `trt2`); lo que importa es el **valor absoluto** → efecto grande
+- Además da el **IC 95%** de *d*: con 10 plantas por grupo, la estimación es muy imprecisa
+]
+
+---
 class: animated, fadeIn
 
 ## Cohen's *d*: regla de oro vs. contexto
@@ -649,7 +678,7 @@ Ya sabemos **medir** el tamaño de efecto. Volvemos a la pregunta: ¿qué *n* ne
 
 --
 
-Relaciona **cuatro** cantidades: si fijamos tres, obtenemos la cuarta.
+Relaciona **cuatro** cantidades:
 
 - Significancia **α**
 - **Potencia** (1 − β)
@@ -705,6 +734,7 @@ power.t.test(delta = 1.5, sd = 1,
 ```
 
 - *n* = 8.06 → **9 por grupo** (siempre se redondea hacia arriba)
+- Como *d* ya está en desviaciones típicas, damos `delta = d` y `sd = 1` (por ejemplo, la *d* que da `cohens_d()`)
 - La fórmula con Z da ≈ 7: es una aproximación normal, y con muestras pequeñas la *t* necesita más datos
 ]
 

@@ -1,0 +1,420 @@
+---
+title: "**Soluciones P3:**<br><font color='#A8A8A8' size='5'>Pruebas de t en `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
+author: "Marta Coronado Zamora"
+date: "Noviembre 2026"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5, fig.align = 'center', fig.height = 5, fig.width = 5)
+library(dplyr)
+library(ggplot2)
+library(prettydoc)
+library(ggsignif)
+library(car)
+library(effectsize)
+```
+
+<style>
+  @import url(https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,500,500i,700,700i);
+  @import url(https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css);
+  @import url("https://use.fontawesome.com/releases/v5.10.1/css/all.css");
+
+  body {
+    font-family: 'Fira Sans','Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Microsoft YaHei', 'Songti SC', serif;
+  }
+
+  /* Make bold syntax compile to RU-red */
+  strong {
+    color: #DE1144;
+  }
+
+</style>
+
+<i class="fa fa-info-circle"></i> En estas soluciones leemos los ficheros desde la carpeta `data`. Si usas el enlace URL (`https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/data/...`), el resultado es exactamente el mismo.
+
+```{r QQplot, include = FALSE}
+QQ_plot <- function(vector_datos) {
+  df <- data.frame(valor = vector_datos)
+  ggplot(df, aes(sample = valor)) +
+    stat_qq() +
+    stat_qq_line(color = "firebrick4") +
+    theme_classic() +
+    labs(title = "QQ-plot", x = "Cuantiles teóricos", y = "Cuantiles de la muestra")
+}
+```
+
+# `t`-test de muestras independientes: ToothGrowth
+
+### Leer los datos
+
+```{r}
+dientes <- read.table("data/ToothGrowth.txt", header = TRUE, sep = "\t")
+head(dientes)
+```
+
+Nos quedamos con la dosis de 0.5 mg/día:
+
+```{r}
+dientes_05 <- dientes %>% filter(dose == 0.5)
+dientes_05
+```
+
+### 1. Comprobación de normalidad
+
+Extraemos el vector de `len` de cada grupo:
+
+```{r}
+oj <- dientes_05 %>% filter(supp == "OJ") %>% pull(len)
+vc <- dientes_05 %>% filter(supp == "VC") %>% pull(len)
+
+shapiro.test(oj)
+shapiro.test(vc)
+```
+
+En los dos grupos p > 0.05: no rechazamos H₀ (normalidad). No tenemos evidencia de que los datos no sigan una distribución normal.
+
+```{r fig.show = "hold", fig.width = 4, fig.height = 4}
+QQ_plot(oj)
+QQ_plot(vc)
+```
+
+Los puntos siguen razonablemente bien la recta en los dos grupos (con solo 10 datos por grupo, es normal que se separen un poco en los extremos).
+
+### 2. Homogeneidad de varianzas
+
+```{r}
+leveneTest(len ~ supp, data = dientes_05)
+```
+
+p = 0.083 > 0.05: no rechazamos H₀ (varianzas iguales). Podemos usar `var.equal = TRUE`.
+
+```{r}
+ggplot(dientes_05, aes(x = supp, y = len, fill = supp)) +
+  geom_boxplot() +
+  theme_classic() +
+  theme(legend.position = "none") +
+  labs(x = "Método de administración", y = "Longitud de los odontoblastos")
+```
+
+El grupo `OJ` tiene algo más de dispersión que `VC`, pero el test de Levene no encuentra diferencias significativas.
+
+### 3. `t`-test
+
+```{r}
+t.test(len ~ supp, data = dientes_05, var.equal = TRUE)
+```
+
+- **Hipótesis:** H₀: $\mu_{OJ} = \mu_{VC}$ (el método de administración no afecta a la longitud media de los odontoblastos); H₁: $\mu_{OJ} \neq \mu_{VC}$.
+- Es un test **bilateral** (`alternative hypothesis: ... not equal to 0`).
+- p = 0.0053 < 0.05: rechazamos H₀. Con una dosis de 0.5 mg/día, la longitud media de los odontoblastos es mayor con zumo de naranja (13.23) que con ácido ascórbico (7.98).
+
+```{r}
+ggplot(dientes_05, aes(x = supp, y = len, fill = supp)) +
+  geom_boxplot() +
+  theme_classic() +
+  theme(legend.position = "none") +
+  labs(x = "Método de administración", y = "Longitud de los odontoblastos") +
+  geom_signif(comparisons = list(c("OJ", "VC")),
+              test = "t.test", test.args = list(var.equal = TRUE))
+```
+
+### 4. Tamaño del efecto: *d* de Cohen
+
+```{r}
+cohens_d(len ~ supp, data = dientes_05)
+```
+
+*d* = 1.42 ≥ 0.8: es un **efecto grande**. Las medias de los dos grupos están separadas más de una desviación típica. Pero el IC 95% es muy ancho (0.41–2.39): con 10 cobayas por grupo, el efecto real podría ir de pequeño-medio a enorme.
+
+Guardamos el valor de *d* para usarlo después (también puedes copiar el número directamente):
+
+```{r}
+d <- cohens_d(len ~ supp, data = dientes_05)$Cohens_d
+d
+```
+
+### 5. Potencia estadística
+
+**a) Potencia del experimento:**
+
+```{r}
+power.t.test(n = 10, delta = d, sd = 1, sig.level = 0.05)
+```
+
+La potencia era de 0.85: con 10 cobayas por grupo, el experimento tenía un 85% de probabilidad de detectar una diferencia de este tamaño.
+
+**b) *n* necesaria para una potencia del 80% y del 90%:**
+
+```{r}
+power.t.test(delta = d, sd = 1, sig.level = 0.05, power = 0.8)
+power.t.test(delta = d, sd = 1, sig.level = 0.05, power = 0.9)
+```
+
+*n* = 8.88 → **9 cobayas por grupo** para una potencia del 80%, y *n* = 11.51 → **12 cobayas por grupo** para una potencia del 90% (siempre redondeando hacia arriba).
+
+**¿Tenía suficiente potencia?** Sí: con 10 cobayas por grupo superaba el 80% habitual. Como el efecto es grande, no hacen falta muestras muy grandes para detectarlo.
+
+
+# `t`-test pareado: peso de ratones
+
+```{r}
+peso_ratones <- read.table("data/peso_ratones.txt", header = TRUE, sep = "\t")
+head(peso_ratones)
+
+antes <- peso_ratones %>% filter(grupo == "antes") %>% pull(peso)
+despues <- peso_ratones %>% filter(grupo == "despues") %>% pull(peso)
+```
+
+### 1. Comprobación de normalidad
+
+```{r}
+diferencias <- despues - antes
+diferencias
+
+shapiro.test(diferencias)
+```
+
+p = 0.61 > 0.05: no tenemos evidencia de que las diferencias no sigan una distribución normal.
+
+```{r fig.width = 4, fig.height = 4}
+QQ_plot(diferencias)
+```
+
+### 2. Homogeneidad de varianzas
+
+No hace falta: en el `t`-test pareado solo trabajamos con las diferencias.
+
+### 3. `t`-test pareado
+
+```{r}
+t.test(despues, antes, paired = TRUE)
+```
+
+- H₀: la diferencia media (después − antes) es 0; H₁: es distinta de 0. Es un test **bilateral**.
+- p = 6.2 × 10⁻⁹ < 0.05: rechazamos H₀. Después del tratamiento, los ratones pesan de media 194.5 g más (IC 95%: 173.4–215.6 g).
+
+```{r}
+ggplot(peso_ratones, aes(x = grupo, y = peso, group = id)) +
+    geom_line(color = "grey") +
+    geom_point(aes(color = grupo), size = 3) +
+    theme_classic(base_size = 14) +
+    theme(legend.position = "none")
+```
+
+Todas las líneas suben: todos los ratones aumentan de peso.
+
+
+# Datasets científicos reales
+
+### 🎨👂 Oír colores
+
+```{r}
+sinestesia <- read.table("data/chap02q10Synesthetes.txt", header = TRUE, sep = "\t")
+head(sinestesia)
+table(sinestesia$group)
+
+# comprobación de normalidad (en cada grupo)
+controles <- sinestesia %>% filter(group == "controls") %>% pull(score)
+sinestesicos <- sinestesia %>% filter(group == "synesthetes") %>% pull(score)
+shapiro.test(controles)
+shapiro.test(sinestesicos)
+```
+
+```{r fig.show = "hold", fig.width = 4, fig.height = 4}
+QQ_plot(controles)
+QQ_plot(sinestesicos)
+```
+
+```{r}
+# homogeneidad de varianzas
+leveneTest(score ~ group, data = sinestesia)
+
+# t-test
+t.test(score ~ group, data = sinestesia, var.equal = TRUE)
+```
+
+- Normalidad: p > 0.05 en los dos grupos (aunque con solo 4 sinestésicos el test tiene muy poca capacidad de detectar desviaciones).
+- Levene: p = 0.44, varianzas iguales → `var.equal = TRUE`.
+- `t`-test: p = 0.0005 < 0.05. Las personas sinestésicas obtienen una puntuación media mayor (75.4) que los controles (56.3).
+
+```{r}
+# tamaño del efecto
+cohens_d(score ~ group, data = sinestesia)
+d_sin <- cohens_d(score ~ group, data = sinestesia)$Cohens_d
+
+# potencia (usamos n = 4, el grupo más pequeño) y n para una potencia del 80%
+power.t.test(n = 4, delta = d_sin, sd = 1)$power
+power.t.test(delta = d_sin, sd = 1, power = 0.8)$n
+```
+
+- *d* = −2.80 (negativa porque `R` resta controles − sinestésicos; lo que importa es el valor absoluto): efecto **muy grande**. Las dos distribuciones apenas se solapan.
+- Por eso, aun con solo 4 sinestésicos la potencia es alta (≈ 0.91 de forma aproximada, y algo más en realidad, porque el otro grupo tiene 10), y bastan 4 personas (*n* = 3.3) por grupo para una potencia del 80%.
+
+```{r}
+ggplot(sinestesia, aes(x = group, y = score, fill = group)) +
+  geom_boxplot() +
+  theme_classic() +
+  theme(legend.position = "none") +
+  geom_signif(comparisons = list(c("controls", "synesthetes")),
+              test = "t.test", test.args = list(var.equal = TRUE))
+```
+
+
+### ⏳ ¿Funciona el ayuno intermitente?
+
+```{r}
+monos <- read.table("data/chap02q35FoodReductionLifespan.txt", header = TRUE, sep = "\t")
+head(monos)
+table(monos$foodTreatment)
+
+# comprobación de normalidad (en cada grupo)
+control <- monos %>% filter(foodTreatment == "control") %>% pull(lifespan)
+reducida <- monos %>% filter(foodTreatment == "reduced") %>% pull(lifespan)
+shapiro.test(control)
+shapiro.test(reducida)
+```
+
+```{r fig.show = "hold", fig.width = 4, fig.height = 4}
+QQ_plot(control)
+QQ_plot(reducida)
+```
+
+```{r}
+# homogeneidad de varianzas
+leveneTest(lifespan ~ foodTreatment, data = monos)
+
+# t-test
+t.test(lifespan ~ foodTreatment, data = monos, var.equal = TRUE)
+```
+
+- Normalidad: p > 0.05 en los dos grupos. Levene: p = 0.36, varianzas iguales.
+- `t`-test: p = 0.998. No rechazamos H₀: no hay evidencia de que la dieta reducida cambie la esperanza de vida (31.1 años en los dos grupos).
+
+```{r}
+# tamaño del efecto
+cohens_d(lifespan ~ foodTreatment, data = monos)
+d_monos <- cohens_d(lifespan ~ foodTreatment, data = monos)$Cohens_d
+
+# potencia y n para una potencia del 80%
+power.t.test(n = 17, delta = d_monos, sd = 1)$power
+power.t.test(delta = d_monos, sd = 1, power = 0.8)$n
+```
+
+- *d* ≈ 0.00: el efecto es **prácticamente cero**. Las medias de los dos grupos difieren menos de una centésima de año. El IC 95% (aproximadamente de −0.67 a 0.67) incluye el 0.
+- La potencia (0.025) es tan baja y la *n* necesaria tan absurda (millones de monos) porque **no hay prácticamente ninguna diferencia que detectar**. Aquí el resultado no significativo no se debe a una muestra pequeña: el tamaño del efecto nos dice que la diferencia observada es trivial.
+
+```{r}
+ggplot(monos, aes(x = foodTreatment, y = lifespan, fill = foodTreatment)) +
+  geom_boxplot() +
+  theme_classic() +
+  theme(legend.position = "none") +
+  geom_signif(comparisons = list(c("control", "reduced")),
+              test = "t.test", test.args = list(var.equal = TRUE))
+```
+
+
+### 💞🧬 ¿Un gen para la monogamia?
+
+```{r}
+topillos <- read.table("data/chap03q15VasopressinVoles.txt", header = TRUE, sep = "\t")
+head(topillos)
+table(topillos$treatment)
+
+# comprobación de normalidad (en cada grupo)
+control_t <- topillos %>% filter(treatment == "control") %>% pull(percent)
+enhanced <- topillos %>% filter(treatment == "enhanced") %>% pull(percent)
+shapiro.test(control_t)
+shapiro.test(enhanced)
+```
+
+```{r fig.show = "hold", fig.width = 4, fig.height = 4}
+QQ_plot(control_t)
+QQ_plot(enhanced)
+```
+
+```{r}
+# homogeneidad de varianzas
+leveneTest(percent ~ treatment, data = topillos)
+```
+
+- Normalidad: Shapiro no la rechaza en ningún grupo (p = 0.24 y p = 0.11), pero son pocos datos y son porcentajes: en el grupo `enhanced` los valores se acumulan cerca del 100% (el máximo posible), y en los QQ-plots los puntos se separan de la recta en los extremos.
+- Levene: p = 0.008 < 0.05: las varianzas **no** son iguales. Si hacemos el `t`-test, debe ser el de Welch (`var.equal = FALSE`).
+
+```{r}
+# t-test de Welch
+t.test(percent ~ treatment, data = topillos, var.equal = FALSE)
+
+# alternativa no paramétrica
+wilcox.test(percent ~ treatment, data = topillos)
+```
+
+Los dos tests llegan a la misma conclusión (p ≈ 0.006 < 0.05): los machos con más expresión de V1a pasan más tiempo acurrucados con la hembra (86.3% de media frente a 58.1% en los controles). Es decir, aumentar la expresión de un solo gen hace que una especie promiscua se comporte de forma más monógama.
+
+```{r}
+# tamaño del efecto
+cohens_d(percent ~ treatment, data = topillos)
+d_top <- cohens_d(percent ~ treatment, data = topillos)$Cohens_d
+
+# potencia (usamos n = 11, el grupo más pequeño) y n para una potencia del 80%
+power.t.test(n = 11, delta = d_top, sd = 1)$power
+power.t.test(delta = d_top, sd = 1, power = 0.8)$n
+```
+
+- *d* = −1.12 (negativa porque `R` resta control − enhanced): efecto **grande**.
+- Con 11 topillos en el grupo más pequeño, la potencia aproximada es de 0.70, y harían falta 14 topillos (*n* = 13.6) por grupo para llegar al 80%. (Ojo: como las varianzas son distintas, la *d* calculada con $s_p$ es solo una aproximación.)
+
+```{r}
+ggplot(topillos, aes(x = treatment, y = percent, fill = treatment)) +
+  geom_boxplot() +
+  theme_classic() +
+  theme(legend.position = "none") +
+  geom_signif(comparisons = list(c("control", "enhanced")),
+              test = "wilcox.test")
+```
+
+
+### 🕷️💨 Correr con menos peso
+
+```{r}
+aranas <- read.table("data/chap03e2SpiderAmputation.txt", header = TRUE, sep = "\t")
+head(aranas)
+
+# filtra: datos de speed de antes y datos de speed de después
+antes_a <- aranas %>% filter(treatment == "before") %>% pull(speed)
+despues_a <- aranas %>% filter(treatment == "after") %>% pull(speed)
+
+# calcula las diferencias (después - antes)
+diferencias_a <- despues_a - antes_a
+diferencias_a
+
+# comprobación de normalidad (de las diferencias)
+shapiro.test(diferencias_a)
+```
+
+```{r fig.width = 4, fig.height = 4}
+QQ_plot(diferencias_a)
+```
+
+```{r}
+# t-test pareado
+t.test(despues_a, antes_a, paired = TRUE)
+```
+
+- Normalidad de las diferencias: p = 0.10 > 0.05, la aceptamos.
+- `t`-test pareado (bilateral): p = 0.0005 < 0.05. Rechazamos H₀: después de la amputación, los machos corren de media 1.19 cm/s más rápido (IC 95%: 0.61–1.76 cm/s).
+
+```{r}
+ggplot(aranas, aes(x = treatment, y = speed, group = spider)) +
+    geom_line(color = "grey") +
+    geom_point(aes(color = treatment), size = 3) +
+    theme_classic(base_size = 14) +
+    theme(legend.position = "none") +
+    scale_x_discrete(limits = c("before", "after"))
+```
+
+Con `scale_x_discrete(limits = ...)` ponemos `before` a la izquierda (por defecto, `ggplot2` ordena alfabéticamente y `after` saldría primero). Casi todas las líneas suben: 15 de las 16 arañas corren más rápido después de la amputación.
