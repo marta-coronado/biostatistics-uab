@@ -241,23 +241,13 @@ class: animated, fadeIn
 
 # Outline
 
-.pull-left[
 1. El p-valor no basta
 2. Tamaño de efecto
 3. Conceptos de potencia estadística
 4. ¿De qué depende la potencia?
 5. Medir el tamaño de efecto: Cohen's *d*
 6. Análisis de potencia: ¿qué *n* necesito?
-]
 
-.pull-right[
-**Al terminar sabrás:**
-
-- por qué un p-valor no dice si un efecto importa
-- calcular e interpretar un tamaño de efecto (Cohen's *d*)
-- qué es la potencia y de qué depende
-- calcular el tamaño de muestra de un diseño sencillo
-]
 
 <!-- ========================================================= -->
 <!-- BLOQUE 1: EL P-VALOR NO BASTA                              -->
@@ -443,7 +433,6 @@ fig_solape(obs_sol)
 
 - Potencia = 1 − β, donde β es la probabilidad de un falso negativo
 
-- Con estas dos distribuciones y 3 datos por grupo, la potencia es solo de **`r round(power.t.test(n = 3, delta = 2.5, sd = 3.5)$power, 2)`**
 ]
 
 
@@ -529,6 +518,44 @@ ggplot(df, aes(x)) +
 ---
 class: animated, fadeIn
 
+## Recordando: Tipos de errores
+
+Si realizamos un test y decidimos **rechazar o no H₀**, existen cuatro posibles resultados:
+
+| Decisión | H₀ cierta | H<sub>A</sub> cierta |
+|--------------------|---------------|-----------------|
+| **No rechazamos H₀**   | Correcto (1-α)   | Error tipo II (β), falso negativo        |
+| **Rechazamos H₀**       | Error tipo I (α), falso positivo       | Correcto (1-β) = potencia   |
+
+- **Error tipo I ($\alpha$)**:
+rechazamos la H₀ cuando es verdadera  
+- **Error tipo II ($\beta$)**: no rechazamos H₀ cuando es falsa
+
+<br>
+**Ejemplo:**
+
+- El medicamento no tiene un efecto y por lo tanto no hay diferencias en la presión arterial, pero en nuestra muestra los valores están tan alejados que por error pensamos que sí hay un efecto del medicamento.
+
+- El medicamento sí tiene un efecto, y por lo tanto sí hay diferencias en la presión arterial, pero nuestra muestra no muestra diferencias claras: no rechazamos H₀ y nos perdemos un efecto que sí existe 
+
+---
+class: animated, fadeIn
+
+## Recordando: Tipos de errores
+
+### Clasificaciones incorrectas
+
+- **Falso positivo (Error tipo I)**: rechazamos H₀ cuando es verdadera  
+  - Si H₀ es cierta, ocurre en una proporción α **de las veces que repitiéramos el estudio** (5% si α = 0.05)
+
+- **Falso negativo (error tipo II)**: no rechazamos H₀ aunque H₀ sea falsa  
+  - Suele ocurrir si hay **muy pocos datos** o métodos poco sensibles  
+  - Se reduce **aumentando el tamaño de muestra** o usando métodos con **mayor potencia estadística**
+
+
+---
+class: animated, fadeIn
+
 ## La potencia depende de dos factores
 
 .pull-left[
@@ -604,7 +631,7 @@ class: animated, fadeIn, R
 ## Cohen's *d* en `R`
 
 .pull-left[
-La función `cohens_d()` del paquete **`effectsize`** calcula la *d* de Cohen directamente. Hay que instalar el paquete una sola vez (`install.packages("effectsize")`) y cargarlo en cada sesión con `library()`.
+La función `cohens_d()` del paquete **`effectsize`** calcula la *d* de Cohen directamente. Hay que instalar el paquete (`install.packages("effectsize")`) y cargarlo con `library(effectsize)`.
 
 Se escribe con la misma fórmula que `t.test()`: `respuesta ~ grupos`. Por defecto usa la desviación típica combinada $s_p$.
 
@@ -623,7 +650,7 @@ library(effectsize)
 cohens_d(weight ~ group, data = plantas)
 ```
 
-- *d* = −0.95: el signo solo indica el orden de la resta (`ctrl` − `trt2`); lo que importa es el **valor absoluto** → efecto grande
+- *d* = −0.95: el signo solo indica el orden de la resta (`ctrl` − `trt2`); lo que importa es el **valor absoluto**
 - Además da el **IC 95%** de *d*: con 10 plantas por grupo, la estimación es muy imprecisa
 ]
 
@@ -733,7 +760,7 @@ power.t.test(delta = 1.5, sd = 1,
              sig.level = 0.05, power = 0.8)
 ```
 
-- *n* = 8.06 → **9 por grupo** (siempre se redondea hacia arriba)
+- *n* = 8.06 → **9 por grupo**
 - Como *d* ya está en desviaciones típicas, damos `delta = d` y `sd = 1` (por ejemplo, la *d* que da `cohens_d()`)
 - La fórmula con Z da ≈ 7: es una aproximación normal, y con muestras pequeñas la *t* necesita más datos
 ]
