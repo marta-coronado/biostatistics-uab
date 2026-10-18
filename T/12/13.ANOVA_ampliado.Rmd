@@ -1,5 +1,5 @@
 ---
-title: "<br>"
+title: ""
 subtitle: ""
 author: ""
 date: ""
@@ -9,7 +9,6 @@ output:
     lib_dir: libs
     self_contained: true
     nature:
-      mathjax: "default"
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -17,19 +16,22 @@ output:
       
 ---
 ```{r setup, include=FALSE}
-options(htmltools.dir.version = FALSE)
+options(htmltools.dir.version = FALSE, width = 200)
 #knitr::include_graphics()
 knitr::opts_chunk$set(
   cache = TRUE,
+  echo = TRUE,
   message = FALSE, 
   warning = FALSE,
   hiline = TRUE,
-  fig.retina = 5
+  fig.retina = 5,
+  fig.align = "center",
+  comment = ""
 )
+
 library(ggplot2)
 library(readr)
 library(knitr)
-#pagedown::chrome_print(".html")
 ```
 
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
@@ -38,9 +40,11 @@ style_mono_accent(
   base_color = "#1c5253", link_color =  "#DE1144", code_inline_color = "#DE1144",
   header_font_google = google_font("Josefin Sans"),
   text_font_google   = google_font("Montserrat", "400", "400i"),
-  code_font_google   = google_font("Roboto Mono")
+  code_font_google   = google_font("Roboto Mono"),
+    
 )
 ```
+
 
 ```{r xaringanExtra-clipboard, echo=FALSE}
 library(xaringanExtra)
@@ -54,6 +58,158 @@ htmltools::tagList(
 ```
 
 
+class: title-slide, animated, fadeIn
+
+.left-top[
+# ANOVA
+
+]
+
+.left-bottom[
+.authors[
+**Bioestadística**
+<br><br><br><br>
+
+Marta Coronado ([marta.coronado@uab.cat](mailto:marta.coronado@uab.cat))  
+]
+
+.footer-info[
+**Grado en Genética | Curso 2026/2027**
+]
+]
+
+.right-panel[]
+
+
+
+<style>
+.title-slide {
+  background-image: none;
+}
+
+/* Contenedor teal superior (solo título) */
+.title-slide .left-top {
+  position: absolute;
+  top: 0; left: 0;
+  width: 60%;
+  height: 62%;
+  background-color: #163a3a;
+  color: white;
+  padding: 50px 45px 30px 65px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;   /* ← esto faltaba */
+  align-items: flex-start;  /* ← con column, flex-end alinearía a la derecha; usa flex-start para pegar a la izquierda */
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+
+/* Contenedor blanco inferior (autores, fecha) */
+.title-slide .left-bottom {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 60%;
+  height: 38%;
+  background-color: white;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px 45px 30px 65px;
+  margin: 0;
+}
+
+.title-slide .right-panel {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 41%;
+  background-color: white;
+  background-image: url('img/1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.title-slide h1 {
+  font-size: 1.9em;
+  line-height: 1.25;
+  margin: 0;
+  font-weight: 400;
+}
+
+.title-slide .subtitle {
+  display: block;   /* ← esto es la clave: sin esto, margin-top se ignora */
+  font-size: 2em;
+  font-weight: bold;
+  color: #7ac142;
+  margin-top: -35px;
+  margin-bottom: 15px;
+}
+
+.title-slide .authors {
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.title-slide .authors a {
+  color: #e8846b;
+  text-decoration: none;
+}
+
+.title-slide .footer-info {
+  font-size: 0.9em;
+  color: #444;
+}
+
+.remark-slide-content h2,
+.remark-slide-content h3,
+.remark-slide-content h4,
+.remark-slide-content h5 {
+  margin-top: 1em;
+  margin-bottom: 0.6em;
+}
+
+.remark-slide-content p,
+.remark-slide-content ul,
+.remark-slide-content ol {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.remark-slide-content li {
+  margin-bottom: 0.1em;
+}
+
+.practica::before {
+  content: "\f303";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+
+.R::before {
+  content: "\f4f7";
+  font-family: "Font Awesome 6 Brands";
+  font-weight: 400;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+</style>
+
+
+
+---
 class: animated, fadeIn
 # Outline
 
@@ -63,13 +219,7 @@ class: animated, fadeIn
 - ¿Qué es un ANOVA? ¿Por qué no hacer t-tests a pares?
 - ANOVA de una vía: cálculo, supuestos, `R`, *post hoc* y alternativas
 - ANOVA de dos vías: interacción, R² y efecto lote
-
-<style>
-.title-slide {
-  background-image: url('img/1.png');
-  background-size: 100%;
-}
-</style>
+- Versión no paramétrica
 
 ---
 class: animated, fadeIn
@@ -82,6 +232,7 @@ _Perform an appropriate statistical analysis of this experiment._
 
 --
 
+<br><br>
 - ¿H<sub>0</sub> y H<sub>A</sub>?
 - ¿Variable respuesta?
 - ¿Grupos?
@@ -95,6 +246,7 @@ _It is thought that **stress may increase susceptibility to illness** through su
 
 _Perform an appropriate statistical analysis of this experiment._
 
+<br><br>
 - ¿Por qué no podemos hacer t-tests a pares? (no stress *vs.* mild stress, no stress *vs.* moderate stress, ...) 
 
 --
@@ -716,6 +868,7 @@ ggplot(data.frame(x = x_vals), aes(x)) +
     y = "Densidad"
   ) +
   ggthemes::theme_base(base_size = 13) +
+  theme(plot.background = element_rect(colour = NA)) +  # sin recuadro negro alrededor de la figura
   theme(panel.grid=element_blank(),
         axis.text=element_text(color="black"),
         panel.background = element_rect(fill = "white"))
@@ -847,6 +1000,7 @@ ggplot(bird, aes(x = Diet,
     title = "Distribución de abundancia máxima según la dieta"
   ) +
   ggthemes::theme_base(base_size = 14) +
+  theme(plot.background = element_rect(colour = NA)) +  # sin recuadro negro alrededor de la figura
   theme(
     plot.title = element_text(face = "bold", hjust = 0.5),
     axis.text.x = element_text(angle = 45, hjust = 1)
@@ -868,6 +1022,7 @@ ggplot(bird, aes(x = Diet, y = log(MaxAbund), fill=Diet)) +
   ) +
   scale_fill_viridis_d() +
   ggthemes::theme_base(base_size = 13) +
+  theme(plot.background = element_rect(colour = NA)) +  # sin recuadro negro alrededor de la figura
   theme(panel.grid=element_blank(),
         axis.text=element_text(color="black"),
         panel.background = element_rect(fill = "white"))
@@ -892,6 +1047,11 @@ class: animated, fadeIn
 - En el ANOVA, son las diferencias entre los valores observados y las medias de los grupos
 
 
+<style>
+.texto-peq { font-size: 60%; }
+</style>
+
+.texto-peq[
 | Fuente de variación | Suma de cuadrados (SS) | Grados de libertad (gl) | Media cuadrática (MS) | Estadístico F |
 |:--------------------:|:----------------------:|:-----------------------:|:----------------------:|:--------------:|
 | **Factor** (variabilidad entre grupos) | $SS_{entre} = \displaystyle \sum_{i=1}^{g} n_i (M_i - G)^2$ | $gl_{entre} = g - 1$ | $MS_{entre} = \dfrac{SS_{entre}}{gl_{entre}}$ | $F = \dfrac{MS_{entre}}{MS_{dentro}}$ |
@@ -904,6 +1064,7 @@ class: animated, fadeIn
 - $n_i$ = tamaño del grupo *i*  
 - $g$ = número de grupos  
 - $N$ = número total de observaciones  
+]
 
 ???
 En un análisis ANOVA, los factores son las variables independientes categóricas que se estudian, mientras que los residuos son la diferencia entre el valor observado y el valor predicho por el modelo ANOVA (es decir, la variación no explicada por los factores). El análisis de los residuos es crucial para verificar la validez del modelo ANOVA, ya que asume que estos errores siguen una distribución normal y son independientes
@@ -1082,6 +1243,7 @@ ggplot(bird, aes(x = Diet, y = log(MaxAbund), fill=Diet)) +
   ) +
   scale_fill_viridis_d() +
   ggthemes::theme_base(base_size = 13) +
+  theme(plot.background = element_rect(colour = NA)) +  # sin recuadro negro alrededor de la figura
   theme(panel.grid=element_blank(),
         axis.text=element_text(color="black"),
         panel.background = element_rect(fill = "white"))
@@ -1156,6 +1318,7 @@ ggplot(bird, aes(x = Diet, y = log(MaxAbund), fill=Diet)) +
   ) +
   scale_fill_viridis_d() +
   ggthemes::theme_base(base_size = 13) +
+  theme(plot.background = element_rect(colour = NA)) +  # sin recuadro negro alrededor de la figura
   theme(panel.grid=element_blank(),
         axis.text=element_text(color="black"),
         panel.background = element_rect(fill = "white"))
@@ -1702,6 +1865,7 @@ ggplot(datos, aes(x = Luz, y = Crecimiento, color = Fertilizante, group = Fertil
   )  +
   scale_color_manual(values=c("cadetblue4", "firebrick3")) + 
   ggthemes::theme_base(base_size = 18) + 
+  theme(plot.background = element_rect(colour = NA)) +  # sin recuadro negro alrededor de la figura
   theme(
     plot.title = element_text(face = "bold", size = 18, hjust = 0.5),
     strip.text = element_text(size = 13, face = "bold"),
@@ -2686,6 +2850,7 @@ ggplot(datos_luz, aes(x = Luz, y = Crecimiento, color = Fertilizante, group = Fe
     x = "Nivel de luz"
   ) +
   ggthemes::theme_base(base_size = 13) +
+  theme(plot.background = element_rect(colour = NA)) +  # sin recuadro negro alrededor de la figura
   theme(panel.grid=element_blank(),
         axis.text=element_text(color="black"),
         panel.background = element_rect(fill = "white"))
@@ -2737,73 +2902,7 @@ class: animated, fadeIn
 
 ### Conecta resultado de ANOVA con su tabla
 
-.pull-left[
-
-```{r echo = F, size='small'}
-library(dplyr)
-
-# Dividimos el dataset por escenario
-escenarios <- split(datos, datos$Escenario)
-
-# Función para hacer ANOVA de dos vías y resumir resultados
-run_anova <- function(df) {
-  modelo <- aov(Crecimiento ~ Fertilizante * Luz, data = df)
-  summary(modelo)
-}
-
-# Aplicamos a cada escenario
-resultados <- lapply(escenarios, run_anova)
-
-# Mostramos resultados
-names(resultados) <- c("Caso1", "Caso2", "Caso3", "Caso4")
-
-resultados[1:2]
-
-#graficos de antes
-```
-
-]
----
-
-class: animated, fadeIn
-
-### Conecta resultado de ANOVA con su tabla
-
-.pull-left[
-
-```{r echo = F, size='small'}
-library(dplyr)
-
-# Dividimos el dataset por escenario
-escenarios <- split(datos, datos$Escenario)
-
-# Función para hacer ANOVA de dos vías y resumir resultados
-run_anova <- function(df) {
-  modelo <- aov(Crecimiento ~ Fertilizante * Luz, data = df)
-  summary(modelo)
-}
-
-# Aplicamos a cada escenario
-resultados <- lapply(escenarios, run_anova)
-
-# Mostramos resultados
-names(resultados) <- c("Caso1", "Caso2", "Caso3", "Caso4")
-
-resultados[3:4]
-
-#graficos de antes
-```
-
-]
-
----
-class: animated, fadeIn
-
-## Casos
-
-<center>
-
-```{r echo = F, fig.width=10}
+```{r include = F}
 library(ggplot2)
 library(dplyr)
 
@@ -2856,7 +2955,37 @@ data4$Escenario <- "Con interacción significativa"
 
 # ---- Unir los datasets ----
 datos <- bind_rows(data4, data1, data3, data2)
+```
 
+<style>
+.codigo-mini .remark-code { font-size: 55%; }
+</style>
+
+.pull-left[
+.codigo-mini[
+```{r echo = F}
+# Dividimos el dataset por escenario
+escenarios <- split(datos, datos$Escenario)
+
+# Función para hacer ANOVA de dos vías y resumir resultados
+run_anova <- function(df) {
+  modelo <- aov(Crecimiento ~ Fertilizante * Luz, data = df)
+  summary(modelo)
+}
+
+# Aplicamos a cada escenario
+resultados <- lapply(escenarios, run_anova)
+
+# Mostramos resultados
+names(resultados) <- c("Caso1", "Caso2", "Caso3", "Caso4")
+
+resultados
+```
+]
+]
+
+.pull-right[
+```{r echo = F, fig.width=8, fig.height=7.5}
 # ---- Graficar ----
 ggplot(datos, aes(x = Luz, y = Crecimiento, color = Fertilizante, group = Fertilizante)) +
   stat_summary(fun = mean, geom = "point", size = 3) +
@@ -2871,6 +3000,7 @@ ggplot(datos, aes(x = Luz, y = Crecimiento, color = Fertilizante, group = Fertil
   )  +
   scale_color_manual(values=c("cadetblue4", "firebrick3")) + 
   ggthemes::theme_base(base_size = 18) + 
+  theme(plot.background = element_rect(colour = NA)) +  # sin recuadro negro alrededor de la figura
   theme(
     plot.title = element_text(face = "bold", size = 18, hjust = 0.5),
     strip.text = element_text(size = 13, face = "bold"),
@@ -2882,6 +3012,7 @@ ggplot(datos, aes(x = Luz, y = Crecimiento, color = Fertilizante, group = Fertil
       coord_cartesian(ylim=c(7.5,14))
 
 ```
+]
 
 
 ---
@@ -2961,6 +3092,27 @@ class: animated, fadeIn
 | **< 0.3**      | El modelo explica **poca** variabilidad (orientativo).         |
 | **0.3–0.7**    | El modelo explica **una parte moderada** de la variabilidad.   |
 | **≥ 0.7**      | El modelo tiene **buena capacidad explicativa**.               |
+
+---
+class: animated, fadeIn
+
+## R² y tamaño del efecto
+
+En el ANOVA de una vía, el $R^2$ es lo que se conoce como **eta cuadrado** ($\eta^2$):
+
+$$\eta^2 = R^2 = \frac{SS_{entre}}{SS_{total}}$$
+
+- Es una medida del **tamaño del efecto**: igual que la *d* de Cohen en el *t*-test (Tema 10), nos dice **cuánto** importa el factor, no solo si su efecto es significativo.
+
+- Valores orientativos (Cohen): **0.01** pequeño, **0.06** mediano, **0.14** grande.
+
+> Estos valores son mucho más bajos que los de la tabla anterior: en biología, un factor que explica el 14% de la variabilidad ya es un efecto grande.
+
+--
+
+En el ANOVA de dos vías, el $R^2$ mide el efecto **conjunto** de todos los factores y su interacción. Para el tamaño del efecto de **cada factor** se usa el **eta cuadrado parcial**:
+
+$$\eta^2_p = \frac{SS_{A}}{SS_{A} + SS_{error}}$$
 
 ---
 class: animated, fadeIn
@@ -3062,6 +3214,7 @@ ggplot(datos_luz, aes(x = Lote, y = Crecimiento, fill = Lote)) +
   geom_boxplot(width = 0.1, color = "black", alpha = 0.5, show.legend = F) +
   labs(title = "Efecto de lote (batch effect) sobre el crecimiento") +
   ggthemes::theme_base(base_size = 13) +
+  theme(plot.background = element_rect(colour = NA)) +  # sin recuadro negro alrededor de la figura
   scale_fill_brewer(palette="Set2") + 
   theme(panel.grid=element_blank(),
         axis.text=element_text(color="black"),

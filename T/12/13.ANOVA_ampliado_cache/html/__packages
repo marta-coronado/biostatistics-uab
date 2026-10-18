@@ -3,8 +3,8 @@ readr
 knitr
 xaringanthemer
 xaringanExtra
-kableExtra
 dplyr
+kableExtra
 data.table
 carData
 car
