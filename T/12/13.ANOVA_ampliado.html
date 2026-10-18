@@ -2359,7 +2359,7 @@ class: animated, fadeIn
 1. **Visualizar** los datos (boxplot por grupo)
 2. Ajustar el modelo con `aov()` y **comprobar los supuestos sobre los residuos** (Shapiro-Wilk, QQ-plot, Levene)
 3. Elegir el **test global**; si es significativo → **test *post hoc***
-4. Cuantificar el **tamaño del efecto** (`\(R^2\)`)
+4. Cuantificar el **tamaño del efecto**: `\(R^2 = \eta^2\)` en el ANOVA; en Kruskal-Wallis, `\(\eta^2_H\)` con `kruskal_effsize()` (`rstatix`)
 
 &lt;br&gt;
 
@@ -2368,6 +2368,7 @@ class: animated, fadeIn
 | Normalidad ✔ y homogeneidad ✔ | ANOVA: `aov()` | Tukey HSD: `TukeyHSD()` |
 | Normalidad ✔, homogeneidad ✘ | Welch-ANOVA: `oneway.test()` | Games-Howell |
 | Normalidad ✘ (incluso tras transformar) | Kruskal-Wallis: `kruskal.test()` | Dunn (con corrección de p-valores) |
+| Normalidad ✘ y homogeneidad ✘ | Transformar + Welch-ANOVA, o test de permutación | Games-Howell (sobre los datos transformados) |
 
 ---
 class: animated, fadeIn
@@ -4854,6 +4855,26 @@ Model 2: Crecimiento ~ Fertilizante * Luz + Lote
 - `Pr(&gt;F)` &lt; 0.05 → el modelo más complejo (con más términos) mejora significativamente el ajuste
 
 - `Pr(&gt;F)` &gt; 0.05 → la mejora del ajuste no es significativa → conviene quedarse con el modelo más simple (principio de parsimonia)
+
+---
+class: animated, fadeIn
+
+## Alternativa no paramétrica: test de Friedman
+
+- No existe un "Kruskal-Wallis de dos vías" estándar.
+
+- El **test de Friedman** es la alternativa no paramétrica cuando tenemos **un factor** y un **bloque** (por ejemplo, el lote o el individuo en medidas repetidas).
+
+- Compara los rangos de los tratamientos **dentro de cada bloque**.
+
+- No permite estudiar la **interacción** entre los dos factores.
+
+
+``` r
+friedman.test(y ~ tratamiento | bloque, data = datos)
+```
+
+&gt; Requiere una única observación por cada combinación de tratamiento y bloque.
 
 ---
 class: animated, fadeIn
