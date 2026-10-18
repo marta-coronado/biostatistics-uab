@@ -1,0 +1,446 @@
+---
+title: "Problemas de ANOVA (desarrollados)"
+author: "Bioestadística"
+date: "Diciembre 2026"
+output:
+  html_document:
+    self_contained: true
+    theme: simplex
+    css: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css
+    toc: yes
+    toc_float:
+      collapsed: true
+fontsize: 14pt
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+# Load useful packages
+library(rmdformats)   # for extra formatting if needed
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+```{=html}
+<style>
+body {
+  font-size: 14px;   /* un poco más grande */
+  color: black;      /* asegura texto en negro */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #D9230F;        /* títulos en rojo */
+}
+
+h3, h4, h5, h6 {
+  color: black;        /* títulos en rojo */
+}
+
+h3 {
+  font-size: 1em;   /* tamaño igual al texto normal */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+
+.handwritten {
+  font-family: 'Handlee', monospace;
+  font-size: 1.1em;
+}
+
+.respuesta {
+  background-color: #F0F0F0;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  line-height: 1.2;
+}
+</style>
+```
+
+
+---
+
+En estos problemas **no hace falta calcular un ANOVA desde cero**: el objetivo es saber **leer e interpretar** sus resultados. Todo se resuelve a mano (con calculadora). Recuerda:
+
+- **Estadístico F**: $F = \dfrac{MS_{entre}}{MS_{dentro}}$, con $MS = \dfrac{SS}{gl}$
+- **Grados de libertad** (una vía, $g$ grupos y $N$ observaciones): $gl_{entre} = g - 1$, $\;gl_{dentro} = N - g$, $\;gl_{total} = N - 1$
+- **Decisión**: si $F_{obs} > F_{crit}(gl_{entre}, gl_{dentro})$ → rechazamos $H_0$ (o, lo que es lo mismo, si p < α)
+- **Tamaño del efecto**: $R^2 = \eta^2 = \dfrac{SS_{entre}}{SS_{total}}$ (orientativo: 0.01 pequeño, 0.06 mediano, 0.14 grande)
+- Los **supuestos** (normalidad y homogeneidad de varianzas) se comprueban sobre los **residuos**. Si no se cumplen: transformar, Welch-ANOVA o Kruskal-Wallis
+- Si el ANOVA es significativo → **test *post hoc*** (Tukey; Games-Howell tras Welch; Dunn tras Kruskal-Wallis)
+
+**Tabla de valores críticos de F** (cola superior, α = 0.05):
+
+| | $gl_1$ = 1 | $gl_1$ = 2 | $gl_1$ = 3 | $gl_1$ = 4 | $gl_1$ = 5 | $gl_1$ = 6 |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| **$gl_2$ = 15** | 4.54 | 3.68 | 3.29 | 3.06 | 2.90 | 2.79 |
+| **$gl_2$ = 19** | 4.38 | 3.52 | 3.13 | 2.90 | 2.74 | 2.63 |
+| **$gl_2$ = 20** | 4.35 | 3.49 | 3.10 | 2.87 | 2.71 | 2.60 |
+| **$gl_2$ = 27** | 4.21 | 3.35 | 2.96 | 2.73 | 2.57 | 2.46 |
+| **$gl_2$ = 30** | 4.17 | 3.32 | 2.92 | 2.69 | 2.53 | 2.42 |
+| **$gl_2$ = 40** | 4.08 | 3.23 | 2.84 | 2.61 | 2.45 | 2.34 |
+| **$gl_2$ = 54** | 4.02 | 3.17 | 2.78 | 2.54 | 2.39 | 2.27 |
+| **$gl_2$ = 60** | 4.00 | 3.15 | 2.76 | 2.53 | 2.37 | 2.25 |
+| **$gl_2$ = 65** | 3.99 | 3.14 | 2.75 | 2.51 | 2.36 | 2.24 |
+| **$gl_2$ = 66** | 3.99 | 3.14 | 2.74 | 2.51 | 2.35 | 2.24 |
+
+$gl_1$: grados de libertad del numerador (entre grupos); $gl_2$: grados de libertad del denominador (dentro de los grupos).
+
+## 💡 Problema 1 - Luz detrás de las rodillas
+
+En 1998 se publicó en *Science* que iluminar la **parte de atrás de las rodillas** podía desplazar el reloj circadiano, igual que la luz que entra por los ojos. En 2002, Wright y Czeisler repitieron el experimento con más control. Asignaron al azar **22 personas** a tres grupos: sin luz (**Control**), luz en las **Rodillas** y luz en los **Ojos**. Midieron el desplazamiento del ritmo circadiano (en horas; un valor negativo indica un retraso del reloj) a partir de los niveles de melatonina:
+
+| | Control | Rodillas | Ojos |
+|---|:-:|:-:|:-:|
+| *n* | 8 | 7 | 7 |
+| Media (h) | −0.31 | −0.34 | −1.55 |
+| Desviación típica (h) | 0.62 | 0.79 | 0.71 |
+
+La tabla del ANOVA ha quedado incompleta:
+
+| Fuente de variación | gl | SS | MS | F |
+|:--|:-:|:-:|:-:|:-:|
+| Grupo (entre grupos) | ? | 7.224 | ? | ? |
+| Residuos (dentro de los grupos) | ? | 9.415 | ? | |
+| Total | ? | 16.639 | | |
+
+### a) Escribe las hipótesis nula y alternativa del ANOVA.
+### b) Completa la tabla: grados de libertad, medias cuadráticas (MS) y F.
+### c) Busca la F crítica (α = 0.05). ¿Rechazas $H_0$? ¿Qué puedes concluir (y qué **no** puedes concluir todavía)?
+### d) Calcula el $R^2 = \eta^2$ e interprétalo. ¿Es un efecto pequeño, mediano o grande?
+### e) Los supuestos se cumplen (Shapiro-Wilk sobre los residuos: p = 0.47; Levene: p = 0.85). Estos son los resultados del test de Tukey. ¿Qué grupos son diferentes? ¿Funciona la luz en las rodillas?
+
+| Comparación | Diferencia de medias (h) | IC 95% | p ajustado |
+|:--|:-:|:-:|:-:|
+| Rodillas − Control | −0.03 | [−0.95, 0.90] | 0.997 |
+| Ojos − Control | −1.24 | [−2.17, −0.32] | 0.008 |
+| Ojos − Rodillas | −1.22 | [−2.17, −0.26] | 0.012 |
+
+<br>
+<details>
+<summary>Solución desarrollada</summary>
+
+**a) Hipótesis**
+
+- $H_0$: $\mu_{Control} = \mu_{Rodillas} = \mu_{Ojos}$ (el tipo de luz no afecta al desplazamiento del reloj)
+- $H_A$: al menos una de las medias es diferente
+
+**b) Tabla completa**
+
+Hay $g = 3$ grupos y $N = 8 + 7 + 7 = 22$ personas:
+
+- $gl_{entre} = g - 1 = 2$; $\;gl_{dentro} = N - g = 22 - 3 = 19$; $\;gl_{total} = N - 1 = 21$ (comprobación: 2 + 19 = 21)
+- $MS_{entre} = \dfrac{7.224}{2} = 3.612$; $\;MS_{dentro} = \dfrac{9.415}{19} = 0.496$
+- $F = \dfrac{3.612}{0.496} = 7.29$
+
+| Fuente de variación | gl | SS | MS | F |
+|:--|:-:|:-:|:-:|:-:|
+| Grupo (entre grupos) | 2 | 7.224 | 3.612 | 7.29 |
+| Residuos (dentro de los grupos) | 19 | 9.415 | 0.496 | |
+| Total | 21 | 16.639 | | |
+
+**c) Decisión**
+
+En la tabla, $F_{crit}(2, 19) = 3.52$. Como $F_{obs} = 7.29 > 3.52$, **rechazamos $H_0$** (el p-valor exacto es 0.004).
+
+Podemos concluir que **al menos uno** de los tres grupos tiene una media diferente. Lo que **no** podemos concluir todavía es **cuál** (o cuáles): para eso necesitamos un test *post hoc*.
+
+**d) Tamaño del efecto**
+
+$$R^2 = \eta^2 = \frac{SS_{entre}}{SS_{total}} = \frac{7.224}{16.639} = 0.43$$
+
+El tipo de luz explica el **43%** de la variabilidad del desplazamiento del reloj circadiano. Es un **efecto grande** (muy por encima de 0.14).
+
+**e) Test de Tukey**
+
+Miramos la columna del p-valor ajustado por comparaciones múltiples:
+
+- Rodillas − Control: diferencia de −0.03 h, p = 0.997 → **no hay diferencias**
+- Ojos − Control: diferencia de −1.24 h, p = 0.008 → **diferentes**
+- Ojos − Rodillas: diferencia de −1.22 h, p = 0.012 → **diferentes**
+
+Lo mismo se ve con los intervalos de confianza: el de Rodillas − Control incluye el 0, mientras que los de las comparaciones con Ojos no.
+
+La luz en los ojos retrasa el reloj circadiano unas 1.2 horas, pero **la luz en las rodillas no tiene ningún efecto**: su media es prácticamente igual a la del control. El ANOVA era significativo solo por el grupo de los Ojos. Wright y Czeisler concluyeron que el resultado de 1998 no se podía reproducir.
+
+</details>
+
+<br>
+
+## 🐛 Problema 2 - ¿Qué insecticida funciona mejor?
+
+En un experimento agrícola clásico (Beall, 1942) se comparó la eficacia de **6 insecticidas** (A a F). Cada uno se aplicó en **12 parcelas** y se contó el número de insectos que quedaban en cada parcela:
+
+| Insecticida | A | B | C | D | E | F |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|
+| Media | 14.50 | 15.33 | 2.08 | 4.92 | 3.50 | 16.67 |
+| Desviación típica | 4.72 | 4.27 | 1.98 | 2.50 | 1.73 | 6.21 |
+
+Se hizo un ANOVA de una vía:
+
+| Fuente de variación | gl | SS | MS | F |
+|:--|:-:|:-:|:-:|:-:|
+| Insecticida (entre grupos) | 5 | 2668.8 | 533.8 | 34.70 |
+| Residuos (dentro de los grupos) | 66 | 1015.2 | 15.4 | |
+
+Y se comprobaron los supuestos sobre los residuos:
+
+- Test de Shapiro-Wilk: W = 0.96, **p = 0.022**
+- Test de Levene: F = 3.82, **p = 0.004**
+
+### a) Con la F crítica, el ANOVA sería claramente significativo. Pero antes de concluir nada: ¿se cumplen los supuestos del ANOVA? ¿Puedes fiarte de este resultado?
+### b) Fíjate en las medias y las desviaciones típicas de la tabla. ¿Ves algún patrón que explique por qué falla la homogeneidad de varianzas? (Pista: son **recuentos**; piensa en la distribución de Poisson.)
+### c) ¿Qué test usarías como alternativa? Su resultado es **χ² = 54.69, gl = 5, p < 0.001**. Interprétalo.
+### d) Estos son los resultados del *post hoc* adecuado (p-valores ajustados por Holm). ¿Qué insecticidas recomendarías? ¿Hay diferencias entre los tres mejores?
+
+| Comparación | p ajustado | | Comparación | p ajustado | | Comparación | p ajustado |
+|:-:|:-:|---|:-:|:-:|---|:-:|:-:|
+| A − B | 1 | | B − C | < 0.001 | | C − E | 1 |
+| A − C | < 0.001 | | B − D | 0.005 | | C − F | < 0.001 |
+| A − D | 0.013 | | B − E | < 0.001 | | D − E | 1 |
+| A − E | 0.001 | | B − F | 1 | | D − F | 0.004 |
+| A − F | 1 | | C − D | 0.586 | | E − F | < 0.001 |
+
+### e) Un compañero propone olvidarse del ANOVA y hacer t-tests comparando los insecticidas dos a dos. ¿Cuántos tests tendría que hacer? ¿Cuál sería la probabilidad de obtener al menos un falso positivo (α = 0.05)?
+
+<br>
+<details>
+<summary>Solución desarrollada</summary>
+
+**a) Supuestos**
+
+Con $F_{crit}(5, 66) = 2.35$, la F observada (34.70) sería claramente significativa. Pero:
+
+- **Normalidad de los residuos**: Shapiro-Wilk p = 0.022 < 0.05 → rechazamos que los residuos sean normales.
+- **Homogeneidad de varianzas**: Levene p = 0.004 < 0.05 → rechazamos que las varianzas sean iguales.
+
+**No se cumple ninguno de los dos supuestos**, así que no podemos fiarnos del resultado del ANOVA, por grande que sea la F. Primero hay que elegir un test adecuado.
+
+**b) El patrón de las varianzas**
+
+Los insecticidas con medias altas (A, B, F: 14.5–16.7 insectos) tienen desviaciones típicas grandes (4.3–6.2), y los de medias bajas (C, D, E: 2.1–4.9) tienen desviaciones típicas pequeñas (1.7–2.5). La **varianza aumenta con la media**.
+
+Es lo esperable en datos de **recuento**: si siguen una distribución de **Poisson**, la varianza es igual a la media ($\sigma^2 = \lambda$). Por eso, en datos de recuento es muy habitual que falle la homogeneidad de varianzas. (Una transformación como $\sqrt{y}$ suele arreglarlo, pero aquí usaremos la alternativa no paramétrica.)
+
+**c) Kruskal-Wallis**
+
+Como no se cumple la normalidad (ni la homogeneidad), usamos la alternativa no paramétrica: el **test de Kruskal-Wallis**.
+
+- $H_0$: el número de insectos tiene la misma distribución con todos los insecticidas
+- $H_A$: al menos un insecticida es diferente
+
+p < 0.001 < 0.05 → **rechazamos $H_0$**: al menos un insecticida deja un número de insectos diferente.
+
+Si quisiéramos el tamaño del efecto, se puede calcular a mano a partir del estadístico H (el χ²), con $k$ grupos y $n$ observaciones:
+
+$$\eta^2_H = \frac{H - k + 1}{n - k} = \frac{54.69 - 6 + 1}{72 - 6} = 0.75$$
+
+Un efecto grande.
+
+**d) *Post hoc* de Dunn**
+
+Tras un Kruskal-Wallis significativo, el *post hoc* adecuado es el **test de Dunn**, con corrección de p-valores (aquí, Holm):
+
+- **C, D y E** frente a **A, B y F**: todas las comparaciones son significativas (p < 0.05)
+- **Entre C, D y E**: ninguna diferencia significativa (C–D p = 0.59; C–E y D–E p = 1)
+- **Entre A, B y F**: ninguna diferencia significativa (p = 1)
+
+Los insecticidas se separan en **dos grupos**: C, D y E son eficaces (dejan entre 2 y 5 insectos de media) y A, B y F mucho menos (14–17 insectos). Recomendaríamos **C, D o E**. Aunque C tiene la media más baja, con estos datos **no podemos decir que sea mejor que D o E**.
+
+**e) Comparaciones múltiples**
+
+Con 6 insecticidas hay $\dfrac{6 \times 5}{2} = 15$ comparaciones por pares. Si cada test tiene un 5% de probabilidad de falso positivo:
+
+$$P(\text{al menos un falso positivo}) = 1 - 0.95^{15} = 1 - 0.46 = 0.54$$
+
+Habría un **54%** de probabilidad de encontrar alguna diferencia "significativa" que no es real. Por eso primero se hace un test global (ANOVA o Kruskal-Wallis) y después un *post hoc* que corrige por comparaciones múltiples.
+
+</details>
+
+<br>
+
+## 🦷 Problema 3 - Vitamina C y dientes de cobaya
+
+Las cobayas, como nosotros, no pueden sintetizar vitamina C. Crampton (1947) estudió cómo afecta la vitamina C al crecimiento de los **odontoblastos** (las células que forman la dentina de los dientes). Usó **60 cobayas**, repartidas en 6 grupos de 10, combinando dos factores:
+
+- **Suplemento**: zumo de naranja (**OJ**) o ácido ascórbico puro (**VC**)
+- **Dosis**: 0.5, 1 o 2 mg de vitamina C al día
+
+Longitud media de los odontoblastos en cada grupo:
+
+| Suplemento | 0.5 mg | 1 mg | 2 mg |
+|:--|:-:|:-:|:-:|
+| Zumo de naranja (OJ) | 13.2 | 22.7 | 26.1 |
+| Ácido ascórbico (VC) | 8.0 | 16.8 | 26.1 |
+
+```{r echo = F, fig.width = 6, fig.height = 4, fig.align = "center"}
+tg <- ToothGrowth
+tg$dose <- factor(tg$dose)
+ggplot(tg, aes(x = dose, y = len, color = supp, group = supp)) +
+  stat_summary(fun = mean, geom = "point", size = 3) +
+  stat_summary(fun = mean, geom = "line", linewidth = 1) +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.1) +
+  scale_color_manual(values = c("darkorange", "cadetblue4"),
+                     labels = c("Zumo de naranja (OJ)", "Ácido ascórbico (VC)")) +
+  labs(x = "Dosis (mg/día)", y = "Longitud media de los odontoblastos",
+       color = "Suplemento") +
+  theme_minimal(base_size = 13)
+```
+
+Se hizo un ANOVA de dos vías con interacción:
+
+| Fuente de variación | gl | SS | MS | F |
+|:--|:-:|:-:|:-:|:-:|
+| Suplemento | 1 | 205.4 | 205.4 | 15.57 |
+| Dosis | 2 | 2426.4 | 1213.2 | 92.00 |
+| Suplemento × Dosis | 2 | 108.3 | 54.2 | 4.11 |
+| Residuos | 54 | 712.1 | 13.2 | |
+
+Los supuestos se cumplen (Shapiro-Wilk sobre los residuos: p = 0.67; Levene: p = 0.15).
+
+### a) ¿Cuántas hipótesis nulas se ponen a prueba en este ANOVA de dos vías? Escríbelas.
+### b) Busca la F crítica (α = 0.05) para cada una de ellas y decide si rechazas $H_0$.
+### c) Usa el gráfico (o la tabla de medias) para explicar qué significa la interacción Suplemento × Dosis.
+### d) Una noticia dice: "El zumo de naranja es mejor que la vitamina C pura para los dientes". ¿Es correcto con estos datos?
+### e) Calcula el $R^2$ del modelo. ¿Qué proporción de la variabilidad explican los dos factores y su interacción?
+
+<br>
+<details>
+<summary>Solución desarrollada</summary>
+
+**a) Hipótesis**
+
+En un ANOVA de dos vías con interacción se ponen a prueba **tres** hipótesis nulas:
+
+1. **Suplemento**: $H_0$: la longitud media es la misma con OJ que con VC
+2. **Dosis**: $H_0$: la longitud media es la misma con las tres dosis
+3. **Interacción**: $H_0$: el efecto del suplemento es el mismo en todas las dosis (no hay interacción)
+
+**b) Decisión**
+
+Los grados de libertad del denominador son los de los residuos: $gl_2 = 54$ (60 cobayas − 6 grupos).
+
+| Efecto | $gl_1$ | $F_{obs}$ | $F_{crit}(gl_1, 54)$ | Decisión |
+|:--|:-:|:-:|:-:|:--|
+| Suplemento | 1 | 15.57 | 4.02 | Rechazamos $H_0$ |
+| Dosis | 2 | 92.00 | 3.17 | Rechazamos $H_0$ |
+| Interacción | 2 | 4.11 | 3.17 | Rechazamos $H_0$ |
+
+Los tres efectos son significativos (los p-valores exactos son 0.0002, < 0.0001 y 0.022).
+
+**c) La interacción**
+
+En el gráfico, las líneas **no son paralelas**:
+
+- A **0.5 y 1 mg**, el zumo de naranja (OJ) da odontoblastos claramente más largos que el ácido ascórbico (VC): unas 5–6 unidades más (13.2 frente a 8.0; 22.7 frente a 16.8).
+- A **2 mg**, los dos suplementos dan lo mismo (26.1 frente a 26.1).
+
+Es decir, **el efecto del suplemento depende de la dosis**. Eso es exactamente lo que significa una interacción significativa.
+
+**d) La noticia**
+
+**No es correcta tal como está escrita.** El efecto principal del suplemento es significativo, pero como también lo es la **interacción**, no podemos hablar del efecto del suplemento "en general": el zumo de naranja solo es mejor a **dosis bajas** (0.5 y 1 mg). A la dosis más alta, da igual qué suplemento se use.
+
+Cuando la interacción es significativa, hay que interpretar el efecto de un factor **dentro de cada nivel del otro**.
+
+**e) $R^2$ del modelo**
+
+$$SS_{total} = 205.4 + 2426.4 + 108.3 + 712.1 = 3452.2$$
+
+$$R^2 = \frac{SS_{supl} + SS_{dosis} + SS_{supl \times dosis}}{SS_{total}} = \frac{2740.1}{3452.2} = 0.79$$
+
+Los dos factores y su interacción explican el **79%** de la variabilidad en la longitud de los odontoblastos. Casi todo se debe a la **dosis** ($SS = 2426.4$, el 70% de la variabilidad total). Si quisiéramos el tamaño del efecto de cada factor por separado, usaríamos el $\eta^2$ parcial: por ejemplo, para la dosis, $\eta^2_p = \dfrac{2426.4}{2426.4 + 712.1} = 0.77$.
+
+</details>
+
+<br>
+
+## 🐣 Problema 4 - Completa la tabla
+
+En un estudio se criaron pollitos con **diferentes dietas** y, a las seis semanas, se pesaron (en gramos). Al copiar la tabla del ANOVA se han perdido algunos valores:
+
+| Fuente de variación | gl | SS | MS | F |
+|:--|:-:|:-:|:-:|:-:|
+| Dieta (entre grupos) | 5 | 231 129 | ? | ? |
+| Residuos (dentro de los grupos) | 65 | ? | 3 009 | |
+| Total | ? | 426 685 | | |
+
+### a) ¿Cuántas dietas se compararon? ¿Cuántos pollitos había en total?
+### b) Completa la tabla.
+### c) Busca la F crítica (α = 0.05). ¿Afecta la dieta al peso de los pollitos?
+### d) Calcula el $R^2$ e interprétalo.
+
+<br>
+<details>
+<summary>Solución desarrollada</summary>
+
+**a) Número de dietas y de pollitos**
+
+- $gl_{entre} = g - 1 = 5$ → $g = 6$ **dietas**
+- $gl_{total} = gl_{entre} + gl_{dentro} = 5 + 65 = 70 = N - 1$ → $N = 71$ **pollitos**
+
+**b) Tabla completa**
+
+- $SS_{dentro} = SS_{total} - SS_{entre} = 426\,685 - 231\,129 = 195\,556$ (comprobación: $195\,556 / 65 = 3\,009$ ✔)
+- $MS_{entre} = \dfrac{231\,129}{5} = 46\,226$
+- $F = \dfrac{46\,226}{3\,009} = 15.36$
+
+| Fuente de variación | gl | SS | MS | F |
+|:--|:-:|:-:|:-:|:-:|
+| Dieta (entre grupos) | 5 | 231 129 | 46 226 | 15.36 |
+| Residuos (dentro de los grupos) | 65 | 195 556 | 3 009 | |
+| Total | 70 | 426 685 | | |
+
+**c) Decisión**
+
+$F_{crit}(5, 65) = 2.36$. Como $F_{obs} = 15.36 > 2.36$, **rechazamos $H_0$**: el peso medio no es el mismo con todas las dietas. Para saber qué dietas son diferentes, haríamos un test *post hoc*.
+
+**d) Tamaño del efecto**
+
+$$R^2 = \frac{231\,129}{426\,685} = 0.54$$
+
+La dieta explica el **54%** de la variabilidad del peso de los pollitos: un efecto muy grande.
+
+</details>
+
+<br>
+
+## 🤔 Problema 5 - Preguntas rápidas
+
+### a) Un ANOVA da F = 0.8. Sin mirar ninguna tabla, ¿puedes decidir si es significativo?
+### b) Un ANOVA con 4 grupos da p = 0.03. ¿Podemos decir que las 4 medias son diferentes entre sí?
+### c) Repetimos un experimento con el **doble de individuos** por grupo, y obtenemos las mismas medias y desviaciones típicas. ¿Qué pasa con la F y con el p-valor? ¿Y con el $R^2$?
+### d) Los datos cumplen todos los supuestos del ANOVA, pero un compañero prefiere usar Kruskal-Wallis "porque no tiene supuestos". ¿Es buena idea?
+### e) En un ANOVA de una vía se comparan 3 cepas de levadura con 10 réplicas cada una. ¿Cuáles son los grados de libertad del numerador y del denominador? ¿Cuál es la F crítica?
+
+<br>
+<details>
+<summary>Solución desarrollada</summary>
+
+**a)** **Sí: no es significativo.** Con α = 0.05, la F crítica es siempre mayor que 1 (mira la tabla: el valor más pequeño es 2.24). Una F < 1 significa que la variabilidad **entre** grupos es incluso menor que la variabilidad **dentro** de los grupos: no hay ninguna evidencia de diferencias.
+
+**b)** **No.** El ANOVA solo nos dice que **al menos una** de las medias es diferente de las demás. Puede que solo un grupo sea distinto y los otros tres sean iguales (como en el Problema 1). Para saber qué grupos difieren hace falta un test *post hoc* (Tukey).
+
+**c)** La $MS_{entre}$ depende del tamaño de los grupos: $SS_{entre} = \sum n_i (M_i - G)^2$. Si duplicamos *n* con las mismas medias, la $MS_{entre}$ se duplica, mientras que la $MS_{dentro}$ (la varianza dentro de los grupos) no cambia. Por tanto, **la F aumenta** (aproximadamente se duplica) y **el p-valor disminuye**: con más datos tenemos más potencia. En cambio, el **$R^2$ se mantiene aproximadamente igual**: el tamaño del efecto no depende del tamaño de la muestra. Es la misma idea que vimos con la *d* de Cohen.
+
+**d)** **No es buena idea.** Si los supuestos se cumplen, el ANOVA tiene **más potencia** que Kruskal-Wallis: es más fácil que detecte una diferencia real (lo vimos con los datos de las aves en clase). Además, Kruskal-Wallis también tiene supuestos: las observaciones deben ser independientes y, para interpretarlo como una comparación de medianas, las distribuciones de los grupos deben tener una forma parecida.
+
+**e)** $g = 3$ cepas y $N = 3 \times 10 = 30$ observaciones:
+
+- $gl_1 = gl_{entre} = 3 - 1 = 2$
+- $gl_2 = gl_{dentro} = 30 - 3 = 27$
+
+En la tabla, $F_{crit}(2, 27) = 3.35$. Si la F del experimento es mayor que 3.35, rechazaremos que las tres cepas tengan la misma media.
+
+</details>
+
+<br>
+
+## 📚 Fuentes
+
+- Wright, K. P. y Czeisler, C. A. (2002). Absence of circadian phase resetting in response to bright light behind the knees. *Science*, 297, 571. Datos en Whitlock, M. C. y Schluter, D. *The Analysis of Biological Data* (ejemplo 15.1).
+- Beall, G. (1942). The transformation of data from entomological field experiments, so that the analysis of variance becomes applicable. *Biometrika*, 32, 243–262. Disponibles en R: `InsectSprays`.
+- Crampton, E. W. (1947). The growth of the odontoblast of the incisor teeth as a criterion of vitamin C intake of the guinea pig. *The Journal of Nutrition*, 33, 491–504. Disponibles en R: `ToothGrowth`.
+- Anónimo (1948). *Biometrika*, 35, 214. Disponibles en R: `chickwts`.
