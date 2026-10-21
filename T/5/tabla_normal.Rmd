@@ -41,7 +41,7 @@ z_table_df <- as.data.frame(z_table)
 z_table_df <- cbind(Z = rows, z_table_df)
 
 # Nombres de columnas
-colnames(z_table_df) <- c("Z", paste0("0.", 0:9))
+colnames(z_table_df) <- c("Z", paste0("0.0", 0:9))
 
 # Mostrar tabla completa en kable
 kable(z_table_df, digits = 4, align = "c",
