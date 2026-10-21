@@ -28,8 +28,7 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 [FÓRMULAS](T/FORMULAS_v2.html)
 
 ### 📋 Tablas
-- [Tabla de la distribución normal N(0,1): P(Z ≤ z)](T/5/tabla_normal.html)
-- [Tabla de la distribución normal N(0,1): P(Z ≥ z)](T/5/tabla_normal_rev.html)
+- [Tablas de la distribución normal N(0,1): P(Z ≤ z) y P(Z ≥ z) (PDF)](T/5/TABLAS_NORMAL.pdf)
 - [Tabla de la distribución t de Student: valores críticos (cola superior)](T/9/tabla_t.html)
 
 ---
