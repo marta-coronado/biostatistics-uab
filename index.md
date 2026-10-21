@@ -25,6 +25,8 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Tema 10: Tamaño del efecto](T/11/11.html)
 - [Tema 11: ANOVA](T/12/13.ANOVA_ampliado.html)
 
+[FÓRMULAS](T/FORMULAS_v2.html)
+
 ---
 
 ## 🗣️ Seminarios
