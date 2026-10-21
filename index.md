@@ -29,7 +29,7 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 
 ### 📋 Tablas
 - [Tablas de la distribución normal N(0,1): P(Z ≤ z) y P(Z ≥ z) (PDF)](T/5/TABLAS_NORMAL.pdf)
-- [Tabla de la distribución t de Student: valores críticos (cola superior)](T/9/tabla_t.html)
+- [Tabla de la distribución t de Student: valores críticos (cola superior) (PDF)](T/9/tabla_t_moodle.pdf)
 
 ---
 
