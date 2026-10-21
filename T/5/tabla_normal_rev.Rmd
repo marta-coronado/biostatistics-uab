@@ -44,7 +44,7 @@ z_table_df <- cbind(Z = rows, z_table_df)
 colnames(z_table_df) <- c("Z", paste0("0.0", 0:9))
 
 # Mostrar tabla completa en kable
-kable(z_table_df, digits = 4, align = "c",
+kable(z_table_df, format = "html", digits = 4, align = "c", escape = FALSE,
       caption = "<span style='font-size:15px; color:black;'>Tabla de la distribución normal N(0,1):<br> Probabilidades acumuladas P(Z ≥ z)</span>") %>%
   kable_styling(
     full_width = FALSE,
