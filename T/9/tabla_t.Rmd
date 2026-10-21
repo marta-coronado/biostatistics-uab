@@ -1,0 +1,96 @@
+---
+title: ""
+output:
+  html_document:
+    css: styles.css
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+#knitr::include_graphics()
+knitr::opts_chunk$set(
+  cache = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE,
+  fig.retina = 5
+)
+#pagedown::chrome_print(".html")
+```
+  
+<br>
+
+  
+```{r echo = F}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(magick)
+library(pdftools)
+
+# --- Parámetros ---
+dfs <- 1:99
+probs <- c(0.5, 0.25, 0.2, 0.15, 0.1, 0.05, 0.025, 0.01, 0.005, 0.001)
+
+# --- Calcular valores críticos t (cola superior) ---
+# Usamos qt(1 - p, df) para obtener t tal que P(T > t) = p
+t_table <- sapply(probs, function(p) qt(1 - p, df = dfs))
+t_table_df <- data.frame(df = dfs, round(t_table, 4))
+colnames(t_table_df) <- c("gl", paste0("p = ", probs))
+
+t_inf <- sapply(probs, function(p) qnorm(1 - p))          
+t_inf_df <- data.frame(df = "∞", t(as.data.frame(round(t_inf, 4))))  
+colnames(t_inf_df) <- colnames(t_table_df)
+
+# --- Combinar tablas ---
+t_table_df <- rbind(t_table_df, t_inf_df)
+
+# --- Mostrar tabla ---
+kable(t_table_df, row.names = F,  digits = 4, align = "c",
+      caption = "Valores críticos de la distribución t (cola superior)") %>%
+  kable_styling(
+    full_width = FALSE,
+    position = "center",
+    font_size = 11,
+    bootstrap_options = c("condensed")
+
+  ) %>%
+  row_spec(0, bold = TRUE, background = "#e6f2ff") %>%
+  column_spec(1, bold = TRUE, background = "#e6f2ff") %>%
+  row_spec(1:nrow(t_table_df), extra_css = "line-height: 0.8;") %>%
+  row_spec(nrow(t_table_df), bold = TRUE, background = "#ffe6e6")  # resalta la fila ∞
+
+
+
+```
+  
+  
+```{r}
+pdf_pages <- image_read_pdf("tabla_t.pdf", density = 300)  # una lista de imágenes
+
+
+# Convertir la primera página del PDF a imagen
+pdf_convert("t.pdf", format = "png", pages = 1, filenames = "logo.png", dpi = 300)
+
+# Leer la imagen resultante
+logo <- image_read("logo.png")
+
+# Redimensionar logo (por ejemplo, 10% del ancho de la página)
+logo_resized <- image_scale(logo, "30%")
+
+# Superponer el logo sobre cada página
+pages_with_logo <- lapply(pdf_pages, function(page) {
+  image_composite(
+    page,
+    logo_resized,
+    operator = "over",
+    gravity = "northeast",   # esquina superior derecha
+    offset = "+20+20"        # margen desde el borde
+  )
+})
+
+final_pdf <- image_join(pages_with_logo)
+image_write(final_pdf, path = "base_with_logo.pdf", format = "pdf")
+```
+
+
