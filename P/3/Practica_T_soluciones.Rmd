@@ -228,6 +228,18 @@ ggplot(peso_ratones, aes(x = grupo, y = peso, group = id)) +
 
 Todas las líneas suben: todos los ratones aumentan de peso.
 
+### 4. Potencia estadística
+
+En el `t`-test pareado damos a `power.t.test()` la media y la desviación típica de las **diferencias**, y `type = "paired"`:
+
+```{r}
+power.t.test(n = 10, delta = mean(dif), sd = sd(dif), sig.level = 0.05, type = "paired")
+power.t.test(delta = mean(dif), sd = sd(dif), sig.level = 0.05, power = 0.8, type = "paired")
+```
+
+- **a)** La potencia es prácticamente 1: el aumento medio de peso (194.5 g) es enorme comparado con la variación de las diferencias entre ratones (desviación típica = 29.5 g).
+- **b)** *n* = 2.28 → bastarían **3 ratones** para una potencia del 80%.
+
 
 # Datasets científicos reales
 
@@ -423,10 +435,15 @@ QQ_plot(diferencias_a)
 ```{r}
 # t-test pareado
 t.test(despues_a, antes_a, paired = TRUE)
+
+# potencia y n para una potencia del 80%
+power.t.test(n = 16, delta = mean(diferencias_a), sd = sd(diferencias_a), type = "paired")$power
+power.t.test(delta = mean(diferencias_a), sd = sd(diferencias_a), power = 0.8, type = "paired")$n
 ```
 
 - Normalidad de las diferencias: p = 0.10 > 0.05, no la rechazamos.
 - `t`-test pareado (bilateral): p = 0.0005 < 0.05. Rechazamos H₀: después de la amputación, los machos corren de media 1.19 cm/s más rápido (IC 95%: 0.61–1.76 cm/s).
+- Potencia: con 16 arañas, 0.98. Para una potencia del 80% bastarían **9 arañas** (*n* = 8.55).
 
 ```{r}
 ggplot(aranas, aes(x = treatment, y = speed, group = spider)) +

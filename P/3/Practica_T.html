@@ -634,6 +634,28 @@ código:</p>
 <p>Lo que hace es añadir una línea que une los ratones por
 <code>id</code>.</p>
 </div>
+<div id="potencia-estadística-1" class="section level4">
+<h4>4. Potencia estadística</h4>
+<p>En un <code>t</code>-test pareado también podemos calcular la
+potencia con <code>power.t.test()</code>, añadiendo el argumento
+<code>type = &quot;paired&quot;</code>. Esta vez le damos los datos en las
+<strong>unidades reales</strong> (gramos), a partir del vector de las
+diferencias:</p>
+<ul>
+<li><code>n</code>: el número de <strong>pares</strong> (10
+ratones).</li>
+<li><code>delta</code>: la <strong>media de las diferencias</strong>,
+<code>mean(dif)</code>.</li>
+<li><code>sd</code>: la <strong>desviación típica de las
+diferencias</strong>, <code>sd(dif)</code> (no la de cada grupo por
+separado).</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">power.t.test</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">delta =</span> <span class="fu">mean</span>(dif), <span class="at">sd =</span> <span class="fu">sd</span>(dif), <span class="at">sig.level =</span> <span class="fl">0.05</span>, <span class="at">type =</span> <span class="st">&quot;paired&quot;</span>)</span></code></pre></div>
+<p><strong>a) ¿Qué potencia tenía este experimento?</strong></p>
+<p><strong>b) ¿Cuántos ratones harían falta para tener una potencia del
+80%?</strong> Como antes, le damos <code>power = 0.8</code> y no le
+damos <code>n</code> (y redondeamos hacia arriba).</p>
+</div>
 </div>
 </div>
 </div>
@@ -715,32 +737,32 @@ estudio</a></li>
 <p><i class="fa fa-key"></i> Lee los datos directamente de los enlaces
 anteriores con <code>read.table()</code>, igual que has hecho con
 <code>ToothGrowth.txt</code>:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>mis_datos <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">&quot;url_del_fichero.txt&quot;</span>, <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>mis_datos <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">&quot;url_del_fichero.txt&quot;</span>, <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>)</span></code></pre></div>
 <p><i class="fa fa-info-circle"></i> <code>power.t.test()</code> supone
 que los dos grupos tienen el mismo número de observaciones. Si tu
 dataset tiene grupos de tamaño distinto, usa como <code>n</code> el
 tamaño del grupo <strong>más pequeño</strong>: obtendrás una potencia
 aproximada (un poco por debajo de la real).</p>
 <p>Pasos para hacer el <code>t</code>-test:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># lee los datos</span></span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co"># head() o View() de los datos</span></span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co"># comprobación de normalidad (en cada grupo)</span></span>
-<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co"># QQ-plot</span></span>
-<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co"># comprobación de homogeneidad de varianzas</span></span>
-<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="co"># t-test</span></span>
-<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a></span>
-<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="co"># interpretación del test</span></span>
-<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a></span>
-<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a><span class="co"># tamaño del efecto (cohens_d) e interpretación</span></span>
-<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a></span>
-<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a><span class="co"># potencia del estudio y n necesaria para una potencia del 80%</span></span>
-<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a></span>
-<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a><span class="co"># boxplot con significación (usa la plantilla de antes)</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># lee los datos</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co"># head() o View() de los datos</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co"># comprobación de normalidad (en cada grupo)</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co"># QQ-plot</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co"># comprobación de homogeneidad de varianzas</span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co"># t-test</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co"># interpretación del test</span></span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a><span class="co"># tamaño del efecto (cohens_d) e interpretación</span></span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a></span>
+<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a><span class="co"># potencia del estudio y n necesaria para una potencia del 80%</span></span>
+<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a><span class="co"># boxplot con significación (usa la plantilla de antes)</span></span></code></pre></div>
 <p>Utiliza el siguiente conjunto de datos para hacer un
 <code>t</code>-test pareado.</p>
 </div>
@@ -765,23 +787,25 @@ estudio</a></li>
 velocidad de antes y otro con los de después. Así podrás calcular las
 diferencias entre cada par de valores.</p>
 <p>Pasos para hacer el <code>t</code>-test:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># lee los datos</span></span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co"># head() o View() de los datos</span></span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co"># filtra: datos de speed de antes y datos de speed de después</span></span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co"># calcula las diferencias (después - antes)</span></span>
-<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co"># comprobación de normalidad (de las diferencias)</span></span>
-<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co"># QQ-plot</span></span>
-<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a></span>
-<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co"># t-test pareado</span></span>
-<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a></span>
-<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a><span class="co"># interpretación del test</span></span>
-<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a></span>
-<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a><span class="co"># ggplot2 gráfico pareado</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># lee los datos</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="co"># head() o View() de los datos</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="co"># filtra: datos de speed de antes y datos de speed de después</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co"># calcula las diferencias (después - antes)</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="co"># comprobación de normalidad (de las diferencias)</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co"># QQ-plot</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="co"># t-test pareado</span></span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a></span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a><span class="co"># interpretación del test</span></span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a></span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="co"># potencia del estudio y n necesaria para una potencia del 80% (type = &quot;paired&quot;)</span></span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a></span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a><span class="co"># ggplot2 gráfico pareado</span></span></code></pre></div>
 </div>
 </div>
 </article>
