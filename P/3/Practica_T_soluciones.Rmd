@@ -60,8 +60,8 @@ head(dientes)
 Nos quedamos con la dosis de 0.5 mg/día:
 
 ```{r}
-dientes_05 <- dientes %>% filter(dose == 0.5)
-dientes_05
+dientes_0.5 <- dientes %>% filter(dose == 0.5)
+dientes_0.5
 ```
 
 ### 1. Comprobación de normalidad
@@ -69,18 +69,18 @@ dientes_05
 Extraemos el vector de `len` de cada grupo:
 
 ```{r}
-oj <- dientes_05 %>% filter(supp == "OJ") %>% pull(len)
-vc <- dientes_05 %>% filter(supp == "VC") %>% pull(len)
+len_OJ <- dientes_0.5 %>% filter(supp == "OJ") %>% pull(len)
+len_VC <- dientes_0.5 %>% filter(supp == "VC") %>% pull(len)
 
-shapiro.test(oj)
-shapiro.test(vc)
+shapiro.test(len_OJ)
+shapiro.test(len_VC)
 ```
 
 En los dos grupos p > 0.05: no rechazamos H₀ (normalidad). No tenemos evidencia de que los datos no sigan una distribución normal.
 
 ```{r fig.show = "hold", fig.width = 4, fig.height = 4}
-QQ_plot(oj)
-QQ_plot(vc)
+QQ_plot(len_OJ)
+QQ_plot(len_VC)
 ```
 
 Los puntos siguen razonablemente bien la recta en los dos grupos (con solo 10 datos por grupo, es normal que se separen un poco en los extremos).
@@ -88,13 +88,13 @@ Los puntos siguen razonablemente bien la recta en los dos grupos (con solo 10 da
 ### 2. Homogeneidad de varianzas
 
 ```{r}
-leveneTest(len ~ supp, data = dientes_05)
+leveneTest(len ~ supp, data = dientes_0.5)
 ```
 
 p = 0.083 > 0.05: no rechazamos H₀ (varianzas iguales). Podemos usar `var.equal = TRUE`.
 
 ```{r}
-ggplot(dientes_05, aes(x = supp, y = len, fill = supp)) +
+ggplot(dientes_0.5, aes(x = supp, y = len, fill = supp)) +
   geom_boxplot() +
   theme_classic() +
   theme(legend.position = "none") +
@@ -106,7 +106,7 @@ El grupo `OJ` tiene algo más de dispersión que `VC`, pero el test de Levene no
 ### 3. `t`-test
 
 ```{r}
-t.test(len ~ supp, data = dientes_05, var.equal = TRUE)
+t.test(len ~ supp, data = dientes_0.5, var.equal = TRUE)
 ```
 
 - **Hipótesis:** H₀: $\mu_{OJ} = \mu_{VC}$ (el método de administración no afecta a la longitud media de los odontoblastos); H₁: $\mu_{OJ} \neq \mu_{VC}$.
@@ -114,7 +114,7 @@ t.test(len ~ supp, data = dientes_05, var.equal = TRUE)
 - p = 0.0053 < 0.05: rechazamos H₀. Con una dosis de 0.5 mg/día, la longitud media de los odontoblastos es mayor con zumo de naranja (13.23) que con ácido ascórbico (7.98).
 
 ```{r}
-ggplot(dientes_05, aes(x = supp, y = len, fill = supp)) +
+ggplot(dientes_0.5, aes(x = supp, y = len, fill = supp)) +
   geom_boxplot() +
   theme_classic() +
   theme(legend.position = "none") +
@@ -126,15 +126,15 @@ ggplot(dientes_05, aes(x = supp, y = len, fill = supp)) +
 ### 4. Tamaño del efecto: *d* de Cohen
 
 ```{r}
-cohens_d(len ~ supp, data = dientes_05)
+cohens_d(len ~ supp, data = dientes_0.5)
 ```
 
 *d* = 1.42 ≥ 0.8: es un **efecto grande**. Las medias de los dos grupos están separadas más de una desviación típica. Pero el IC 95% es muy ancho (0.41–2.39): con 10 cobayas por grupo, el efecto real podría ir de pequeño-medio a enorme.
 
-Guardamos el valor de *d* para usarlo después (también puedes copiar el número directamente):
+Guardamos el valor de *d* en el objeto `d` para usarlo después (también puedes copiar el número directamente: `d <- 1.42`):
 
 ```{r}
-d <- cohens_d(len ~ supp, data = dientes_05)$Cohens_d
+d <- cohens_d(len ~ supp, data = dientes_0.5)$Cohens_d
 d
 ```
 
@@ -142,8 +142,28 @@ d
 
 **a) Potencia del experimento:**
 
+`power.t.test()` solo utiliza el cociente `delta / sd`, que es la *d* de Cohen. Por eso hay dos maneras equivalentes de darle los datos:
+
+| Unidades | `delta` | `sd` | En este ejemplo |
+|:--|:--|:--|:--|
+| **Desviaciones típicas** | *d* de Cohen | `1` | `delta = 1.42`, `sd = 1` |
+| **Unidades reales** (µm) | diferencia de medias $\bar{x}_{OJ} - \bar{x}_{VC}$ | desviación típica combinada $s_p$ | `delta = 5.25`, `sd = 3.70` |
+
+En los dos casos, `delta / sd` $= 5.25 / 3.70 = 1.42 = d$.
+
 ```{r}
 power.t.test(n = 10, delta = d, sd = 1, sig.level = 0.05)
+```
+
+Comprobamos que en las unidades reales (diferencia de medias y $s_p$) da exactamente lo mismo:
+
+```{r}
+dif_medias <- mean(len_OJ) - mean(len_VC)
+s_p <- sqrt(((length(len_OJ) - 1) * var(len_OJ) + (length(len_VC) - 1) * var(len_VC)) /
+            (length(len_OJ) + length(len_VC) - 2))
+c(dif_medias = dif_medias, s_p = s_p, d = dif_medias / s_p)
+
+power.t.test(n = 10, delta = dif_medias, sd = s_p, sig.level = 0.05)
 ```
 
 La potencia era de 0.85: con 10 cobayas por grupo, el experimento tenía un 85% de probabilidad de detectar una diferencia de este tamaño.
@@ -173,16 +193,16 @@ despues <- peso_ratones %>% filter(grupo == "despues") %>% pull(peso)
 ### 1. Comprobación de normalidad
 
 ```{r}
-diferencias <- despues - antes
-diferencias
+diff <- despues - antes
+diff
 
-shapiro.test(diferencias)
+shapiro.test(diff)
 ```
 
 p = 0.61 > 0.05: no tenemos evidencia de que las diferencias no sigan una distribución normal.
 
 ```{r fig.width = 4, fig.height = 4}
-QQ_plot(diferencias)
+QQ_plot(diff)
 ```
 
 ### 2. Homogeneidad de varianzas
@@ -353,7 +373,7 @@ t.test(percent ~ treatment, data = topillos, var.equal = FALSE)
 wilcox.test(percent ~ treatment, data = topillos)
 ```
 
-Los dos tests llegan a la misma conclusión (p ≈ 0.006 < 0.05): los machos con más expresión de V1a pasan más tiempo acurrucados con la hembra (86.3% de media frente a 58.1% en los controles). Es decir, aumentar la expresión de un solo gen hace que una especie promiscua se comporte de forma más monógama.
+Los dos tests llegan a la misma conclusión (Welch: p = 0.001; Wilcoxon: p = 0.006; ambos < 0.05): los machos con más expresión de V1a pasan más tiempo acurrucados con la hembra (86.3% de media frente a 58.1% en los controles). Es decir, aumentar la expresión de un solo gen hace que una especie promiscua se comporte de forma más monógama.
 
 ```{r}
 # tamaño del efecto
@@ -405,7 +425,7 @@ QQ_plot(diferencias_a)
 t.test(despues_a, antes_a, paired = TRUE)
 ```
 
-- Normalidad de las diferencias: p = 0.10 > 0.05, la aceptamos.
+- Normalidad de las diferencias: p = 0.10 > 0.05, no la rechazamos.
 - `t`-test pareado (bilateral): p = 0.0005 < 0.05. Rechazamos H₀: después de la amputación, los machos corren de media 1.19 cm/s más rápido (IC 95%: 0.61–1.76 cm/s).
 
 ```{r}

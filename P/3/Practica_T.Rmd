@@ -7,6 +7,7 @@ output:
     theme: leonids
     highlight: github
     self_contained: true
+    pandoc_args: ["--tab-stop=8"]  # alinea las columnas separadas por tabuladores
 ---
 
 ```{r setup, include=FALSE}
@@ -38,7 +39,7 @@ library(effectsize)
 </style>
 
 
-# La distribución `t`
+# El `t`-test
 
 Como genetistas, la estadística es una herramienta que nos permite diseñar los mejores experimentos posibles y poner a prueba nuestras hipótesis.  
 La **prueba `t` (`t`-test)** es el inicio de nuestro recorrido estadístico. Es una prueba sencilla, y aunque quizás no la utilices con frecuencia, la teoría que hay detrás sienta las bases de muchos métodos estadísticos más avanzados.
@@ -59,7 +60,7 @@ La **robustez** del `t`-test aumenta con el tamaño de la muestra y es mayor cua
 
 ## Leer ficheros separados por tabuladores: `read.table()`
 
-En esta práctica, todos los datos están en **ficheros de texto separados por tabuladores** (extensión `.txt`): cada fila es una observación, y las columnas están separadas por un tabulador (la tecla <kbd>Tab</kbd>). Así se ve, por ejemplo, el principio del fichero `ToothGrowth.txt`:
+En esta práctica, todos los datos están en **ficheros de texto separados por tabuladores** (extensión `.txt`): cada fila es una observación, y las columnas están separadas por un tabulador (la tecla <kbd>Tab</kbd>). Así se ve, por ejemplo, el principio del fichero [`ToothGrowth.txt`](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/data/ToothGrowth.txt):
 
 ```
 len	supp	dose
@@ -68,7 +69,7 @@ len	supp	dose
 7.3	VC	0.5
 ```
 
-Hasta ahora habíamos leído ficheros `.csv` (separados por comas) con `read.csv()`. Para leer ficheros separados por tabuladores utilizaremos la función `read.table()`, que tiene la siguiente forma ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#21)):
+Hasta ahora habíamos leído ficheros `.csv` (separados por comas) con `read.csv()`. Para leer ficheros separados por tabuladores utilizaremos la función `read.table()`, que tiene la siguiente forma:
 
 ```{r eval = F}
 mis_datos <- read.table(file = "ruta_al_fichero.txt", header = TRUE, sep = "\t")
@@ -80,8 +81,6 @@ mis_datos <- read.table(file = "ruta_al_fichero.txt", header = TRUE, sep = "\t")
 
 <i class="fa fa-exclamation-triangle"></i> Si te olvidas de `sep = "\t"`, `read.table()` separa las columnas por cualquier espacio en blanco. Si te olvidas de `header = TRUE`, los nombres de las columnas se leerán como si fueran la primera fila de datos. Comprueba siempre el resultado con `head()` o `str()`.
 
-Todos los ficheros de esta práctica están en la carpeta [`data`](https://github.com/marta-coronado/biostatistics-uab/tree/main/P/3/data). No hace falta que los descargues: `R` puede leerlos directamente desde el enlace URL.
-
 ### Ejemplo de `t`-test con dos muestras independientes: evaluar el crecimiento de los dientes
 
 Utilizaremos el dataset `ToothGrowth`. La **variable respuesta** es la **longitud de los odontoblastos** (células responsables del crecimiento dental, `len`) en 60 cobayas. Cada animal recibió uno de tres niveles de dosis de vitamina C (0.5, 1 y 2 mg/día, `dose`) mediante uno de dos métodos de administración: zumo de naranja (`OJ`) o ácido ascórbico (una forma de vitamina C, codificada como `VC`), en la columna `supp`.
@@ -92,14 +91,7 @@ Lee el fichero [`ToothGrowth.txt`](https://raw.githubusercontent.com/marta-coron
 
 ```
 
-Puedes ver la tabla completa de manera interactiva con la función `datatable()`:
-
-```{r eval = F}
-library(DT)
-datatable(dientes)
-```
-
-Utilizaremos la dosis de 0.5 mg/día para hacer la prueba. Para ello, tenemos que hacer un subset de los datos. Utiliza la función `filter()` para filtrar cuando la dosis (`dose`) es igual a `0.5` y guárdalo en un nuevo objeto. [Ejemplo de filter.](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#27)
+Utilizaremos la dosis de 0.5 mg/día para hacer la prueba estadística. Para ello, tenemos que hacer un filtrado de los datos. Utiliza la función `filter()` para filtrar cuando la dosis (`dose`) es igual a `0.5` y guárdalo en un nuevo objeto llamado `dientes_0.5`. [Ejemplo de filter.](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#27)
 
 ```{r}
 library(tidyverse)
@@ -108,21 +100,21 @@ library(tidyverse)
 
 #### 1. Comprobación de normalidad
 
-Antes de aplicar tests paramétricos como el `t`-test, es importante verificar si la variable respuesta, la **longitud de los odontoblastos** (`len`), sigue una **distribución normal** en **cada uno de los dos grupos** (`OJ` y `VC`). Para ello, podemos aplicar el test de Shapiro-Wilk. Recuerda que se ejecuta como `shapiro.test(vector_datos)`. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/10/12.TTest_pt2.html#28)
+Antes de aplicar tests paramétricos como el `t`-test, es importante verificar si la variable respuesta, la **longitud de los odontoblastos** (`len`), sigue una **distribución normal** en **cada uno de los dos grupos** (`OJ` y `VC`). Para ello, podemos aplicar el test de Shapiro-Wilk. Recuerda que se ejecuta como `shapiro.test(vector_datos_numericos)`. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/10/12.TTest_pt2.html#28)
 
-Para obtener el vector numérico de un grupo, filtra el grupo con `filter()` y extrae la columna con `pull()`:
-
-```{r eval = F}
-df %>% filter(columna_grupo == "grupo") %>% pull(columna_respuesta)
-```
-
-Guarda los vectores de `len` de cada grupo (`OJ` y `VC`) en dos objetos y aplica el test de Shapiro-Wilk a cada uno. ¿Cuál es la conclusión del test?
+Para obtener los dos vectores numéricos de cada grupo, filtra por el grupo de interés con `filter()` y extrae la columna de la longitud de los odontoblastos con `pull(nombre_columna)`. Guarda los vectores de cada grupo como `len_OJ` y `len_VC`.
 
 ```{r}
 
 ```
 
-Otra forma de evaluar si los datos siguen una distribución normal es de manera **gráfica**, mediante un **QQ-plot** (*quantile-quantile plot*). En la práctica 2 creamos una función `QQ_plot()` que genera automáticamente el gráfico a partir de cualquier vector numérico.
+Aplica el test de Shapiro-Wilk a cada uno de los vectores. ¿Cuál es la conclusión del test en los dos casos?
+
+```{r}
+
+```
+
+Otra forma de evaluar si los datos siguen una distribución normal es de manera **gráfica**, mediante un **QQ-plot** (*quantile-quantile plot*). La función `QQ_plot()` que te damos a continuación genera automáticamente el gráfico a partir de cualquier vector numérico.
 
 <i class="fa fa-cogs"></i> **Ejecuta el siguiente bloque de código para cargar la función `QQ_plot()`.**
 
@@ -147,7 +139,7 @@ QQ_plot <- function(vector_datos) {
 
 ```
 
-Genera el QQ-plot de cada grupo (`QQ_plot(vector_numerico)`). ¿Tienes evidencia de que siguen una distribución normal?
+Genera los QQ-plot de cada grupo con los vectores que has creado antes (ejemplo: `QQ_plot(len_OJ)`). ¿Tienes evidencia de que siguen una distribución normal?
 
 ```{r}
 
@@ -156,7 +148,7 @@ Genera el QQ-plot de cada grupo (`QQ_plot(vector_numerico)`). ¿Tienes evidencia
 
 #### 2. Comprobación de homogeneidad de varianzas
 
-El test de Levene nos permite evaluar si las varianzas son iguales o no. Recuerda que tenemos que cargar la librería `car` primero, antes de poder aplicar la función `leveneTest()`. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/10/12.TTest_pt2.html#14)
+El test de Levene nos permite evaluar si las varianzas de dos grupos son iguales o no. Antes de usar la función `leveneTest()`, tenemos que cargar la librería `car`. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/10/12.TTest_pt2.html#14)
 
 La función de Levene tiene la siguiente forma:
  `leveneTest(variable_respuesta ~ grupos, data = data_frame)`
@@ -165,7 +157,7 @@ La función de Levene tiene la siguiente forma:
 
 ```
 
-Como otro método gráfico, podemos utilizar los boxplots para visualizar cómo se distribuyen los datos. [Tienes un ejemplo de boxplot aquí.](https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#17)
+Como otro método gráfico, podemos utilizar los **boxplots** para visualizar cómo se distribuyen los datos. [Tienes un ejemplo de boxplot aquí.](https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#17)
 
 Completa la siguiente plantilla: sustituye cada `___` por el nombre del data frame y de las columnas que van en el eje x (los **grupos**) y en el eje y (la **variable respuesta**). En `fill` pon la misma columna que en `x`, para que cada grupo tenga un color. En `labs()` puedes escribir los títulos de los ejes que quieras.
 
@@ -177,13 +169,11 @@ ggplot(data = ___, aes(x = ___, y = ___, fill = ___)) +
   labs(x = "___", y = "___")
 ```
 
-```{r}
-
-```
-
 #### 3. Aplicar el `t`-test
 
 Una vez comprobados los supuestos, podemos hacer el `t`-test con la función `t.test()` y la expresión: `variable_respuesta ~ grupos, data = dataframe, var.equal = TRUE`. Si el test de Levene ha dado significativo (varianzas distintas), usamos `var.equal = FALSE`, y `R` hace el `t`-test de Welch.
+
+<i class="fa fa-info-circle"></i> El `t`-test de Welch también sería válido aunque las varianzas sean iguales, y es lo que hace `R` por defecto (como vimos en teoría). Aquí usamos el test de Levene para decidir, y así practicar los dos casos.
 
 El modelo se escribe como has hecho para el test de Levene de antes. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/10/12.TTest_pt2.html#20)
 
@@ -191,15 +181,15 @@ El modelo se escribe como has hecho para el test de Levene de antes. [Ejemplo.](
 
 ```
 
-**¿Cuál era la hipótesis? ¿Qué nos dice el test anterior? Indica si es bilateral o unilateral.**
+**¿Cuál era la hipótesis? ¿Qué nos dice el test anterior? Indica si la prueba realizada es bilateral o unilateral.**
 
 
 
-Podemos mejorar el boxplot de antes añadiéndole el resultado del `t`-test con la función `geom_signif()` del paquete `ggsignif`. [Lo vimos en esta diapositiva.](https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#24)
+Podemos mejorar el boxplot de antes añadiéndole el resultado del `t`-test con la función `geom_signif()` del paquete `ggsignif`. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#24)
 
-En este caso, el test es `t.test`, y en `comparisons` indicamos los dos grupos que queremos comparar, en este caso `OJ` y `VC` (los grupos que vemos en el eje x). Con `test.args` le indicamos que las varianzas son iguales, como en el `t`-test que has hecho.
+En este caso, el test es `t.test`, y en `comparisons` indicamos los dos grupos que queremos comparar, en este caso `OJ` y `VC` (los grupos que vemos en el eje x). Con `test.args` le indicamos que las varianzas son iguales, como en el `t`-test que hemos hecho.
 
-Añade la capa `geom_signif()` al final del boxplot que hiciste antes (rellena otra vez los `___`):
+Añade la capa `geom_signif()` al final del boxplot que hiciste antes (copia el código del boxplot realizado anteriormente):
 
 ```{r eval = F}
 library(ggsignif)
@@ -213,13 +203,10 @@ ggplot(data = ___, aes(x = ___, y = ___, fill = ___)) +
               test = "t.test", test.args = list(var.equal = TRUE))
 ```
 
-```{r}
-
-```
 
 #### 4. Tamaño del efecto: *d* de Cohen
 
-El `t`-test nos dice **si** hay una diferencia entre los dos grupos, pero no **cuán grande** es. Un p-valor pequeño no significa que el efecto sea grande o importante: también depende del tamaño de la muestra. Para medir la magnitud de la diferencia, calculamos el **tamaño del efecto**. [Lo vimos en esta diapositiva.](https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#21)
+El `t`-test nos dice **si** hay una diferencia entre los dos grupos, pero no **cuán grande** es. Un p-valor pequeño no significa que el efecto sea grande o importante: también depende del tamaño de la muestra. Para medir la magnitud de la diferencia, calculamos el **tamaño del efecto**. [Lo vimos en esta diapositiva.](https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#23)
 
 Para dos grupos independientes, usamos la ***d* de Cohen**: la diferencia de medias medida en desviaciones típicas.
 
@@ -229,7 +216,7 @@ donde $s_p$ es la **desviación típica combinada** (*pooled*) de los dos grupos
 
 $$s_p = \sqrt{\frac{(n_1 - 1)\,s_1^2 + (n_2 - 1)\,s_2^2}{n_1 + n_2 - 2}}$$
 
-No hace falta que lo calcules a mano: la función `cohens_d()` del paquete `effectsize` lo hace por nosotros ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#22)). Se escribe con la misma fórmula que `t.test()` y `leveneTest()`, y por defecto utiliza la desviación típica combinada $s_p$:
+No hace falta que lo calcules a mano: la función `cohens_d()` del paquete `effectsize` lo hace por nosotros ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#24)). Se escribe con la misma fórmula que `t.test()` y `leveneTest()`, y por defecto utiliza la desviación típica combinada $s_p$. Completa con los datos y las variables el siguiente código:
 
 ```{r eval = F}
 library(effectsize)
@@ -237,21 +224,37 @@ library(effectsize)
 cohens_d(variable_respuesta ~ grupos, data = dataframe)
 ```
 
+Guarda el valor de *d* en un objeto llamado `d`, porque lo necesitarás para calcular la potencia. Puedes hacerlo con `d <- cohens_d(variable_respuesta ~ grupos, data = dataframe)$Cohens_d`, o simplemente copiar el número, por ejemplo: `d <- 1.42`.
+
 ```{r}
 
 ```
 
 Además del valor de *d*, `cohens_d()` da su **intervalo de confianza del 95%**: con muestras pequeñas, la estimación del tamaño del efecto también es incierta.
 
-**¿Es un efecto pequeño, medio o grande? ¿Qué te dice el intervalo de confianza?** Recuerda la guía orientativa de Cohen: *d* < 0.2 trivial; 0.2 ≤ *d* < 0.5 pequeño; 0.5 ≤ *d* < 0.8 medio; *d* ≥ 0.8 grande. Pero no la apliques de forma rígida: la relevancia de un efecto depende siempre del contexto. (La función `interpret_cohens_d(d)` aplica esta guía automáticamente.)
+**¿Es un efecto pequeño, medio o grande? ¿Qué te dice el intervalo de confianza?** Recuerda la guía orientativa de Cohen: *d* < 0.2 trivial; 0.2 ≤ *d* < 0.5 pequeño; 0.5 ≤ *d* < 0.8 medio; *d* ≥ 0.8 grande. (La función `interpret_cohens_d(d)` aplica esta guía automáticamente.)
 
 
 
 #### 5. Potencia estadística
 
-La **potencia** es la probabilidad de rechazar correctamente H₀ cuando hay una diferencia real (1 − β). Con la función `power.t.test()` podemos hacer un **análisis de potencia**: relaciona el tamaño de muestra (`n`, **por grupo**), la diferencia de medias (`delta`), la desviación típica (`sd`), la significación (`sig.level`) y la potencia (`power`). Si le damos todos los valores menos uno, `R` calcula el que falta. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#29)
+La **potencia** es la probabilidad de rechazar correctamente H₀ cuando hay una diferencia real (1 − β). Con la función `power.t.test()` podemos hacer un **análisis de potencia**: relaciona el tamaño de muestra (`n`, **por grupo**), la diferencia de medias (`delta`), la desviación típica (`sd`), la significación (`sig.level`) y la potencia (`power`). Si le damos todos los valores menos uno, `R` calcula el que falta. [Ejemplo.](https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#31)
 
 Como la *d* de Cohen ya está medida en desviaciones típicas, podemos darle directamente `delta = d` y `sd = 1` (como hicimos en las diapositivas).
+
+<i class="fa fa-info-circle"></i> **Dos maneras equivalentes de usar `power.t.test()`.** La función solo utiliza el cociente `delta / sd`, que es justamente la *d* de Cohen. Por eso podemos darle los datos de dos formas, y las dos dan la misma potencia:
+
+| Unidades | `delta` | `sd` |
+|:--|:--|:--|
+| **Desviaciones típicas** | *d* de Cohen | `1` |
+| **Unidades reales** de la variable (µm, años, %…) | diferencia de medias $\bar{x}_1 - \bar{x}_2$ | desviación típica combinada $s_p$ (mismas unidades) |
+
+```{r eval = F}
+power.t.test(n = 10, delta = d, sd = 1)                    # en desviaciones típicas
+power.t.test(n = 10, delta = media_1 - media_2, sd = s_p)  # en unidades reales
+```
+
+En los dos casos, `delta / sd` $= \dfrac{\bar{x}_1 - \bar{x}_2}{s_p} = d$. En esta práctica usamos la primera forma, porque ya hemos calculado *d* con `cohens_d()`.
 
 **a) ¿Qué potencia tenía este experimento?** Le damos `n` (10 cobayas por grupo), `delta` (la *d* que has calculado) y `sd = 1`, y no le damos `power`:
 
@@ -292,20 +295,20 @@ Para un `t`-test pareado necesitamos **dos vectores** con los pesos de antes y d
 
 #### 1. Comprobación de normalidad
 
-En un `t`-test pareado, lo que tiene que seguir una distribución normal son las **diferencias** entre cada par de valores (después − antes de cada ratón). Para calcularlas, simplemente podemos restar los vectores `despues - antes`. Guarda el vector resultante en un nuevo objeto:
+En un `t`-test pareado, lo que tiene que seguir una distribución normal son las **diferencias** entre cada par de valores (después - antes de cada ratón). Para calcularlas, simplemente podemos restar los vectores `despues - antes`. Guarda el vector resultante en un nuevo objeto llamado `diff`:
 
 
 ```{r}
 
 ```
 
-Aplica el test de Shapiro-Wilk a las diferencias. ¿Cuál es la conclusión del test de normalidad?
+Aplica el test de Shapiro-Wilk al vector de las diferencias. ¿Cuál es la conclusión del test de normalidad?
 
 ```{r}
 
 ```
 
-Genera el QQ-plot de las diferencias. ¿Tienes evidencia de que siguen una distribución normal?
+Genera el QQ-plot con el vector de las diferencias. ¿Tienes evidencia de que siguen una distribución normal?
 
 ```{r}
 
@@ -342,9 +345,8 @@ ggplot(peso_ratones, aes(x = grupo, y = peso, group = id)) +
     theme(legend.position = "none")
 ```
 
-```{r}
+Lo que hace es añadir una línea que une los ratones por `id`.
 
-```
 
 
 # <i class="fa fa-rocket"></i> Analiza un dataset científico real

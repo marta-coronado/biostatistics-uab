@@ -264,8 +264,8 @@ strong {
 color: #DE1144;
 }
 </style>
-<div id="la-distribución-t" class="section level1">
-<h1>La distribución <code>t</code></h1>
+<div id="el-t-test" class="section level1">
+<h1>El <code>t</code>-test</h1>
 <p>Como genetistas, la estadística es una herramienta que nos permite
 diseñar los mejores experimentos posibles y poner a prueba nuestras
 hipótesis.<br />
@@ -306,15 +306,15 @@ similares.</p>
 separados por tabuladores</strong> (extensión <code>.txt</code>): cada
 fila es una observación, y las columnas están separadas por un tabulador
 (la tecla <kbd>Tab</kbd>). Así se ve, por ejemplo, el principio del
-fichero <code>ToothGrowth.txt</code>:</p>
-<pre><code>len supp    dose
-4.2 VC  0.5
-11.5    VC  0.5
-7.3 VC  0.5</code></pre>
+fichero <a href="https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/data/ToothGrowth.txt"><code>ToothGrowth.txt</code></a>:</p>
+<pre><code>len     supp    dose
+4.2     VC      0.5
+11.5    VC      0.5
+7.3     VC      0.5</code></pre>
 <p>Hasta ahora habíamos leído ficheros <code>.csv</code> (separados por
 comas) con <code>read.csv()</code>. Para leer ficheros separados por
 tabuladores utilizaremos la función <code>read.table()</code>, que tiene
-la siguiente forma (<a href="https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#21">ejemplo</a>):</p>
+la siguiente forma:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>mis_datos <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="at">file =</span> <span class="st">&quot;ruta_al_fichero.txt&quot;</span>, <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>)</span></code></pre></div>
 <ul>
 <li><code>file</code>: la ruta al fichero. Puede ser un fichero de tu
@@ -331,9 +331,6 @@ por cualquier espacio en blanco. Si te olvidas de
 <code>header = TRUE</code>, los nombres de las columnas se leerán como
 si fueran la primera fila de datos. Comprueba siempre el resultado con
 <code>head()</code> o <code>str()</code>.</p>
-<p>Todos los ficheros de esta práctica están en la carpeta <a href="https://github.com/marta-coronado/biostatistics-uab/tree/main/P/3/data"><code>data</code></a>.
-No hace falta que los descargues: <code>R</code> puede leerlos
-directamente desde el enlace URL.</p>
 <div id="ejemplo-de-t-test-con-dos-muestras-independientes-evaluar-el-crecimiento-de-los-dientes" class="section level3">
 <h3>Ejemplo de <code>t</code>-test con dos muestras independientes:
 evaluar el crecimiento de los dientes</h3>
@@ -351,16 +348,13 @@ con <code>read.table()</code> y guárdalo en un objeto que se llame
 <code>https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/3/data/ToothGrowth.txt</code>.
 Comprueba con <code>head()</code> que se ha leído bien (tres columnas:
 <code>len</code>, <code>supp</code> y <code>dose</code>).</p>
-<p>Puedes ver la tabla completa de manera interactiva con la función
-<code>datatable()</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(DT)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">datatable</span>(dientes)</span></code></pre></div>
-<p>Utilizaremos la dosis de 0.5 mg/día para hacer la prueba. Para ello,
-tenemos que hacer un subset de los datos. Utiliza la función
-<code>filter()</code> para filtrar cuando la dosis (<code>dose</code>)
-es igual a <code>0.5</code> y guárdalo en un nuevo objeto. <a href="https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#27">Ejemplo
+<p>Utilizaremos la dosis de 0.5 mg/día para hacer la prueba estadística.
+Para ello, tenemos que hacer un filtrado de los datos. Utiliza la
+función <code>filter()</code> para filtrar cuando la dosis
+(<code>dose</code>) es igual a <code>0.5</code> y guárdalo en un nuevo
+objeto llamado <code>dientes_0.5</code>. <a href="https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#27">Ejemplo
 de filter.</a></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
 <div id="comprobación-de-normalidad" class="section level4">
 <h4>1. Comprobación de normalidad</h4>
 <p>Antes de aplicar tests paramétricos como el <code>t</code>-test, es
@@ -369,50 +363,52 @@ los odontoblastos</strong> (<code>len</code>), sigue una
 <strong>distribución normal</strong> en <strong>cada uno de los dos
 grupos</strong> (<code>OJ</code> y <code>VC</code>). Para ello, podemos
 aplicar el test de Shapiro-Wilk. Recuerda que se ejecuta como
-<code>shapiro.test(vector_datos)</code>. <a href="https://marta-coronado.github.io/biostatistics-uab/T/10/12.TTest_pt2.html#28">Ejemplo.</a></p>
-<p>Para obtener el vector numérico de un grupo, filtra el grupo con
-<code>filter()</code> y extrae la columna con <code>pull()</code>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(columna_grupo <span class="sc">==</span> <span class="st">&quot;grupo&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(columna_respuesta)</span></code></pre></div>
-<p>Guarda los vectores de <code>len</code> de cada grupo
-(<code>OJ</code> y <code>VC</code>) en dos objetos y aplica el test de
-Shapiro-Wilk a cada uno. ¿Cuál es la conclusión del test?</p>
+<code>shapiro.test(vector_datos_numericos)</code>. <a href="https://marta-coronado.github.io/biostatistics-uab/T/10/12.TTest_pt2.html#28">Ejemplo.</a></p>
+<p>Para obtener los dos vectores numéricos de cada grupo, filtra por el
+grupo de interés con <code>filter()</code> y extrae la columna de la
+longitud de los odontoblastos con <code>pull(nombre_columna)</code>.
+Guarda los vectores de cada grupo como <code>len_OJ</code> y
+<code>len_VC</code>.</p>
+<p>Aplica el test de Shapiro-Wilk a cada uno de los vectores. ¿Cuál es
+la conclusión del test en los dos casos?</p>
 <p>Otra forma de evaluar si los datos siguen una distribución normal es
 de manera <strong>gráfica</strong>, mediante un <strong>QQ-plot</strong>
-(<em>quantile-quantile plot</em>). En la práctica 2 creamos una función
-<code>QQ_plot()</code> que genera automáticamente el gráfico a partir de
+(<em>quantile-quantile plot</em>). La función <code>QQ_plot()</code> que
+te damos a continuación genera automáticamente el gráfico a partir de
 cualquier vector numérico.</p>
 <p><i class="fa fa-cogs"></i> <strong>Ejecuta el siguiente bloque de
 código para cargar la función <code>QQ_plot()</code>.</strong></p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Función para crear QQ-plot con ggplot2</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>QQ_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(vector_datos) {</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">library</span>(ggplot2)</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="co"># Crear data frame con el vector numérico pasado como argumento</span></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">valor =</span> vector_datos)</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="co"># QQ-plot con ggplot2</span></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">sample =</span> valor)) <span class="sc">+</span></span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>    <span class="fu">stat_qq</span>() <span class="sc">+</span></span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>    <span class="fu">stat_qq_line</span>(<span class="at">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="sc">+</span></span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>    <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">&quot;QQ-plot&quot;</span>,</span>
-<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">&quot;Cuantiles teóricos&quot;</span>,</span>
-<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">&quot;Cuantiles de la muestra&quot;</span></span>
-<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>    )</span>
-<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>}</span></code></pre></div>
-<p>Genera el QQ-plot de cada grupo
-(<code>QQ_plot(vector_numerico)</code>). ¿Tienes evidencia de que siguen
-una distribución normal?</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Función para crear QQ-plot con ggplot2</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>QQ_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(vector_datos) {</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="fu">library</span>(ggplot2)</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="co"># Crear data frame con el vector numérico pasado como argumento</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">valor =</span> vector_datos)</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="co"># QQ-plot con ggplot2</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">sample =</span> valor)) <span class="sc">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>    <span class="fu">stat_qq</span>() <span class="sc">+</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>    <span class="fu">stat_qq_line</span>(<span class="at">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="sc">+</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>    <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">&quot;QQ-plot&quot;</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">&quot;Cuantiles teóricos&quot;</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">&quot;Cuantiles de la muestra&quot;</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>    )</span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>}</span></code></pre></div>
+<p>Genera los QQ-plot de cada grupo con los vectores que has creado
+antes (ejemplo: <code>QQ_plot(len_OJ)</code>). ¿Tienes evidencia de que
+siguen una distribución normal?</p>
 </div>
 <div id="comprobación-de-homogeneidad-de-varianzas" class="section level4">
 <h4>2. Comprobación de homogeneidad de varianzas</h4>
-<p>El test de Levene nos permite evaluar si las varianzas son iguales o
-no. Recuerda que tenemos que cargar la librería <code>car</code>
-primero, antes de poder aplicar la función <code>leveneTest()</code>. <a href="https://marta-coronado.github.io/biostatistics-uab/T/10/12.TTest_pt2.html#14">Ejemplo.</a></p>
+<p>El test de Levene nos permite evaluar si las varianzas de dos grupos
+son iguales o no. Antes de usar la función <code>leveneTest()</code>,
+tenemos que cargar la librería <code>car</code>. <a href="https://marta-coronado.github.io/biostatistics-uab/T/10/12.TTest_pt2.html#14">Ejemplo.</a></p>
 <p>La función de Levene tiene la siguiente forma:
 <code>leveneTest(variable_respuesta ~ grupos, data = data_frame)</code></p>
-<p>Como otro método gráfico, podemos utilizar los boxplots para
-visualizar cómo se distribuyen los datos. <a href="https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#17">Tienes
+<p>Como otro método gráfico, podemos utilizar los
+<strong>boxplots</strong> para visualizar cómo se distribuyen los datos.
+<a href="https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#17">Tienes
 un ejemplo de boxplot aquí.</a></p>
 <p>Completa la siguiente plantilla: sustituye cada <code>___</code> por
 el nombre del data frame y de las columnas que van en el eje x (los
@@ -421,11 +417,11 @@ respuesta</strong>). En <code>fill</code> pon la misma columna que en
 <code>x</code>, para que cada grupo tenga un color. En
 <code>labs()</code> puedes escribir los títulos de los ejes que
 quieras.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ___, <span class="fu">aes</span>(<span class="at">x =</span> ___, <span class="at">y =</span> ___, <span class="at">fill =</span> ___)) <span class="sc">+</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;___&quot;</span>, <span class="at">y =</span> <span class="st">&quot;___&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ___, <span class="fu">aes</span>(<span class="at">x =</span> ___, <span class="at">y =</span> ___, <span class="at">fill =</span> ___)) <span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;___&quot;</span>, <span class="at">y =</span> <span class="st">&quot;___&quot;</span>)</span></code></pre></div>
 </div>
 <div id="aplicar-el-t-test" class="section level4">
 <h4>3. Aplicar el <code>t</code>-test</h4>
@@ -435,30 +431,33 @@ quieras.</p>
 Si el test de Levene ha dado significativo (varianzas distintas), usamos
 <code>var.equal = FALSE</code>, y <code>R</code> hace el
 <code>t</code>-test de Welch.</p>
+<p><i class="fa fa-info-circle"></i> El <code>t</code>-test de Welch
+también sería válido aunque las varianzas sean iguales, y es lo que hace
+<code>R</code> por defecto (como vimos en teoría). Aquí usamos el test
+de Levene para decidir, y así practicar los dos casos.</p>
 <p>El modelo se escribe como has hecho para el test de Levene de antes.
 <a href="https://marta-coronado.github.io/biostatistics-uab/T/10/12.TTest_pt2.html#20">Ejemplo.</a></p>
 <p><strong>¿Cuál era la hipótesis? ¿Qué nos dice el test anterior?
-Indica si es bilateral o unilateral.</strong></p>
+Indica si la prueba realizada es bilateral o unilateral.</strong></p>
 <p>Podemos mejorar el boxplot de antes añadiéndole el resultado del
 <code>t</code>-test con la función <code>geom_signif()</code> del
-paquete <code>ggsignif</code>. <a href="https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#24">Lo
-vimos en esta diapositiva.</a></p>
+paquete <code>ggsignif</code>. <a href="https://marta-coronado.github.io/biostatistics-uab/T/3/3.VisualizacionDatos.html#24">Ejemplo.</a></p>
 <p>En este caso, el test es <code>t.test</code>, y en
 <code>comparisons</code> indicamos los dos grupos que queremos comparar,
 en este caso <code>OJ</code> y <code>VC</code> (los grupos que vemos en
 el eje x). Con <code>test.args</code> le indicamos que las varianzas son
-iguales, como en el <code>t</code>-test que has hecho.</p>
+iguales, como en el <code>t</code>-test que hemos hecho.</p>
 <p>Añade la capa <code>geom_signif()</code> al final del boxplot que
-hiciste antes (rellena otra vez los <code>___</code>):</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">library</span>(ggsignif)</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ___, <span class="fu">aes</span>(<span class="at">x =</span> ___, <span class="at">y =</span> ___, <span class="at">fill =</span> ___)) <span class="sc">+</span></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;___&quot;</span>, <span class="at">y =</span> <span class="st">&quot;___&quot;</span>) <span class="sc">+</span></span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;OJ&quot;</span>, <span class="st">&quot;VC&quot;</span>)),</span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>              <span class="at">test =</span> <span class="st">&quot;t.test&quot;</span>, <span class="at">test.args =</span> <span class="fu">list</span>(<span class="at">var.equal =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
+hiciste antes (copia el código del boxplot realizado anteriormente):</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">library</span>(ggsignif)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ___, <span class="fu">aes</span>(<span class="at">x =</span> ___, <span class="at">y =</span> ___, <span class="at">fill =</span> ___)) <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;___&quot;</span>, <span class="at">y =</span> <span class="st">&quot;___&quot;</span>) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;OJ&quot;</span>, <span class="st">&quot;VC&quot;</span>)),</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>              <span class="at">test =</span> <span class="st">&quot;t.test&quot;</span>, <span class="at">test.args =</span> <span class="fu">list</span>(<span class="at">var.equal =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
 </div>
 <div id="tamaño-del-efecto-d-de-cohen" class="section level4">
 <h4>4. Tamaño del efecto: <em>d</em> de Cohen</h4>
@@ -467,7 +466,7 @@ diferencia entre los dos grupos, pero no <strong>cuán grande</strong>
 es. Un p-valor pequeño no significa que el efecto sea grande o
 importante: también depende del tamaño de la muestra. Para medir la
 magnitud de la diferencia, calculamos el <strong>tamaño del
-efecto</strong>. <a href="https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#21">Lo
+efecto</strong>. <a href="https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#23">Lo
 vimos en esta diapositiva.</a></p>
 <p>Para dos grupos independientes, usamos la <strong><em>d</em> de
 Cohen</strong>: la diferencia de medias medida en desviaciones
@@ -481,23 +480,28 @@ dos grupos:</p>
 (n_2 - 1)\,s_2^2}{n_1 + n_2 - 2}}\]</span></p>
 <p>No hace falta que lo calcules a mano: la función
 <code>cohens_d()</code> del paquete <code>effectsize</code> lo hace por
-nosotros (<a href="https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#22">ejemplo</a>).
+nosotros (<a href="https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#24">ejemplo</a>).
 Se escribe con la misma fórmula que <code>t.test()</code> y
 <code>leveneTest()</code>, y por defecto utiliza la desviación típica
-combinada <span class="math inline">\(s_p\)</span>:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">library</span>(effectsize)</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="fu">cohens_d</span>(variable_respuesta <span class="sc">~</span> grupos, <span class="at">data =</span> dataframe)</span></code></pre></div>
+combinada <span class="math inline">\(s_p\)</span>. Completa con los
+datos y las variables el siguiente código:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">library</span>(effectsize)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="fu">cohens_d</span>(variable_respuesta <span class="sc">~</span> grupos, <span class="at">data =</span> dataframe)</span></code></pre></div>
+<p>Guarda el valor de <em>d</em> en un objeto llamado <code>d</code>,
+porque lo necesitarás para calcular la potencia. Puedes hacerlo con
+<code>d &lt;- cohens_d(variable_respuesta ~ grupos, data = dataframe)$Cohens_d</code>,
+o simplemente copiar el número, por ejemplo:
+<code>d &lt;- 1.42</code>.</p>
 <p>Además del valor de <em>d</em>, <code>cohens_d()</code> da su
 <strong>intervalo de confianza del 95%</strong>: con muestras pequeñas,
 la estimación del tamaño del efecto también es incierta.</p>
 <p><strong>¿Es un efecto pequeño, medio o grande? ¿Qué te dice el
 intervalo de confianza?</strong> Recuerda la guía orientativa de Cohen:
 <em>d</em> &lt; 0.2 trivial; 0.2 ≤ <em>d</em> &lt; 0.5 pequeño; 0.5 ≤
-<em>d</em> &lt; 0.8 medio; <em>d</em> ≥ 0.8 grande. Pero no la apliques
-de forma rígida: la relevancia de un efecto depende siempre del
-contexto. (La función <code>interpret_cohens_d(d)</code> aplica esta
-guía automáticamente.)</p>
+<em>d</em> &lt; 0.8 medio; <em>d</em> ≥ 0.8 grande. (La función
+<code>interpret_cohens_d(d)</code> aplica esta guía
+automáticamente.)</p>
 </div>
 <div id="potencia-estadística" class="section level4">
 <h4>5. Potencia estadística</h4>
@@ -509,15 +513,52 @@ potencia</strong>: relaciona el tamaño de muestra (<code>n</code>,
 (<code>delta</code>), la desviación típica (<code>sd</code>), la
 significación (<code>sig.level</code>) y la potencia
 (<code>power</code>). Si le damos todos los valores menos uno,
-<code>R</code> calcula el que falta. <a href="https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#29">Ejemplo.</a></p>
+<code>R</code> calcula el que falta. <a href="https://marta-coronado.github.io/biostatistics-uab/T/11/11.html#31">Ejemplo.</a></p>
 <p>Como la <em>d</em> de Cohen ya está medida en desviaciones típicas,
 podemos darle directamente <code>delta = d</code> y <code>sd = 1</code>
 (como hicimos en las diapositivas).</p>
+<p><i class="fa fa-info-circle"></i> <strong>Dos maneras equivalentes de
+usar <code>power.t.test()</code>.</strong> La función solo utiliza el
+cociente <code>delta / sd</code>, que es justamente la <em>d</em> de
+Cohen. Por eso podemos darle los datos de dos formas, y las dos dan la
+misma potencia:</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Unidades</th>
+<th align="left"><code>delta</code></th>
+<th align="left"><code>sd</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>Desviaciones típicas</strong></td>
+<td align="left"><em>d</em> de Cohen</td>
+<td align="left"><code>1</code></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Unidades reales</strong> de la variable (µm,
+años, %…)</td>
+<td align="left">diferencia de medias <span class="math inline">\(\bar{x}_1 - \bar{x}_2\)</span></td>
+<td align="left">desviación típica combinada <span class="math inline">\(s_p\)</span> (mismas unidades)</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">power.t.test</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">delta =</span> d, <span class="at">sd =</span> <span class="dv">1</span>)                    <span class="co"># en desviaciones típicas</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">power.t.test</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">delta =</span> media_1 <span class="sc">-</span> media_2, <span class="at">sd =</span> s_p)  <span class="co"># en unidades reales</span></span></code></pre></div>
+<p>En los dos casos, <code>delta / sd</code> <span class="math inline">\(= \dfrac{\bar{x}_1 - \bar{x}_2}{s_p} = d\)</span>.
+En esta práctica usamos la primera forma, porque ya hemos calculado
+<em>d</em> con <code>cohens_d()</code>.</p>
 <p><strong>a) ¿Qué potencia tenía este experimento?</strong> Le damos
 <code>n</code> (10 cobayas por grupo), <code>delta</code> (la <em>d</em>
 que has calculado) y <code>sd = 1</code>, y no le damos
 <code>power</code>:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">power.t.test</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">delta =</span> d, <span class="at">sd =</span> <span class="dv">1</span>, <span class="at">sig.level =</span> <span class="fl">0.05</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">power.t.test</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">delta =</span> d, <span class="at">sd =</span> <span class="dv">1</span>, <span class="at">sig.level =</span> <span class="fl">0.05</span>)</span></code></pre></div>
 <p><strong>b) Queremos repetir el experimento. ¿Cuántas cobayas por
 grupo necesitaríamos para tener una potencia del 80%?</strong> Ahora le
 damos <code>power = 0.8</code> y no le damos <code>n</code>. Recuerda:
@@ -550,13 +591,14 @@ corresponden al mismo ratón.</p>
 <h4>1. Comprobación de normalidad</h4>
 <p>En un <code>t</code>-test pareado, lo que tiene que seguir una
 distribución normal son las <strong>diferencias</strong> entre cada par
-de valores (después − antes de cada ratón). Para calcularlas,
+de valores (después - antes de cada ratón). Para calcularlas,
 simplemente podemos restar los vectores <code>despues - antes</code>.
-Guarda el vector resultante en un nuevo objeto:</p>
-<p>Aplica el test de Shapiro-Wilk a las diferencias. ¿Cuál es la
-conclusión del test de normalidad?</p>
-<p>Genera el QQ-plot de las diferencias. ¿Tienes evidencia de que siguen
-una distribución normal?</p>
+Guarda el vector resultante en un nuevo objeto llamado
+<code>diff</code>:</p>
+<p>Aplica el test de Shapiro-Wilk al vector de las diferencias. ¿Cuál es
+la conclusión del test de normalidad?</p>
+<p>Genera el QQ-plot con el vector de las diferencias. ¿Tienes evidencia
+de que siguen una distribución normal?</p>
 </div>
 <div id="comprobación-de-homogeneidad-de-varianzas-1" class="section level4">
 <h4>2. Comprobación de homogeneidad de varianzas</h4>
@@ -583,12 +625,14 @@ nomenclatura es:
 unilateral.</strong></p>
 <p>Podemos visualizar el <code>t</code>-test pareado con el siguiente
 código:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Gráfico pareado</span></span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">ggplot</span>(peso_ratones, <span class="fu">aes</span>(<span class="at">x =</span> grupo, <span class="at">y =</span> peso, <span class="at">group =</span> id)) <span class="sc">+</span></span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">&quot;grey&quot;</span>) <span class="sc">+</span></span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> grupo), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>    <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Gráfico pareado</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">ggplot</span>(peso_ratones, <span class="fu">aes</span>(<span class="at">x =</span> grupo, <span class="at">y =</span> peso, <span class="at">group =</span> id)) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">&quot;grey&quot;</span>) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> grupo), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>    <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p>Lo que hace es añadir una línea que une los ratones por
+<code>id</code>.</p>
 </div>
 </div>
 </div>
@@ -671,32 +715,32 @@ estudio</a></li>
 <p><i class="fa fa-key"></i> Lee los datos directamente de los enlaces
 anteriores con <code>read.table()</code>, igual que has hecho con
 <code>ToothGrowth.txt</code>:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>mis_datos <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">&quot;url_del_fichero.txt&quot;</span>, <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>mis_datos <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">&quot;url_del_fichero.txt&quot;</span>, <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>)</span></code></pre></div>
 <p><i class="fa fa-info-circle"></i> <code>power.t.test()</code> supone
 que los dos grupos tienen el mismo número de observaciones. Si tu
 dataset tiene grupos de tamaño distinto, usa como <code>n</code> el
 tamaño del grupo <strong>más pequeño</strong>: obtendrás una potencia
 aproximada (un poco por debajo de la real).</p>
 <p>Pasos para hacer el <code>t</code>-test:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># lee los datos</span></span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co"># head() o View() de los datos</span></span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co"># comprobación de normalidad (en cada grupo)</span></span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co"># QQ-plot</span></span>
-<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co"># comprobación de homogeneidad de varianzas</span></span>
-<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co"># t-test</span></span>
-<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a></span>
-<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co"># interpretación del test</span></span>
-<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a></span>
-<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a><span class="co"># tamaño del efecto (cohens_d) e interpretación</span></span>
-<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a></span>
-<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a><span class="co"># potencia del estudio y n necesaria para una potencia del 80%</span></span>
-<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a></span>
-<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a><span class="co"># boxplot con significación (usa la plantilla de antes)</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># lee los datos</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co"># head() o View() de los datos</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co"># comprobación de normalidad (en cada grupo)</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co"># QQ-plot</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co"># comprobación de homogeneidad de varianzas</span></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="co"># t-test</span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="co"># interpretación del test</span></span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a><span class="co"># tamaño del efecto (cohens_d) e interpretación</span></span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a></span>
+<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a><span class="co"># potencia del estudio y n necesaria para una potencia del 80%</span></span>
+<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a><span class="co"># boxplot con significación (usa la plantilla de antes)</span></span></code></pre></div>
 <p>Utiliza el siguiente conjunto de datos para hacer un
 <code>t</code>-test pareado.</p>
 </div>
@@ -721,23 +765,23 @@ estudio</a></li>
 velocidad de antes y otro con los de después. Así podrás calcular las
 diferencias entre cada par de valores.</p>
 <p>Pasos para hacer el <code>t</code>-test:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># lee los datos</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="co"># head() o View() de los datos</span></span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a></span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="co"># filtra: datos de speed de antes y datos de speed de después</span></span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co"># calcula las diferencias (después - antes)</span></span>
-<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="co"># comprobación de normalidad (de las diferencias)</span></span>
-<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a></span>
-<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co"># QQ-plot</span></span>
-<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a></span>
-<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="co"># t-test pareado</span></span>
-<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a></span>
-<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a><span class="co"># interpretación del test</span></span>
-<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a></span>
-<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="co"># ggplot2 gráfico pareado</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># lee los datos</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co"># head() o View() de los datos</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co"># filtra: datos de speed de antes y datos de speed de después</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co"># calcula las diferencias (después - antes)</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co"># comprobación de normalidad (de las diferencias)</span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co"># QQ-plot</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co"># t-test pareado</span></span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a><span class="co"># interpretación del test</span></span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a></span>
+<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a><span class="co"># ggplot2 gráfico pareado</span></span></code></pre></div>
 </div>
 </div>
 </article>
