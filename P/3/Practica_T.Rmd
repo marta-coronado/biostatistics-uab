@@ -295,7 +295,7 @@ Para un `t`-test pareado necesitamos **dos vectores** con los pesos de antes y d
 
 #### 1. Comprobación de normalidad
 
-En un `t`-test pareado, lo que tiene que seguir una distribución normal son las **diferencias** entre cada par de valores (después - antes de cada ratón). Para calcularlas, simplemente podemos restar los vectores `despues - antes`. Guarda el vector resultante en un nuevo objeto llamado `diff`:
+En un `t`-test pareado, lo que tiene que seguir una distribución normal son las **diferencias** entre cada par de valores (después - antes de cada ratón). Para calcularlas, simplemente podemos restar los vectores `despues - antes`. Guarda el vector resultante en un nuevo objeto llamado `dif`:
 
 
 ```{r}

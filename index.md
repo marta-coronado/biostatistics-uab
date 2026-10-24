@@ -47,6 +47,8 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - <a href="P/1/PracticaR.Rmd" download>Descarga el documento `Rmd` de la Práctica 1 aquí</a>.
 - [Práctica 2: Bootstrap y test de permutación en `R`](P/2/practica_bootstrap.html)
 - <a href="P/2/practica_bootstrap.Rmd" download>Descarga el documento `Rmd` de la Práctica 2 aquí</a>.
+- [Práctica 3: Pruebas de `t` y tamaño del efecto en `R`](P/3/Practica_T.html)
+- <a href="P/3/Practica_T.Rmd" download>Descarga el documento `Rmd` de la Práctica 3 aquí</a>.
 
 
 ---

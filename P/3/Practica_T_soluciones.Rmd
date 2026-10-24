@@ -193,16 +193,16 @@ despues <- peso_ratones %>% filter(grupo == "despues") %>% pull(peso)
 ### 1. Comprobación de normalidad
 
 ```{r}
-diff <- despues - antes
-diff
+dif <- despues - antes
+dif
 
-shapiro.test(diff)
+shapiro.test(dif)
 ```
 
 p = 0.61 > 0.05: no tenemos evidencia de que las diferencias no sigan una distribución normal.
 
 ```{r fig.width = 4, fig.height = 4}
-QQ_plot(diff)
+QQ_plot(dif)
 ```
 
 ### 2. Homogeneidad de varianzas
