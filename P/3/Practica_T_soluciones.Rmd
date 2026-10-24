@@ -1,7 +1,7 @@
 ---
 title: "**Soluciones P3:**<br><font color='#A8A8A8' size='5'>Pruebas de t en `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
 author: "Marta Coronado Zamora"
-date: "Noviembre 2026"
+date: "Octubre 2026"
 output:
   prettydoc::html_pretty:
     theme: leonids
