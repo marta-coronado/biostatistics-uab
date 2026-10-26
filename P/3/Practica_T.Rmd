@@ -348,6 +348,31 @@ ggplot(peso_ratones, aes(x = grupo, y = peso, group = id)) +
 Lo que hace es añadir una línea que une los ratones por `id`.
 
 
+#### 4. Potencia estadística
+
+En un `t`-test pareado también podemos calcular la potencia con `power.t.test()`, añadiendo el argumento `type = "paired"`. Esta vez le damos los datos en las **unidades reales** (gramos), a partir del vector de las diferencias:
+
+- `n`: el número de **pares** (10 ratones).
+- `delta`: la **media de las diferencias**, `mean(dif)`.
+- `sd`: la **desviación típica de las diferencias**, `sd(dif)` (no la de cada grupo por separado).
+
+```{r eval = F}
+power.t.test(n = 10, delta = mean(dif), sd = sd(dif), sig.level = 0.05, type = "paired")
+```
+
+**a) ¿Qué potencia tenía este experimento?**
+
+```{r}
+
+```
+
+**b) ¿Cuántos ratones harían falta para tener una potencia del 80%?** Como antes, le damos `power = 0.8` y no le damos `n` (y redondeamos hacia arriba).
+
+```{r}
+
+```
+
+
 
 # <i class="fa fa-rocket"></i> Analiza un dataset científico real
 
