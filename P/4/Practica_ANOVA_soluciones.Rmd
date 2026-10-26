@@ -1,0 +1,359 @@
+---
+title: "**Soluciones P4:**<br><font color='#A8A8A8' size='5'>ANOVA y regresión en `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
+author: "Marta Coronado Zamora"
+date: "Noviembre 2026"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5, fig.align = 'center', fig.height = 4, fig.width = 5)
+library(dplyr)
+library(ggplot2)
+library(prettydoc)
+library(car)
+library(rstatix)
+```
+
+<style>
+  @import url(https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,500,500i,700,700i);
+  @import url(https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css);
+  @import url("https://use.fontawesome.com/releases/v5.10.1/css/all.css");
+
+  body {
+    font-family: 'Fira Sans','Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Microsoft YaHei', 'Songti SC', serif;
+  }
+
+  /* Make bold syntax compile to RU-red */
+  strong {
+    color: #DE1144;
+  }
+
+</style>
+
+<i class="fa fa-info-circle"></i> En estas soluciones leemos los ficheros desde la carpeta de la práctica. Si usas el enlace URL (`https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/4/...`), el resultado es exactamente el mismo.
+
+```{r QQplot, include = FALSE}
+QQ_plot <- function(vector_datos) {
+  df <- data.frame(valor = vector_datos)
+  ggplot(df, aes(sample = valor)) +
+    stat_qq() +
+    stat_qq_line(color = "firebrick4") +
+    theme_classic() +
+    labs(title = "QQ-plot", x = "Cuantiles teóricos", y = "Cuantiles de la muestra")
+}
+```
+
+# Parte 1. ANOVA de una vía: biodiversidad de insectos
+
+### 1. Leer los datos
+
+```{r}
+insectos <- read.table("urban_data_filter.tsv", header = TRUE, sep = "\t")
+head(insectos)
+str(insectos)
+```
+
+### 2. Preparar las variables
+
+- `Richness` es la **variable respuesta**: es numérica (un número de especies, `int`).
+- `Urban.Type` es la **variable explicativa** (los grupos). `R` la ha leído como `int`, pero es **categórica**: los números son solo códigos.
+
+```{r}
+insectos <- insectos %>%
+  mutate(Urban.Name = recode_factor(factor(Urban.Type),
+                                    "1" = "Natural",
+                                    "3" = "Suburbano",
+                                    "8" = "Desarrollado",
+                                    "9" = "Denso"))
+
+levels(insectos$Urban.Name)
+table(insectos$Urban.Name)
+```
+
+Los grupos **no** tienen el mismo tamaño: solo hay 12 trampas en zonas naturales, frente a 60-84 en el resto (diseño **desequilibrado**). El ANOVA y el test de Tukey funcionan con grupos de distinto tamaño, pero las estimaciones del grupo `Natural` serán menos precisas.
+
+### 3. Visualizar los datos
+
+```{r}
+ggplot(data = insectos, aes(x = Urban.Name, y = Richness, fill = Urban.Name)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.15, alpha = 0.4) +
+  theme_classic() +
+  theme(legend.position = "none") +
+  labs(x = "Nivel de urbanización", y = "Riqueza de especies")
+```
+
+```{r}
+insectos %>%
+  group_by(Urban.Name) %>%
+  summarize(n = n(),
+            media = mean(Richness),
+            sd = sd(Richness))
+```
+
+Las zonas **naturales** tienen la riqueza media más alta (32.4 especies por trampa), y la riqueza disminuye a medida que aumenta la urbanización (hasta 19.8 en las zonas densas). Las desviaciones típicas son muy parecidas en los cuatro grupos (entre 10.9 y 12.4), así que las varianzas parecen homogéneas.
+
+### 4. Hipótesis
+
+- $H_0$: $\mu_{Natural} = \mu_{Suburbano} = \mu_{Desarrollado} = \mu_{Denso}$. La riqueza media de especies es la misma en todos los niveles de urbanización.
+- $H_A$: al menos una media es diferente. La riqueza media de especies difiere en al menos un nivel de urbanización.
+
+### 5. Ajustar el modelo y comprobar los supuestos
+
+```{r}
+modelo_aov <- aov(Richness ~ Urban.Name, data = insectos)
+```
+
+**a) Normalidad de los residuos**
+
+```{r}
+shapiro.test(resid(modelo_aov))
+```
+
+```{r fig.width = 4, fig.height = 4}
+QQ_plot(resid(modelo_aov))
+```
+
+**b) Homogeneidad de varianzas**
+
+```{r}
+leveneTest(Richness ~ Urban.Name, data = insectos)
+```
+
+- **Shapiro-Wilk**: p = 0.004 < 0.05, rechazamos la normalidad de los residuos. Pero con 240 observaciones el test detecta desviaciones muy pequeñas: en el QQ-plot, los puntos siguen bien la recta en casi todo el rango, y solo se separan un poco en los extremos (la riqueza no puede ser negativa, y hay algunas trampas con 0 especies). Con una muestra tan grande, el ANOVA es robusto a esta desviación.
+- **Levene**: p = 0.84 > 0.05, no rechazamos la homogeneidad de varianzas (coherente con las desviaciones típicas tan parecidas del paso 3).
+
+Podemos hacer el ANOVA, y en el paso 9 lo comprobaremos con Kruskal-Wallis.
+
+### 6. El test de ANOVA
+
+```{r}
+summary(modelo_aov)
+```
+
+*F* = 4.90, con 3 y 236 grados de libertad, p = 0.0025.
+
+```{r}
+qf(0.95, df1 = 3, df2 = 236)
+```
+
+*F* = 4.90 > *F* crítica = 2.64, y p = 0.0025 < 0.05: las dos formas llevan a la misma conclusión. **Rechazamos $H_0$**: la riqueza media de especies difiere en al menos un nivel de urbanización.
+
+### 7. Tamaño del efecto: $R^2$
+
+**a) A mano**, con las sumas de cuadrados de la tabla:
+
+```{r}
+SS_entre  <- 1944
+SS_dentro <- 31216
+SS_entre / (SS_entre + SS_dentro)
+```
+
+**b) Con `R`:**
+
+```{r}
+summary(lm(Richness ~ Urban.Name, data = insectos))
+```
+
+$R^2$ = 0.059 (`Multiple R-squared`): el nivel de urbanización explica solo el **5.9%** de la variabilidad de la riqueza de especies. Según la guía de Cohen, es un efecto **mediano** (está justo en el límite de 0.06).
+
+**¿Por qué el p-valor es tan pequeño y el $R^2$ tan bajo?** Porque son dos cosas distintas:
+
+- El **p-valor** depende del tamaño de la muestra: con 240 trampas, podemos detectar con mucha confianza diferencias aunque sean modestas.
+- El **$R^2$** nos dice cuánto importa el factor: el 94% restante de la variabilidad se debe a otros factores que no están en el modelo (el tipo de vegetación junto a cada trampa, la temperatura, la época del año, la variación aleatoria entre trampas...).
+
+La urbanización tiene un efecto **real** (significativo) sobre la biodiversidad de insectos, pero explica solo una parte pequeña de las diferencias entre trampas.
+
+### 8. Test *post hoc*: Tukey
+
+```{r}
+TukeyHSD(modelo_aov)
+```
+
+```{r fig.width = 6, fig.height = 4}
+par(mar = c(5, 12, 4, 2))  # margen izquierdo más ancho para que quepan los nombres
+plot(TukeyHSD(modelo_aov), las = 1)
+```
+
+Dos parejas difieren significativamente (su intervalo de confianza no incluye el 0):
+
+- **Desarrollado − Natural**: 11.2 especies menos en las zonas desarrolladas (p = 0.013).
+- **Denso − Natural**: 12.6 especies menos en las zonas densas (p = 0.003).
+
+La diferencia Suburbano − Natural (8.8 especies menos) no llega a ser significativa (p = 0.066), y entre los tres niveles urbanos no hay diferencias significativas.
+
+### 9. Comprobación no paramétrica: Kruskal-Wallis y Dunn
+
+```{r}
+kruskal.test(Richness ~ Urban.Name, data = insectos)
+dunn_test(insectos, Richness ~ Urban.Name, p.adjust.method = "holm")
+kruskal_effsize(insectos, Richness ~ Urban.Name)
+```
+
+Sí, llegamos a las mismas conclusiones: Kruskal-Wallis es significativo (p = 0.006), y el test de Dunn encuentra diferencias significativas en las mismas dos parejas que Tukey (Natural − Desarrollado y Natural − Denso). El tamaño del efecto ($\eta^2_H$ = 0.04) también es pequeño-mediano. El resultado es robusto: no depende de que los residuos sean perfectamente normales.
+
+### 10. Conclusión
+
+La riqueza media de especies de insectos **sí** difiere entre los niveles de urbanización (ANOVA: *F* = 4.90, gl = 3 y 236, p = 0.0025). Según el test de Tukey, las zonas **naturales** tienen más especies que las zonas **desarrolladas** y **densas**. Sin embargo, el nivel de urbanización explica solo el **5.9%** de la variabilidad de la riqueza de especies ($R^2$ = 0.059), un efecto **mediano**.
+
+<hr>
+
+# Parte 2. Regresión lineal simple: endogamia en lobos
+
+### 1. Leer los datos
+
+```{r}
+lobos <- read.csv("chap16e2InbreedingWolves.csv")
+head(lobos)
+nrow(lobos)
+```
+
+La variable explicativa ($X$) es el coeficiente de endogamia (`inbreedCoef`), y la variable respuesta ($Y$), el número de crías que sobreviven (`nPups`).
+
+### 2. Visualizar los datos
+
+```{r}
+ggplot(data = lobos, aes(x = inbreedCoef, y = nPups)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(x = "Coeficiente de endogamia", y = "Crías que sobreviven al primer invierno")
+```
+
+La relación es **negativa**: las camadas más endogámicas tienden a tener menos crías. Parece aproximadamente lineal, aunque con bastante dispersión.
+
+### 3. Correlación
+
+```{r}
+cor.test(~ nPups + inbreedCoef, data = lobos)
+```
+
+$r$ = −0.61, p = 0.0016: hay una correlación negativa, moderadamente fuerte y significativa.
+
+### 4. Ajustar la recta de regresión
+
+```{r}
+modelo_lm <- lm(nPups ~ inbreedCoef, data = lobos)
+summary(modelo_lm)
+```
+
+**a)** Ecuación de la recta: $\text{nPups} = 6.57 - 11.45 \times \text{inbreedCoef}$
+
+**b)** La pendiente es −11.45: por cada aumento de 1 en el coeficiente de endogamia, sobreviven de media 11.45 crías menos. Como el coeficiente va de 0 a 1, es más útil decirlo así: por cada aumento de **0.1** en el coeficiente de endogamia, sobreviven de media **1.14 crías menos** (−11.45 × 0.1). La ordenada en el origen (6.57) es el número medio de crías esperado en una camada sin endogamia.
+
+**c)** Sí: p = 0.0016 < 0.05, rechazamos $H_0$: $\beta = 0$. El p-valor es **exactamente el mismo** que el de la correlación: en la regresión lineal simple, el contraste de la pendiente y el de la correlación son equivalentes (incluso el estadístico *t* = −3.59 coincide).
+
+### 5. Comprobar los supuestos
+
+**b) Normalidad de los residuos**
+
+```{r}
+shapiro.test(resid(modelo_lm))
+```
+
+```{r fig.width = 4, fig.height = 4}
+QQ_plot(resid(modelo_lm))
+```
+
+**c) Homocedasticidad**
+
+```{r}
+residuos_lobos <- data.frame(ajustados = fitted(modelo_lm),
+                             residuos  = resid(modelo_lm))
+
+ggplot(residuos_lobos, aes(x = ajustados, y = residuos)) +
+  geom_point(size = 2) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "firebrick4") +
+  theme_classic() +
+  labs(x = "Valores ajustados", y = "Residuos")
+```
+
+- **Linealidad**: razonable en el diagrama de dispersión.
+- **Normalidad**: Shapiro-Wilk da p = 0.03, y en el QQ-plot los residuos forman "escalones" y se separan de la recta en el extremo superior. Es lo esperable: `nPups` es un recuento con pocos valores posibles (de 1 a 8), así que los residuos no pueden ser continuos. Hay además un residuo grande (una camada con muchas más crías de las esperadas).
+- **Homocedasticidad**: los residuos se reparten alrededor del 0 sin una forma de embudo clara.
+
+La desviación de la normalidad es moderada. Como comprobación, podemos usar la **correlación de Spearman**, que no asume normalidad:
+
+```{r}
+cor.test(~ nPups + inbreedCoef, data = lobos, method = "spearman", exact = FALSE)
+```
+
+La correlación de Spearman también es negativa y significativa ($\rho$ = −0.66, p = 0.0005), así que la conclusión no depende del supuesto de normalidad.
+
+### 6. Tamaño del efecto: $R^2$
+
+**a)** $R^2$ = 0.37: el coeficiente de endogamia explica el **37%** de la variabilidad del número de crías que sobreviven.
+
+**b)**
+
+```{r}
+cor(lobos$nPups, lobos$inbreedCoef)^2
+```
+
+$r^2 = (-0.61)^2 = 0.37 = R^2$.
+
+**c)**
+
+```{r}
+anova(modelo_lm)
+29.900 / (29.900 + 51.059)
+```
+
+Con la tabla ANOVA de la regresión también obtenemos $R^2$ = 0.37. Además, la *F* de esta tabla (12.88) es el cuadrado de la *t* de la pendiente: $(-3.59)^2 = 12.88$.
+
+El modelo de los lobos explica mucha más variabilidad (37%) que el de la urbanización (5.9%), aunque en los dos casos el efecto sea significativo.
+
+### 7. Visualizar la recta y hacer predicciones
+
+```{r}
+ggplot(data = lobos, aes(x = inbreedCoef, y = nPups)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", color = "firebrick4") +
+  theme_classic() +
+  labs(x = "Coeficiente de endogamia", y = "Crías que sobreviven al primer invierno")
+```
+
+```{r}
+predict(modelo_lm, newdata = data.frame(inbreedCoef = 0.25))
+6.567 - 11.447 * 0.25
+range(lobos$inbreedCoef)
+```
+
+Esperaríamos **3.7 crías** en una camada con un coeficiente de endogamia de 0.25, el mismo valor que da la ecuación de la recta.
+
+**No** tendría sentido predecir con un coeficiente de 0.8: los datos solo van de 0 a 0.4, y no sabemos si la relación sigue siendo lineal fuera de ese rango (**extrapolación**). De hecho, la recta predeciría un número de crías negativo ($6.57 - 11.45 \times 0.8 = -2.6$), que es imposible.
+
+### 8. Conclusión
+
+El número de crías que sobreviven a su primer invierno **disminuye** con el coeficiente de endogamia ($b$ = −11.45, p = 0.0016). Por cada aumento de 0.1 en el coeficiente de endogamia, sobreviven de media **1.14** crías menos. La endogamia explica el **37%** de la variabilidad en el número de crías ($R^2$ = 0.37).
+
+<hr>
+
+# Para practicar: variables ambientales y biodiversidad
+
+```{r}
+summary(lm(Richness ~ Temp.Mean, data = insectos))
+summary(lm(Richness ~ Rh.Mean, data = insectos))
+summary(lm(Richness ~ Photoperiod, data = insectos))
+```
+
+```{r fig.width = 5, fig.height = 4}
+ggplot(data = insectos, aes(x = Photoperiod, y = Richness)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", color = "firebrick4") +
+  theme_classic() +
+  labs(x = "Fotoperiodo (horas de luz)", y = "Riqueza de especies")
+```
+
+| Variable | Pendiente | p-valor | $R^2$ |
+|:--|:--|:--|:--|
+| `Temp.Mean` | 0.27 | 0.18 | 0.008 |
+| `Rh.Mean` | −0.12 | 0.053 | 0.016 |
+| `Photoperiod` | 2.67 | 1.3 × 10⁻⁸ | 0.127 |
+
+- La temperatura y la humedad no tienen una relación significativa con la riqueza de especies (p > 0.05), y su $R^2$ es prácticamente 0.
+- El **fotoperiodo** sí: por cada hora más de luz, se capturan de media 2.7 especies más, y explica el **12.7%** de la variabilidad (más que el nivel de urbanización).
+- **Cuidado con la interpretación:** el fotoperiodo depende de la **fecha** en que se puso la trampa. Probablemente no es la luz en sí lo que aumenta la riqueza, sino la **época del año**: en los meses con más horas de luz hay más insectos activos. Es un ejemplo de que una relación significativa no implica causalidad.

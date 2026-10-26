@@ -1,7 +1,7 @@
 ---
-title: "**ANOVA y correlación:**<br><font color='#A8A8A8' size='5'>práctica en  `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
+title: "**ANOVA y regresión:**<br><font color='#A8A8A8' size='5'>práctica en  `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
 author: "Marta Coronado Zamora"
-date: "Noviembre 2025"
+date: "Noviembre 2026"
 output:
   prettydoc::html_pretty:
     theme: leonids
@@ -10,25 +10,23 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5, fig.align = 'center', fig.height = 3, fig.width = 3)
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5, fig.align = 'center', fig.height = 4, fig.width = 5)
 library(dplyr)
-library(tibble)
 library(ggplot2)
 library(prettydoc)
-library(data.table)
-library(ggpubr)
 library(car)
+library(rstatix)
 ```
 
 <style>
   @import url(https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,500,500i,700,700i);
   @import url(https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css);
   @import url("https://use.fontawesome.com/releases/v5.10.1/css/all.css");
-  
+
   body {
     font-family: 'Fira Sans','Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Microsoft YaHei', 'Songti SC', serif;
   }
-  
+
   /* Make bold syntax compile to RU-red */
   strong {
     color: #DE1144;
@@ -36,355 +34,504 @@ library(car)
 
 </style>
 
+En esta práctica vamos a hacer dos análisis completos con datos reales:
 
-# Análisis de la varianza (ANOVA): teoría y supuestos
+1. Un **ANOVA de una vía**: ¿cambia la biodiversidad de insectos con el nivel de urbanización?
+2. Una **regresión lineal simple**: ¿tienen menos crías los lobos más endogámicos?
 
-El análisis de la varianza (ANOVA) es una prueba estadística común utilizada para comparar las medias de múltiples grupos. Una prueba *t* solo puede comparar las medias de **dos** grupos. ANOVA puede comparar **muchos** grupos, lo que hace que sea mucho más útil en la práctica.
+En los dos casos calcularemos el **coeficiente de determinación ($R^2$)**, que nos dice **cuánta** variabilidad explica el modelo: es una medida del **tamaño del efecto**, igual que la *d* de Cohen en el `t`-test.
 
-Echemos un vistazo a la teoría que hay detrás de ANOVA.
+Necesitarás estas librerías (si alguna no está instalada, instálala con `install.packages()`):
 
-```{r, fig.align='center', fig.height=5, fig.width=5, echo = F}
-library(ggplot2)
+```{r}
 library(dplyr)
+library(ggplot2)
+library(car)      # leveneTest()
+library(rstatix)  # dunn_test() y kruskal_effsize()
+```
 
-# Datos ficticios para tres grupos
+<hr>
+
+# Parte 1. ANOVA de una vía
+
+## Recordatorio: ¿qué hace un ANOVA?
+
+El ANOVA compara las **medias de 3 o más grupos**. Para ello, compara dos estimaciones de la varianza:
+
+- La **varianza entre grupos** (panel A): cuánto se separan las medias de los grupos.
+- La **varianza dentro de los grupos** (varianza residual, panel B): cuánto varían las observaciones alrededor de la media de su grupo.
+
+```{r, fig.align='center', fig.height=3.5, fig.width=4.5, fig.show='hold', echo = F}
 set.seed(123)
 df <- data.frame(
-  value = c(rnorm(1000, 5, 0.7),
-            rnorm(1000, 7.5, 0.7),
-            rnorm(1000, 10, 0.7)),
+  value = c(rnorm(1000, 5, 0.7), rnorm(1000, 7.5, 0.7), rnorm(1000, 10, 0.7)),
   group = factor(rep(c("A", "B", "C"), each = 1000))
 )
-
-# Colores
-cols <- c("A" = "#A3C4F3", 
-          "B" = "#F7D9C4",  
-          "C" = "#D8E2DC")  
-
-##############################################
-### PANEL A: Between-group variation
-##############################################
-
-pA <- ggplot(df, aes(value, fill = group, color = group)) +
-  geom_density(alpha = 0.15, linewidth = 1.1) +
-  scale_fill_manual(values = cols) +
-  scale_color_manual(values = cols) +
-  theme_classic(base_size = 14) +
-  labs(title = "A. Variación entre grupos",
-       subtitle = "",
-       x = "", y = "") +
-  theme(legend.position = "none")
-
-# Añadir medias
+cols <- c("A" = "#A3C4F3", "B" = "#F7D9C4", "C" = "#D8E2DC")
 means <- df %>% group_by(group) %>% summarize(mu = mean(value))
 
-pA <- pA +
-  geom_vline(data = means, aes(xintercept = mu, color = group),
-             linetype = "dashed", linewidth = 1)
-
-# Añadir flechas entre medias (entre-group)
-pA <- pA +
-  geom_segment(aes(x = means$mu[1], xend = means$mu[2], 
-                   y = 0.12, yend = 0.12),
-               arrow = arrow(ends = "both", length = unit(0.20, "cm")),
-               color = "black") +
-  geom_segment(aes(x = means$mu[2], xend = means$mu[3], 
-                   y = 0.15, yend = 0.15),
-               arrow = arrow(ends = "both", length = unit(0.20, "cm")),
-               color = "black") +
-  geom_segment(aes(x = means$mu[1], xend = means$mu[3], 
-                   y = 0.18, yend = 0.18),
-               arrow = arrow(ends = "both", length = unit(0.20, "cm")),
-               color = "black")
-
-##############################################
-### PANEL B: Within-group variation
-##############################################
-pB <- ggplot(df, aes(value, fill = group, color = group)) +
+base <- ggplot(df, aes(value, fill = group, color = group)) +
   geom_density(alpha = 0.15, linewidth = 1.1) +
+  geom_vline(data = means, aes(xintercept = mu, color = group), linetype = "dashed", linewidth = 1) +
   scale_fill_manual(values = cols) +
   scale_color_manual(values = cols) +
   theme_classic(base_size = 14) +
-  labs(title = "B. Variación dentro de grupo",
-       x = "", y = "") +
+  labs(x = "", y = "") +
   theme(legend.position = "none")
 
-# Flechas dentro de cada grupo
-dens_positions <- data.frame(
-  x1 = means$mu - 0.7,
-  x2 = means$mu + 0.7,
-  y  = c(0.31, 0.36, 0.31)
-)
-pB <- pB +
-  geom_vline(data = means, aes(xintercept = mu, color = group),
-             linetype = "dashed", linewidth = 1)
-pB <- pB +
-  geom_segment(data = dens_positions,
-               aes(x = x1, xend = x2, y = y, yend = y),
-               arrow = arrow(ends = "both", length = unit(0.20, "cm")),
-               inherit.aes = FALSE,
-               color = "black")
+base + labs(title = "A. Variación entre grupos") +
+  annotate("segment", x = means$mu[1], xend = means$mu[2], y = 0.12, yend = 0.12,
+           arrow = arrow(ends = "both", length = unit(0.2, "cm"))) +
+  annotate("segment", x = means$mu[2], xend = means$mu[3], y = 0.15, yend = 0.15,
+           arrow = arrow(ends = "both", length = unit(0.2, "cm"))) +
+  annotate("segment", x = means$mu[1], xend = means$mu[3], y = 0.18, yend = 0.18,
+           arrow = arrow(ends = "both", length = unit(0.2, "cm")))
 
-pA
-pB
-
+base + labs(title = "B. Variación dentro de grupo") +
+  annotate("segment", x = means$mu - 0.7, xend = means$mu + 0.7, y = c(0.31, 0.36, 0.31), yend = c(0.31, 0.36, 0.31),
+           arrow = arrow(ends = "both", length = unit(0.2, "cm")))
 ```
 
-Esta figura muestra **3 grupos**. Las **líneas verticales discontinuas** representan las medias de cada grupo.  Las **líneas continuas** muestran la distribución de cada grupo, es decir, la **variación dentro de cada grupo**. Esta variación interna se llama **varianza residual** (Panel B). El objetivo de ANOVA es comparar medias para ver si difieren entre sí. ¿Cómo lo hace? Comparando:
+$$F = \frac{\text{Varianza ENTRE grupos}}{\text{Varianza DENTRO de los grupos}} = \frac{MS_{entre}}{MS_{dentro}}$$
 
-- La **varianza entre grupos** (Panel A)  
-- La **varianza dentro de los grupos** (varianza residual; Panel B)
+Si la varianza **entre** grupos es suficientemente grande comparada con la varianza **dentro** de los grupos (*F* grande), concluimos que **al menos una de las medias es diferente**.
 
-Si la varianza **entre** grupos es suficientemente grande en comparación con la varianza **dentro** de los grupos, entonces podemos concluir que **al menos una de las medias difiere**.
+- $H_0$: $\mu_1 = \mu_2 = \dots = \mu_k$ (todas las medias son iguales)
+- $H_A$: al menos una media es diferente
 
-ANOVA es, en esencia, una **comparación de dos estimaciones de varianza**. Por eso se llama **análisis de la varianza**, aunque realmente estamos evaluando **diferencias entre medias**.
+**Supuestos del ANOVA:**
 
+1. **Independencia** de las observaciones.
+2. **Normalidad** de los **residuos** (las desviaciones de cada observación respecto a la media de su grupo).
+3. **Homogeneidad de varianzas** entre los grupos.
 
-ANOVA funciona correctamente cuando se cumplen los siguientes supuestos:
+Seguiremos los mismos pasos que en clase ([diapositiva resumen](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#80)):
 
-1. **Independencia de las observaciones**. Cada sujeto u observación pertenece a un único grupo y es independiente de las demás. No debe existir relación, dependencia ni correlación entre las observaciones dentro de cada grupo.
+1. **Visualizar** los datos.
+2. Ajustar el modelo con `aov()` y **comprobar los supuestos** sobre los residuos.
+3. Hacer el **test global** (ANOVA) y, si es significativo, un **test *post hoc***.
+4. Cuantificar el **tamaño del efecto** ($R^2$).
 
-2. **Tipo de variables**  
-   - La **variable dependiente** debe ser **cuantitativa y continua** 
-   - La **variable independiente** debe ser **categórica** con 2 o más niveles
+## 🐝🏙️ Midiendo la biodiversidad de insectos en Los Ángeles
 
-3. **Normalidad**.  Los datos dentro de cada grupo deben seguir aproximadamente una **distribución normal**. ANOVA es bastante robusto a desviaciones moderadas de la normalidad, especialmente con tamaños muestrales grandes.
+El declive de la biodiversidad es una de las grandes preocupaciones ambientales. Las ciudades son más cálidas, tienen menos agua disponible y su vegetación suele ser poco diversa y no nativa (por ejemplo, césped). Algunos insectos no sobreviven bien en estos ambientes, por lo que la urbanización podría reducir su diversidad y afectar a procesos como la polinización o la descomposición de la materia vegetal.
 
-4. **Homogeneidad de varianzas** La varianza de la variable respuesta debe ser **similar entre los grupos**.  
+Para estudiarlo, [Adams et al. (2020)](https://esajournals.onlinelibrary.wiley.com/doi/10.1002/eap.2089) colocaron trampas para insectos en distintos puntos de Los Ángeles, con distintos niveles de urbanización, y contaron el **número de especies** capturadas en cada trampa (la **riqueza de especies**, una medida sencilla de biodiversidad).
 
+| Columna | Descripción |
+|:--|:--|
+| `Sample` | identificador de la muestra (trampa) |
+| `Urban.Type` | nivel de urbanización: `1` (natural), `3` (suburbano), `8` (desarrollado) y `9` (denso) |
+| `Lawn` | si hay césped junto a la trampa (`Yes` / `No`) |
+| `Richness` | **riqueza de especies**: número de especies de insectos capturadas |
+| `Temp.Mean` | temperatura media (ºC) |
+| `Photoperiod` | fotoperiodo (horas de luz) |
+| `Rh.Mean` | humedad relativa media (%) |
 
-## Comprobación de supuestos
+**Nuestra pregunta:** ¿difiere la riqueza media de especies de insectos entre los niveles de urbanización?
 
-En este ejemplo usaremos el data frame `titanic` para evaluar los supuestos del ANOVA. Está disponible aquí: "https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/5/titanic.csv"
+### 1. Leer los datos
 
-```{r}
-titanic <- read.csv("https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/5/titanic.csv")
-head(titanic)
-class(titanic)
-```
+Lee el fichero [`urban_data_filter.tsv`](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/4/urban_data_filter.tsv) con `read.table()` (está separado por tabuladores, como en la práctica 3) y guárdalo en un objeto llamado `insectos`. Comprueba con `head()` y `str()` que se ha leído bien.
 
-Agruparemos a los pasajeros según la clase en la que viajaban (`passenger_class`) y evaluaremos si las distintas clases de pasajeros diferían en su edad media (`age`).
-
-1. **Comprobación de variables**: función `str()`. La función recibe un vector (recuerda que accedemos al vector como `data.frame$nombre_columna`) Comprueba de qué tipo son las columnas `passenger_class` y `age`:
-
-```{r}
-
-```
-
-2. **Normalidad**. La normalidad se comprueba sobre los residuos del ANOVA. Debemos ajustar los datos al modelo `variable_numerica ~ variable categorica, data = data.frame` dentro de la función `aov()`. Guarda el modelo en un objeto llamado `titanic_aov` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/13/13.ANOVA.html#59)).
+El enlace URL es: `https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/4/urban_data_filter.tsv`
 
 ```{r}
 
 ```
 
-Accedemos a los residuos del modelo con la función `resid()` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/13/13.ANOVA.html#60)):
+### 2. Preparar las variables
 
-```{r}
-
-```
-
-Comprobamos si los residuos siguen normalidad con la función de `shapiro.test` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/13/13.ANOVA.html#61)):
-
-```{r}
-
-```
-
-**¿Cuál es la conclusión del test?**
+**¿Qué tipo de variable es `Richness`? ¿Y `Urban.Type`? ¿Cuál es la variable respuesta y cuál la variable explicativa (los grupos)?**
 
 
-2. **Homogeneidad de varianzas**. La homogeneidad de varianzas se comprueba directamente sobre el modelo con un test de Levene: `leveneTest(variable_numerica ~ variable_categorica, data = data.frame)` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/13/13.ANOVA.html#64)).
 
-```{r}
+`R` ha leído `Urban.Type` como un número entero (`int`), pero en realidad es una variable **categórica**: los números 1, 3, 8 y 9 son solo códigos. Si no la convertimos en factor, `aov()` la trataría como una variable numérica y el resultado sería incorrecto.
 
-```
-
-**¿Cuál es la conclusión del test?**
-
-
-3. Test de **ANOVA**:
-
-Según las conclusiones de los test, tenemos distintas opciones para hacer el test:
-
-| Normalidad | Homogeneidad | Test recomendado                | Ejemplo | 
-| ---------- | ------------ | ------------------------------- |--------------- |
-| ✔          | ✔            | **ANOVA**                       | `aov(modelo)` |
-| ✔          | ✘            | **Welch ANOVA**               |  `oneway.test(modelo, var.equal=FALSE)` |
-| ✘          | ✔ o ✘        | **Kruskal–Wallis**              | `kruskal.test(modelo)` |
-
-En todos los casos, el modelo se especifica como `variable_numerica ~ variable_categorica, data = data.frame`. La función `oneway.test` tiene el parámetro `var.equal=TRUE` y `var.equal=FALSE` (como el `t.test`). Hacer un `oneway.test` con `var.equal=TRUE` es equivalente a hacer el test con `aov()`.
-
-<i class="fa fa-info-circle"></i> Para `aov()` necesitamos utilizar la función `summary` para ver el resultado del test (el `p-valor`) ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/13/13.ANOVA.html#65)). Las funciones `oneway.test()` y `kruskal.test()` lo hacen directamente.
-
-**Segun los resultados de los supuestos anteriores, ¿cuál sería el mejor test? Comprueba qué resultado da.**
-
-```{r}
-
-```
-
-
-4. **Post-hoc**
-
-Un ANOVA de un solo factor puede indicarnos que al menos un grupo tiene una media diferente de otro grupo, pero no nos dice qué grupos difieren entre sí. El test de Tukey nos permite probar la hipótesis nula de que no hay diferencia entre las medias poblacionales para todos los pares de grupos. Este test, también conocido como **Tukey Honest Significance Test (Tukey HSD)**, se implementa en R con la función `TukeyHSD()`.
-
-Para hacer un test de Tukey sobre nuestros datos, primero debemos aplicar la función `aov()` al modelo, y luego aplicar `TukeyHSD()` al resultado ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/13/13.ANOVA.html#69)):
-
-```{r}
-
-```
-
-<i class="fa fa-exclamation-triangle"></i> Con estos datos, no podemos utilizar directamente el test de Tukey, ya que asume que las varianzas son iguales y hemos visto que no lo son. La alternativa que tenemos es realizar un `t.test` a pares (`pairwise.t.test`), con corrección de `p-valor` por comparaciones múltiples (`fdr`) y considerando varianzas desiguales (`pool.sd=FALSE`). En el caso de que los datos no fueran normales, podríamos utilizar `pairwise.wilcox.test()`:
-
-
-```{r}
-pairwise.t.test(titanic$age, titanic$passenger_class,
-                p.adjust.method = "fdr",
-                pool.sd = FALSE)
-```
-
-De esta manera, podemos identificar qué pares de grupos difieren significativamente de forma más fiable.
-
-| Normalidad | Homogeneidad | Test post-hoc recomendado               | Ejemplo                                                                                                                                              |
-| ---------- | ------------ | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ✔          | ✔            | **Tukey HSD**                           | `TukeyHSD(aov(modelo))`                                                                                                    |
-| ✔          | ✘            | **Pairwise t-test** con `pool.sd=FALSE` | `pairwise.t.test(vector_resp, vector_grupos, pool.sd=FALSE, p.adjust.method="fdr")`                                                              |
-| ✘          | ✔ o ✘        | **Pairwise Wilcoxon** o  | `pairwise.wilcox.test(vector_resp, vector_grupos, p.adjust.method="fdr")`  |
-
-
-5. **Visualización**
-Podemos visualizar los datos (edad  y clase de los pasajeros) con un boxplot en `ggplot2`:
-
-```{r}
-
-```
-
-
-# Problema: Midiendo la biodiversidad
-Un declive en la biodiversidad es una preocupación ambiental común. La biodiversidad se relaciona con la cantidad de especies (plantas, hongos y animales) y la abundancia de sus poblaciones. Los impactos antropogénicos sobre el ambiente, como la pérdida de hábitat, el aumento de la temperatura global y la contaminación, pueden afectar negativamente la abundancia de los organismos. La extinción de especies como resultado de estos impactos disminuye la biodiversidad.
-
-Existen varias formas de medir la biodiversidad:
-
-1. Riqueza de especies: número de especies diferentes presentes en un lugar, generalmente contado como presencia/ausencia.
-2. Índices de diversidad: consideran tanto el número de especies como la uniformidad de individuos dentro de cada especie.
-
-El ambiente urbano puede afectar la supervivencia y reproducción de algunos insectos. Las ciudades son más cálidas y suelen tener menos disponibilidad de agua, especialmente en regiones secas como California. Las áreas residenciales pueden tener más vegetación, pero esta suele no ser nativa y dominada por un solo tipo de planta (por ejemplo, césped). Algunos insectos no sobreviven bien en estos entornos urbanos, por lo que existe preocupación de que la urbanización reduzca la diversidad de insectos, afectando procesos esenciales como la polinización, la cadena trófica y la descomposición de materia vegetal.
-
-Para evaluar el impacto urbano sobre los insectos, [Adams et al. (2019)](https://esajournals.onlinelibrary.wiley.com/doi/10.1002/eap.2089) capturaron insectos en diferentes lugares de Los Ángeles y examinaron el número de especies en cada sitio. La figura siguiente muestra un mapa de las ubicaciones de muestreo con distintos niveles de urbanización.
-
-El ANOVA será útil para examinar la riqueza de especies de insectos a lo largo de un gradiente urbano en Los Ángeles.
-
-1. **Leer los datos** "urban_data.tsv" (link: https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/5/urban_data_filter.tsv). Utiliza la función `read.table` con el parámetro `sep = "\t"` para indicar que este fichero esta separado por tabulado, y con `header = TRUE` para indicar que tiene encabezado ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#18)):
-
-```{r}
-
-```
-
-2. **Comprueba el tipo de las variables**. Comprueba de que tipo son las variables `Richness` y `Urban.Type`. ¿Qué variable es la respuesta (numérica) y cuál es la categórica?
-
-```{r}
-
-```
-
-3. **Recodificación de variables**. La variable categórica `Urban.Type`, es considerada variable numérica (`int`). Podemos utilizar el paquete `dplyr` para transformarla a categórica y con algun nombre más autoexplciativo que no los numeros presentes ahora.  Lo podemos hacer con la función `mutate` y `recode_factor`. [Ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#45). La nueva columna se llamará `Urban.Name`.
-
-Recodifica:
-1: Natural
-3: Suburbano
-8: Desarrollado
-9: Denso
-
-Primero pasaremos la columna a factor, para que la función pueda trabajar. Después, utiliza las funciones autoexplciativo que no los numeros presentes ahora.  Lo podemos hacer con la función `mutate` y `recode_factor`. ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#45)) para poder recodificar la variable:
+Ejecuta el siguiente código: convierte `Urban.Type` en factor y crea una nueva columna, `Urban.Name`, con nombres más claros. La función `recode_factor()` además ordena los niveles en el orden en que los escribimos, de menos a más urbanizado ([ejemplo de `mutate()`](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#45)).
 
 ```{r eval = F}
-data.frame$Urban.Type <- as.factor(data.frame$Urban.Type)
-
-
+insectos <- insectos %>%
+  mutate(Urban.Name = recode_factor(factor(Urban.Type),
+                                    "1" = "Natural",
+                                    "3" = "Suburbano",
+                                    "8" = "Desarrollado",
+                                    "9" = "Denso"))
 ```
-
-4. **Comprobación de supuestos**. Comprueba los resultados del test de Shapiro y el de Levene. Recuerda que en nuestro modelo vamos a evaluar la riqueza de especies (`Richness`) respecto el los niveles de urbanización (`Urban.Name`). Recuerda también que el test de Shapiro lo hacemos sobre los residuos.
-
-```{r eval}
-
-```
-
-5. **ANOVA**. Según los resultados de las pruebas anteriores, evalúa que test es más apropiado y ejecútalo. ¿Cuál es el resultado del test?
 
 ```{r}
 
 ```
 
-6. **Post-hoc**. La prueba más apropiada para realizar el test de post-hoc es `pairwise.wilcox.test`, ya que los datos no son normales (si no, usaríamos el `pairwise.t.test`, como en el ejemplo)
-
-
-```{r}
-
-
-```
-
-**¿Qué comparaciones han salido significativas?**
-
-
-7. **Visualización**. Haz un boxplot para visualizar la riqueda de especies respecto el nivel de urbanización.
+Comprueba los niveles del factor con `levels(insectos$Urban.Name)` y cuántas trampas hay en cada nivel con `table(insectos$Urban.Name)`. **¿Tienen todos los grupos el mismo tamaño?**
 
 ```{r}
 
 ```
 
+### 3. Visualizar los datos
 
-# Correlación
+Completa la plantilla del boxplot. Con `geom_jitter()` añadimos los puntos individuales, para ver cuántas observaciones hay en cada grupo y cómo se distribuyen.
 
-Comprobar la correlación entre dos variables es muy sencillo y muy útil para ver si existe una relación lineal entre ellas.
-Por ejemplo, podemos analizar si mayores niveles de endogamia en lobos están relacionados con menos crías que sobreviven su primer invierno.
-
-En R, la correlación se puede calcular con funciones como `cor.test()` para obtener el coeficiente de correlación y el valor p que indica si la relación es estadísticamente significativa.
-
-Explica qué estamos haciendo en estos pasos:
-
-1. ???
- 
-```{r}
-wolf <- read.csv("https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/5/chap16e2InbreedingWolves.csv")
-
-head(wolf)
-```
-
-2. ???
-
-```{r}
-shapiro.test(wolf$nPups)
-shapiro.test(wolf$inbreedCoef)
-```
-
-3. ??? 
-
-```{r}
-cor.test(~ nPups + inbreedCoef, data = wolf, method = "pearson")
-```
-
-4. ???
-
-```{r}
-ggplot(wolf, aes(x=inbreedCoef, y =nPups)) +
-  geom_point() +
-  geom_smooth(method="lm", se = F, color = "firebrick4") +
+```{r eval = F}
+ggplot(data = ___, aes(x = ___, y = ___, fill = ___)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.15, alpha = 0.4) +
   theme_classic() +
-  stat_cor(method = "pearson", label.x = 0.1, label.y = 10) 
+  theme(legend.position = "none") +
+  labs(x = "___", y = "___")
 ```
 
-**¿Cuál es la conclusión de la correlación?**
-
-
-## Datos de biodiversidad
-
-Con las variables cuantitativas que tienes en el dataset de biodiversidad (`Temp.Mean`, `Rh.Mean` y `Photoperiod`), comprueba si hay alguna correlación significativa. Recuerda comprobar el supuesto de normalidad y haz el gráfico con `ggplot` siguiendo el código anterior de los lobos.
-
+Calcula también el número de trampas (`n()`), la media (`mean()`) y la desviación típica (`sd()`) de `Richness` en cada nivel de urbanización, con `group_by()` y `summarize()` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/2/2.IntroR.html#66)):
 
 ```{r}
 
 ```
 
-Tabla resumen de las correlaciones:
+**¿Qué nivel de urbanización parece tener más riqueza de especies? ¿Las dispersiones de los grupos parecen similares?**
 
-| Supuesto                    | Pearson                              | Spearman                              |
-| --------------------------- | ------------------------------------ | ------------------------------------- |
-| Normalidad de las variables | ✔ necesaria                          | ❌ no necesaria                        |
-| Función en R                | `cor.test(method = "pearson")` | `cor.test(method = "spearman")` |
+
+
+### 4. Hipótesis
+
+**Escribe la hipótesis nula y la alternativa, con palabras y con símbolos.**
+
+
+
+### 5. Ajustar el modelo y comprobar los supuestos
+
+Ajusta el modelo con `aov(variable_respuesta ~ grupos, data = data_frame)` y guárdalo en un objeto llamado `modelo_aov` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#62)):
+
+```{r}
+
+```
+
+**a) Normalidad de los residuos.** Extrae los residuos del modelo con `resid(modelo_aov)` y aplícales el test de Shapiro-Wilk ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#63)):
+
+```{r}
+
+```
+
+Genera también el QQ-plot de los residuos. <i class="fa fa-cogs"></i> Ejecuta primero el siguiente bloque para cargar la función `QQ_plot()` (la misma de la práctica 3):
+
+```{r}
+QQ_plot <- function(vector_datos) {
+  df <- data.frame(valor = vector_datos)
+  ggplot(df, aes(sample = valor)) +
+    stat_qq() +
+    stat_qq_line(color = "firebrick4") +
+    theme_classic() +
+    labs(title = "QQ-plot", x = "Cuantiles teóricos", y = "Cuantiles de la muestra")
+}
+```
+
+```{r}
+
+```
+
+**b) Homogeneidad de varianzas.** Aplica el test de Levene: `leveneTest(variable_respuesta ~ grupos, data = data_frame)` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#65)):
+
+```{r}
+
+```
+
+**¿Qué concluyes de cada test? ¿Qué te dice el QQ-plot?**
+
+<i class="fa fa-info-circle"></i> **El test de Shapiro-Wilk y el tamaño de la muestra.** Con muestras grandes (aquí tenemos 240 trampas), el test de Shapiro-Wilk detecta desviaciones de la normalidad muy pequeñas, que en la práctica no afectan al ANOVA. Por eso conviene mirar siempre también el **QQ-plot**: si los puntos siguen razonablemente la recta, el ANOVA es fiable, porque es **robusto** a desviaciones moderadas de la normalidad cuando la muestra es grande. Aun así, en el paso 9 comprobaremos el resultado con la alternativa no paramétrica.
+
+
+
+### 6. El test de ANOVA
+
+Aplica `summary()` al modelo para obtener la tabla del ANOVA ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#67)):
+
+```{r}
+
+```
+
+En la tabla, la fila del factor corresponde a la variabilidad **entre** grupos, y la fila `Residuals`, a la variabilidad **dentro** de los grupos. **Anota el valor de *F*, sus grados de libertad (`Df`) y el p-valor.**
+
+Como vimos en clase, también podemos tomar la decisión comparando *F* con el valor crítico de la distribución *F*. Calcúlalo con `qf(0.95, df1 = gl_entre, df2 = gl_dentro)`, sustituyendo los grados de libertad por los de tu tabla ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#90)):
+
+```{r}
+
+```
+
+**¿Rechazas $H_0$? ¿Llegas a la misma conclusión con el p-valor y con la *F* crítica?**
+
+
+
+### 7. Tamaño del efecto: el coeficiente de determinación $R^2$
+
+El ANOVA nos dice **si** hay diferencias entre los grupos, pero no **cuánto** importa el factor. Para eso calculamos el **coeficiente de determinación** ($R^2$), que en el ANOVA de una vía se conoce también como **eta cuadrado** ($\eta^2$) ([diapositiva](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#140)):
+
+$$R^2 = \eta^2 = \frac{SS_{entre}}{SS_{total}} = \frac{SS_{entre}}{SS_{entre} + SS_{dentro}}$$
+
+Es la **proporción de la variabilidad total** de la variable respuesta que explican los grupos. Va de 0 (el factor no explica nada) a 1 (lo explica todo).
+
+**a) Calcúlalo a mano** con las sumas de cuadrados (`Sum Sq`) de la tabla del ANOVA:
+
+```{r}
+
+```
+
+**b) Calcúlalo con `R`.** Como el ANOVA es un modelo lineal, la función `lm()` ajusta el mismo modelo, y `summary(lm())` nos da el $R^2$ en la línea `Multiple R-squared` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#144)):
+
+```{r eval = F}
+summary(lm(variable_respuesta ~ grupos, data = data_frame))
+```
+
+```{r}
+
+```
+
+Valores orientativos de Cohen para $\eta^2$: **0.01** pequeño, **0.06** mediano, **0.14** grande (como siempre, son solo una guía: la relevancia depende del contexto).
+
+**¿Qué porcentaje de la variabilidad de la riqueza de especies explica el nivel de urbanización? ¿Es un efecto pequeño, mediano o grande? Si el p-valor es tan pequeño, ¿por qué el $R^2$ es tan bajo?** (Pista: piensa en el tamaño de la muestra y en todo lo que puede influir en el número de especies de una trampa, además de la urbanización.)
+
+
+
+### 8. Test *post hoc*: Tukey
+
+El ANOVA nos dice que al menos una media es diferente, pero no **cuáles**. Para saberlo, comparamos todas las parejas de grupos con el test de Tukey (`TukeyHSD()`), que corrige por comparaciones múltiples ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#71)). Puedes visualizar el resultado con `plot(TukeyHSD(modelo_aov))` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#74)).
+
+```{r}
+
+```
+
+**¿Qué parejas de grupos difieren significativamente (`p adj` < 0.05)? ¿Cuánto difieren sus medias?**
+
+
+
+### 9. Comprobación no paramétrica: Kruskal-Wallis y Dunn
+
+Como el test de Shapiro-Wilk ha dado significativo, vamos a comprobar si la alternativa no paramétrica llega a la misma conclusión ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#79)):
+
+- Test global: `kruskal.test(variable_respuesta ~ grupos, data = data_frame)`.
+- *Post hoc*: test de Dunn con corrección de Holm, `dunn_test(data_frame, variable_respuesta ~ grupos, p.adjust.method = "holm")`.
+- Tamaño del efecto: `kruskal_effsize(data_frame, variable_respuesta ~ grupos)` (el equivalente al $\eta^2$ para Kruskal-Wallis).
+
+```{r}
+
+```
+
+**¿Llegas a las mismas conclusiones que con el ANOVA y el test de Tukey?**
+
+
+
+### 10. Conclusión
+
+**Completa la conclusión:**
+
+La riqueza media de especies de insectos [sí/no] difiere entre los niveles de urbanización (ANOVA: *F* = XXXX, gl = XXXX y XXXX, p = XXXX). Según el test de Tukey, las zonas XXXX tienen más especies que las zonas XXXX y XXXX. Sin embargo, el nivel de urbanización explica solo el XXXX% de la variabilidad de la riqueza de especies ($R^2$ = XXXX), un efecto XXXX.
+
+<hr>
+
+# Parte 2. Regresión lineal simple
+
+## Recordatorio: correlación y regresión
+
+- La **correlación** ($r$) mide la **fuerza** y la **dirección** de la relación lineal entre dos variables cuantitativas. Es simétrica: no distingue entre variable explicativa y respuesta.
+- La **regresión lineal** ajusta la **recta** que mejor predice una variable respuesta ($Y$) a partir de una variable explicativa ($X$):
+
+$$Y = a + b\,X$$
+
+donde $a$ es la **ordenada en el origen** (*intercept*: el valor de $Y$ cuando $X = 0$) y $b$ es la **pendiente** (cuánto cambia $Y$, de media, cuando $X$ aumenta una unidad).
+
+- El contraste de hipótesis de la regresión se hace sobre la pendiente: $H_0$: $\beta = 0$ (no hay relación lineal) frente a $H_A$: $\beta \neq 0$.
+- El **coeficiente de determinación** ($R^2$) es la proporción de la variabilidad de $Y$ que explica la recta. En la regresión lineal simple, $R^2 = r^2$.
+
+**Supuestos de la regresión lineal:**
+
+1. **Linealidad**: la relación entre $X$ e $Y$ es lineal.
+2. **Independencia** de las observaciones.
+3. **Normalidad de los residuos**.
+4. **Homocedasticidad**: la varianza de los residuos es constante a lo largo de los valores de $X$.
+
+## 🐺 Endogamia y supervivencia de las crías en lobos
+
+La población de lobos (*Canis lupus*) de Escandinavia se fundó a principios de los años 80 a partir de solo dos individuos (en 1991 llegó un tercero), y ha estado prácticamente aislada. Como consecuencia, los lobos de esta población están muy emparentados entre sí. [Liberg et al. (2005)](https://royalsocietypublishing.org/doi/10.1098/rsbl.2004.0266) estudiaron si la **endogamia** reduce la supervivencia de las crías. Para 24 camadas, midieron:
+
+- `inbreedCoef`: el **coeficiente de endogamia** de la camada (de 0, sin endogamia, a 1).
+- `nPups`: el **número de crías** que sobrevivieron a su primer invierno.
+
+Datos de: _Whitlock, Michael C, and Dolph Schluter. 2020. The Analysis of Biological Data. Third Edition_ (ejemplo 16.2).
+
+**Nuestra pregunta:** ¿las camadas más endogámicas tienen menos crías que sobreviven? ¿Cuántas crías esperaríamos para un determinado nivel de endogamia?
+
+### 1. Leer los datos
+
+Lee el fichero [`chap16e2InbreedingWolves.csv`](https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/4/chap16e2InbreedingWolves.csv) con `read.csv()` y guárdalo en un objeto llamado `lobos`. Comprueba con `head()` y `nrow()` que se ha leído bien.
+
+El enlace URL es: `https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/4/chap16e2InbreedingWolves.csv`
+
+```{r}
+
+```
+
+**¿Cuál es la variable explicativa ($X$) y cuál la variable respuesta ($Y$)?**
+
+
+
+### 2. Visualizar los datos
+
+En una regresión, lo primero es siempre hacer un **diagrama de dispersión**, con la variable explicativa en el eje x y la respuesta en el eje y. Completa la plantilla:
+
+```{r eval = F}
+ggplot(data = ___, aes(x = ___, y = ___)) +
+  geom_point(size = 2) +
+  theme_classic() +
+  labs(x = "___", y = "___")
+```
+
+**¿Qué tipo de relación ves (positiva, negativa, ninguna)? ¿Parece lineal?**
+
+
+
+### 3. Correlación
+
+Calcula el coeficiente de correlación de Pearson con `cor.test(~ variable_1 + variable_2, data = data_frame)` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/13/14.Correlacion.html#27)):
+
+```{r}
+
+```
+
+**¿Cuánto vale $r$? ¿Es significativa la correlación?**
+
+
+
+### 4. Ajustar la recta de regresión
+
+La regresión lineal se ajusta con la función `lm()` (*linear model*), con la misma fórmula que usábamos en el ANOVA: `lm(variable_respuesta ~ variable_explicativa, data = data_frame)`. Ajusta el modelo, guárdalo en un objeto llamado `modelo_lm` y aplícale `summary()`:
+
+```{r}
+
+```
+
+En la salida de `summary()`, fíjate en:
+
+- **`Coefficients`**: la columna `Estimate` da la **ordenada en el origen** (`(Intercept)`, $a$) y la **pendiente** (la fila de la variable explicativa, $b$). La columna `Pr(>|t|)` de la pendiente es el p-valor del contraste $H_0$: $\beta = 0$.
+- **`Multiple R-squared`**: el **coeficiente de determinación** $R^2$.
+
+**a) Escribe la ecuación de la recta** ($Y = a + b\,X$) con los valores que has obtenido.
+
+**b) Interpreta la pendiente.** ¿Cuántas crías menos sobreviven, de media, por cada aumento de 0.1 en el coeficiente de endogamia?
+
+**c) ¿Es la pendiente significativamente distinta de 0?** ¿Coincide el p-valor con el de la correlación del paso 3?
+
+
+
+### 5. Comprobar los supuestos
+
+**a) Linealidad**: lo hemos visto en el diagrama de dispersión del paso 2.
+
+**b) Normalidad de los residuos**: aplica el test de Shapiro-Wilk a `resid(modelo_lm)` y genera su QQ-plot con la función `QQ_plot()`:
+
+```{r}
+
+```
+
+**c) Homocedasticidad**: ejecuta el siguiente código, que representa los **residuos** frente a los **valores ajustados** por la recta (`fitted()`). Si se cumple la homocedasticidad, los puntos deben repartirse sin ningún patrón alrededor de la línea del 0, con una dispersión parecida de izquierda a derecha (sin forma de embudo):
+
+```{r eval = F}
+residuos_lobos <- data.frame(ajustados = fitted(modelo_lm),
+                             residuos  = resid(modelo_lm))
+
+ggplot(residuos_lobos, aes(x = ajustados, y = residuos)) +
+  geom_point(size = 2) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "firebrick4") +
+  theme_classic() +
+  labs(x = "Valores ajustados", y = "Residuos")
+```
+
+```{r}
+
+```
+
+**¿Se cumplen los supuestos?** Ten en cuenta que `nPups` es un número de crías (solo puede tomar valores enteros, entre 1 y 8) y que solo tenemos 24 camadas.
+
+
+
+### 6. Tamaño del efecto: $R^2$
+
+**a) ¿Qué proporción de la variabilidad del número de crías explica el coeficiente de endogamia?**
+
+**b)** Comprueba que, en la regresión lineal simple, $R^2 = r^2$: eleva al cuadrado el coeficiente de correlación del paso 3.
+
+```{r}
+
+```
+
+**c)** La regresión también tiene su **tabla ANOVA**, que obtenemos con `anova(modelo_lm)`. Calcula el $R^2$ con las sumas de cuadrados, igual que en la parte 1: $R^2 = SS_{regresión} / (SS_{regresión} + SS_{residuos})$.
+
+```{r}
+
+```
+
+El $R^2$ es el **mismo concepto** en el ANOVA y en la regresión: la proporción de la variabilidad total que explica el modelo. La única diferencia es que en el ANOVA la variable explicativa es categórica (grupos) y en la regresión es cuantitativa.
+
+**¿Qué modelo explica más variabilidad, el de la parte 1 (urbanización) o el de los lobos (endogamia)?**
+
+
+
+### 7. Visualizar la recta y hacer predicciones
+
+Añade la recta de regresión al diagrama de dispersión con `geom_smooth(method = "lm")`. La banda gris es el intervalo de confianza del 95% de la recta.
+
+```{r eval = F}
+ggplot(data = ___, aes(x = ___, y = ___)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", color = "firebrick4") +
+  theme_classic() +
+  labs(x = "___", y = "___")
+```
+
+```{r}
+
+```
+
+Una de las utilidades de la regresión es **predecir**. Con la función `predict()`, calcula cuántas crías esperaríamos en una camada con un coeficiente de endogamia de 0.25:
+
+```{r eval = F}
+predict(modelo_lm, newdata = data.frame(inbreedCoef = 0.25))
+```
+
+```{r}
+
+```
+
+**Comprueba el resultado con la ecuación de la recta del paso 4. ¿Tendría sentido usar la recta para predecir el número de crías con un coeficiente de endogamia de 0.8?** (Pista: mira el rango de valores de `inbreedCoef` en los datos.)
+
+
+
+### 8. Conclusión
+
+**Completa la conclusión:**
+
+El número de crías que sobreviven a su primer invierno [aumenta/disminuye] con el coeficiente de endogamia ($b$ = XXXX, p = XXXX). Por cada aumento de 0.1 en el coeficiente de endogamia, sobreviven de media XXXX crías menos. La endogamia explica el XXXX% de la variabilidad en el número de crías ($R^2$ = XXXX).
+
+<hr>
+
+# <i class="fa fa-rocket"></i> Para practicar: ¿qué variables ambientales explican la biodiversidad?
+
+Vuelve a los datos de los insectos (`insectos`). Además del nivel de urbanización, se midieron tres variables ambientales cuantitativas: la temperatura media (`Temp.Mean`), la humedad relativa media (`Rh.Mean`) y el fotoperiodo (`Photoperiod`).
+
+Haz una **regresión lineal** de la riqueza de especies (`Richness`) frente a cada una de estas tres variables: dibuja el diagrama de dispersión con la recta, ajusta el modelo con `lm()` y anota la pendiente, su p-valor y el $R^2$. **¿Qué variable explica más variabilidad de la riqueza de especies? ¿Cómo interpretas el resultado?**
+
+```{r}
+
+```
+
+<hr>
+
+# Resumen: ANOVA y regresión
+
+|  | ANOVA de una vía | Regresión lineal simple |
+|:--|:--|:--|
+| Variable respuesta | cuantitativa | cuantitativa |
+| Variable explicativa | **categórica** (grupos) | **cuantitativa** |
+| Función en `R` | `aov(y ~ grupos)` + `summary()` | `lm(y ~ x)` + `summary()` |
+| Hipótesis nula | todas las medias son iguales | la pendiente es 0 ($\beta = 0$) |
+| Supuestos | independencia, normalidad de los residuos, homogeneidad de varianzas | independencia, linealidad, normalidad de los residuos, homocedasticidad |
+| Tamaño del efecto | $R^2 = \eta^2 = SS_{entre} / SS_{total}$ | $R^2 = SS_{regresión} / SS_{total}$ ($= r^2$) |
+| Si no se cumplen los supuestos | Kruskal-Wallis + Dunn | correlación de Spearman |

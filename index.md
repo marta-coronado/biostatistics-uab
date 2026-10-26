@@ -11,19 +11,19 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 ---
 
 ## 📖 Teoría
-- [Presentación de la asignatura](/T/0/PresentacionBioestadistica.html)
-- [Tema 1: Estadística descriptiva](T/1/1.EstadisticaDescriptiva.html)
-- [Tema 2: Introducción a R](T/2/2.IntroR.html)
-- [Tema 3: Visualización de datos](T/3/3.VisualizacionDatos.html)
-- [Tema 4: Distribuciones de probabilidad](T/4/4.ProbRmd.html)
-- [Tema 5: Distribución normal](T/5/6.Normal.html)
-- [Tema 6: Intervalos de confianza](T/6/9.Intervaloconfianza.html)
-- [Tema 7: Inferencia estadística](T/7/10.Inferencia.html)
-- [Tema 8: Bootstrap y test de permutación](T/8/8.html)
-- [Tema 9a: Prueba de t-test](T/9/11.TTest.html)
-- [Tema 9b: Prueba de t-test](T/10/12.TTest_pt2.html)
-- [Tema 10: Tamaño del efecto](T/11/11.html)
-- [Tema 11: ANOVA](T/12/13.ANOVA_ampliado.html)
+- [Presentación de la asignatura](T/0/PresentacionBioestadistica.html) ([PDF](T/0/PresentacionBioestadistica.pdf))
+- [Tema 1: Estadística descriptiva](T/1/1.EstadisticaDescriptiva.html) ([PDF](T/1/1.EstadisticaDescriptiva.pdf))
+- [Tema 2: Introducción a R](T/2/2.IntroR.html) ([PDF](T/2/2.IntroR.pdf))
+- [Tema 3: Visualización de datos](T/3/3.VisualizacionDatos.html) ([PDF](T/3/3.VisualizacionDatos.pdf))
+- [Tema 4: Distribuciones de probabilidad](T/4/4.ProbRmd.html) ([PDF](T/4/4.ProbRmd.pdf))
+- [Tema 5: Distribución normal](T/5/6.Normal.html) ([PDF](T/5/6.Normal.pdf))
+- [Tema 6: Intervalos de confianza](T/6/9.Intervaloconfianza.html) ([PDF](T/6/9.Intervaloconfianza.pdf))
+- [Tema 7: Inferencia estadística](T/7/10.Inferencia.html) ([PDF](T/7/10.Inferencia.pdf))
+- [Tema 8: Bootstrap y test de permutación](T/8/8.html) ([PDF](T/8/8.pdf))
+- [Tema 9a: Prueba de t-test](T/9/11.TTest.html) ([PDF](T/9/11.TTest.pdf))
+- [Tema 9b: Prueba de t-test](T/10/12.TTest_pt2.html) ([PDF](T/10/12.TTest_pt2.pdf))
+- [Tema 10: Tamaño del efecto](T/11/11.html) ([PDF](T/11/11.pdf))
+- [Tema 11: ANOVA](T/12/13.ANOVA_ampliado.html) ([PDF](T/12/13.ANOVA_ampliado.pdf))
 
 [FÓRMULAS](T/FORMULAS_v2.html)
 
@@ -34,11 +34,11 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 ---
 
 ## 🗣️ Seminarios
-- [Seminario 1: La importancia de mostrar los datos](S/1/S1.html)
-- [Seminario 2: Distribución de Poisson](S/2/7.Poisson.html)
-- [Seminario 3: Visualización de distribuciones](S/3/8.VisDistr.html)
-- [Seminario 4: Pensamiento estadístico](S/4/S5_soluciones.html)
-- [Seminario 5: Problemas de t-test](S/5/S6.html)
+- [Seminario 1: La importancia de mostrar los datos](S/1/S1.html) ([PDF](S/1/S1.pdf))
+- [Seminario 2: Distribución de Poisson](S/2/7.Poisson.html) ([PDF](S/2/7.Poisson.pdf))
+- [Seminario 3: Visualización de distribuciones](S/3/8.VisDistr.html) ([PDF](S/3/8.VisDistr.pdf))
+- [Seminario 4: Pensamiento estadístico](S/4/S5_soluciones.html) ([PDF](S/4/S5_soluciones.pdf))
+- [Seminario 5: Problemas de t-test](S/5/S6.html) ([PDF](S/5/S6.pdf))
 
 ---
 
