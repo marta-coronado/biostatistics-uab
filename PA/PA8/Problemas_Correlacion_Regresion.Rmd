@@ -1,0 +1,321 @@
+---
+title: "Problemas de correlación y regresión"
+author: "Bioestadística"
+date: "Diciembre 2026"
+output:
+  html_document:
+    self_contained: true
+    theme: simplex
+    css: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css
+    toc: yes
+    toc_float:
+      collapsed: true
+fontsize: 14pt
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+# Load useful packages
+library(rmdformats)   # for extra formatting if needed
+knitr::opts_chunk$set(echo = TRUE, comment = "", message = FALSE, warning = FALSE,
+                      fig.align = "center")
+library(ggplot2)
+```
+
+```{=html}
+<style>
+body {
+  font-size: 14px;   /* un poco más grande */
+  color: black;      /* asegura texto en negro */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #D9230F;        /* títulos en rojo */
+}
+
+h3, h4, h5, h6 {
+  color: black;        /* títulos en rojo */
+}
+
+h3 {
+  font-size: 1em;   /* tamaño igual al texto normal */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+
+.handwritten {
+  font-family: 'Handlee', monospace;
+  font-size: 1.1em;
+}
+
+.respuesta {
+  background-color: #F0F0F0;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  line-height: 1.2;
+}
+</style>
+```
+
+
+---
+
+En estos problemas **no hace falta ajustar los modelos desde cero**: el objetivo es saber **leer e interpretar** los resultados de una correlación o de una regresión. Los cálculos se hacen a mano (con calculadora). Recuerda:
+
+- **Coeficiente de correlación de Pearson** ( $r$ ): mide la fuerza y la dirección de una relación **lineal**, entre −1 y 1. El **coeficiente de Spearman** ( $\rho$ ) usa los rangos: sirve para relaciones **monótonas** no lineales, datos ordinales o con valores extremos
+- **Test de la correlación**: $H_0: \rho = 0$. Estadístico $t = \dfrac{r\sqrt{n-2}}{\sqrt{1-r^2}}$, con $gl = n - 2$. Rechazamos $H_0$ si $|t_{obs}| > t_{crit}$
+- **Regresión lineal simple**: $\hat{y} = a + b\,x$, con $b = r \cdot \dfrac{s_y}{s_x}$ y $a = \bar{y} - b\,\bar{x}$. La pendiente $b$ es el cambio en $y$ cuando $x$ aumenta 1 unidad
+- **Contraste de la pendiente**: $H_0: b = 0$ (no hay relación). En la regresión simple, $R^2 = r^2$
+- **Regresión múltiple**: $\hat{y} = a + b_1 x_1 + \dots + b_k x_k$. Cada $b_i$ es el efecto de $x_i$ **manteniendo constantes las demás**. Para comparar la influencia de variables con unidades distintas → **coeficientes estandarizados**. Con muchas variables → **$R^2$ ajustado**. Multicolinealidad si $VIF > 10$
+- **Variables *dummy***: una variable categórica con $k$ categorías se convierte en $k - 1$ variables *dummy*; cada coeficiente es la diferencia respecto a la categoría de **referencia**
+- **Supuestos** (sobre los residuos): linealidad, independencia, homocedasticidad y normalidad
+
+**Tabla de valores críticos de t** (dos colas, α = 0.05):
+
+| $gl$ | 10 | 20 | 29 | 30 | 66 | 121 | 149 | 340 |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| $t_{crit}$ | 2.228 | 2.086 | 2.045 | 2.042 | 1.997 | 1.980 | 1.976 | 1.967 |
+
+## 🐧 Problema 1 - El pico de los pingüinos
+
+Entre 2007 y 2009, Kristen Gorman midió el pico de **342 pingüinos** de tres especies (Adelia, barbijo y papúa) en el archipiélago Palmer (Antártida). Queremos saber si la **longitud** y la **profundidad** (altura) del pico están relacionadas.
+
+```{r, echo = FALSE, fig.width = 6, fig.height = 4}
+pin <- na.omit(penguins[, c("species", "bill_len", "bill_dep")])
+ggplot(pin, aes(bill_len, bill_dep)) +
+  geom_point(alpha = 0.6) +
+  labs(x = "Longitud del pico (mm)", y = "Profundidad del pico (mm)") +
+  theme_classic(base_size = 13)
+```
+
+Con todos los pingüinos juntos, el coeficiente de correlación de Pearson es **r = −0.235**.
+
+### a) Escribe las hipótesis nula y alternativa del test de correlación.
+### b) Interpreta el signo y la fuerza de la correlación. Calcula $r^2$ e interprétalo.
+### c) Calcula el estadístico t y decide si la correlación es significativa (α = 0.05).
+### d) Ahora separamos los pingüinos por especie. ¿Qué ocurre? Calcula el estadístico t para el pingüino barbijo y decide si es significativo. ¿Cómo explicas que la correlación cambie de signo?
+
+```{r, echo = FALSE, fig.width = 7, fig.height = 4}
+ggplot(pin, aes(bill_len, bill_dep, colour = species)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_colour_manual(values = c("#1c5253", "#E69F00", "#D9230F"),
+                      labels = c("Adelia", "Barbijo", "Papúa")) +
+  labs(x = "Longitud del pico (mm)", y = "Profundidad del pico (mm)", colour = "Especie") +
+  theme_classic(base_size = 13)
+```
+
+| Especie | *n* | *r* |
+|:--|:-:|:-:|
+| Adelia | 151 | 0.391 |
+| Barbijo | 68 | 0.654 |
+| Papúa | 123 | 0.643 |
+
+### e) ¿Podemos concluir que un pico más largo **provoca** un pico más profundo?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | $H_0$: $\rho = 0$ (no hay correlación lineal); $H_A$: $\rho \neq 0$ |
+| (b) | Negativa y débil; $r^2$ = 0.055: la longitud explica solo el 5.5% de la variabilidad de la profundidad |
+| (c) | $t$ = −4.46; $|t|$ > 1.967 → correlación significativa |
+| (d) | Dentro de cada especie la correlación es **positiva** y moderada. Barbijo: $t$ = 7.01 > 1.997, significativa. La especie es una variable de confusión (paradoja de Simpson) |
+| (e) | No: correlación no implica causalidad. Ambas medidas dependen, por ejemplo, del tamaño del individuo |
+
+</details>
+
+<br>
+
+## 🧪 Problema 2 - ¿Pearson o Spearman?
+
+Treloar (1974) midió la **velocidad inicial** de una reacción enzimática (en cuentas/min²) a distintas **concentraciones de sustrato** (en ppm), en células tratadas con puromicina:
+
+```{r, echo = FALSE}
+pu <- Puromycin[Puromycin$state == "treated", c("conc", "rate")]
+knitr::kable(t(pu), col.names = NULL)
+```
+
+```{r, echo = FALSE, fig.width = 6, fig.height = 3.8}
+ggplot(pu, aes(conc, rate)) +
+  geom_point(size = 2.5) +
+  labs(x = "Concentración de sustrato (ppm)", y = "Velocidad (cuentas/min²)") +
+  theme_classic(base_size = 13)
+```
+
+### a) Describe la relación entre las dos variables a partir del gráfico.
+### b) La correlación de Pearson es **r = 0.831** (p = 0.0008) y la de Spearman, **ρ = 0.975** (p < 0.001). ¿Por qué son tan diferentes? ¿Cuál es más adecuada aquí?
+### c) Comprueba con el estadístico t que la correlación de Pearson es significativa (α = 0.05).
+### d) Un compañero dice: "r = 0.83 es una correlación lineal fuerte, así que puedo ajustar una recta `lm(rate ~ conc)` sin problemas". ¿Estás de acuerdo?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | Positiva y monótona, pero **no lineal**: la velocidad sube rápido y luego se satura (cinética de Michaelis-Menten) |
+| (b) | Pearson mide relación **lineal**; Spearman, relación **monótona**. Aquí es más adecuada Spearman |
+| (c) | $t$ = 4.72 > 2.228 ($gl$ = 10) → significativa |
+| (d) | No: un $r$ alto no garantiza que la relación sea lineal. Hay que mirar siempre el gráfico; transformar (p. ej. `log(conc)`) o usar un modelo no lineal |
+
+</details>
+
+<br>
+
+## 🌳 Problema 3 - ¿Cuánta madera tiene un cerezo?
+
+En un bosque de Pensilvania se midieron el **diámetro** del tronco (en cm, a 1.37 m del suelo) y el **volumen de madera** (en m³) de 31 cerezos negros (*Prunus serotina*) talados. Los forestales quieren predecir el volumen de madera de un árbol **sin talarlo**, a partir de su diámetro.
+
+```{r}
+arboles <- data.frame(diametro = trees$Girth * 2.54,
+                      volumen  = trees$Volume * 0.0283)
+modelo <- lm(volumen ~ diametro, data = arboles)
+summary(modelo)
+```
+
+### a) ¿Cuál es la variable dependiente y cuál la independiente? Escribe la ecuación de la recta de regresión.
+### b) Interpreta la pendiente y la ordenada en el origen. ¿Tiene sentido biológico la ordenada?
+### c) ¿Es significativa la relación? Interpreta el $R^2$. ¿Cuánto vale el coeficiente de correlación $r$?
+### d) Predice el volumen de madera de un cerezo de **40 cm** de diámetro. ¿Y el de uno de **10 cm**? (Los diámetros medidos van de 21 a 52 cm.)
+### e) Este es el gráfico de los residuos frente a los valores predichos. ¿Se cumple el supuesto de linealidad? ¿Se te ocurre por qué?
+
+```{r, echo = FALSE, fig.width = 6, fig.height = 3.8}
+ggplot(data.frame(pred = fitted(modelo), res = residuals(modelo)), aes(pred, res)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_point(size = 2.5) +
+  geom_smooth(se = FALSE, colour = "#D9230F", method = "loess") +
+  labs(x = "Volumen predicho (m³)", y = "Residuos (m³)") +
+  theme_classic(base_size = 13)
+```
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | Dependiente: volumen; independiente: diámetro. $\widehat{\text{volumen}} = -1.046 + 0.0565 \cdot \text{diámetro}$ |
+| (b) | Cada cm más de diámetro → +0.0565 m³ (unos 56 litros). La ordenada (−1.046 m³ con 0 cm) no tiene sentido biológico |
+| (c) | p < 2·10<sup>-16</sup> → significativa. $R^2$ = 0.935: el diámetro explica el 93.5% de la variabilidad del volumen. $r = \sqrt{0.935}$ = 0.967 |
+| (d) | 40 cm → 1.21 m³. 10 cm → −0.48 m³: absurdo, es una **extrapolación** fuera del rango observado |
+| (e) | No: los residuos forman una U. El volumen crece con el **cuadrado** del diámetro (como un cilindro), no de forma lineal → transformar (log-log) |
+
+</details>
+
+<br>
+
+## 🌫️ Problema 4 - ¿De qué depende el ozono?
+
+El **ozono troposférico** es un contaminante que daña el aparato respiratorio y las hojas de las plantas. Se forma a partir de otros contaminantes por acción de la **luz solar**, y se acumula más los días **calurosos** y **sin viento**. Con los datos de 111 días del verano de 1973 en Nueva York, ajustamos un modelo de regresión múltiple para explicar la concentración de **ozono** (ppb) a partir de la **radiación solar** (langleys, Ly), la velocidad del **viento** (km/h) y la **temperatura** (°C):
+
+```{r}
+aire <- na.omit(airquality[, 1:4])
+aire$Wind <- aire$Wind * 1.609          # mph -> km/h
+aire$Temp <- (aire$Temp - 32) / 1.8     # ºF -> ºC
+names(aire) <- c("ozono", "radiacion", "viento", "temperatura")
+
+modelo_oz <- lm(ozono ~ radiacion + viento + temperatura, data = aire)
+summary(modelo_oz)
+```
+
+Además, sabemos que:
+
+| Variable | Coeficiente estandarizado β | VIF |
+|:--|:-:|:-:|
+| Radiación | 0.164 | 1.10 |
+| Viento | −0.356 | 1.33 |
+| Temperatura | 0.473 | 1.43 |
+
+### a) Escribe la ecuación del modelo.
+### b) Interpreta los coeficientes de la temperatura y del viento.
+### c) ¿Qué variables tienen un efecto significativo sobre el ozono (α = 0.05)?
+### d) ¿Qué variable influye **más** en la concentración de ozono? ¿Por qué no podemos responder mirando directamente los coeficientes de la columna `Estimate`?
+### e) Predice la concentración de ozono de un día con una radiación de 200 Ly, viento de 16 km/h y 27 °C.
+### f) Interpreta el $R^2$, el $R^2$ ajustado y el error estándar de la estimación (`Residual standard error`). ¿Hay problemas de multicolinealidad?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | $\widehat{\text{ozono}} = -11.48 + 0.060 \cdot \text{radiación} - 2.07 \cdot \text{viento} + 2.97 \cdot \text{temperatura}$ |
+| (b) | +1 °C → +2.97 ppb de ozono; +1 km/h de viento → −2.07 ppb (manteniendo constantes las demás variables) |
+| (c) | Las tres (radiación p = 0.011; viento y temperatura p < 0.001). La ordenada no lo es, pero no importa |
+| (d) | La temperatura (β = 0.47). Los $b$ dependen de las unidades de cada variable y no son comparables |
+| (e) | ≈ 47.6 ppb |
+| (f) | $R^2$ = 0.606 (61% explicado); $R^2$ ajustado = 0.595; error medio de ±21 ppb. Todos los VIF < 10 → no hay multicolinealidad |
+
+</details>
+
+<br>
+
+## 🌱 Problema 5 - Variables *dummy* y ANOVA
+
+Se comparó el **peso seco** (g) de plantas sometidas a dos tratamientos (`trt1` y `trt2`) y de un grupo control (`ctrl`), con 10 plantas por grupo. En lugar de `aov()`, el análisis se hizo con `lm()`:
+
+```{r}
+modelo_pl <- lm(weight ~ group, data = PlantGrowth)
+summary(modelo_pl)
+```
+
+### a) ¿Cuántas variables *dummy* ha creado `R`? ¿Cuál es la categoría de referencia?
+### b) Calcula la media del peso seco de cada grupo a partir de los coeficientes.
+### c) ¿Qué compara exactamente el p-valor de la fila `grouptrt2` (p = 0.088)? ¿Sirve para saber si `trt1` y `trt2` son diferentes?
+### d) ¿Qué contrasta la `F-statistic` de la última línea? ¿Qué concluyes? Interpreta el $R^2$. ¿Cuál sería el siguiente paso del análisis?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | 2 *dummy* (3 grupos − 1): `grouptrt1` y `grouptrt2`. Referencia: `ctrl` |
+| (b) | ctrl = 5.032; trt1 = 5.032 − 0.371 = 4.661; trt2 = 5.032 + 0.494 = 5.526 |
+| (c) | Compara solo `trt2` con `ctrl`. No dice nada de `trt1` frente a `trt2` |
+| (d) | Es el ANOVA de una vía: F = 4.85, p = 0.016 → al menos una media es diferente. $R^2$ = 0.264. Siguiente paso: test *post hoc* (Tukey) |
+
+</details>
+
+<br>
+
+## 🤔 Problema 6 - Preguntas rápidas
+
+### a) La correlación de Pearson entre dos variables es r = 0. ¿Podemos concluir que no hay ninguna relación entre ellas?
+### b) La correlación entre la expresión de dos genes es r = −0.9. ¿Qué porcentaje de la variabilidad de uno explica el otro?
+### c) En una regresión simple, $r$ = 0.5, $s_y$ = 10, $s_x$ = 2, $\bar{x}$ = 4 e $\bar{y}$ = 20. Calcula la pendiente y la ordenada en el origen.
+### d) Un estudio encontró una correlación de r = 0.79 entre el consumo de chocolate de un país y su número de premios Nobel por habitante. ¿Comer chocolate hace a la gente más inteligente?
+### e) En una regresión queremos incluir el **tipo de tejido** (hígado, músculo, cerebro, riñón y piel). ¿Cuántas variables *dummy* necesitamos?
+### f) Al añadir una nueva variable a un modelo de regresión múltiple, el $R^2$ pasa de 0.40 a 0.41. ¿Es mejor el nuevo modelo?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | No: $r$ solo mide relación **lineal**. Puede haber una relación curva (p. ej. en forma de U) |
+| (b) | $r^2$ = 0.81 → el 81% |
+| (c) | $b$ = 0.5 · 10/2 = 2.5; $a$ = 20 − 2.5 · 4 = 10 |
+| (d) | No: correlación no implica causalidad. Una variable de confusión (la riqueza del país) explica ambas |
+| (e) | 5 − 1 = 4 |
+| (f) | No necesariamente: el $R^2$ siempre sube al añadir variables. Hay que mirar el $R^2$ ajustado y el p-valor de la nueva variable |
+
+</details>
+
+<br>
+
+## 📚 Fuentes
+
+- Gorman, K. B., Williams, T. D. y Fraser, W. R. (2014). Ecological sexual dimorphism and environmental variability within a community of Antarctic penguins (genus *Pygoscelis*). *PLoS ONE*, 9(3), e90081. Disponibles en R (≥ 4.5): `penguins`.
+- Treloar, M. A. (1974). *Effects of Puromycin on Galactosyltransferase in Golgi Membranes*. Tesis de máster, Universidad de Toronto. Datos en Bates, D. M. y Watts, D. G. (1988). *Nonlinear Regression Analysis and Its Applications*. Wiley. Disponibles en R: `Puromycin`.
+- Ryan, T. A., Joiner, B. L. y Ryan, B. F. (1976). *The Minitab Student Handbook*. Duxbury Press. Disponibles en R: `trees`.
+- Chambers, J. M., Cleveland, W. S., Kleiner, B. y Tukey, P. A. (1983). *Graphical Methods for Data Analysis*. Wadsworth. Disponibles en R: `airquality`.
+- Dobson, A. J. (1983). *An Introduction to Statistical Modelling*. Chapman and Hall. Disponibles en R: `PlantGrowth`.
+- Messerli, F. H. (2012). Chocolate consumption, cognitive function, and Nobel laureates. *The New England Journal of Medicine*, 367, 1562–1564.

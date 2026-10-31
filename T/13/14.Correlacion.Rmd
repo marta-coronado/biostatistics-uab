@@ -1,5 +1,5 @@
 ---
-title: "<br>"
+title: ""
 subtitle: ""
 author: ""
 date: ""
@@ -54,22 +54,167 @@ htmltools::tagList(
 ```
 
 
+class: title-slide, animated, fadeIn
+
+.left-top[
+# Correlación
+
+]
+
+.left-bottom[
+.authors[
+**Bioestadística**
+<br><br><br><br>
+
+Marta Coronado ([marta.coronado@uab.cat](mailto:marta.coronado@uab.cat))  
+]
+
+.footer-info[
+**Grado en Genética | Curso 2026/2027**
+]
+]
+
+.right-panel[]
+
+
+
+<style>
+.title-slide {
+  background-image: none;
+}
+
+/* Contenedor teal superior (solo título) */
+.title-slide .left-top {
+  position: absolute;
+  top: 0; left: 0;
+  width: 60%;
+  height: 62%;
+  background-color: #163a3a;
+  color: white;
+  padding: 50px 45px 30px 65px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;   /* ← esto faltaba */
+  align-items: flex-start;  /* ← con column, flex-end alinearía a la derecha; usa flex-start para pegar a la izquierda */
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+
+/* Contenedor blanco inferior (autores, fecha) */
+.title-slide .left-bottom {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 60%;
+  height: 38%;
+  background-color: white;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 20px 45px 30px 65px;
+  margin: 0;
+}
+
+.title-slide .right-panel {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 41%;
+  background-color: white;
+  background-image: url('img/1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.title-slide h1 {
+  font-size: 1.9em;
+  line-height: 1.25;
+  margin: 0;
+  font-weight: 400;
+}
+
+.title-slide .subtitle {
+  display: block;   /* ← esto es la clave: sin esto, margin-top se ignora */
+  font-size: 2em;
+  font-weight: bold;
+  color: #7ac142;
+  margin-top: -35px;
+  margin-bottom: 15px;
+}
+
+.title-slide .authors {
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.title-slide .authors a {
+  color: #e8846b;
+  text-decoration: none;
+}
+
+.title-slide .footer-info {
+  font-size: 0.9em;
+  color: #444;
+}
+
+.remark-slide-content h2,
+.remark-slide-content h3,
+.remark-slide-content h4,
+.remark-slide-content h5 {
+  margin-top: 1em;
+  margin-bottom: 0.6em;
+}
+
+.remark-slide-content p,
+.remark-slide-content ul,
+.remark-slide-content ol {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.remark-slide-content li {
+  margin-bottom: 0.1em;
+}
+
+.practica::before {
+  content: "\f303";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+
+.R::before {
+  content: "\f4f7";
+  font-family: "Font Awesome 6 Brands";
+  font-weight: 400;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #1c5253;
+}
+</style>
+
+
+
+---
 class: animated, fadeIn
 # Outline
 
 #### **Correlación**
 
-- Qué es un análisis de correlación?
-- Tipos más importantes (Pearson, Spearman, Kendall)
-- Diferencias entre correlación y causalidad
-- Correlación vs. regresión
-
-<style>
-  .title-slide {
-    background-image: url('img/1.png');
-    background-size: 100%;
-  }
-</style>
+- ¿Qué es un análisis de correlación?
+- Correlación de Pearson y de Spearman
+- Correlación y causalidad
+- Correlación y regresión
 
 ---
 class: animated, fadeIn
@@ -185,19 +330,21 @@ Nos interesa conocer:
 
 --
 
-Ambas medidas se veran reflejadas en el **coeficiente de correlación** (`r`): de -1 a 1
+Ambas medidas se verán reflejadas en el **coeficiente de correlación** (`r`): de -1 a 1
 
 --
 
 #### Fuerza de la correlación según el valor de *r*
 
-| Valor de `r`        | Interpretación        |
-|---------------------:|:----------------------|
-| `r` < 0.1           | No correlación        |
-| 0.1 < `r` ≤ 0.3     | Correlación baja      |
-| 0.3 < `r` ≤ 0.5     | Correlación media     |
-| 0.5 < `r` ≤ 0.7     | Correlación alta      |
-| 0.7 < `r` ≤ 1.0     | Correlación muy alta  |
+El signo indica la dirección; la fuerza depende del valor absoluto: *r* = −0.8 es una correlación tan fuerte como *r* = 0.8
+
+| Valor absoluto de *r* | Interpretación |
+|:--:|:--|
+| < 0.1 | No correlación |
+| 0.1 – 0.3 | Correlación baja |
+| 0.3 – 0.5 | Correlación media |
+| 0.5 – 0.7 | Correlación alta |
+| 0.7 – 1.0 | Correlación muy alta |
 
 ---
 class: animated, fadeIn
@@ -253,13 +400,11 @@ wrap_plots(plots, ncol = 3)
 ---
 class: animated, fadeIn
 
-## Tipos de coeficientes de correlacion
+## Tipos de coeficientes de correlación
 
-1. R de Pearson
+1. *r* de Pearson: relación **lineal** entre dos variables cuantitativas con distribución normal
 
-2. R de Spearman
-
-3. R de Kendall
+2. *r* de Spearman: relación **monótona**, calculada sobre los **rangos** (no paramétrica)
 
 ---
 class: animated, fadeIn
@@ -405,16 +550,12 @@ ggplot(iris[iris$Species=="setosa",], aes(x = Sepal.Length, y = Sepal.Width)) +
 ```
 ]
 
---
-
 .pull-right[
 - $H_0$: no hay una correlación entre la anchura y la longitud del sépalo: `r` es 0
 
 - $H_1$: sí hay una correlación entre la anchura y la longitud del sépalo: `r` no es 0
 
 ]
-
-
 
 ---
 class: animated, fadeIn
@@ -471,7 +612,7 @@ $$
 ---
 class: animated, fadeIn
 
-## Consideraciones para el coeficiente de correlación de Pearson: dependen de lo que queramos
+## Supuestos de la correlación de Pearson
 
 - Para calcular el coeficiente de correlación de Pearson necesitamos **dos variables métricas**.  
 
@@ -543,99 +684,27 @@ class: animated, fadeIn
 
 .pull-left[
 ```{r}
-cor.test(setosa$Sepal.Length, setosa$Sepal.Width,
+cor.test(setosa$Sepal.Length,
+         setosa$Sepal.Width,
          method = "pearson",
          alternative  = "two.sided")
 
 ```
-
-
 ]
 
 .pull-right[
-
-
-```{r echo = F, fig.align='center', fig.width=7, fig.height=6}
-
-# Cargar librerías
-library(ggplot2)
-
-# Representar gráficamente la relación
-ggplot(iris[iris$Species=="setosa",], aes(x = Sepal.Length, y = Sepal.Width)) +
-  geom_point(size = 3, alpha = 0.7) +
-  geom_smooth(method = "lm", se = FALSE, color = "black") +
-  theme_minimal(base_size = 16) +
-  labs(
-    title = "Correlación entre largo y ancho del sépalo en setosa",
-    x = "Largo del sépalo (cm)",
-    y = "Ancho del sépalo (cm)"
-  )+
-    ggthemes::theme_base(base_size = 13) +
-    theme(
-      panel.grid = element_blank(),
-      axis.title = element_blank(),
-      axis.text = element_text(color = "black"),
-      panel.background = element_rect(fill = "white"))
-```
-
-
-]
-
----
-class: animated, fadeIn
-
-## Correlación de Pearson en `R`
-
-.pull-left[
-```{r eval = F}
-cor.test(setosa$Sepal.Length, setosa$Petal.Length,
-         method = "pearson",
-         alternative  = "two.sided")
-
-```
-
-Salida esperada:
 
 - `t`: valor del estadístico de contraste
 
-- `df`: grados de libertad (n - 2)
+- `df`: grados de libertad (n − 2)
 
 - `p-value`: significación
 
-- `cor`: coeficiente de Pearson 
+- `cor`: coeficiente de Pearson
 
-> Podemos indicar `greater` y `lower` en `alternative` para cambiar la hipótesis
-]
+- `95 percent confidence interval`: IC del coeficiente
 
-.pull-right[
-
-
-```{r echo = F, fig.align='center', fig.width=7, fig.height=6}
-
-# Cargar librerías
-library(ggplot2)
-library(ggpubr)  # para stat_cor
-
-# Representar gráficamente la relación con la correlación de Pearson
-ggplot(iris[iris$Species == "setosa", ], aes(x = Sepal.Length, y = Sepal.Width)) +
-  geom_point(size = 3, alpha = 0.7) +
-  geom_smooth(method = "lm", se = FALSE, color = "black") +
-  theme_minimal(base_size = 16) +
-  labs(
-    title = "Correlación entre largo y ancho del sépalo en setosa",
-    x = "Largo del sépalo (cm)",
-    y = "Ancho del sépalo (cm)"
-  ) +
-  ggthemes::theme_base(base_size = 13) +
-  theme(
-    panel.grid = element_blank(),
-    axis.title = element_blank(),
-    axis.text = element_text(color = "black"),
-    panel.background = element_rect(fill = "white")
-  )
-
-```
-
+> Con `alternative = "greater"` o `"less"` hacemos un test de una cola
 
 ]
 
@@ -757,7 +826,7 @@ p1 + p2
 ---
 class: animated, fadeIn
 
-### Ejemplo de correación de Spearman
+### Ejemplo de correlación de Spearman
 
 <center>
 <img src="img/t1.png" width=50%>
@@ -766,7 +835,7 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-### Ejemplo de correación de Spearman
+### Ejemplo de correlación de Spearman
 
 <center>
 <img src="img/t2.png" width=60%>
@@ -775,7 +844,7 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-### Ejemplo de correación de Spearman
+### Ejemplo de correlación de Spearman
 
 ```{r echo = F, fig.align='center', fig.width=8, fig.height=5}
 # Cargar librerías
@@ -857,7 +926,7 @@ donde:
 ---
 class: animated, fadeIn
 
-### Ejemplo de correación de Spearman
+### Ejemplo de correlación de Spearman
 
 <center>
 <img src="img/t3.png" width=70%>
@@ -866,7 +935,7 @@ class: animated, fadeIn
 ---
 class: animated, fadeIn
 
-### Ejemplo de correación de Spearman
+### Ejemplo de correlación de Spearman
 
 .pull-left[
 <center>
@@ -935,7 +1004,7 @@ p1 + p2
 
 --
 
-- El coeficiente de correlación de spearman va de -1 a 1
+- El coeficiente de correlación de Spearman también va de −1 a 1
 
 
 ---
@@ -947,135 +1016,6 @@ edad <- c(14, 16, 13, 20, 18, 30, 27, 34)
 tiempo_reaccion <- c(12, 15, 17, 18, 20, 21, 22, 26)
 
 cor.test(edad, tiempo_reaccion, method = "spearman", alternative = "two.sided")
-```
-
-
-
----
-class: animated, fadeIn
-
-## Coeficiente de correlación de rango de Kendall (τ de Kendall)
-
-- **Correlación de Kendall (τ)** es un **procedimiento no paramétrico**
-
-  - No requiere que los datos sigan una **distribución normal**
-
-- Mide la **asociación entre dos variables ordinales**
- 
-- Es **similar a la correlación de Spearman**, pero:
-  - Es **más robusta** cuando hay **pocos datos** o **muchos empates en los rangos (rank ties)**
-
-
----
-class: animated, fadeIn
-
-## Coeficiente de correlación de rango de Kendall (τ de Kendall)
-
-
-$$
-\tau = \frac{(n_c - n_d)}{n_c+n_d}
-$$
-
-donde:  
-- $n_c$: número de pares **concordantes**  
-- $n_d$: número de pares **discordantes**  
-
----
-class: animated, fadeIn
-
-### Ejemplo
-<center>
-<img src="img/k1.png" width=80%>
-
----
-class: animated, fadeIn
-
-### Ejemplo
-<center>
-<img src="img/k2.png" width=80%>
----
-class: animated, fadeIn
-
-### Ejemplo
-<center>
-<img src="img/k3.png" width=80%>
----
-class: animated, fadeIn
-
-### Ejemplo
-<center>
-<img src="img/k4.png" width=80%>
----
-class: animated, fadeIn
-
-### Ejemplo
-<center>
-<img src="img/k5.png" width=80%>
----
-class: animated, fadeIn
-
-### Ejemplo
-<center>
-<img src="img/k6.png" width=80%>
-
----
-class: animated, fadeIn
-
-### Ejemplo
-<center>
-<img src="img/k8.png" width=80%>
-
----
-class: animated, fadeIn
-
-### Ejemplo
-.pull-left[
-
-$$\tau=\frac{11-4}{11+4}=0.47$$
-
-]
-.pull-right[
-<center>
-<img src="img/k8.png" width=100%>
-]
---
-
-- El coeficiente de tau también va de -1 a 1
-
----
-class: animated, fadeIn
-
-## Test de hipótesis
-
-- La **τ de Kendall** se puede contrastar estadísticamente usando la **distribución normal (z)** como aproximación.
-
-- Esta aproximación **solo es válida cuando el tamaño muestral es suficientemente grande**, **n ≥ 40**.
-
---
-
-Para calcular el valor z, utilizamos la fórmula: 
-
-$$
-z = \frac{3\tau\sqrt{n(n-1)}}{\sqrt{2(2n + 5)}}
-$$
---
-
-- Si $|z| > 1.96$, podemos rechazar la hipótesis nula de **no correlación** (al nivel de significación 0.05). 
-
-- Un valor de **τ positivo** indica **concordancia** entre los rangos;  
-  uno **negativo**, **discordancia**.
-
----
-class: animated, fadeIn
-
-## Coeficiente de correlación de rango de Kendall en `R`
-
-```{r}
-medico1 <- c(1,2,3,4,5,6)
-medico2 <- c(3,1,4,2,6,5)
-
-cor.test(medico1, medico2, method = "kendall")
-
 ```
 
 
@@ -1115,7 +1055,7 @@ Se debe cumplir:
 
 1. Correlación significativa
 
-2. Los siguientres tres escenarios:
+2. Los siguientes tres escenarios:
   
   a. Secuencia cronológica
   
@@ -1123,6 +1063,39 @@ Se debe cumplir:
   
   c. Fundamento teórico sólido
 
+
+---
+class: animated, fadeIn
+
+## Correlación y regresión
+
+.pull-left[
+**Correlación**
+
+- Mide la **fuerza** y la **dirección** de la relación
+- Es **simétrica**: `cor(x, y)` = `cor(y, x)`
+- No hay variable dependiente ni independiente
+
+**Regresión** (próximo tema)
+
+- **Predice** $y$ a partir de $x$: $y = \beta_0 + \beta_1 x + \varepsilon$
+- No es simétrica: $y$ es la respuesta, $x$ la explicativa
+- Es un modelo lineal, como el ANOVA: `lm(y ~ x)`
+]
+
+.pull-right[
+```{r}
+r <- cor(setosa$Sepal.Length,
+         setosa$Sepal.Width)
+r^2
+
+modelo <- lm(Sepal.Width ~ Sepal.Length,
+             data = setosa)
+summary(modelo)$r.squared
+```
+
+> En la regresión lineal simple, $R^2 = r^2$: el 55% de la variabilidad de la anchura del sépalo se explica por su longitud
+]
 
 ---
 class: animated, fadeIn

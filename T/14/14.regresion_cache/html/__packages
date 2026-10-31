@@ -1,0 +1,10 @@
+ggplot2
+readr
+knitr
+xaringanthemer
+xaringanExtra
+dplyr
+tidyr
+patchwork
+carData
+car

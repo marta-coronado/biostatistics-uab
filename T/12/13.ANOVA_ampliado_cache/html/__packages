@@ -9,4 +9,5 @@ data.table
 carData
 car
 ggstatsplot
+patchwork
 tidyr

@@ -218,7 +218,8 @@ class: animated, fadeIn
 - Ejemplo
 - ¿Qué es un ANOVA? ¿Por qué no hacer t-tests a pares?
 - ANOVA de una vía: cálculo, supuestos, `R`, *post hoc* y alternativas
-- ANOVA de dos vías: interacción, R² y efecto lote
+- El ANOVA como modelo lineal
+- ANOVA de dos vías: interacción y R²
 - Versión no paramétrica
 
 ---
@@ -1511,6 +1512,67 @@ anova(lm(log(MaxAbund) ~ Diet, data = bird))
 ---
 class: animated, fadeIn
 
+## El ANOVA como modelo
+
+El ANOVA describe cada observación como **la media de su grupo** más un **residuo**:
+
+$$\underbrace{y_{ij}}_{\text{observación}} = \underbrace{\bar{y}_j}_{\text{media de su grupo}} + \underbrace{\varepsilon_{ij}}_{\text{residuo}}$$
+
+```{r, echo = F, fig.width = 11, fig.height = 4.3}
+library(ggplot2)
+set.seed(1)
+d <- data.frame(Diet = factor(bird$Diet), y = log(bird$MaxAbund))
+d$x <- as.numeric(d$Diet) + runif(nrow(d), -0.2, 0.2)
+d$media <- ave(d$y, d$Diet)
+medias <- aggregate(y ~ Diet, data = d, FUN = mean)
+ggplot(d) +
+  geom_segment(aes(x = x, xend = x, y = y, yend = media), colour = "grey60") +
+  geom_point(aes(x = x, y = y), size = 2.5) +
+  geom_segment(data = medias, aes(x = as.numeric(Diet) - 0.3, xend = as.numeric(Diet) + 0.3,
+                                  y = y, yend = y), colour = "#DE1144", linewidth = 1.3) +
+  scale_x_continuous(breaks = 1:5, labels = levels(d$Diet)) +
+  labs(x = "Dieta", y = "log(Max. abundancia)") +
+  theme_classic(base_size = 16)
+```
+
+- **Línea roja**: lo que el modelo predice para cada observación (la media de su grupo)
+- **Líneas grises**: los residuos, la parte que el modelo **no** explica
+
+---
+class: animated, fadeIn
+
+## El ANOVA compara dos modelos
+
+```{r, echo = F, fig.width = 12, fig.height = 4.3}
+library(patchwork)
+G <- mean(d$y)
+p0 <- ggplot(d) +
+  geom_segment(aes(x = x, xend = x, y = y, yend = G), colour = "grey60") +
+  geom_point(aes(x = x, y = y), size = 2.5) +
+  geom_hline(yintercept = G, colour = "#DE1144", linewidth = 1.3) +
+  scale_x_continuous(breaks = 1:5, labels = levels(d$Diet)) +
+  labs(title = "H0: una sola media para todos",
+       subtitle = "Error = SS total = 143.99", x = NULL, y = "log(Max. abundancia)") +
+  theme_classic(base_size = 15) + theme(axis.text.x = element_text(angle = 30, hjust = 1))
+p1 <- ggplot(d) +
+  geom_segment(aes(x = x, xend = x, y = y, yend = media), colour = "grey60") +
+  geom_point(aes(x = x, y = y), size = 2.5) +
+  geom_segment(data = medias, aes(x = as.numeric(Diet) - 0.3, xend = as.numeric(Diet) + 0.3,
+                                  y = y, yend = y), colour = "#DE1144", linewidth = 1.3) +
+  scale_x_continuous(breaks = 1:5, labels = levels(d$Diet)) +
+  labs(title = "H1: una media por grupo",
+       subtitle = "Error = SS dentro = 116.92", x = NULL, y = NULL) +
+  theme_classic(base_size = 15) + theme(axis.text.x = element_text(angle = 30, hjust = 1))
+p0 + p1
+```
+
+- Al pasar de una media a una media por grupo, el error baja: 143.99 − 116.92 = **27.07 = SS entre**
+- **F** pregunta si esa reducción es mayor de lo que esperaríamos por azar → p = 0.034
+- $R^2 = 27.07 / 143.99 = 0.188$: la dieta explica el 18.8% de la variabilidad
+
+---
+class: animated, fadeIn
+
 ## Actividad de ANOVA
 
 Una investigadora desea conocer la efectividad de varios suplementos alimenticios (_feed_) sobre la tasa de crecimiento (_weight_) de los pollos. Los datos están disponibles en la tabla `chickwts` de `R` y se muestran a continuación. Usa ANOVA para examinar la efectividad de los suplementos alimenticios. Ejercicio tomado de: Biostatistics with R. Shahbaba (2012). Springer.
@@ -2079,8 +2141,6 @@ $...+(6.74-10.11)^2+(7.6-10.11)^2=106.63$
 ```{r, echo = F}
 datos_luz <- datos %>%
   filter(Escenario == "Solo efecto de la luz")
-
-datos_luz$Lote <- rep(c("Lote1", "Lote2"), each = nrow(datos_luz)/2)
 
 ```
 
@@ -2800,17 +2860,6 @@ Para los tres efectos: gl numerador = 1, gl denominador = 16 → $F_{crit}(1, 16
 | Luz (B) | 98.66 | 4.49 | 3.0 × 10<sup>-8</sup> | **Rechazamos $H_0$** |
 | Interacción (A×B) | 1.08 | 4.49 | 0.313 | No rechazamos $H_0$ |
 
-<style>
-.codigo-peq .remark-code { font-size: 65%; }
-</style>
-
-.codigo-peq[
-```{r}
-pf(1.829, df1 = 1, df2 = 16, lower.tail = FALSE)   # Fertilizante
-pf(98.656, df1 = 1, df2 = 16, lower.tail = FALSE)  # Luz
-pf(1.084, df1 = 1, df2 = 16, lower.tail = FALSE)   # Interacción
-```
-]
 
 > Conclusión: solo la luz afecta al crecimiento de las plantas. El tipo de fertilizante no tiene efecto, y el efecto de la luz no depende del fertilizante (no hay interacción).
 
@@ -3152,102 +3201,6 @@ summary(lm(Crecimiento ~ Fertilizante * Luz, data = datos_luz))
 ```
 
 > El $R^2$ es el valor `Multiple R-squared` (0.864): el modelo explica el 86% de la variabilidad del crecimiento.
-
----
-class: animated, fadeIn
-
-## _Batch effect_
-
-- Variación sistemática no biológica entre grupos de muestras que fueron procesadas en momentos o condiciones distintas.
-
-Por ejemplo:
-
-- Las plantas del fertilizante orgánico se midieron en un día distinto que las del químico.
-
-- Las muestras de RNA-seq fueron secuenciadas en distintos "batches".
-
-- Se usaron distintos experimentadores o cámaras de luz.
-
-Este factor no es de interés biológico, pero puede introducir ruido o confusión si no se controla.
-
----
-class: animated, fadeIn
-
-## _Batch effect_
-
-```{r echo = F}
-datos_luz$Lote <- rep(c("Lote1", "Lote2"), each = nrow(datos_luz)/2)
-
-head(datos_luz,20)
-```
-
-
----
-class: animated, fadeIn
-
-## Cómo controlamos por el _batch effect_ en ANOVA
-
-```{r}
-modelo_batch <- aov(Crecimiento ~ Fertilizante * Luz + Lote, data = datos_luz)
-summary(modelo_batch)
-```
-
-- `Lote` añadido como **factor de bloqueo** (variable categórica de control)
-
-- `aov()` usa sumas de cuadrados secuenciales (tipo I), así que **el orden importa**: con `Lote` al final, su test indica si el lote explica variación adicional **después** de tener en cuenta `Fertilizante` y `Luz`. Para ajustar los efectos de los factores por el lote, se pondría primero (`Lote + Fertilizante * Luz`).
-
-  - Si el efecto de Lote es significativo → el batch effect está influyendo en el crecimiento
-  - Si no lo es → las diferencias entre lotes no tienen un impacto relevante
-
-
----
-class: animated, fadeIn
-
-## Cómo controlamos por el _batch effect_ en ANOVA
-
-Verificación visual de si hay efecto:
-
-```{r echo = F, fig.align='center'}
-library(ggplot2)
-
-ggplot(datos_luz, aes(x = Lote, y = Crecimiento, fill = Lote)) +
-  geom_violin(trim = FALSE, alpha = 0.7, show.legend = F) +
-  geom_boxplot(width = 0.1, color = "black", alpha = 0.5, show.legend = F) +
-  labs(title = "Efecto de lote (batch effect) sobre el crecimiento") +
-  ggthemes::theme_base(base_size = 13) +
-  theme(plot.background = element_rect(colour = NA)) +  # sin recuadro negro alrededor de la figura
-  scale_fill_brewer(palette="Set2") + 
-  theme(panel.grid=element_blank(),
-        axis.text=element_text(color="black"),
-        panel.background = element_rect(fill = "white"))
-  
-```
-
-
-
----
-class: animated, fadeIn
-
-## Cómo controlamos por el _batch effect_ en ANOVA
-
-```{r}
-anova(aov(Crecimiento ~ Fertilizante * Luz, data = datos_luz),
-      aov(Crecimiento ~ Fertilizante * Luz + Lote, data = datos_luz))
-```
-
-- ¿El modelo 2 reduce el error lo suficiente como para que valga la pena añadirle `Lote`?
-
-- Añadir el efecto lote no mejora significativamente el modelo
-
---
-
-- El RSS (_Residual Sum of Squares_) mide la variación no explicada por el modelo:
-  - Cuanto menor sea el RSS → mejor explica el modelo la variación de los datos
-  - Pero cuidado: añadir más variables nunca aumenta el RSS (casi siempre lo reduce), aunque no sean realmente relevantes
-
-- `Pr(>F)` < 0.05 → el modelo más complejo (con más términos) mejora significativamente el ajuste
-
-- `Pr(>F)` > 0.05 → la mejora del ajuste no es significativa → conviene quedarse con el modelo más simple (principio de parsimonia)
 
 ---
 class: animated, fadeIn
