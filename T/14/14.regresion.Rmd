@@ -370,17 +370,50 @@ class: animated, fadeIn
 <br>
 
 .pull-left[
-<div class="hueco" style="height:200px; width:85%;">
-<span><i class="fa fa-image fa-2x"></i><br>
-Imagen: una recta (simple) y un plano (múltiple)</span>
-</div>
+```{r tipos-lineal, echo = FALSE, fig.width = 6, fig.height = 2.8}
+tema_tipos <- theme_classic(base_size = 13) +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5),
+        axis.text = element_blank(), axis.ticks = element_blank())
+
+# Simple: una recta
+p_simple <- ggplot(pinguinos, aes(x = flipper_len, y = body_mass)) +
+  geom_point(colour = "#1c5253", alpha = 0.35, size = 1.2) +
+  geom_smooth(method = "lm", se = FALSE, colour = "#DE1144", linewidth = 1.2) +
+  labs(title = "Simple", x = "Aleta (mm)", y = "Masa (g)") +
+  tema_tipos
+
+# Múltiple: aleta + sexo (una recta por sexo)
+modelo_tipos <- lm(body_mass ~ flipper_len + sex, data = pinguinos)
+
+p_multiple <- ggplot(pinguinos, aes(x = flipper_len, y = body_mass, colour = sex)) +
+  geom_point(alpha = 0.35, size = 1.2) +
+  geom_line(aes(y = predict(modelo_tipos)), linewidth = 1.2) +
+  scale_colour_manual(values = c(female = "#E69F00", male = "#1c5253"),
+                      labels = c("Hembra", "Macho"), name = NULL) +
+  labs(title = "Múltiple", x = "Aleta (mm)", y = NULL) +
+  tema_tipos +
+  theme(legend.position = c(0.25, 0.9), legend.background = element_blank(),
+        legend.key.height = unit(0.4, "cm"))
+
+p_simple + p_multiple
+```
 ]
 
 .pull-right[
-<div class="hueco" style="height:200px; width:85%;">
-<span><i class="fa fa-image fa-2x"></i><br>
-Imagen: curva en forma de S (logística)</span>
-</div>
+```{r tipos-logistica, echo = FALSE, fig.width = 4.5, fig.height = 2.8}
+# Logística: probabilidad de ser macho según la masa (pingüinos Adelia)
+adelia <- subset(pinguinos, species == "Adelie")
+adelia$macho <- as.numeric(adelia$sex == "male")
+
+ggplot(adelia, aes(x = body_mass, y = macho)) +
+  geom_jitter(height = 0.03, width = 0, colour = "#1c5253", alpha = 0.4, size = 1.4) +
+  geom_smooth(method = "glm", method.args = list(family = binomial),
+              se = FALSE, colour = "#DE1144", linewidth = 1.2) +
+  scale_y_continuous(breaks = c(0, 0.5, 1), labels = c("0 (hembra)", "0.5", "1 (macho)")) +
+  labs(title = "Logística", x = "Masa (g)", y = "P(macho)") +
+  tema_tipos +
+  theme(axis.text.y = element_text())
+```
 ]
 
 ---
@@ -403,9 +436,10 @@ class: animated, fadeIn
   - ¿Y si tiene más de dos categorías (p. ej. tres especies)? → **Variables *dummy*** (lo veremos al final del tema)
 
 ---
-class: inverse, center, middle, animated, fadeIn
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
 
-# Regresión lineal simple
+## Regresión lineal simple
 
 ---
 class: animated, fadeIn
@@ -625,9 +659,10 @@ predict(modelo, newdata = data.frame(flipper_len = c(190, 200, 220)))
 > Con `interval = "prediction"`, `predict()` también da un intervalo de valores probables para un pingüino nuevo.
 
 ---
-class: inverse, center, middle, animated, fadeIn
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
 
-# Supuestos de la regresión
+## Supuestos de la regresión
 
 ---
 class: animated, fadeIn
@@ -768,9 +803,10 @@ ggplot(diag, aes(x = predichos, y = residuos)) +
 > Atajo: `plot(modelo)` dibuja los cuatro gráficos de diagnóstico de `R` base
 
 ---
-class: inverse, center, middle, animated, fadeIn
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
 
-# Contraste de hipótesis y R²
+## Contraste de hipótesis y R²
 
 ---
 class: animated, fadeIn
@@ -823,9 +859,10 @@ class: animated, fadeIn
 > En la regresión simple, $R^2 = r^2$: `r round(cor(pinguinos$flipper_len, pinguinos$body_mass), 3)`² = `r round(summary(modelo)$r.squared, 3)`
 
 ---
-class: inverse, center, middle, animated, fadeIn
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
 
-# Regresión lineal múltiple
+## Regresión lineal múltiple
 
 ---
 class: animated, fadeIn
@@ -1091,9 +1128,10 @@ class: animated, fadeIn
 - **Error estándar de la estimación** (`Residual standard error`): distancia media entre los valores observados y la predicción → al predecir la presión de una persona, nos equivocaremos en promedio unos **`r round(summary(modelo_pa)$sigma, 1)` mmHg**
 
 ---
-class: inverse, center, middle, animated, fadeIn
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
 
-# Variables *dummy*
+## Variables *dummy*
 
 ---
 class: animated, fadeIn
@@ -1198,9 +1236,10 @@ ggplot(pinguinos, aes(flipper_len, body_mass, colour = species)) +
 > Misma pendiente para las tres especies; la ordenada se desplaza según la especie
 
 ---
-class: inverse, center, middle, animated, fadeIn
+layout: false
+class: left, bottom, inverse, animated, bounceInDown
 
-# ANOVA y regresión
+## ANOVA y regresión
 
 ---
 class: animated, fadeIn
