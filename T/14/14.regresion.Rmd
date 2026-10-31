@@ -224,6 +224,7 @@ Marta Coronado ([marta.coronado@uab.cat](mailto:marta.coronado@uab.cat))
 
 .texto-peq { font-size: 75%; }
 .texto-peq .remark-code { font-size: 100%; }
+.codigo-mini .remark-code { font-size: 62%; }
 </style>
 
 ```{r datos, include=FALSE}
@@ -293,10 +294,7 @@ Si estas variables influyen, podemos **predecir** la masa de un pingüino conoci
 ]
 
 .pull-right[
-<div class="hueco" style="height:330px; width:90%;">
-<span><i class="fa fa-image fa-2x"></i><br>
-Imagen: pingüino con flechas desde «aleta», «especie» y «sexo» hacia «masa corporal»</span>
-</div>
+<img src="img/2.png" alt="Aleta, especie y sexo influyen en la masa corporal del pingüino" style="display:block; margin:auto; max-height:330px; max-width:90%;">
 ]
 
 ---
@@ -317,10 +315,7 @@ class: animated, fadeIn
 ]
 
 .pull-right[
-<div class="hueco" style="height:330px; width:90%;">
-<span><i class="fa fa-image fa-2x"></i><br>
-Imagen: esquema x<sub>1</sub>, x<sub>2</sub>, x<sub>3</sub> → y</span>
-</div>
+<img src="img/3.png" alt="Esquema: x1, x2 y x3 explican y" style="display:block; margin:auto; max-height:330px; max-width:90%;">
 ]
 
 ---
@@ -335,10 +330,7 @@ class: animated, fadeIn
 
 ¿Qué factores influyen en la **presión arterial**? ¿La edad, el peso, el colesterol? ¿Su efecto es positivo o negativo?
 
-<div class="hueco" style="height:220px; width:85%;">
-<span><i class="fa fa-image fa-2x"></i><br>
-Imagen: medida de la presión arterial</span>
-</div>
+<img src="img/4.png" alt="Edad y peso influyen positiva o negativamente en la presión arterial" style="display:block; margin:auto; max-height:220px; max-width:85%;">
 ]
 
 .pull-right[
@@ -348,10 +340,8 @@ Imagen: medida de la presión arterial</span>
 
 ¿Qué **edad** tiene un pez a partir de su longitud? ¿Cuántos **días** estará un paciente ingresado?
 
-<div class="hueco" style="height:220px; width:85%;">
-<span><i class="fa fa-image fa-2x"></i><br>
-Imagen: pez con una regla / cama de hospital</span>
-</div>
+<br><br>
+<img src="img/5.png" alt="Predecir la edad de un pez o los días de ingreso" style="display:block; margin:auto; max-height:220px; max-width:85%;">
 ]
 
 ---
@@ -373,13 +363,14 @@ class: animated, fadeIn
 ```{r tipos-lineal, echo = FALSE, fig.width = 6, fig.height = 2.8}
 tema_tipos <- theme_classic(base_size = 13) +
   theme(plot.title = element_text(face = "bold", hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, family = "mono", size = 10),
         axis.text = element_blank(), axis.ticks = element_blank())
 
 # Simple: una recta
 p_simple <- ggplot(pinguinos, aes(x = flipper_len, y = body_mass)) +
   geom_point(colour = "#1c5253", alpha = 0.35, size = 1.2) +
   geom_smooth(method = "lm", se = FALSE, colour = "#DE1144", linewidth = 1.2) +
-  labs(title = "Simple", x = "Aleta (mm)", y = "Masa (g)") +
+  labs(title = "Simple", subtitle = "masa ~ aleta", x = "Aleta (mm)", y = "Masa (g)") +
   tema_tipos
 
 # Múltiple: aleta + sexo (una recta por sexo)
@@ -389,10 +380,11 @@ p_multiple <- ggplot(pinguinos, aes(x = flipper_len, y = body_mass, colour = sex
   geom_point(alpha = 0.35, size = 1.2) +
   geom_line(aes(y = predict(modelo_tipos)), linewidth = 1.2) +
   scale_colour_manual(values = c(female = "#E69F00", male = "#1c5253"),
-                      labels = c("Hembra", "Macho"), name = NULL) +
-  labs(title = "Múltiple", x = "Aleta (mm)", y = NULL) +
+                      labels = c("Hembra", "Macho"), name = "Sexo") +
+  labs(title = "Múltiple", subtitle = "masa ~ aleta + sexo", x = "Aleta (mm)", y = NULL) +
   tema_tipos +
-  theme(legend.position = c(0.25, 0.9), legend.background = element_blank(),
+  theme(legend.position = c(0.22, 0.85), legend.background = element_blank(),
+        legend.title = element_text(size = 10, face = "bold"),
         legend.key.height = unit(0.4, "cm"))
 
 p_simple + p_multiple
@@ -410,7 +402,7 @@ ggplot(adelia, aes(x = body_mass, y = macho)) +
   geom_smooth(method = "glm", method.args = list(family = binomial),
               se = FALSE, colour = "#DE1144", linewidth = 1.2) +
   scale_y_continuous(breaks = c(0, 0.5, 1), labels = c("0 (hembra)", "0.5", "1 (macho)")) +
-  labs(title = "Logística", x = "Masa (g)", y = "P(macho)") +
+  labs(title = "Logística", subtitle = "sexo ~ masa", x = "Masa (g)", y = "P(macho)") +
   tema_tipos +
   theme(axis.text.y = element_text())
 ```
@@ -451,7 +443,7 @@ class: animated, fadeIn
 .pull-left[
 **Ejemplo**: ¿podemos predecir la **masa corporal** de un pingüino a partir de la **longitud de su aleta**?
 
-Datos: `penguins` (incluidos en `R` ≥ 4.5) con `r nrow(pinguinos)` pingüinos de la Antártida.
+Datos: `penguins` con `r nrow(pinguinos)` pingüinos de la Antártida.
 
 ```{r, echo = F}
 kable(head(muestra[, c("flipper_len", "body_mass")], 6),
@@ -460,10 +452,7 @@ kable(head(muestra[, c("flipper_len", "body_mass")], 6),
 ]
 
 .pull-right[
-<div class="hueco" style="height:380px; width:90%;">
-<span><i class="fa fa-image fa-2x"></i><br>
-Imagen: pingüinos de Palmer (Adelia, barbijo y papúa)</span>
-</div>
+<img src="img/palmer.jpg" alt="Pingüinos de la Antártida: papúa, barbijo, Adelia y emperador" style="display:block; margin:auto; max-height:380px; max-width:90%;">
 ]
 
 ---
@@ -588,10 +577,33 @@ class: animated, fadeIn
 ]
 
 .pull-right[
-<div class="hueco" style="height:380px; width:90%;">
-<span><i class="fa fa-image fa-2x"></i><br>
-Imagen: recta extrapolada hasta x = 0 con un pingüino de masa negativa</span>
-</div>
+```{r extrapolacion, echo = FALSE, fig.width = 6, fig.height = 5.2}
+rango <- range(pinguinos$flipper_len)
+x_ext <- 100                 # pingüino hipotético con una aleta de 100 mm
+y_ext <- a + b * x_ext
+
+ggplot(pinguinos, aes(x = flipper_len, y = body_mass)) +
+  annotate("rect", xmin = rango[1], xmax = rango[2], ymin = -Inf, ymax = Inf,
+           fill = "#1c5253", alpha = 0.08) +
+  geom_hline(yintercept = 0, colour = "grey40") +
+  geom_point(size = 1.5, colour = "grey60") +
+  # Recta extrapolada (fuera del rango) y recta ajustada (dentro del rango)
+  annotate("segment", x = 0, xend = rango[1], y = a, yend = a + b * rango[1],
+           colour = "#1c5253", linewidth = 1.2, linetype = "dashed") +
+  annotate("segment", x = rango[1], xend = rango[2], y = a + b * rango[1], yend = a + b * rango[2],
+           colour = "#1c5253", linewidth = 1.2) +
+  # Predicciones absurdas
+  annotate("point", x = c(0, x_ext), y = c(a, y_ext), colour = "#DE1144", size = 4) +
+  annotate("label", x = x_ext + 8, y = y_ext, hjust = 0, colour = "#DE1144", size = 4.5,
+           label = paste0("Aleta de ", x_ext, " mm\n", format(round(y_ext), big.mark = ".", decimal.mark = ","), " g")) +
+  annotate("label", x = 8, y = a, hjust = 0, colour = "#DE1144", size = 4.5,
+           label = paste0("Aleta de 0 mm: ", format(round(a), big.mark = ".", decimal.mark = ","), " g")) +
+  annotate("text", x = mean(rango), y = max(pinguinos$body_mass) + 600,
+           label = "Rango observado", colour = "#1c5253", size = 4.5) +
+  expand_limits(x = 0) +
+  labs(x = "Longitud de la aleta (mm)", y = "Masa corporal (g)") +
+  tema
+```
 ]
 
 ---
@@ -642,8 +654,12 @@ class: animated, fadeIn
 
 ¿Cuál es la masa esperada de un pingüino con una aleta de 200 mm?
 
+Sustituimos en la ecuación de la recta:
+
+$$\widehat{\text{masa}} = a + b \cdot \text{aleta} = `r round(a, 1)` + `r round(b, 2)` \cdot 200 = `r round(round(a, 1) + round(b, 2) * 200, 1)` \text{ g}$$
+
 ```{r}
-coef(modelo)[1] + coef(modelo)[2] * 200
+-5872.1 + 50.15 * 200
 ```
 
 --
@@ -651,10 +667,12 @@ coef(modelo)[1] + coef(modelo)[2] * 200
 O directamente con `predict()`:
 
 ```{r}
-predict(modelo, newdata = data.frame(flipper_len = c(190, 200, 220)))
+predict(modelo, newdata = data.frame(flipper_len = 200))
 ```
 
 --
+
+> La pequeña diferencia con el cálculo a mano se debe al **redondeo** de $a$ y $b$.
 
 > Con `interval = "prediction"`, `predict()` también da un intervalo de valores probables para un pingüino nuevo.
 
@@ -676,10 +694,37 @@ class: animated, fadeIn
 
 > Como en el ANOVA, los supuestos 2 a 4 se comprueban sobre los **residuos**
 
-<div class="hueco" style="height:220px; width:60%;">
-<span><i class="fa fa-image fa-2x"></i><br>
-Imagen: resumen visual de los cuatro supuestos</span>
-</div>
+```{r supuestos-resumen, echo = F, fig.width = 12, fig.height = 2.9}
+set.seed(21)
+sup <- data.frame(x = runif(80, 0, 10), orden = 1:80, residuo = rnorm(80))
+sup$y <- 2 + 0.8 * sup$x + rnorm(80, 0, 1)
+sup$pred <- seq(0, 10, length.out = 80)
+sup$res_pred <- runif(80, -1, 1)   # banda de anchura constante
+
+tema_sup <- theme_classic(base_size = 15) +
+  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+        axis.text = element_blank(), axis.ticks = element_blank())
+
+s1 <- ggplot(sup, aes(x, y)) +
+  geom_point(colour = "#1c5253", size = 1.5) +
+  geom_smooth(method = "lm", se = FALSE, colour = "#DE1144") +
+  labs(title = "1. Lineal", x = "x", y = "y") + tema_sup
+s2 <- ggplot(sup, aes(orden, residuo)) +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey50") +
+  geom_line(colour = "grey75") + geom_point(colour = "#1c5253", size = 1.5) +
+  labs(title = "2. Independencia", x = "Orden", y = "Residuo") + tema_sup
+s3 <- ggplot(sup, aes(pred, res_pred)) +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey50") +
+  geom_hline(yintercept = c(-1.1, 1.1), colour = "#DE1144", linewidth = 1) +
+  geom_point(colour = "#1c5253", size = 1.5) +
+  labs(title = "3. Homocedasticidad", x = "Predichos", y = "Residuo") + tema_sup
+s4 <- ggplot(sup, aes(residuo)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 12, fill = "#1c5253", colour = "white") +
+  stat_function(fun = dnorm, colour = "#DE1144", linewidth = 1) +
+  labs(title = "4. Normalidad", x = "Residuo", y = NULL) + tema_sup
+
+s1 + s2 + s3 + s4 + plot_layout(nrow = 1)
+```
 
 ---
 class: animated, fadeIn
@@ -705,7 +750,7 @@ g2 <- ggplot(lin, aes(tiempo, od)) +
 g1 + g2
 ```
 
-> El crecimiento bacteriano es **exponencial**: transformar con `log(od)` lo vuelve lineal
+> El crecimiento bacteriano es **exponencial**: transformar con `log()` lo vuelve lineal
 
 ---
 class: animated, fadeIn
@@ -756,10 +801,12 @@ h$homo   <- rnorm(150, 0, 1)
 h$hetero <- rnorm(150, 0, 0.25 * h$pred)
 g1 <- ggplot(h, aes(pred, homo)) +
   geom_hline(yintercept = 0, linetype = "dashed", colour = "grey50") +
+  geom_hline(yintercept = c(-2, 2), colour = "#DE1144", linewidth = 1) +
   geom_point(colour = "#1c5253", size = 2.2) +
   labs(title = "Varianza constante ✔", x = "Valores predichos", y = "Residuos") + tema
 g2 <- ggplot(h, aes(pred, hetero)) +
   geom_hline(yintercept = 0, linetype = "dashed", colour = "grey50") +
+  geom_abline(intercept = 0, slope = c(-0.5, 0.5), colour = "#DE1144", linewidth = 1) +
   geom_point(colour = "#1c5253", size = 2.2) +
   labs(title = "Forma de embudo ✘", x = "Valores predichos", y = "Residuos") + tema
 g1 + g2
@@ -789,18 +836,38 @@ g1 + g2
 ---
 class: animated, fadeIn
 
-## Comprobar los supuestos en `R`
+## Comprobar los supuestos con nuestros pingüinos
 
-```{r, fig.width = 12, fig.height = 4}
-diag <- data.frame(predichos = fitted(modelo), residuos = residuals(modelo))
+Representamos los **residuos** frente a los **valores predichos** del modelo `masa ~ aleta`:
+
+.pull-left[
+.texto-peq[
+```{r, fig.width = 6.5, fig.height = 4}
+diag <- data.frame(predichos = fitted(modelo),
+                   residuos = residuals(modelo))
 
 ggplot(diag, aes(x = predichos, y = residuos)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_point(colour = "#1c5253", alpha = 0.6) +
-  labs(x = "Valores predichos (g)", y = "Residuos (g)") + theme_classic(base_size = 16)
+  labs(x = "Valores predichos (g)", y = "Residuos (g)") +
+  theme_classic(base_size = 16)
 ```
+]
+]
 
-> Atajo: `plot(modelo)` dibuja los cuatro gráficos de diagnóstico de `R` base
+.pull-right[
+<br><br>
+
+- Sin patrón curvo → **linealidad** ✔
+
+<br>
+
+- Dispersión parecida en todo el rango → **homocedasticidad** ✔
+
+<br>
+
+- Dos grupos de puntos: ¿falta alguna variable en el modelo? → **la especie** (lo veremos en la regresión múltiple)
+]
 
 ---
 layout: false
@@ -827,10 +894,31 @@ El **p-valor** nos dice si la relación entre $x$ e $y$ es real o podría debers
 ]
 
 .pull-right[
-<div class="hueco" style="height:330px; width:90%;">
-<span><i class="fa fa-image fa-2x"></i><br>
-Imagen: recta plana (H<sub>0</sub>, b = 0) frente a recta con pendiente (H<sub>A</sub>)</span>
-</div>
+```{r hipotesis-pendiente, echo = F, fig.width = 6.5, fig.height = 4.4}
+set.seed(8)
+hip <- data.frame(x = runif(40, 0, 10))
+hip$y_h0 <- 5 + rnorm(40, 0, 1.5)                  # sin relación
+hip$y_ha <- 1.5 + 0.7 * hip$x + rnorm(40, 0, 1.5)  # con relación
+
+tema_hip <- theme_classic(base_size = 15) +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5),
+        axis.text = element_blank(), axis.ticks = element_blank())
+
+h0 <- ggplot(hip, aes(x, y_h0)) +
+  geom_point(colour = "#1c5253", size = 2) +
+  geom_hline(yintercept = mean(hip$y_h0), colour = "#DE1144", linewidth = 1.2) +
+  labs(title = expression(H[0]*":"~~b == 0), x = "x", y = "y") +
+  tema_hip
+
+ha <- ggplot(hip, aes(x, y_ha)) +
+  geom_hline(yintercept = mean(hip$y_ha), colour = "grey60", linewidth = 1, linetype = "dashed") +
+  geom_point(colour = "#1c5253", size = 2) +
+  geom_smooth(method = "lm", se = FALSE, colour = "#DE1144", linewidth = 1.2) +
+  labs(title = expression(H[A]*":"~~b != 0), x = "x", y = NULL) +
+  tema_hip
+
+h0 + ha
+```
 ]
 
 ---
@@ -838,25 +926,27 @@ class: animated, fadeIn
 
 ## `summary()` del modelo
 
-.texto-peq[
+.pull-left[
+.codigo-mini[
 ```{r}
+modelo <- lm(body_mass ~ flipper_len, data = pinguinos)
 summary(modelo)
 ```
 ]
+]
 
----
-class: animated, fadeIn
-
-## Interpretar `summary()`
-
+.pull-right[
+.texto-peq[
 - `Estimate`: los coeficientes: $a$ = `(Intercept)` y $b$ = `flipper_len`
 - `Pr(>|t|)` de `flipper_len`: p-valor del test $H_0: b = 0$ → p < 2·10<sup>-16</sup>, la relación es significativa
 - `Multiple R-squared` = `r round(summary(modelo)$r.squared, 3)`: la longitud de la aleta explica el **`r round(100 * summary(modelo)$r.squared)`%** de la variabilidad de la masa corporal
 - `Residual standard error` = `r round(summary(modelo)$sigma)` g: en promedio, las predicciones se desvían unos `r round(summary(modelo)$sigma)` g de la masa real
 
---
+<br>
 
 > En la regresión simple, $R^2 = r^2$: `r round(cor(pinguinos$flipper_len, pinguinos$body_mass), 3)`² = `r round(summary(modelo)$r.squared, 3)`
+]
+]
 
 ---
 layout: false
@@ -883,10 +973,7 @@ kable(head(datos_pa, 5), col.names = c("Presión", "Edad", "Peso", "Colesterol")
 ]
 
 .pull-right[
-<div class="hueco" style="height:380px; width:90%;">
-<span><i class="fa fa-image fa-2x"></i><br>
-Imagen: paciente con edad, peso y colesterol apuntando a la presión arterial</span>
-</div>
+<img src="img/6.png" alt="Edad, colesterol y peso explican la presión arterial" style="display:block; margin:auto; max-height:380px; max-width:90%;">
 ]
 
 ---
@@ -915,6 +1002,24 @@ $$\hat{y} = a + b_1 x_1 + b_2 x_2 + \dots + b_k x_k$$
 ---
 class: animated, fadeIn
 
+## Supuestos de la regresión múltiple
+
+Los cuatro de la regresión simple…
+
+1. **Relación lineal** → un gráfico de dispersión para cada variable
+2. **Independencia** de los errores
+3. **Homocedasticidad** → residuos frente a valores predichos
+4. **Normalidad** de los errores → QQ plot
+
+--
+
+… y uno nuevo:
+
+**5. No multicolinealidad**: las variables independientes no deben estar muy correlacionadas entre sí
+
+---
+class: animated, fadeIn
+
 ## Primero, visualizamos cada variable por separado
 
 ```{r, echo = F, fig.width = 13, fig.height = 4.6}
@@ -930,24 +1035,6 @@ datos_pa %>%
 ```
 
 > Así comprobamos el supuesto de **linealidad** y nos hacemos una primera idea de cada relación
-
----
-class: animated, fadeIn
-
-## Supuestos de la regresión múltiple
-
-Los cuatro de la regresión simple…
-
-1. **Relación lineal** → un gráfico de dispersión para cada variable
-2. **Independencia** de los errores
-3. **Homocedasticidad** → residuos frente a valores predichos
-4. **Normalidad** de los errores → QQ plot
-
---
-
-… y uno nuevo:
-
-**5. No multicolinealidad**: las variables independientes no deben estar muy correlacionadas entre sí
 
 ---
 class: animated, fadeIn
@@ -1113,19 +1200,25 @@ class: animated, fadeIn
 
 ## ¿Cómo de bueno es el modelo?
 
-- $R$ **múltiple**: correlación entre los valores **predichos** $\hat{y}$ y los **observados** $y$. Cuanto mayor, mejor el modelo → `r round(cor(fitted(modelo_pa), datos_pa$presion), 3)`
+.pull-left[
+.codigo-mini[
+```{r}
+summary(modelo_pa)
+```
+]
+]
 
---
+.pull-right[
+.texto-peq[
+- $R$ **múltiple**: correlación entre los valores **predichos** $\hat{y}$ y los **observados** $y$. No aparece en la salida, pero es $\sqrt{R^2}$ → `r round(cor(fitted(modelo_pa), datos_pa$presion), 3)`
 
-- $R^2$ (**coeficiente de determinación**): proporción de la varianza de $y$ explicada por el modelo → el modelo explica el **`r round(100 * summary(modelo_pa)$r.squared)`%** de la variación de la presión arterial. $R^2 = 1$ sería una predicción perfecta (no pasa nunca)
+- $R^2$ (`Multiple R-squared`, **coeficiente de determinación**): proporción de la varianza de $y$ explicada por el modelo → el modelo explica el **`r round(100 * summary(modelo_pa)$r.squared)`%** de la variación de la presión arterial. $R^2 = 1$ sería una predicción perfecta (no pasa nunca)
 
---
-
-- $R^2$ **ajustado**: corrige por el número de variables independientes. Con muchas variables, $R^2$ **sobreestima** lo bien que el modelo explica los datos → `r round(summary(modelo_pa)$adj.r.squared, 3)`
-
---
+- $R^2$ **ajustado** (`Adjusted R-squared`): corrige por el número de variables independientes. Con muchas variables, $R^2$ **sobreestima** lo bien que el modelo explica los datos → `r round(summary(modelo_pa)$adj.r.squared, 3)`
 
 - **Error estándar de la estimación** (`Residual standard error`): distancia media entre los valores observados y la predicción → al predecir la presión de una persona, nos equivocaremos en promedio unos **`r round(summary(modelo_pa)$sigma, 1)` mmHg**
+]
+]
 
 ---
 layout: false
@@ -1144,6 +1237,11 @@ class: animated, fadeIn
 
 $$\widehat{\text{masa}} = a + b \cdot \text{sexo}$$
 
+```{r dummy-sexo, include = F}
+medias_sexo <- tapply(pinguinos$body_mass, pinguinos$sex, mean)
+b_sexo <- coef(lm(body_mass ~ sex, data = pinguinos))["sexmale"]
+```
+
 --
 
 .pull-left[
@@ -1151,6 +1249,9 @@ $$\widehat{\text{masa}} = a + b \cdot \text{sexo}$$
 - Macho: $\widehat{\text{masa}} = a + b \cdot 1 = a + b$
 
 > $b$ es la **diferencia** de masa entre machos y hembras
+
+- `(Intercept)` = $a$ = **`r round(medias_sexo["female"], 1)` g**: masa media de las **hembras** (referencia)
+- `sexmale` = $b$ = **`r round(b_sexo, 1)` g**: los machos pesan de media **`r round(b_sexo)` g más** que las hembras (`r round(medias_sexo["male"], 1)` − `r round(medias_sexo["female"], 1)`)
 ]
 
 .pull-right[
@@ -1169,7 +1270,7 @@ class: animated, fadeIn
 
 ## ¿Y con más de dos categorías?
 
-La **especie** tiene tres niveles: Adelia, barbijo (*Chinstrap*) y papúa (*Gentoo*). Creamos **variables *dummy***: variables artificiales que indican **presencia (1)** o **ausencia (0)** de cada categoría.
+La **especie** tiene tres niveles: Adelia (*Adelie*), barbijo (*Chinstrap*) y papúa (*Gentoo*). Creamos **variables *dummy***: variables artificiales que indican **presencia (1)** o **ausencia (0)** de cada categoría.
 
 .pull-left[
 **Una columna original**
@@ -1200,40 +1301,21 @@ La **especie** tiene tres niveles: Adelia, barbijo (*Chinstrap*) y papúa (*Gent
 ---
 class: animated, fadeIn
 
-## Variables *dummy* en `R`
-
-`R` crea las variables *dummy* **automáticamente** cuando la variable es un `factor`:
-
-```{r}
-head(model.matrix(~ species, data = pinguinos)[c(1, 150, 300), ])
-```
-
---
-
-```{r}
-modelo_esp <- lm(body_mass ~ flipper_len + species, data = pinguinos)
-coef(modelo_esp)
-```
-
-- `speciesChinstrap` y `speciesGentoo`: diferencia de masa respecto a **Adelia**, para una misma longitud de aleta
-
----
-class: animated, fadeIn
-
 ## Variables *dummy*: tres rectas paralelas
 
 ```{r, echo = F, fig.width = 11, fig.height = 5}
+modelo_esp <- lm(body_mass ~ flipper_len + species, data = pinguinos)
 pinguinos$pred_esp <- fitted(modelo_esp)
 ggplot(pinguinos, aes(flipper_len, body_mass, colour = species)) +
   geom_point(alpha = 0.5, size = 2) +
   geom_line(aes(y = pred_esp), linewidth = 1.3) +
   scale_colour_manual(values = c("#1c5253", "#E69F00", "#DE1144"),
-                      labels = c("Adelia", "Barbijo", "Papúa")) +
+                      labels = c("Adelia (Adelie)", "Barbijo (Chinstrap)", "Papúa (Gentoo)")) +
   labs(x = "Longitud de la aleta (mm)", y = "Masa corporal (g)", colour = "Especie") +
   tema
 ```
 
-> Misma pendiente para las tres especies; la ordenada se desplaza según la especie
+> Misma pendiente para las tres especies; cada recta se desplaza respecto a la de **Adelia** (la referencia)
 
 ---
 layout: false
@@ -1315,15 +1397,6 @@ round(tapply(pinguinos$body_mass,
 - `(Intercept)` = `r round(coef(m1)[1], 1)` = media de Adelia
 - Media de barbijo = `r round(coef(m1)[1], 1)` + `r round(coef(m1)[2], 1)` = **`r round(coef(m1)[1] + coef(m1)[2], 1)`**
 - Media de papúa = `r round(coef(m1)[1], 1)` + `r round(coef(m1)[3], 1)` = **`r round(coef(m1)[1] + coef(m1)[3], 1)`**
-
-**¡Cuidado!** En `summary(m1)`, cada coeficiente lleva su propio t-test, que compara **esa especie con la de referencia**, no todas entre sí. Para todas las parejas → Tukey.
-
-Para cambiar el grupo de referencia:
-
-```{r, eval = F}
-pinguinos$species <-
-  relevel(pinguinos$species, ref = "Gentoo")
-```
 ]
 
 ---
@@ -1337,29 +1410,63 @@ ss0 <- sum(residuals(m0)^2)
 ss1 <- sum(residuals(m1)^2)
 ```
 
-.pull-left[
-**Modelo nulo** ( $H_0$ ): una sola media para todos
-
-$$\hat{y} = a$$
-]
-
-.pull-right[
-**Modelo completo** ( $H_A$ ): una media por especie
-
-$$\hat{y} = a + b_1 \cdot \text{Barbijo} + b_2 \cdot \text{Papúa}$$
-]
+- **Modelo nulo** ( $H_0$ ): una sola media para todos → $\hat{y} = a$
+- **Modelo completo** ( $H_A$ ): una media por especie → $\hat{y} = a + b_1 \cdot \text{Barbijo} + b_2 \cdot \text{Papúa}$
 
 ¿Explica el modelo completo **bastante más** variabilidad que el nulo?
 
+.pull-left[
+.codigo-mini[
 ```{r}
 m0 <- lm(body_mass ~ 1, data = pinguinos)
 anova(m0, m1)
 ```
+]
+]
 
---
+.pull-right[
+.texto-peq[
+- `RSS` del modelo nulo = $SS_{total}$; `RSS` del modelo completo = $SS_{dentro}$. Su diferencia (`Sum of Sq`) es $SS_{entre}$ → **la misma F y el mismo p-valor que `aov()`**
 
-- `RSS` del modelo nulo = $SS_{total}$; `RSS` del modelo completo = $SS_{dentro}$. Su diferencia es $SS_{entre}$ → **la misma F y el mismo p-valor que `aov()`**
-- $R^2 = SS_{entre} / SS_{total}$ = `r round((ss0 - ss1) / ss0, 3)`: la especie explica el `r round(100 * (ss0 - ss1) / ss0)`% de la variabilidad de la masa
+- $R^2 = \dfrac{SS_{entre}}{SS_{total}} = \dfrac{`r format(round(ss0 - ss1), scientific = FALSE)`}{`r format(round(ss0), scientific = FALSE)`} = `r round((ss0 - ss1) / ss0, 3)`$
+
+  La especie explica el **`r round(100 * (ss0 - ss1) / ss0)`%** de la variabilidad de la masa (el mismo `Multiple R-squared` de `summary(m1)`)
+]
+]
+
+---
+class: animated, fadeIn
+
+## `aov()` y `lm()`: el mismo resultado
+
+.pull-left[
+**El ANOVA del tema anterior**
+
+.codigo-mini[
+```{r}
+summary(aov(body_mass ~ species,
+            data = pinguinos))
+```
+]
+]
+
+.pull-right[
+**El mismo modelo con `lm()`**
+
+.codigo-mini[
+```{r}
+anova(lm(body_mass ~ species,
+         data = pinguinos))
+```
+]
+]
+
+<br>
+
+| Situación | Función |
+|:--|:--|
+| Solo factores y queremos comparar grupos (y después Tukey) | `aov()`: `TukeyHSD()` necesita un objeto `aov` |
+| Hay alguna variable numérica, o queremos coeficientes y predicciones | `lm()` |
 
 ---
 class: animated, fadeIn
