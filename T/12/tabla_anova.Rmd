@@ -27,25 +27,21 @@ library(knitr)
 library(kableExtra)
 
 # --- Parámetros ---
-df1_vals <- 1:15      # grados de libertad del numerador
-df2_vals <- 1:42     # grados de libertad del denominador
-alpha <- 0.05        # nivel de significación (cola superior)
+df1_vals <- 1:15                                    # gl del numerador (entre grupos)
+df2_vals <- c(1:30, seq(32, 40, by = 2), seq(45, 70, by = 5),
+              80, 100, 120, 200, Inf)               # gl del denominador (dentro de los grupos)
+alpha <- 0.05                                       # nivel de significación (cola superior)
 
 # --- Calcular valores críticos F ---
 F_table <- sapply(df1_vals, function(df1) qf(1 - alpha, df1 = df1, df2 = df2_vals))
 
 # --- Convertir en data frame ---
-F_table_df <- data.frame(df2 = df2_vals, round(F_table, 4))
-colnames(F_table_df) <- c("df2", paste0("gl1=", df1_vals))
-rownames(F_table_df) <- paste0("gl2=",rownames(F_table_df))
-F_table_df$df2<-rownames(F_table_df)
-rownames(F_table_df) <- NULL
-
-F_table_df <- F_table_df %>%
-  rename(`Grados libertad` = df2)
+F_table_df <- data.frame(gl2 = ifelse(is.infinite(df2_vals), "∞", df2_vals),
+                         round(F_table, 2))
+colnames(F_table_df) <- c("gl₂ \\\\ gl₁", df1_vals)
 
 # --- Mostrar tabla ---
-kable(F_table_df, row.names = F, align = "c",
+kable(F_table_df, row.names = F, align = "c", digits = 2,
       caption = "Valores críticos de la distribución F (cola superior, α = 0.05)") %>%
   kable_styling(
     full_width = FALSE,
@@ -54,7 +50,12 @@ kable(F_table_df, row.names = F, align = "c",
     bootstrap_options = c("condensed")
   ) %>%
   row_spec(0, bold = TRUE, background = "#e6f2ff") %>%
-  column_spec(1, bold = TRUE, background = "#e6f2ff", width = "1.5cm")
+  column_spec(1, bold = TRUE, background = "#e6f2ff", width = "1.5cm") %>%
+  row_spec(1:nrow(F_table_df), extra_css = "line-height: 0.8;")
 ```
-  
-  
+
+<p style="font-size: 9px; text-align: center;">
+<b>gl<sub>1</sub></b>: grados de libertad del numerador (entre grupos, <i>g</i> − 1) ·
+<b>gl<sub>2</sub></b>: grados de libertad del denominador (dentro de los grupos, <i>N</i> − <i>g</i>).<br>
+Si los grados de libertad no aparecen en la tabla, utiliza el valor inmediatamente <b>inferior</b> (es más conservador).
+</p>

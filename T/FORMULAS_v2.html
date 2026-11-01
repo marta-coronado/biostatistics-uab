@@ -4391,7 +4391,347 @@ conjunta de todos los grupos)<br />
 <li><span class="math inline">\(N\)</span> = número total de
 observaciones</li>
 </ul>
+<p><strong>Hipótesis y decisión</strong></p>
+<p><span class="math display">\[
+H_0: \mu_1 = \mu_2 = \dots = \mu_g \qquad H_A: \text{al menos una }
+\mu_i \text{ es diferente}
+\]</span></p>
+<p>Si <span class="math inline">\(F_{obs} &gt; F_{crit}(gl_{entre},\,
+gl_{dentro})\)</span> (tabla F, <span class="math inline">\(\alpha =
+0.05\)</span>) o p-valor <span class="math inline">\(\le \alpha\)</span>
+→ <strong>rechazamos <span class="math inline">\(H_0\)</span></strong> →
+test <em>post hoc</em> (Tukey) para saber qué grupos difieren.</p>
+<p><br></p>
+<p><strong>Coeficiente de determinación y tamaño del efecto</strong></p>
+<p><span class="math display">\[
+\eta^2 = R^2 = \frac{SS_{entre}}{SS_{total}}
+\]</span></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left"><span class="math inline">\(\eta^2\)</span></th>
+<th align="left">Efecto (guía orientativa de Cohen)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><span class="math inline">\(0.01\)</span></td>
+<td align="left">pequeño</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(0.06\)</span></td>
+<td align="left">mediano</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\ge 0.14\)</span></td>
+<td align="left">grande</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
 </div>
+<div id="anova-de-dos-vías" class="section level4">
+<h4>ANOVA de dos vías</h4>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="28%" />
+<col width="27%" />
+<col width="18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Fuente de variación</th>
+<th align="center">Grados de libertad (gl)</th>
+<th align="center">Media cuadrática (MS)</th>
+<th align="center">Estadístico F</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>Factor A</strong></td>
+<td align="center"><span class="math inline">\(gl_A = p -
+1\)</span></td>
+<td align="center"><span class="math inline">\(MS_A =
+\dfrac{SS_A}{gl_A}\)</span></td>
+<td align="center"><span class="math inline">\(F_A =
+\dfrac{MS_A}{MS_{error}}\)</span></td>
+</tr>
+<tr class="even">
+<td align="center"><strong>Factor B</strong></td>
+<td align="center"><span class="math inline">\(gl_B = q -
+1\)</span></td>
+<td align="center"><span class="math inline">\(MS_B =
+\dfrac{SS_B}{gl_B}\)</span></td>
+<td align="center"><span class="math inline">\(F_B =
+\dfrac{MS_B}{MS_{error}}\)</span></td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>Interacción A×B</strong></td>
+<td align="center"><span class="math inline">\(gl_{AB} = (p - 1)(q -
+1)\)</span></td>
+<td align="center"><span class="math inline">\(MS_{AB} =
+\dfrac{SS_{AB}}{gl_{AB}}\)</span></td>
+<td align="center"><span class="math inline">\(F_{AB} =
+\dfrac{MS_{AB}}{MS_{error}}\)</span></td>
+</tr>
+<tr class="even">
+<td align="center"><strong>Error</strong> (residuos)</td>
+<td align="center"><span class="math inline">\(gl_{error} = p\,q\,(n -
+1)\)</span></td>
+<td align="center"><span class="math inline">\(MS_{error} =
+\dfrac{SS_{error}}{gl_{error}}\)</span></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>Total</strong></td>
+<td align="center"><span class="math inline">\(gl_{total} = n\,p\,q -
+1\)</span></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Donde:</strong></p>
+<ul>
+<li><span class="math inline">\(p\)</span> = número de niveles del
+factor A; <span class="math inline">\(q\)</span> = número de niveles del
+factor B</li>
+<li><span class="math inline">\(n\)</span> = número de réplicas por
+combinación de niveles</li>
+</ul>
+<p>Cada F se compara con <span class="math inline">\(F_{crit}(gl_{efecto},\, gl_{error})\)</span>.
+Tamaño del efecto de cada factor (eta cuadrado parcial): <span class="math inline">\(\eta^2_p = \dfrac{SS_A}{SS_A +
+SS_{error}}\)</span></p>
+<hr>
+</div>
+</div>
+<div id="correlación" class="section level2">
+<h2><strong>Correlación</strong></h2>
+<p><strong>Coeficiente de correlación de Pearson</strong> (relación
+<strong>lineal</strong> entre dos variables cuantitativas)</p>
+<p><span class="math display">\[
+r = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i -
+\bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i -
+\bar{x})^2}\,\sqrt{\sum_{i=1}^{n}(y_i - \bar{y})^2}} \qquad -1 \le r \le
+1
+\]</span></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Valor absoluto de <span class="math inline">\(r\)</span></th>
+<th align="left">Interpretación</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><span class="math inline">\(&lt; 0.1\)</span></td>
+<td align="left">No correlación</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(0.1 - 0.3\)</span></td>
+<td align="left">Correlación baja</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(0.3 - 0.5\)</span></td>
+<td align="left">Correlación media</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(0.5 - 0.7\)</span></td>
+<td align="left">Correlación alta</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(0.7 - 1.0\)</span></td>
+<td align="left">Correlación muy alta</td>
+</tr>
+</tbody>
+</table>
+<p>El <strong>signo</strong> de <span class="math inline">\(r\)</span>
+indica la dirección (positiva o negativa); su <strong>valor
+absoluto</strong>, la fuerza.</p>
+<p><br></p>
+<p><strong>Test de la correlación</strong></p>
+<p><span class="math display">\[
+H_0: \rho = 0 \qquad H_A: \rho \ne 0 \qquad\qquad
+t = \frac{r\sqrt{n-2}}{\sqrt{1-r^2}} \qquad gl = n - 2
+\]</span></p>
+<p>donde:</p>
+<ul>
+<li><span class="math inline">\(\rho\)</span>: correlación en la
+<strong>población</strong>; <span class="math inline">\(r\)</span>:
+correlación en la <strong>muestra</strong></li>
+<li>Si <span class="math inline">\(|t| &gt; t_{crit}\)</span> (dos
+colas) → rechazamos <span class="math inline">\(H_0\)</span>: la
+correlación es significativa</li>
+<li>Requiere que ambas variables sean aproximadamente
+<strong>normales</strong>; si no, se usa Spearman</li>
+</ul>
+<p><br></p>
+<p><strong>Coeficiente de correlación de Spearman</strong> (relación
+<strong>monótona</strong>; usa los <strong>rangos</strong>, no
+paramétrico)</p>
+<p><span class="math display">\[
+r_s = 1 - \frac{6\sum_{i=1}^{n} d_i^2}{n(n^2 - 1)} \qquad d_i = R(x_i) -
+R(y_i)
+\]</span></p>
+<p>donde:</p>
+<ul>
+<li><span class="math inline">\(R(x_i)\)</span>, <span class="math inline">\(R(y_i)\)</span>: rangos de cada valor dentro de su
+variable (fórmula válida si <strong>no hay empates</strong>)</li>
+<li><span class="math inline">\(-1 \le r_s \le 1\)</span>; se interpreta
+igual que <span class="math inline">\(r\)</span></li>
+</ul>
+<p><br></p>
+<blockquote>
+<p><strong>Correlación no implica causalidad.</strong></p>
+</blockquote>
+<hr>
+</div>
+<div id="regresión-lineal" class="section level2">
+<h2><strong>Regresión lineal</strong></h2>
+<p><strong>Regresión lineal simple</strong></p>
+<p><span class="math display">\[
+\hat{y} = a + b\,x \qquad\qquad
+b = r \cdot \frac{s_y}{s_x} \qquad\qquad
+a = \bar{y} - b\,\bar{x}
+\]</span></p>
+<p>donde:</p>
+<ul>
+<li><span class="math inline">\(\hat{y}\)</span>: valor
+<strong>predicho</strong> de la variable dependiente; <span class="math inline">\(x\)</span>: variable independiente</li>
+<li><span class="math inline">\(b\)</span> (<strong>pendiente</strong>):
+cambio en <span class="math inline">\(\hat{y}\)</span> cuando <span class="math inline">\(x\)</span> aumenta 1 unidad</li>
+<li><span class="math inline">\(a\)</span> (<strong>ordenada en el
+origen</strong>): valor de <span class="math inline">\(\hat{y}\)</span>
+cuando <span class="math inline">\(x = 0\)</span> (a menudo sin sentido
+biológico)</li>
+<li><span class="math inline">\(s_x\)</span>, <span class="math inline">\(s_y\)</span>: desviaciones típicas de <span class="math inline">\(x\)</span> y de <span class="math inline">\(y\)</span></li>
+<li>Solo se puede predecir <strong>dentro del rango observado</strong>
+de <span class="math inline">\(x\)</span> (no extrapolar)</li>
+</ul>
+<p><br></p>
+<p><strong>Residuo y mínimos cuadrados</strong></p>
+<p><span class="math display">\[
+e_i = y_i - \hat{y}_i \qquad\qquad \text{La recta de regresión minimiza
+} \sum_{i=1}^{n} e_i^2
+\]</span></p>
+<p><br></p>
+<p><strong>Contraste de la pendiente</strong>: <span class="math inline">\(H_0: b = 0\)</span> (no hay relación) frente a
+<span class="math inline">\(H_A: b \ne 0\)</span>. Si p-valor <span class="math inline">\(\le \alpha\)</span> → la relación es
+significativa.</p>
+<p><br></p>
+<p><strong>Supuestos</strong> (se comprueban sobre los
+<strong>residuos</strong>): linealidad, independencia, homocedasticidad
+(varianza constante) y normalidad.</p>
+<p><br></p>
+<p><strong>Bondad del ajuste</strong></p>
+<p><span class="math display">\[
+R^2 = \frac{SS_{explicada}}{SS_{total}} = 1 - \frac{\sum (y_i -
+\hat{y}_i)^2}{\sum (y_i - \bar{y})^2} \qquad\qquad
+\text{En la regresión simple: } R^2 = r^2
+\]</span></p>
+<p>donde:</p>
+<ul>
+<li><span class="math inline">\(R^2\)</span> (<strong>coeficiente de
+determinación</strong>, <code>Multiple R-squared</code>): proporción de
+la variabilidad de <span class="math inline">\(y\)</span> explicada por
+el modelo (<span class="math inline">\(0 \le R^2 \le 1\)</span>). No
+indica la <strong>dirección</strong> de la relación</li>
+<li><span class="math inline">\(R^2\)</span> <strong>ajustado</strong>
+(<code>Adjusted R-squared</code>): corrige por el número de variables
+independientes; es el que se usa para comparar modelos con distinto
+número de variables</li>
+<li><strong>Error estándar de la estimación</strong>
+(<code>Residual standard error</code>): distancia media entre los
+valores observados y los predichos, en las unidades de <span class="math inline">\(y\)</span></li>
+</ul>
+<p><br></p>
+<p><strong>Regresión lineal múltiple</strong></p>
+<p><span class="math display">\[
+\hat{y} = a + b_1 x_1 + b_2 x_2 + \dots + b_k x_k
+\]</span></p>
+<p>donde:</p>
+<ul>
+<li><span class="math inline">\(b_i\)</span>: cambio en <span class="math inline">\(\hat{y}\)</span> cuando <span class="math inline">\(x_i\)</span> aumenta 1 unidad <strong>y las demás
+variables se mantienen constantes</strong></li>
+<li><span class="math inline">\(R\)</span> <strong>múltiple</strong>:
+correlación entre los valores predichos <span class="math inline">\(\hat{y}\)</span> y los observados <span class="math inline">\(y\)</span> (<span class="math inline">\(R =
+\sqrt{R^2}\)</span>)</li>
+</ul>
+<p><br></p>
+<p><strong>Coeficientes estandarizados</strong> (para comparar la
+influencia de variables con unidades distintas)</p>
+<p><span class="math display">\[
+\beta_i = b_i \cdot \frac{s_{x_i}}{s_y}
+\]</span></p>
+<p>La variable con mayor <span class="math inline">\(|\beta_i|\)</span>
+es la que más influye en <span class="math inline">\(y\)</span>.</p>
+<p><br></p>
+<p><strong>Multicolinealidad: tolerancia y VIF</strong></p>
+<p><span class="math display">\[
+T_i = 1 - R^2_i \qquad\qquad VIF_i = \frac{1}{T_i} = \frac{1}{1 - R^2_i}
+\]</span></p>
+<p>donde:</p>
+<ul>
+<li><span class="math inline">\(R^2_i\)</span>: <span class="math inline">\(R^2\)</span> de la regresión de <span class="math inline">\(x_i\)</span> sobre las demás variables
+independientes</li>
+<li><strong>Cuidado</strong> si <span class="math inline">\(T &lt;
+0.1\)</span> o <span class="math inline">\(VIF &gt; 10\)</span>: las
+variables aportan la misma información</li>
+</ul>
+<p><br></p>
+<p><strong>Variables <em>dummy</em></strong> (variables independientes
+categóricas)</p>
+<ul>
+<li>Una variable con <span class="math inline">\(k\)</span> categorías
+se convierte en <strong><span class="math inline">\(k -
+1\)</span></strong> variables <em>dummy</em> (0/1)</li>
+<li>La categoría que no tiene <em>dummy</em> es la
+<strong>referencia</strong>: la ordenada <span class="math inline">\(a\)</span> es su media</li>
+<li>Cada coeficiente <span class="math inline">\(b_i\)</span> es la
+<strong>diferencia</strong> de la categoría <span class="math inline">\(i\)</span> respecto a la referencia</li>
+</ul>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Variables independientes</th>
+<th align="left">Modelo</th>
+<th align="left">En <code>R</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Un factor</td>
+<td align="left">ANOVA de una vía</td>
+<td align="left"><code>lm(y ~ grupo)</code></td>
+</tr>
+<tr class="even">
+<td align="left">Dos factores</td>
+<td align="left">ANOVA de dos vías</td>
+<td align="left"><code>lm(y ~ A * B)</code></td>
+</tr>
+<tr class="odd">
+<td align="left">Una variable numérica</td>
+<td align="left">Regresión lineal simple</td>
+<td align="left"><code>lm(y ~ x)</code></td>
+</tr>
+<tr class="even">
+<td align="left">Varias variables numéricas</td>
+<td align="left">Regresión lineal múltiple</td>
+<td align="left"><code>lm(y ~ x1 + x2 + x3)</code></td>
+</tr>
+<tr class="odd">
+<td align="left">Numéricas y factores</td>
+<td align="left">Regresión con variables <em>dummy</em></td>
+<td align="left"><code>lm(y ~ x + grupo)</code></td>
+</tr>
+</tbody>
+</table>
 </div>
 
 

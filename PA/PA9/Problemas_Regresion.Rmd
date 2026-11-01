@@ -1,0 +1,361 @@
+---
+title: "Problemas de regresión lineal simple y múltiple"
+author: "Bioestadística"
+date: "Diciembre 2026"
+output:
+  html_document:
+    self_contained: true
+    theme: simplex
+    css: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css
+    toc: yes
+    toc_float:
+      collapsed: true
+fontsize: 14pt
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+# Load useful packages
+library(rmdformats)   # for extra formatting if needed
+knitr::opts_chunk$set(echo = TRUE, comment = "", message = FALSE, warning = FALSE,
+                      fig.align = "center")
+library(ggplot2)
+```
+
+```{=html}
+<style>
+body {
+  font-size: 14px;   /* un poco más grande */
+  color: black;      /* asegura texto en negro */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #D9230F;        /* títulos en rojo */
+}
+
+h3, h4, h5, h6 {
+  color: black;        /* títulos en rojo */
+}
+
+h3 {
+  font-size: 1em;   /* tamaño igual al texto normal */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+
+.handwritten {
+  font-family: 'Handlee', monospace;
+  font-size: 1.1em;
+}
+
+.respuesta {
+  background-color: #F0F0F0;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  line-height: 1.2;
+}
+</style>
+```
+
+
+---
+
+En estos problemas **no hace falta ajustar los modelos desde cero**: el objetivo es saber **leer e interpretar** las salidas de `R` y **reflexionar** sobre ellas. Los cálculos se hacen a mano (con calculadora). Recuerda:
+
+- **Regresión lineal simple**: $\hat{y} = a + b\,x$, con $b = r \cdot \dfrac{s_y}{s_x}$ y $a = \bar{y} - b\,\bar{x}$. La pendiente $b$ es el cambio en $y$ cuando $x$ aumenta 1 unidad. Solo se puede predecir **dentro del rango observado** de $x$
+- **Residuo**: $e = y - \hat{y}$ (valor observado menos valor predicho)
+- **Contraste de la pendiente**: $H_0: b = 0$ (no hay relación). En la regresión simple, $R^2 = r^2$
+- **Regresión múltiple**: $\hat{y} = a + b_1 x_1 + \dots + b_k x_k$. Cada $b_i$ es el efecto de $x_i$ **manteniendo constantes las demás**. Para comparar la influencia de variables con unidades distintas → **coeficientes estandarizados**. Con muchas variables → **$R^2$ ajustado**. Multicolinealidad si $T < 0.1$ o $VIF > 10$
+- **Variables *dummy***: una variable categórica con $k$ categorías se convierte en $k - 1$ variables *dummy*; cada coeficiente es la diferencia respecto a la categoría de **referencia**
+- **Supuestos** (sobre los residuos): linealidad, independencia, homocedasticidad y normalidad
+
+**Tabla de valores críticos de t** (dos colas, α = 0.05):
+
+| $gl$ | 29 | 30 | 142 |
+|:-:|:-:|:-:|:-:|
+| $t_{crit}$ | 2.045 | 2.042 | 1.977 |
+
+## 🐈 Problema 1 - El corazón de los gatos
+
+En un experimento clásico de farmacología se pesaron el **cuerpo** (en kg) y el **corazón** (en g) de 144 gatos adultos. Queremos predecir el peso del corazón a partir del peso corporal.
+
+```{r, echo = FALSE, fig.width = 6, fig.height = 4}
+ggplot(MASS::cats, aes(Bwt, Hwt)) +
+  geom_point(alpha = 0.6) +
+  labs(x = "Peso corporal (kg)", y = "Peso del corazón (g)") +
+  theme_classic(base_size = 13)
+```
+
+| | Media | Desviación típica |
+|:--|:-:|:-:|
+| Peso corporal, $x$ (kg) | 2.724 | 0.485 |
+| Peso del corazón, $y$ (g) | 10.631 | 2.435 |
+
+Coeficiente de correlación: $r$ = 0.804. El peso corporal va de 2.0 a 3.9 kg.
+
+### a) ¿Cuál es la variable dependiente y cuál la independiente?
+### b) Calcula a mano la pendiente y la ordenada en el origen. Escribe la ecuación de la recta e interpreta la pendiente.
+### c) Calcula $R^2$ e interprétalo.
+### d) Calcula el estadístico t del test de la correlación y decide si la relación es significativa (α = 0.05).
+### e) Predice el peso del corazón de un gato de **3 kg**. ¿Y el de un gatito de **0.5 kg**? ¿Te fías de las dos predicciones?
+### f) Esta es la salida de `R`. Busca en ella los valores que has calculado. ¿Por qué hay pequeñas diferencias? ¿Qué relación hay entre el estadístico t de la pendiente y el del apartado d)?
+
+```{r}
+modelo_gatos <- lm(Hwt ~ Bwt, data = MASS::cats)
+summary(modelo_gatos)
+```
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | Dependiente: peso del corazón; independiente: peso corporal |
+| (b) | $b$ = 0.804 · 2.435 / 0.485 = 4.04; $a$ = 10.631 − 4.04 · 2.724 = −0.37. $\widehat{\text{corazón}} = -0.37 + 4.04 \cdot \text{peso}$: cada kg más de peso corporal → +4.04 g de corazón |
+| (c) | $R^2 = 0.804^2$ = 0.646: el peso corporal explica el 64.6% de la variabilidad del peso del corazón |
+| (d) | $t$ = 16.1 > 1.977 ($gl$ = 142) → significativa |
+| (e) | 3 kg → 11.75 g. 0.5 kg → 1.65 g, pero es una **extrapolación** (fuera de 2.0–3.9 kg): no es fiable |
+| (f) | `Estimate`: −0.357 y 4.034; `Multiple R-squared`: 0.6466. Las diferencias se deben al **redondeo**. El t de la pendiente (16.12) es el mismo que el del test de la correlación: en la regresión simple, los dos contrastes son equivalentes |
+
+</details>
+
+<br>
+
+## 🌳 Problema 2 - ¿Cuánta madera tiene un cerezo?
+
+En un bosque de Pensilvania se midieron el **diámetro** del tronco (en cm, a 1.37 m del suelo) y el **volumen de madera** (en m³) de 31 cerezos negros (*Prunus serotina*) talados. Los forestales quieren predecir el volumen de madera de un árbol **sin talarlo**, a partir de su diámetro.
+
+```{r}
+arboles <- data.frame(diametro = trees$Girth * 2.54,
+                      volumen  = trees$Volume * 0.0283)
+modelo <- lm(volumen ~ diametro, data = arboles)
+summary(modelo)
+```
+
+### a) ¿Cuál es la variable dependiente y cuál la independiente? Escribe la ecuación de la recta de regresión.
+### b) Interpreta la pendiente y la ordenada en el origen. ¿Tiene sentido biológico la ordenada?
+### c) ¿Es significativa la relación? Interpreta el $R^2$. ¿Cuánto vale el coeficiente de correlación $r$?
+### d) Predice el volumen de madera de un cerezo de **40 cm** de diámetro. ¿Y el de uno de **10 cm**? (Los diámetros medidos van de 21 a 52 cm.)
+### e) Este es el gráfico de los residuos frente a los valores predichos. ¿Se cumple el supuesto de linealidad? ¿Se te ocurre por qué?
+
+```{r, echo = FALSE, fig.width = 6, fig.height = 3.8}
+ggplot(data.frame(pred = fitted(modelo), res = residuals(modelo)), aes(pred, res)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_point(size = 2.5) +
+  geom_smooth(se = FALSE, colour = "#D9230F", method = "loess") +
+  labs(x = "Volumen predicho (m³)", y = "Residuos (m³)") +
+  theme_classic(base_size = 13)
+```
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | Dependiente: volumen; independiente: diámetro. $\widehat{\text{volumen}} = -1.046 + 0.0565 \cdot \text{diámetro}$ |
+| (b) | Cada cm más de diámetro → +0.0565 m³ (unos 56 litros). La ordenada (−1.046 m³ con 0 cm) no tiene sentido biológico |
+| (c) | p < 2·10<sup>-16</sup> → significativa. $R^2$ = 0.935: el diámetro explica el 93.5% de la variabilidad del volumen. $r = \sqrt{0.935}$ = 0.967 |
+| (d) | 40 cm → 1.21 m³. 10 cm → −0.48 m³: absurdo, es una **extrapolación** fuera del rango observado |
+| (e) | No: los residuos forman una U. El volumen crece con el **cuadrado** del diámetro (como un cilindro), no de forma lineal → transformar (log-log) |
+
+</details>
+
+<br>
+
+## 🔍 Problema 3 - ¿Se cumplen los supuestos?
+
+Estos son los gráficos de diagnóstico de cuatro modelos de regresión distintos (A, B y C son residuos frente a valores predichos; D es el QQ plot de los residuos de otro modelo):
+
+```{r, echo = FALSE, fig.width = 8, fig.height = 6}
+library(patchwork)
+set.seed(12)
+n <- 120
+pred <- runif(n, 1, 10)
+tema_diag <- theme_classic(base_size = 12) +
+  theme(axis.text = element_blank(), axis.ticks = element_blank(),
+        plot.title = element_text(face = "bold"))
+residuos_vs_pred <- function(res, titulo) {
+  ggplot(data.frame(pred, res), aes(pred, res)) +
+    geom_hline(yintercept = 0, linetype = "dashed", colour = "grey50") +
+    geom_point(alpha = 0.7) +
+    labs(title = titulo, x = "Valores predichos", y = "Residuos") + tema_diag
+}
+gA <- residuos_vs_pred(rnorm(n), "A")
+gB <- residuos_vs_pred(0.25 * (pred - 5.5)^2 - 1.7 + rnorm(n, 0, 0.6), "B")
+gC <- residuos_vs_pred(rnorm(n, 0, 0.18 * pred), "C")
+gD <- ggplot(data.frame(res = rexp(n) - 1), aes(sample = res)) +
+  stat_qq() + stat_qq_line(colour = "#D9230F") +
+  labs(title = "D", x = "Cuantiles teóricos", y = "Cuantiles observados") + tema_diag
+(gA + gB) / (gC + gD)
+```
+
+### a) Para cada gráfico, indica qué supuesto permite comprobar y si se cumple o no.
+### b) ¿Qué harías en los casos B y C para poder seguir usando un modelo lineal?
+### c) ¿Qué supuesto no se puede comprobar con ninguno de estos gráficos? ¿Cómo nos aseguramos de que se cumple?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | A: linealidad y homocedasticidad → se cumplen. B: **linealidad** → no (forma de U). C: **homocedasticidad** → no (forma de embudo). D: **normalidad** → no (la cola derecha se separa de la línea: asimetría positiva) |
+| (b) | B: transformar $x$ o $y$, o usar un modelo que permita la curvatura. C: transformar $y$ (p. ej. `log(y)`) |
+| (c) | La **independencia** de los errores: se garantiza con el **diseño experimental** (muestreo aleatorio, sin medidas repetidas del mismo individuo…) |
+
+</details>
+
+<br>
+
+## 🌫️ Problema 4 - ¿De qué depende el ozono?
+
+El **ozono troposférico** es un contaminante que daña el aparato respiratorio y las hojas de las plantas. Se forma a partir de otros contaminantes por acción de la **luz solar**, y se acumula más los días **calurosos** y **sin viento**. Con los datos de 111 días del verano de 1973 en Nueva York, ajustamos un modelo de regresión múltiple para explicar la concentración de **ozono** (ppb) a partir de la **radiación solar** (langleys, Ly), la velocidad del **viento** (km/h) y la **temperatura** (°C):
+
+```{r}
+aire <- na.omit(airquality[, 1:4])
+aire$Wind <- aire$Wind * 1.609          # mph -> km/h
+aire$Temp <- (aire$Temp - 32) / 1.8     # ºF -> ºC
+names(aire) <- c("ozono", "radiacion", "viento", "temperatura")
+
+modelo_oz <- lm(ozono ~ radiacion + viento + temperatura, data = aire)
+summary(modelo_oz)
+```
+
+Además, sabemos que:
+
+| Variable | Coeficiente estandarizado β | VIF |
+|:--|:-:|:-:|
+| Radiación | 0.164 | 1.10 |
+| Viento | −0.356 | 1.33 |
+| Temperatura | 0.473 | 1.43 |
+
+### a) Escribe la ecuación del modelo.
+### b) Interpreta los coeficientes de la temperatura y del viento.
+### c) ¿Qué variables tienen un efecto significativo sobre el ozono (α = 0.05)?
+### d) ¿Qué variable influye **más** en la concentración de ozono? ¿Por qué no podemos responder mirando directamente los coeficientes de la columna `Estimate`?
+### e) Predice la concentración de ozono de un día con una radiación de 200 Ly, viento de 16 km/h y 27 °C.
+### f) Interpreta el $R^2$, el $R^2$ ajustado y el error estándar de la estimación (`Residual standard error`). ¿Hay problemas de multicolinealidad?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | $\widehat{\text{ozono}} = -11.48 + 0.060 \cdot \text{radiación} - 2.07 \cdot \text{viento} + 2.97 \cdot \text{temperatura}$ |
+| (b) | +1 °C → +2.97 ppb de ozono; +1 km/h de viento → −2.07 ppb (manteniendo constantes las demás variables) |
+| (c) | Las tres (radiación p = 0.011; viento y temperatura p < 0.001). La ordenada no lo es, pero no importa |
+| (d) | La temperatura (β = 0.47). Los $b$ dependen de las unidades de cada variable y no son comparables |
+| (e) | ≈ 47.6 ppb |
+| (f) | $R^2$ = 0.606 (61% explicado); $R^2$ ajustado = 0.595; error medio de ±21 ppb. Todos los VIF < 10 → no hay multicolinealidad |
+
+</details>
+
+<br>
+
+## 🦴 Problema 5 - Fémur, tibia y estatura
+
+En antropología forense se estima la **estatura** de una persona a partir de la longitud de sus huesos largos. Con datos de 30 personas (datos simulados), ajustamos tres modelos: con el fémur, con la tibia y con los dos huesos (todas las medidas en cm).
+
+```{r, echo = FALSE}
+set.seed(3)
+femur  <- round(rnorm(30, 46, 2.5), 1)
+tibia  <- round(0.82 * femur + rnorm(30, 0, 0.45), 1)
+altura <- round(65 + 1.4 * femur + 1.3 * tibia + rnorm(30, 0, 3.5), 1)
+huesos <- data.frame(femur, tibia, altura)
+```
+
+```{r}
+coef(summary(lm(altura ~ femur, data = huesos)))   # R² = 0.758
+coef(summary(lm(altura ~ tibia, data = huesos)))   # R² = 0.765
+summary(lm(altura ~ femur + tibia, data = huesos))
+cor(huesos$femur, huesos$tibia)
+```
+
+### a) En los modelos con un solo hueso, ¿es significativo su efecto? ¿Y en el modelo con los dos huesos? ¿Qué te llama la atención?
+### b) En el modelo con los dos huesos, ¿qué contrasta la `F-statistic`? ¿Es significativa? ¿Cómo puede ser, si ninguno de los dos coeficientes lo es?
+### c) Calcula la tolerancia y el VIF. (Con dos variables independientes, $T = 1 - r^2$, donde $r$ es la correlación entre ellas.) ¿Qué ocurre?
+### d) ¿Qué modelo elegirías para estimar la estatura? Compara los $R^2$ ajustados.
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | Por separado, los dos son muy significativos (p < 10<sup>-9</sup>). Juntos, ninguno lo es (p = 0.310 y 0.173), aunque el $R^2$ apenas cambia (0.774) |
+| (b) | La F contrasta si el modelo **en conjunto** explica algo (todos los $b_i$ = 0). F = 46.3, p < 0.001 → sí. Los dos huesos aportan la misma información: juntos predicen bien, pero el modelo no puede separar el efecto de cada uno |
+| (c) | $r$ = 0.968 → $T$ = 1 − 0.937 = 0.063 < 0.1; $VIF$ = 15.8 > 10 → **multicolinealidad** |
+| (d) | Un solo hueso (p. ej. la tibia): $R^2$ ajustado 0.757, igual que con los dos (0.757). Añadir el segundo hueso no mejora el modelo y lo hace más difícil de interpretar |
+
+</details>
+
+<br>
+
+## 🌱 Problema 6 - Variables *dummy* y ANOVA
+
+Se comparó el **peso seco** (g) de plantas sometidas a dos tratamientos (`trt1` y `trt2`) y de un grupo control (`ctrl`), con 10 plantas por grupo. En lugar de `aov()`, el análisis se hizo con `lm()`:
+
+```{r}
+modelo_pl <- lm(weight ~ group, data = PlantGrowth)
+summary(modelo_pl)
+```
+
+### a) ¿Cuántas variables *dummy* ha creado `R`? ¿Cuál es la categoría de referencia?
+### b) Calcula la media del peso seco de cada grupo a partir de los coeficientes.
+### c) ¿Qué compara exactamente el p-valor de la fila `grouptrt2` (p = 0.088)? ¿Sirve para saber si `trt1` y `trt2` son diferentes?
+### d) ¿Qué contrasta la `F-statistic` de la última línea? ¿Qué concluyes? Interpreta el $R^2$. ¿Cuál sería el siguiente paso del análisis?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | 2 *dummy* (3 grupos − 1): `grouptrt1` y `grouptrt2`. Referencia: `ctrl` |
+| (b) | ctrl = 5.032; trt1 = 5.032 − 0.371 = 4.661; trt2 = 5.032 + 0.494 = 5.526 |
+| (c) | Compara solo `trt2` con `ctrl`. No dice nada de `trt1` frente a `trt2` |
+| (d) | Es el ANOVA de una vía: F = 4.85, p = 0.016 → al menos una media es diferente. $R^2$ = 0.264. Siguiente paso: test *post hoc* (Tukey) |
+
+</details>
+
+<br>
+
+## 🤔 Problema 7 - Preguntas rápidas
+
+### a) En una regresión simple, $r$ = 0.5, $s_y$ = 10, $s_x$ = 2, $\bar{x}$ = 4 e $\bar{y}$ = 20. Calcula la pendiente y la ordenada en el origen.
+### b) En una regresión queremos incluir el **tipo de tejido** (hígado, músculo, cerebro, riñón y piel). ¿Cuántas variables *dummy* necesitamos?
+### c) Al añadir una nueva variable a un modelo de regresión múltiple, el $R^2$ pasa de 0.40 a 0.41. ¿Es mejor el nuevo modelo?
+### d) Un pingüino tiene un residuo de +300 g en el modelo que predice la masa a partir de la aleta. ¿Qué significa?
+### e) Con datos de 5000 personas, la pendiente de la edad sobre la presión arterial es $b$ = 0.05 mmHg por año, con p < 0.001. ¿Es un efecto importante?
+### f) Un modelo predice la expresión de un gen a partir de la dosis de un fármaco con $R^2$ = 0.95, con dosis de 0 a 10 mg. ¿Podemos usarlo para predecir la expresión con 50 mg? ¿Demuestra que el fármaco **causa** el cambio de expresión?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | $b$ = 0.5 · 10/2 = 2.5; $a$ = 20 − 2.5 · 4 = 10 |
+| (b) | 5 − 1 = 4 |
+| (c) | No necesariamente: el $R^2$ siempre sube al añadir variables. Hay que mirar el $R^2$ ajustado y el p-valor de la nueva variable |
+| (d) | Pesa 300 g **más** de lo que predice el modelo para su longitud de aleta (observado > predicho) |
+| (e) | Significativo no es lo mismo que importante: 0.05 mmHg por año son 0.5 mmHg en 10 años, un efecto muy pequeño |
+| (f) | No: 50 mg es una **extrapolación**. Un $R^2$ alto no demuestra causalidad: depende del **diseño** (solo un experimento con las dosis asignadas al azar la apoya) |
+
+</details>
+
+<br>
+
+## 📚 Fuentes
+
+- Fisher, R. A. (1947). The analysis of covariance method for the relation between a part and the whole. *Biometrics*, 3(2), 65–68. Datos en Venables, W. N. y Ripley, B. D. (2002). *Modern Applied Statistics with S*. Springer. Disponibles en R: `MASS::cats`.
+- Ryan, T. A., Joiner, B. L. y Ryan, B. F. (1976). *The Minitab Student Handbook*. Duxbury Press. Disponibles en R: `trees`.
+- Chambers, J. M., Cleveland, W. S., Kleiner, B. y Tukey, P. A. (1983). *Graphical Methods for Data Analysis*. Wadsworth. Disponibles en R: `airquality`.
+- Dobson, A. J. (1983). *An Introduction to Statistical Modelling*. Chapman and Hall. Disponibles en R: `PlantGrowth`.
+- Los datos de los Problemas 3 y 5 son simulados.

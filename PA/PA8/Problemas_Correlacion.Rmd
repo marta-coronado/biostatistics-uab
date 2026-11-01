@@ -1,0 +1,311 @@
+---
+title: "Problemas de correlación"
+author: "Bioestadística"
+date: "Diciembre 2026"
+output:
+  html_document:
+    self_contained: true
+    theme: simplex
+    css: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css
+    toc: yes
+    toc_float:
+      collapsed: true
+fontsize: 14pt
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+# Load useful packages
+library(rmdformats)   # for extra formatting if needed
+knitr::opts_chunk$set(echo = TRUE, comment = "", message = FALSE, warning = FALSE,
+                      fig.align = "center")
+library(ggplot2)
+```
+
+```{=html}
+<style>
+body {
+  font-size: 14px;   /* un poco más grande */
+  color: black;      /* asegura texto en negro */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #D9230F;        /* títulos en rojo */
+}
+
+h3, h4, h5, h6 {
+  color: black;        /* títulos en rojo */
+}
+
+h3 {
+  font-size: 1em;   /* tamaño igual al texto normal */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+
+.handwritten {
+  font-family: 'Handlee', monospace;
+  font-size: 1.1em;
+}
+
+.respuesta {
+  background-color: #F0F0F0;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  line-height: 1.2;
+}
+</style>
+```
+
+
+---
+
+En estos problemas **no hace falta calcular las correlaciones desde cero**: el objetivo es saber **leer e interpretar** los resultados y **reflexionar** sobre ellos. Los cálculos se hacen a mano (con calculadora). Recuerda:
+
+- **Coeficiente de correlación de Pearson** ( $r$ ): mide la fuerza y la dirección de una relación **lineal**, entre −1 y 1. El signo indica la dirección; el valor absoluto, la fuerza
+- **Coeficiente de Spearman** ( $r_s$ ): es la correlación de Pearson calculada sobre los **rangos**. Sirve para relaciones **monótonas** no lineales, datos ordinales, muestras pequeñas o con valores extremos. Sin empates: $r_s = 1 - \dfrac{6\sum d_i^2}{n(n^2-1)}$, con $d_i$ la diferencia de rangos
+- **Test de la correlación**: $H_0: \rho = 0$. Estadístico $t = \dfrac{r\sqrt{n-2}}{\sqrt{1-r^2}}$, con $gl = n - 2$. Rechazamos $H_0$ si $|t_{obs}| > t_{crit}$
+- $r^2$: proporción de la variabilidad de una variable que se explica por la otra
+- **Correlación no implica causalidad**, y una correlación **significativa** no tiene por qué ser **fuerte**
+
+**Tabla de valores críticos de t** (dos colas, α = 0.05):
+
+| $gl$ | 3 | 6 | 9 | 10 | 66 | 340 |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| $t_{crit}$ | 3.182 | 2.447 | 2.262 | 2.228 | 1.997 | 1.967 |
+
+## 🐧 Problema 1 - El pico de los pingüinos
+
+Entre 2007 y 2009, Kristen Gorman midió el pico de **342 pingüinos** de tres especies (Adelia, barbijo y papúa) en el archipiélago Palmer (Antártida). Queremos saber si la **longitud** y la **profundidad** (altura) del pico están relacionadas.
+
+```{r, echo = FALSE, fig.width = 6, fig.height = 4}
+pin <- na.omit(penguins[, c("species", "bill_len", "bill_dep")])
+ggplot(pin, aes(bill_len, bill_dep)) +
+  geom_point(alpha = 0.6) +
+  labs(x = "Longitud del pico (mm)", y = "Profundidad del pico (mm)") +
+  theme_classic(base_size = 13)
+```
+
+Con todos los pingüinos juntos, el coeficiente de correlación de Pearson es **r = −0.235**.
+
+### a) Escribe las hipótesis nula y alternativa del test de correlación.
+### b) Interpreta el signo y la fuerza de la correlación. Calcula $r^2$ e interprétalo.
+### c) Calcula el estadístico t y decide si la correlación es significativa (α = 0.05).
+### d) Ahora separamos los pingüinos por especie. ¿Qué ocurre? Calcula el estadístico t para el pingüino barbijo y decide si es significativo. ¿Cómo explicas que la correlación cambie de signo?
+
+```{r, echo = FALSE, fig.width = 7, fig.height = 4}
+ggplot(pin, aes(bill_len, bill_dep, colour = species)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_colour_manual(values = c("#1c5253", "#E69F00", "#D9230F"),
+                      labels = c("Adelia", "Barbijo", "Papúa")) +
+  labs(x = "Longitud del pico (mm)", y = "Profundidad del pico (mm)", colour = "Especie") +
+  theme_classic(base_size = 13)
+```
+
+| Especie | *n* | *r* |
+|:--|:-:|:-:|
+| Adelia | 151 | 0.391 |
+| Barbijo | 68 | 0.654 |
+| Papúa | 123 | 0.643 |
+
+### e) ¿Podemos concluir que un pico más largo **provoca** un pico más profundo?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | $H_0$: $\rho = 0$ (no hay correlación lineal); $H_A$: $\rho \neq 0$ |
+| (b) | Negativa y débil; $r^2$ = 0.055: la longitud explica solo el 5.5% de la variabilidad de la profundidad |
+| (c) | $t$ = −4.46; $|t|$ > 1.967 → correlación significativa |
+| (d) | Dentro de cada especie la correlación es **positiva** y moderada. Barbijo: $t$ = 7.01 > 1.997, significativa. La especie es una variable de confusión (paradoja de Simpson) |
+| (e) | No: correlación no implica causalidad. Ambas medidas dependen, por ejemplo, del tamaño del individuo |
+
+</details>
+
+<br>
+
+## 🧪 Problema 2 - ¿Pearson o Spearman?
+
+Treloar (1974) midió la **velocidad inicial** de una reacción enzimática (en cuentas/min²) a distintas **concentraciones de sustrato** (en ppm), en células tratadas con puromicina:
+
+```{r, echo = FALSE}
+pu <- Puromycin[Puromycin$state == "treated", c("conc", "rate")]
+knitr::kable(t(pu), col.names = NULL)
+```
+
+```{r, echo = FALSE, fig.width = 6, fig.height = 3.8}
+ggplot(pu, aes(conc, rate)) +
+  geom_point(size = 2.5) +
+  labs(x = "Concentración de sustrato (ppm)", y = "Velocidad (cuentas/min²)") +
+  theme_classic(base_size = 13)
+```
+
+### a) Describe la relación entre las dos variables a partir del gráfico.
+### b) La correlación de Pearson es **r = 0.831** (p = 0.0008) y la de Spearman, **ρ = 0.975** (p < 0.001). ¿Por qué son tan diferentes? ¿Cuál es más adecuada aquí?
+### c) Comprueba con el estadístico t que la correlación de Pearson es significativa (α = 0.05).
+### d) Un compañero dice: "r = 0.83 es una correlación lineal fuerte, así que puedo ajustar una recta `lm(rate ~ conc)` sin problemas". ¿Estás de acuerdo?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | Positiva y monótona, pero **no lineal**: la velocidad sube rápido y luego se satura (cinética de Michaelis-Menten) |
+| (b) | Pearson mide relación **lineal**; Spearman, relación **monótona**. Aquí es más adecuada Spearman |
+| (c) | $t$ = 4.72 > 2.228 ($gl$ = 10) → significativa |
+| (d) | No: un $r$ alto no garantiza que la relación sea lineal. Hay que mirar siempre el gráfico; transformar (p. ej. `log(conc)`) o usar un modelo no lineal |
+
+</details>
+
+<br>
+
+## 📈 Problema 3 - Cuatro conjuntos de datos con la misma correlación
+
+El estadístico Francis Anscombe (1973) construyó cuatro conjuntos de datos de 11 observaciones cada uno. Al calcular la correlación y la recta de regresión, los cuatro dan **prácticamente el mismo resultado**:
+
+| Conjunto | $r$ | Recta de regresión |
+|:-:|:-:|:-:|
+| I | 0.816 | $\hat{y} = 3.0 + 0.5\,x$ |
+| II | 0.816 | $\hat{y} = 3.0 + 0.5\,x$ |
+| III | 0.816 | $\hat{y} = 3.0 + 0.5\,x$ |
+| IV | 0.817 | $\hat{y} = 3.0 + 0.5\,x$ |
+
+### a) Calcula el estadístico t para $r$ = 0.816 y decide si la correlación es significativa (α = 0.05).
+### b) Ahora mira los datos. ¿En qué conjuntos tiene sentido resumir la relación con el coeficiente de Pearson? Describe qué ocurre en cada uno.
+
+```{r, echo = FALSE, fig.width = 7, fig.height = 5.5}
+ans <- data.frame(
+  conjunto = rep(c("I", "II", "III", "IV"), each = 11),
+  x = c(anscombe$x1, anscombe$x2, anscombe$x3, anscombe$x4),
+  y = c(anscombe$y1, anscombe$y2, anscombe$y3, anscombe$y4))
+ggplot(ans, aes(x, y)) +
+  geom_point(size = 2.5) +
+  geom_smooth(method = "lm", se = FALSE, colour = "#D9230F", fullrange = TRUE) +
+  facet_wrap(~ conjunto, labeller = label_both) +
+  theme_classic(base_size = 13)
+```
+
+### c) En el conjunto III, la correlación de Spearman es $r_s$ = 0.991, mucho mayor que la de Pearson. ¿Por qué?
+### d) ¿Qué lección sacas de este problema?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | $t$ = 4.24 > 2.262 ($gl$ = 9) → significativa en los cuatro conjuntos |
+| (b) | Solo en el I (relación lineal con dispersión). II: relación **curva**; III: lineal perfecta salvo un **valor atípico**; IV: no hay relación, la correlación la crea **un único punto** extremo |
+| (c) | Spearman usa los rangos: el valor atípico pasa a ser simplemente el valor más alto y pierde su peso |
+| (d) | Los mismos números pueden venir de datos muy distintos: hay que **representar siempre los datos** antes de calcular |
+
+</details>
+
+<br>
+
+## 🪰 Problema 4 - Altitud y tamaño del ala
+
+Se midió el tamaño medio del ala (en mm) de *Drosophila melanogaster* en 8 poblaciones situadas a distintas altitudes (datos ilustrativos):
+
+| Población | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|:--|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Altitud (m) | 120 | 450 | 800 | 1100 | 1500 | 1900 | 2300 | 2700 |
+| Ala (mm) | 2.10 | 2.18 | 2.15 | 2.30 | 2.26 | 2.41 | 2.39 | 2.52 |
+
+### a) Con solo 8 poblaciones, ¿por qué puede ser preferible el coeficiente de Spearman al de Pearson?
+### b) Calcula a mano el coeficiente de Spearman: asigna los rangos, calcula las diferencias $d_i$ y $\sum d_i^2$.
+### c) Esta es la salida de `R`. Comprueba tu resultado e interpreta el p-valor.
+
+```{r}
+altitud <- c(120, 450, 800, 1100, 1500, 1900, 2300, 2700)
+ala     <- c(2.10, 2.18, 2.15, 2.30, 2.26, 2.41, 2.39, 2.52)
+cor.test(altitud, ala, method = "spearman")
+```
+
+### d) ¿Podemos concluir que vivir a más altitud **provoca** alas más grandes? ¿Qué otra variable podría explicar la relación?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | Con $n$ = 8 no podemos comprobar bien la normalidad, y un solo valor extremo pesaría mucho. Spearman no requiere normalidad |
+| (b) | Rangos del ala: 1, 3, 2, 5, 4, 7, 6, 8; $d_i$: 0, −1, 1, −1, 1, −1, 1, 0; $\sum d_i^2$ = 6; $r_s$ = 1 − 36/504 = 0.929 |
+| (c) | $r_s$ = 0.929, p = 0.002 < 0.05 → correlación positiva, muy alta y significativa |
+| (d) | No: es un estudio observacional. La **temperatura** (más baja a más altitud) podría ser la causa |
+
+</details>
+
+<br>
+
+## 🐧 Problema 5 - Una matriz de correlaciones
+
+Con los mismos pingüinos del Problema 1, calculamos la correlación entre las cuatro medidas morfológicas: longitud del pico (`bill_len`), profundidad del pico (`bill_dep`), longitud de la aleta (`flipper_len`) y masa corporal (`body_mass`).
+
+```{r}
+morfo <- na.omit(penguins[, c("bill_len", "bill_dep", "flipper_len", "body_mass")])
+nrow(morfo)
+round(cor(morfo), 2)
+```
+
+### a) ¿Por qué la diagonal vale 1? ¿Por qué la matriz es simétrica?
+### b) ¿Qué par de variables tiene la correlación más fuerte? Interprétala y calcula qué porcentaje de la variabilidad de la masa explica la aleta.
+### c) La profundidad del pico tiene correlaciones **negativas** con las demás medidas. ¿Significa que los pingüinos con picos más profundos son más pequeños? (Pista: recuerda el Problema 1.)
+### d) Queremos predecir la masa corporal con una regresión múltiple que incluya la aleta y la longitud del pico. ¿Habrá problemas de multicolinealidad? (Con dos variables independientes, $VIF = \dfrac{1}{1 - r^2}$, donde $r$ es la correlación entre ellas.)
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | Cada variable está perfectamente correlacionada consigo misma ($r$ = 1). La correlación es simétrica: `cor(x, y)` = `cor(y, x)` |
+| (b) | Aleta y masa: $r$ = 0.87, positiva y muy alta. $r^2$ = 0.76 → la aleta explica el 76% de la variabilidad de la masa |
+| (c) | No necesariamente: mezcla tres especies. Dentro de cada especie, la relación es positiva (paradoja de Simpson) |
+| (d) | $r$ = 0.66 → $VIF$ = 1/(1 − 0.44) = 1.77 < 10 → no hay multicolinealidad preocupante |
+
+</details>
+
+<br>
+
+## 🤔 Problema 6 - Preguntas rápidas
+
+### a) La correlación de Pearson entre dos variables es r = 0. ¿Podemos concluir que no hay ninguna relación entre ellas?
+### b) La correlación entre la expresión de dos genes es r = −0.9. ¿Qué porcentaje de la variabilidad de uno explica el otro?
+### c) Un estudio encontró una correlación de r = 0.79 entre el consumo de chocolate de un país y su número de premios Nobel por habitante. ¿Comer chocolate hace a la gente más inteligente?
+### d) En un estudio con 2000 personas, la correlación entre dos variables es r = 0.12 y el p-valor es menor que 0.001. ¿Es una relación fuerte?
+### e) En otro estudio, con solo 5 individuos, se obtiene r = 0.8. Calcula el estadístico t. ¿Es significativa? ¿Significa que no hay relación?
+### f) Medimos la longitud de unos peces en centímetros y calculamos su correlación con el peso. Si repetimos el cálculo con la longitud en milímetros, ¿cambia $r$?
+
+<br>
+<details>
+<summary>Respuestas</summary>
+
+| Apartado | Resultado |
+|:--|:--|
+| (a) | No: $r$ solo mide relación **lineal**. Puede haber una relación curva (p. ej. en forma de U) |
+| (b) | $r^2$ = 0.81 → el 81% |
+| (c) | No: correlación no implica causalidad. Una variable de confusión (la riqueza del país) explica ambas |
+| (d) | No: $r^2$ = 0.014, explica solo el 1.4%. Con muestras grandes, correlaciones muy débiles ya son significativas |
+| (e) | $t$ = 2.31 < 3.182 ($gl$ = 3) → no significativa. No demuestra que no haya relación: con $n$ = 5 el test tiene muy poca potencia |
+| (f) | No: $r$ no tiene unidades y no cambia al multiplicar una variable por una constante positiva |
+
+</details>
+
+<br>
+
+## 📚 Fuentes
+
+- Gorman, K. B., Williams, T. D. y Fraser, W. R. (2014). Ecological sexual dimorphism and environmental variability within a community of Antarctic penguins (genus *Pygoscelis*). *PLoS ONE*, 9(3), e90081. Disponibles en R (≥ 4.5): `penguins`.
+- Treloar, M. A. (1974). *Effects of Puromycin on Galactosyltransferase in Golgi Membranes*. Tesis de máster, Universidad de Toronto. Datos en Bates, D. M. y Watts, D. G. (1988). *Nonlinear Regression Analysis and Its Applications*. Wiley. Disponibles en R: `Puromycin`.
+- Anscombe, F. J. (1973). Graphs in statistical analysis. *The American Statistician*, 27(1), 17–21. Disponibles en R: `anscombe`.
+- Messerli, F. H. (2012). Chocolate consumption, cognitive function, and Nobel laureates. *The New England Journal of Medicine*, 367, 1562–1564.
+- Los datos del Problema 4 son ilustrativos.

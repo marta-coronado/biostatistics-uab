@@ -1081,6 +1081,11 @@ class: animated, fadeIn
 - **Predice** $y$ a partir de $x$: $y = \beta_0 + \beta_1 x + \varepsilon$
 - No es simétrica: $y$ es la respuesta, $x$ la explicativa
 - Es un modelo lineal, como el ANOVA: `lm(y ~ x)`
+
+- $r$ = coeficiente de **correlación** (`cor()`): de -1 a 1
+- $R^2$ = coeficiente de **determinación** (`lm()`): de 0 a 1
+
+> En la regresión lineal simple, $R^2 = r^2$: el 55% de la variabilidad de la anchura del sépalo se explica por su longitud. Al elevar al cuadrado se **pierde el signo**: $R^2$ dice cuánto explica el modelo, pero **no la dirección** de la relación
 ]
 
 .pull-right[
@@ -1093,11 +1098,6 @@ modelo <- lm(Sepal.Width ~ Sepal.Length,
              data = setosa)
 summary(modelo)$r.squared
 ```
-
-- $r$ = coeficiente de **correlación** (`cor()`): de -1 a 1
-- $R^2$ = coeficiente de **determinación** (`lm()`): de 0 a 1
-
-> En la regresión lineal simple, $R^2 = r^2$: el 55% de la variabilidad de la anchura del sépalo se explica por su longitud. Al elevar al cuadrado se **pierde el signo**: $R^2$ dice cuánto explica el modelo, pero **no la dirección** de la relación
 ]
 
 ---

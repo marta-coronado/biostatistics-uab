@@ -24,15 +24,15 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Tema 9b: Prueba de t-test](T/10/12.TTest_pt2.html) ([PDF](T/10/12.TTest_pt2.pdf))
 - [Tema 10: Tamaño del efecto](T/11/11.html) ([PDF](T/11/11.pdf))
 - [Tema 11: ANOVA](T/12/13.ANOVA_ampliado.html) ([PDF](T/12/13.ANOVA_ampliado.pdf))
-- [Tema 12: Correlación](T/12/13.ANOVA_ampliado.html) ([PDF](T/12/13.ANOVA_ampliado.pdf))
-- [Tema 13: Regresión linear y múltiple](T/12/13.ANOVA_ampliado.html) ([PDF](T/12/13.ANOVA_ampliado.pdf))
+- [Tema 12: Correlación](T/13/14.Correlacion.html) ([PDF](T/13/14.Correlacion.pdf))
+- [Tema 13: Regresión lineal simple y múltiple](T/14/14.regresion.html) ([PDF](T/14/14.regresion.pdf))
 
-[FÓRMULAS](T/FORMULAS_v2.html)
+[FÓRMULAS](T/FORMULAS_v2.html) ([PDF](T/FORMULAS_v2.pdf))
 
 ### 📋 Tablas
 - [Tablas de la distribución normal N(0,1): P(Z ≤ z) y P(Z ≥ z) (PDF)](T/5/TABLAS_NORMAL.pdf)
 - [Tabla de la distribución t de Student: valores críticos (cola superior) (PDF)](T/9/tabla_t_moodle.pdf)
-- [Tabla de la distribución de F (ANOVA)](T/9/tabla_t_moodle.pdf)
+- [Tabla de la distribución F (ANOVA): valores críticos (cola superior, α = 0.05) (PDF)](T/12/tabla_anova.pdf)
 
 ---
 
@@ -54,8 +54,8 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - <a href="P/2/practica_bootstrap.Rmd" download>Descarga el documento `Rmd` de la Práctica 2 aquí</a>.
 - [Práctica 3: Pruebas de `t` y tamaño del efecto en `R`](P/3/Practica_T.html)
 - <a href="P/3/Practica_T.Rmd" download>Descarga el documento `Rmd` de la Práctica 3 aquí</a>.
-- [Práctica 4: ANOVA y modelos lineares](P/4/)
-- <a href="P/4/xxx.Rmd" download>Descarga el documento `Rmd` de la Práctica 4 aquí</a>.
+- [Práctica 4: ANOVA y modelos lineales](P/4/Practica_ANOVA.html)
+- <a href="P/4/Practica_ANOVA.Rmd" download>Descarga el documento `Rmd` de la Práctica 4 aquí</a>.
 
 
 ---
@@ -68,9 +68,9 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Problemas 5: Problemas de intervalo de confianza](PA/PA6/Problemas_Intervalos_Confianza.html)
 - [Problemas 6: Problemas de t-test](S/5/S6.html)
 - [Problemas 7: Problemas tamaño del efecto](PA/PA5/Problemas_Tamano_Efecto.html)
-- [Problemas 8: Problemas de ANOVA](PA/PA5/Problemas_Tamano_Efecto.html)
-- [Problemas 9: Problemas de correlación](PA/PA5/Problemas_Tamano_Efecto.html)
-- [Problemas 10: Problemas de regresión](PA/PA5/Problemas_Tamano_Efecto.html)
+- [Problemas 8: Problemas de ANOVA](PA/PA7/Problemas_ANOVA.html)
+- [Problemas 9: Problemas de correlación](PA/PA8/Problemas_Correlacion.html)
+- [Problemas 10: Problemas de regresión](PA/PA9/Problemas_Regresion.html)
 
    
 ---

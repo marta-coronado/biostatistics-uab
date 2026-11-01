@@ -863,3 +863,200 @@ $$
 - $n_i$ = tamaño del grupo *i*  
 - $g$ = número de grupos  
 - $N$ = número total de observaciones
+
+**Hipótesis y decisión**
+
+$$
+H_0: \mu_1 = \mu_2 = \dots = \mu_g \qquad H_A: \text{al menos una } \mu_i \text{ es diferente}
+$$
+
+Si $F_{obs} > F_{crit}(gl_{entre},\, gl_{dentro})$ (tabla F, $\alpha = 0.05$) o p-valor $\le \alpha$ → **rechazamos $H_0$** → test *post hoc* (Tukey) para saber qué grupos difieren.
+
+<br>
+
+**Coeficiente de determinación y tamaño del efecto**
+
+$$
+\eta^2 = R^2 = \frac{SS_{entre}}{SS_{total}}
+$$
+
+| $\eta^2$ | Efecto (guía orientativa de Cohen) |
+|:--------------------|:--------------------|
+| $0.01$ | pequeño |
+| $0.06$ | mediano |
+| $\ge 0.14$ | grande |
+
+<br>
+
+#### ANOVA de dos vías
+
+| Fuente de variación | Grados de libertad (gl) | Media cuadrática (MS) | Estadístico F |
+|:--------------------:|:-----------------------:|:----------------------:|:--------------:|
+| **Factor A** | $gl_A = p - 1$ | $MS_A = \dfrac{SS_A}{gl_A}$ | $F_A = \dfrac{MS_A}{MS_{error}}$ |
+| **Factor B** | $gl_B = q - 1$ | $MS_B = \dfrac{SS_B}{gl_B}$ | $F_B = \dfrac{MS_B}{MS_{error}}$ |
+| **Interacción A×B** | $gl_{AB} = (p - 1)(q - 1)$ | $MS_{AB} = \dfrac{SS_{AB}}{gl_{AB}}$ | $F_{AB} = \dfrac{MS_{AB}}{MS_{error}}$ |
+| **Error** (residuos) | $gl_{error} = p\,q\,(n - 1)$ | $MS_{error} = \dfrac{SS_{error}}{gl_{error}}$ |  |
+| **Total** | $gl_{total} = n\,p\,q - 1$ |  |  |
+
+**Donde:**
+
+- $p$ = número de niveles del factor A; $q$ = número de niveles del factor B
+- $n$ = número de réplicas por combinación de niveles
+
+Cada F se compara con $F_{crit}(gl_{efecto},\, gl_{error})$. Tamaño del efecto de cada factor (eta cuadrado parcial): $\eta^2_p = \dfrac{SS_A}{SS_A + SS_{error}}$
+
+<hr>
+
+## **Correlación**
+
+**Coeficiente de correlación de Pearson** (relación **lineal** entre dos variables cuantitativas)
+
+$$
+r = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n}(x_i - \bar{x})^2}\,\sqrt{\sum_{i=1}^{n}(y_i - \bar{y})^2}} \qquad -1 \le r \le 1
+$$
+
+| Valor absoluto de $r$ | Interpretación |
+|:--------------------|:--------------------|
+| $< 0.1$ | No correlación |
+| $0.1 - 0.3$ | Correlación baja |
+| $0.3 - 0.5$ | Correlación media |
+| $0.5 - 0.7$ | Correlación alta |
+| $0.7 - 1.0$ | Correlación muy alta |
+
+El **signo** de $r$ indica la dirección (positiva o negativa); su **valor absoluto**, la fuerza.
+
+<br>
+
+**Test de la correlación**
+
+$$
+H_0: \rho = 0 \qquad H_A: \rho \ne 0 \qquad\qquad
+t = \frac{r\sqrt{n-2}}{\sqrt{1-r^2}} \qquad gl = n - 2
+$$
+
+donde:
+
+-   $\rho$: correlación en la **población**; $r$: correlación en la **muestra**
+-   Si $|t| > t_{crit}$ (dos colas) → rechazamos $H_0$: la correlación es significativa
+-   Requiere que ambas variables sean aproximadamente **normales**; si no, se usa Spearman
+
+<br>
+
+**Coeficiente de correlación de Spearman** (relación **monótona**; usa los **rangos**, no paramétrico)
+
+$$
+r_s = 1 - \frac{6\sum_{i=1}^{n} d_i^2}{n(n^2 - 1)} \qquad d_i = R(x_i) - R(y_i)
+$$
+
+donde:
+
+-   $R(x_i)$, $R(y_i)$: rangos de cada valor dentro de su variable (fórmula válida si **no hay empates**)
+-   $-1 \le r_s \le 1$; se interpreta igual que $r$
+
+<br>
+
+> **Correlación no implica causalidad.**
+
+<hr>
+
+## **Regresión lineal**
+
+**Regresión lineal simple**
+
+$$
+\hat{y} = a + b\,x \qquad\qquad
+b = r \cdot \frac{s_y}{s_x} \qquad\qquad
+a = \bar{y} - b\,\bar{x}
+$$
+
+donde:
+
+-   $\hat{y}$: valor **predicho** de la variable dependiente; $x$: variable independiente
+-   $b$ (**pendiente**): cambio en $\hat{y}$ cuando $x$ aumenta 1 unidad
+-   $a$ (**ordenada en el origen**): valor de $\hat{y}$ cuando $x = 0$ (a menudo sin sentido biológico)
+-   $s_x$, $s_y$: desviaciones típicas de $x$ y de $y$
+-   Solo se puede predecir **dentro del rango observado** de $x$ (no extrapolar)
+
+<br>
+
+**Residuo y mínimos cuadrados**
+
+$$
+e_i = y_i - \hat{y}_i \qquad\qquad \text{La recta de regresión minimiza } \sum_{i=1}^{n} e_i^2
+$$
+
+<br>
+
+**Contraste de la pendiente**: $H_0: b = 0$ (no hay relación) frente a $H_A: b \ne 0$. Si p-valor $\le \alpha$ → la relación es significativa.
+
+<br>
+
+**Supuestos** (se comprueban sobre los **residuos**): linealidad, independencia, homocedasticidad (varianza constante) y normalidad.
+
+<br>
+
+**Bondad del ajuste**
+
+$$
+R^2 = \frac{SS_{explicada}}{SS_{total}} = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2} \qquad\qquad
+\text{En la regresión simple: } R^2 = r^2
+$$
+
+donde:
+
+-   $R^2$ (**coeficiente de determinación**, `Multiple R-squared`): proporción de la variabilidad de $y$ explicada por el modelo ($0 \le R^2 \le 1$). No indica la **dirección** de la relación
+-   $R^2$ **ajustado** (`Adjusted R-squared`): corrige por el número de variables independientes; es el que se usa para comparar modelos con distinto número de variables
+-   **Error estándar de la estimación** (`Residual standard error`): distancia media entre los valores observados y los predichos, en las unidades de $y$
+
+<br>
+
+**Regresión lineal múltiple**
+
+$$
+\hat{y} = a + b_1 x_1 + b_2 x_2 + \dots + b_k x_k
+$$
+
+donde:
+
+-   $b_i$: cambio en $\hat{y}$ cuando $x_i$ aumenta 1 unidad **y las demás variables se mantienen constantes**
+-   $R$ **múltiple**: correlación entre los valores predichos $\hat{y}$ y los observados $y$ ($R = \sqrt{R^2}$)
+
+<br>
+
+**Coeficientes estandarizados** (para comparar la influencia de variables con unidades distintas)
+
+$$
+\beta_i = b_i \cdot \frac{s_{x_i}}{s_y}
+$$
+
+La variable con mayor $|\beta_i|$ es la que más influye en $y$.
+
+<br>
+
+**Multicolinealidad: tolerancia y VIF**
+
+$$
+T_i = 1 - R^2_i \qquad\qquad VIF_i = \frac{1}{T_i} = \frac{1}{1 - R^2_i}
+$$
+
+donde:
+
+-   $R^2_i$: $R^2$ de la regresión de $x_i$ sobre las demás variables independientes
+-   **Cuidado** si $T < 0.1$ o $VIF > 10$: las variables aportan la misma información
+
+<br>
+
+**Variables *dummy*** (variables independientes categóricas)
+
+-   Una variable con $k$ categorías se convierte en **$k - 1$** variables *dummy* (0/1)
+-   La categoría que no tiene *dummy* es la **referencia**: la ordenada $a$ es su media
+-   Cada coeficiente $b_i$ es la **diferencia** de la categoría $i$ respecto a la referencia
+
+| Variables independientes | Modelo | En `R` |
+|:--------------------|:--------------------|:--------------------|
+| Un factor | ANOVA de una vía | `lm(y ~ grupo)` |
+| Dos factores | ANOVA de dos vías | `lm(y ~ A * B)` |
+| Una variable numérica | Regresión lineal simple | `lm(y ~ x)` |
+| Varias variables numéricas | Regresión lineal múltiple | `lm(y ~ x1 + x2 + x3)` |
+| Numéricas y factores | Regresión con variables *dummy* | `lm(y ~ x + grupo)` |
+
