@@ -1,7 +1,7 @@
 ---
 title: "Problemas de correlación (desarrollados)"
 author: "Bioestadística"
-date: "Diciembre 2026"
+date: "Noviembre 2026"
 output:
   html_document:
     self_contained: true
