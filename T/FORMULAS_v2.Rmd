@@ -953,10 +953,6 @@ donde:
 -   $R(x_i)$, $R(y_i)$: rangos de cada valor dentro de su variable (fórmula válida si **no hay empates**)
 -   $-1 \le r_s \le 1$; se interpreta igual que $r$
 
-<br>
-
-> **Correlación no implica causalidad.**
-
 <hr>
 
 ## **Regresión lineal**
