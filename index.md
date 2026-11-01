@@ -24,12 +24,15 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Tema 9b: Prueba de t-test](T/10/12.TTest_pt2.html) ([PDF](T/10/12.TTest_pt2.pdf))
 - [Tema 10: Tamaño del efecto](T/11/11.html) ([PDF](T/11/11.pdf))
 - [Tema 11: ANOVA](T/12/13.ANOVA_ampliado.html) ([PDF](T/12/13.ANOVA_ampliado.pdf))
+- [Tema 12: Correlación](T/12/13.ANOVA_ampliado.html) ([PDF](T/12/13.ANOVA_ampliado.pdf))
+- [Tema 13: Regresión linear y múltiple](T/12/13.ANOVA_ampliado.html) ([PDF](T/12/13.ANOVA_ampliado.pdf))
 
 [FÓRMULAS](T/FORMULAS_v2.html)
 
 ### 📋 Tablas
 - [Tablas de la distribución normal N(0,1): P(Z ≤ z) y P(Z ≥ z) (PDF)](T/5/TABLAS_NORMAL.pdf)
 - [Tabla de la distribución t de Student: valores críticos (cola superior) (PDF)](T/9/tabla_t_moodle.pdf)
+- [Tabla de la distribución de F (ANOVA)](T/9/tabla_t_moodle.pdf)
 
 ---
 
@@ -39,6 +42,8 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Seminario 3: Visualización de distribuciones](S/3/8.VisDistr.html) ([PDF](S/3/8.VisDistr.pdf))
 - [Seminario 4: Pensamiento estadístico](S/4/S5_soluciones.html) ([PDF](S/4/S5_soluciones.pdf))
 - [Seminario 5: Problemas de t-test](S/5/S6.html) ([PDF](S/5/S6.pdf))
+- Seminario 6: Resolución de problemas (PA)
+- [Seminario 7: Discusión: "Ten common statistical mistakes to watch out for when writing or reviewing a manuscript"](S/7/elife-48175-v1.pdf)
 
 ---
 
@@ -49,6 +54,8 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - <a href="P/2/practica_bootstrap.Rmd" download>Descarga el documento `Rmd` de la Práctica 2 aquí</a>.
 - [Práctica 3: Pruebas de `t` y tamaño del efecto en `R`](P/3/Practica_T.html)
 - <a href="P/3/Practica_T.Rmd" download>Descarga el documento `Rmd` de la Práctica 3 aquí</a>.
+- [Práctica 4: ANOVA y modelos lineares](P/4/)
+- <a href="P/4/xxx.Rmd" download>Descarga el documento `Rmd` de la Práctica 4 aquí</a>.
 
 
 ---
@@ -61,6 +68,9 @@ Bienvenida al portal de la asignatura. Aquí encontrarás todos los materiales o
 - [Problemas 5: Problemas de intervalo de confianza](PA/PA6/Problemas_Intervalos_Confianza.html)
 - [Problemas 6: Problemas de t-test](S/5/S6.html)
 - [Problemas 7: Problemas tamaño del efecto](PA/PA5/Problemas_Tamano_Efecto.html)
+- [Problemas 8: Problemas de ANOVA](PA/PA5/Problemas_Tamano_Efecto.html)
+- [Problemas 9: Problemas de correlación](PA/PA5/Problemas_Tamano_Efecto.html)
+- [Problemas 10: Problemas de regresión](PA/PA5/Problemas_Tamano_Efecto.html)
 
    
 ---
