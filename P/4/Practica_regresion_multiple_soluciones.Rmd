@@ -1,0 +1,126 @@
+---
+title: "**Soluciones:**<br><font color='#A8A8A8' size='5'>regresión múltiple en `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
+author: "Marta Coronado Zamora"
+date: "Noviembre 2026"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5, fig.align = 'center', fig.height = 4, fig.width = 5)
+library(dplyr)
+library(ggplot2)
+library(prettydoc)
+library(car)
+```
+
+<style>
+  @import url(https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,500,500i,700,700i);
+  @import url(https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css);
+  @import url("https://use.fontawesome.com/releases/v5.10.1/css/all.css");
+
+  body {
+    font-family: 'Fira Sans','Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Microsoft YaHei', 'Songti SC', serif;
+  }
+
+  /* Make bold syntax compile to RU-red */
+  strong {
+    color: #DE1144;
+  }
+
+</style>
+
+<i class="fa fa-info-circle"></i> En estas soluciones leemos el fichero desde la carpeta de la práctica. Si usas el enlace URL, el resultado es exactamente el mismo.
+
+```{r}
+insectos <- read.table("urban_data_filter.tsv", header = TRUE, sep = "\t")
+
+insectos <- insectos %>%
+  mutate(Urban.Name = recode_factor(factor(Urban.Type),
+                                    "1" = "Natural",
+                                    "3" = "Suburbano",
+                                    "8" = "Desarrollado",
+                                    "9" = "Denso"))
+```
+
+# Regresión múltiple
+
+**a) Regresiones simples**
+
+```{r}
+summary(lm(Richness ~ Temp.Mean, data = insectos))
+summary(lm(Richness ~ Rh.Mean, data = insectos))
+summary(lm(Richness ~ Photoperiod, data = insectos))
+```
+
+```{r fig.width = 5, fig.height = 4}
+ggplot(data = insectos, aes(x = Photoperiod, y = Richness)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", color = "firebrick4") +
+  theme_classic() +
+  labs(x = "Fotoperiodo (horas de luz)", y = "Riqueza de especies")
+```
+
+| Variable | Pendiente $b$ | p-valor | $R^2$ |
+|:--|:--|:--|:--|
+| `Temp.Mean` | 0.27 | 0.18 | 0.008 |
+| `Rh.Mean` | −0.12 | 0.053 | 0.016 |
+| `Photoperiod` | 2.67 | 1.3 × 10⁻⁸ | 0.127 |
+
+- La temperatura y la humedad, por separado, no tienen una relación significativa con la riqueza de especies (p > 0.05), y su $R^2$ es prácticamente 0.
+- El **fotoperiodo** sí: por cada hora más de luz, se capturan de media 2.7 especies más, y explica el **12.7%** de la variabilidad (más que el nivel de urbanización, 5.9%).
+- **Cuidado con la interpretación:** el fotoperiodo depende de la **fecha** en que se puso la trampa. Probablemente no es la luz en sí lo que aumenta la riqueza, sino la **época del año**: en los meses con más horas de luz hay más insectos activos. Una relación significativa no implica causalidad.
+
+**b) Correlaciones entre las variables**
+
+```{r}
+round(cor(insectos[, c("Richness", "Temp.Mean", "Rh.Mean", "Photoperiod")]), 2)
+```
+
+La temperatura y el fotoperiodo son las variables explicativas más correlacionadas entre sí ($r$ = 0.51): los días con más horas de luz (en verano) también son más cálidos. La humedad apenas se relaciona con las otras dos.
+
+**c) Regresión múltiple**
+
+```{r}
+modelo_multiple <- lm(Richness ~ Temp.Mean + Rh.Mean + Photoperiod, data = insectos)
+summary(modelo_multiple)
+```
+
+La pendiente de la temperatura **cambia de signo**: en la regresión simple era positiva y no significativa ($b$ = 0.27, p = 0.18), y en el modelo múltiple es **negativa y significativa** ($b$ = −0.59, p = 0.008). La humedad también pasa a ser significativa ($b$ = −0.18, p = 0.002).
+
+En la regresión simple, la temperatura "arrastra" el efecto del fotoperiodo: los días cálidos suelen ser días largos, con muchos insectos. En el modelo múltiple, cada coeficiente es el efecto de una variable **manteniendo constantes las demás**: **con el mismo fotoperiodo** (en la misma época del año), las trampas más cálidas capturan **menos** especies (por ejemplo, porque el calor y la sequedad de las zonas urbanas perjudican a algunos insectos). Una regresión simple puede dar una imagen muy distinta, e incluso opuesta, a la de un modelo que tiene en cuenta las otras variables.
+
+**d) Multicolinealidad**
+
+```{r}
+vif(modelo_multiple)
+```
+
+Todos los VIF están entre 1.1 y 1.5, muy por debajo de 10 (tolerancias entre 0.68 y 0.92, por encima de 0.1): **no hay multicolinealidad**. La temperatura y el fotoperiodo están correlacionados, pero no tanto como para que el modelo no pueda separar sus efectos.
+
+**e) ¿Ha mejorado el modelo?**
+
+El $R^2$ ajustado del modelo múltiple es **0.163**, frente a 0.124 del modelo con solo el fotoperiodo (su $R^2$ es 0.127). El modelo múltiple explica algo más de variabilidad, aunque sigue dejando más del 80% sin explicar.
+
+Usamos el $R^2$ **ajustado** porque el $R^2$ **siempre** aumenta al añadir variables, aunque no aporten nada. El $R^2$ ajustado penaliza el número de variables y permite comparar modelos con distinto número de variables explicativas.
+
+**f) ANOVA y regresión en el mismo modelo**
+
+```{r}
+modelo_mixto <- lm(Richness ~ Urban.Name + Photoperiod, data = insectos)
+summary(modelo_mixto)
+anova(modelo_mixto)
+```
+
+- **`(Intercept)`** (−0.14): riqueza predicha para una trampa de una zona **natural** (el nivel de referencia) con un fotoperiodo de **0 horas**. No tiene sentido biológico (es una extrapolación), pero es el punto de partida del modelo.
+- **Coeficientes de `Urban.Name`** (−8.80, −11.10 y −12.59): diferencia de riqueza de cada nivel de urbanización respecto a las zonas naturales, **con el mismo fotoperiodo**. Son prácticamente los mismos que en el ANOVA de una vía (−8.80, −11.15 y −12.58).
+- **`Photoperiod`** (2.67): por cada hora más de luz, 2.67 especies más, **dentro de un mismo nivel de urbanización**. Es el mismo valor que en la regresión simple.
+
+El modelo es, a la vez, un ANOVA y una regresión: predice **cuatro rectas paralelas**, una por nivel de urbanización, con la misma pendiente para el fotoperiodo.
+
+El efecto de la urbanización **sigue siendo significativo** (*F* = 5.64, p = 0.001), y ahora con un p-valor aún más pequeño que en el ANOVA solo: al tener en cuenta el fotoperiodo, se reduce la variabilidad que queda sin explicar (los residuos), y las diferencias entre zonas se detectan mejor.
+
+El $R^2$ del modelo es **0.186**, prácticamente la **suma** del de la urbanización (0.059) y el del fotoperiodo (0.127). Los coeficientes casi no cambian al juntar las dos variables porque **no están relacionadas entre sí**: el fotoperiodo medio es el mismo (12.2 horas) en los cuatro niveles de urbanización, es decir, las trampas de todas las zonas se muestrearon en las mismas fechas. Cada variable aporta información distinta, al contrario de lo que pasaba con la temperatura y el fotoperiodo en el apartado c).

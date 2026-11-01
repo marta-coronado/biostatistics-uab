@@ -1,0 +1,123 @@
+---
+title: "**Regresión múltiple:**<br><font color='#A8A8A8' size='5'>práctica en  `R`</font><img src='img/Logo_uab.png' style='position:absolute;top:0px;left:0px;' width='10%'/>"
+author: "Marta Coronado Zamora"
+date: "Noviembre 2026"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.retina = 5, fig.align = 'center', fig.height = 4, fig.width = 5)
+library(dplyr)
+library(ggplot2)
+library(prettydoc)
+library(car)
+```
+
+<style>
+  @import url(https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,500,500i,700,700i);
+  @import url(https://cdn.rawgit.com/tonsky/FiraCode/1.204/distr/fira_code.css);
+  @import url("https://use.fontawesome.com/releases/v5.10.1/css/all.css");
+
+  body {
+    font-family: 'Fira Sans','Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Microsoft YaHei', 'Songti SC', serif;
+  }
+
+  /* Make bold syntax compile to RU-red */
+  strong {
+    color: #DE1144;
+  }
+
+</style>
+
+En esta práctica ampliamos el análisis de la **biodiversidad de insectos en Los Ángeles** ([Adams et al. 2020](https://esajournals.onlinelibrary.wiley.com/doi/10.1002/eap.2089)) de la práctica de ANOVA y regresión. Además del nivel de urbanización, en cada trampa se midieron tres variables ambientales cuantitativas. Veremos qué ocurre cuando las incluimos **a la vez** en un modelo de **regresión múltiple**, y cómo combinar en un mismo modelo una variable categórica y una cuantitativa.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(car)      # vif()
+```
+
+### Leer y preparar los datos
+
+Ejecuta el siguiente código, que lee los datos y crea la variable `Urban.Name` (el nivel de urbanización como factor):
+
+```{r eval = F}
+insectos <- read.table("https://raw.githubusercontent.com/marta-coronado/biostatistics-uab/refs/heads/main/P/4/urban_data_filter.tsv",
+                       header = TRUE, sep = "\t")
+
+insectos <- insectos %>%
+  mutate(Urban.Name = recode_factor(factor(Urban.Type),
+                                    "1" = "Natural",
+                                    "3" = "Suburbano",
+                                    "8" = "Desarrollado",
+                                    "9" = "Denso"))
+```
+
+```{r}
+
+```
+
+Recuerda que, en la práctica de ANOVA, el nivel de urbanización explicaba el **5.9%** de la variabilidad de la riqueza de especies ($R^2$ = 0.059).
+
+# Regresión múltiple
+
+Además del nivel de urbanización, se midieron tres variables ambientales cuantitativas: la temperatura media (`Temp.Mean`), la humedad relativa media (`Rh.Mean`) y el fotoperiodo (`Photoperiod`, horas de luz del día en que se puso la trampa).
+
+**a) Regresiones simples.** Haz una **regresión lineal simple** de la riqueza de especies (`Richness`) frente a cada una de las tres variables y anota en la tabla la pendiente, su p-valor y el $R^2$. Dibuja también el diagrama de dispersión con la recta de la variable que tenga el $R^2$ más alto.
+
+```{r}
+
+```
+
+| Variable | Pendiente $b$ | p-valor | $R^2$ |
+|:--|:--|:--|:--|
+| `Temp.Mean` | | | |
+| `Rh.Mean` | | | |
+| `Photoperiod` | | | |
+
+**¿Qué variable explica más variabilidad de la riqueza de especies?**
+
+**b) Correlaciones entre las variables.** Calcula la matriz de correlaciones con `round(cor(insectos[, c("Richness", "Temp.Mean", "Rh.Mean", "Photoperiod")]), 2)`. **¿Qué variables explicativas están más correlacionadas entre sí?**
+
+```{r}
+
+```
+
+**c) Regresión múltiple.** Ajusta un modelo con las tres variables a la vez ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/14/14.regresion.html#50)):
+
+```{r eval = F}
+modelo_multiple <- lm(Richness ~ Temp.Mean + Rh.Mean + Photoperiod, data = insectos)
+summary(modelo_multiple)
+```
+
+```{r}
+
+```
+
+**Compara la pendiente de la temperatura en el modelo múltiple con la de su regresión simple del apartado a). ¿Qué ha pasado? ¿Cómo lo explicas?** (Pista: en un modelo múltiple, cada coeficiente es el efecto de una variable **manteniendo constantes las demás**. Recuerda la correlación entre la temperatura y el fotoperiodo del apartado b.)
+
+**d) Multicolinealidad.** Calcula el VIF de cada variable con `vif(modelo_multiple)` (de la librería `car`) ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/14/14.regresion.html#47)). **¿Hay problemas de multicolinealidad?**
+
+```{r}
+
+```
+
+**e) ¿Ha mejorado el modelo?** Compara el $R^2$ **ajustado** del modelo múltiple con el $R^2$ del modelo con solo el fotoperiodo. **¿Por qué usamos aquí el $R^2$ ajustado?**
+
+**f) ANOVA y regresión en el mismo modelo.** Como el ANOVA y la regresión son el mismo modelo lineal, podemos combinar una variable **categórica** y una **cuantitativa** en un único `lm()`:
+
+```{r eval = F}
+modelo_mixto <- lm(Richness ~ Urban.Name + Photoperiod, data = insectos)
+summary(modelo_mixto)
+anova(modelo_mixto)
+```
+
+```{r}
+
+```
+
+**Interpreta los coeficientes:** ¿qué significan la `(Intercept)`, los coeficientes de `Urban.Name` y el de `Photoperiod`? **¿Sigue siendo significativo el efecto de la urbanización cuando tenemos en cuenta el fotoperiodo?** Compara el $R^2$ de este modelo con el de los modelos con una sola variable (urbanización, 0.059; fotoperiodo, apartado a).

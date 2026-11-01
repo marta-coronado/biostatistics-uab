@@ -277,12 +277,16 @@ los lobos más endogámicos?</li>
 <strong>cuánta</strong> variabilidad explica el modelo: es una medida
 del <strong>tamaño del efecto</strong>, igual que la <em>d</em> de Cohen
 en el <code>t</code>-test.</p>
+<p>La idea central de la práctica es que <strong>los dos análisis son el
+mismo modelo</strong>: un <strong>modelo lineal</strong>, que en
+<code>R</code> se ajusta con la función <code>lm()</code>. Lo único que
+cambia es si la variable explicativa es <strong>categórica</strong>
+(ANOVA) o <strong>cuantitativa</strong> (regresión).</p>
 <p>Necesitarás estas librerías (si alguna no está instalada, instálala
 con <code>install.packages()</code>):</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(car)      <span class="co"># leveneTest()</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(rstatix)  <span class="co"># dunn_test() y kruskal_effsize()</span></span></code></pre></div>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(car)      <span class="co"># leveneTest()</span></span></code></pre></div>
 <hr>
 <div id="parte-1.-anova-de-una-vía" class="section level1">
 <h1>Parte 1. ANOVA de una vía</h1>
@@ -456,12 +460,14 @@ con símbolos.</strong></p>
 <p>Ajusta el modelo con
 <code>aov(variable_respuesta ~ grupos, data = data_frame)</code> y
 guárdalo en un objeto llamado <code>modelo_aov</code> (<a href="https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#62">ejemplo</a>):</p>
-<p><strong>a) Normalidad de los residuos.</strong> Extrae los residuos
-del modelo con <code>resid(modelo_aov)</code> y aplícales el test de
-Shapiro-Wilk (<a href="https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#63">ejemplo</a>):</p>
+<p><strong>a) Normalidad de los residuos.</strong>
+<code>resid(modelo_aov)</code> extrae los residuos del modelo. Para
+hacer el test de Shapiro-Wilk sobre ellos, ejecuta
+<code>shapiro.test(resid(modelo_aov))</code> (<a href="https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#63">ejemplo</a>):</p>
 <p>Genera también el QQ-plot de los residuos. <i class="fa fa-cogs"></i>
 Ejecuta primero el siguiente bloque para cargar la función
-<code>QQ_plot()</code> (la misma de la práctica 3):</p>
+<code>QQ_plot()</code> (la misma de la práctica 3), y después ejecuta
+<code>QQ_plot(resid(modelo_aov))</code>:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>QQ_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(vector_datos) {</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">valor =</span> vector_datos)</span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">sample =</span> valor)) <span class="sc">+</span></span>
@@ -470,10 +476,10 @@ Ejecuta primero el siguiente bloque para cargar la función
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>    <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;QQ-plot&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Cuantiles teóricos&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Cuantiles de la muestra&quot;</span>)</span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>}</span></code></pre></div>
-<p><strong>b) Homogeneidad de varianzas.</strong> Aplica el test de
-Levene:
-<code>leveneTest(variable_respuesta ~ grupos, data = data_frame)</code>
-(<a href="https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#65">ejemplo</a>):</p>
+<p><strong>b) Homogeneidad de varianzas.</strong> Haz el test de Levene
+con
+<code>leveneTest(variable_respuesta ~ grupos, data = data_frame)</code>,
+sustituyendo los nombres por los de tus datos (<a href="https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#65">ejemplo</a>):</p>
 <p><strong>¿Qué concluyes de cada test? ¿Qué te dice el
 QQ-plot?</strong></p>
 <p><i class="fa fa-info-circle"></i> <strong>El test de Shapiro-Wilk y
@@ -483,12 +489,11 @@ muy pequeñas, que en la práctica no afectan al ANOVA. Por eso conviene
 mirar siempre también el <strong>QQ-plot</strong>: si los puntos siguen
 razonablemente la recta, el ANOVA es fiable, porque es
 <strong>robusto</strong> a desviaciones moderadas de la normalidad
-cuando la muestra es grande. Aun así, en el paso 9 comprobaremos el
-resultado con la alternativa no paramétrica.</p>
+cuando la muestra es grande.</p>
 </div>
 <div id="el-test-de-anova" class="section level3">
 <h3>6. El test de ANOVA</h3>
-<p>Aplica <code>summary()</code> al modelo para obtener la tabla del
+<p>Ejecuta <code>summary(modelo_aov)</code> para obtener la tabla del
 ANOVA (<a href="https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#67">ejemplo</a>):</p>
 <p>En la tabla, la fila del factor corresponde a la variabilidad
 <strong>entre</strong> grupos, y la fila <code>Residuals</code>, a la
@@ -503,8 +508,38 @@ los grados de libertad por los de tu tabla (<a href="https://marta-coronado.gith
 la misma conclusión con el p-valor y con la <em>F</em>
 crítica?</strong></p>
 </div>
+<div id="el-anova-es-un-modelo-lineal" class="section level3">
+<h3>7. El ANOVA es un modelo lineal</h3>
+<p>El ANOVA también se puede ajustar con <code>lm()</code> (<em>linear
+model</em>), la misma función que usaremos en la regresión. Ajusta el
+modelo con <code>lm()</code> y guárdalo en un objeto llamado
+<code>modelo_lm_urb</code> (<a href="https://marta-coronado.github.io/biostatistics-uab/T/14/14.regresion.html#68">ejemplo</a>):</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>modelo_lm_urb <span class="ot">&lt;-</span> <span class="fu">lm</span>(Richness <span class="sc">~</span> Urban.Name, <span class="at">data =</span> insectos)</span></code></pre></div>
+<p><strong>a) La tabla del ANOVA.</strong> Ejecuta
+<code>anova(modelo_lm_urb)</code> y compara el resultado con el
+<code>summary(modelo_aov)</code> del paso 6 (<a href="https://marta-coronado.github.io/biostatistics-uab/T/14/14.regresion.html#68">ejemplo</a>).
+<strong>¿Coinciden los grados de libertad, las sumas de cuadrados, la
+<em>F</em> y el p-valor?</strong></p>
+<p><strong>b) Los coeficientes.</strong> Ejecuta
+<code>coef(modelo_lm_urb)</code>. Para poder usar una variable
+categórica en un modelo lineal, <code>R</code> la transforma en
+<strong>variables <em>dummy</em></strong> (0/1), una por cada nivel
+<strong>excepto el primero</strong>, que queda como
+<strong>referencia</strong> (<a href="https://marta-coronado.github.io/biostatistics-uab/T/14/14.regresion.html#66">ejemplo</a>):</p>
+<p>La <code>(Intercept)</code> es la <strong>media del nivel de
+referencia</strong>, y cada uno de los otros coeficientes es la
+<strong>diferencia</strong> entre la media de ese nivel y la de
+referencia.</p>
+<ul>
+<li><strong>¿Cuál es el nivel de referencia?</strong> Comprueba que la
+<code>(Intercept)</code> coincide con su media del paso 3.</li>
+<li>Calcula la media de las zonas <strong>densas</strong> con los
+coeficientes (<code>(Intercept)</code> + <code>Urban.NameDenso</code>).
+<strong>¿Coincide con la del paso 3?</strong></li>
+</ul>
+</div>
 <div id="tamaño-del-efecto-el-coeficiente-de-determinación-r2" class="section level3">
-<h3>7. Tamaño del efecto: el coeficiente de determinación <span class="math inline">\(R^2\)</span></h3>
+<h3>8. Tamaño del efecto: el coeficiente de determinación <span class="math inline">\(R^2\)</span></h3>
 <p>El ANOVA nos dice <strong>si</strong> hay diferencias entre los
 grupos, pero no <strong>cuánto</strong> importa el factor. Para eso
 calculamos el <strong>coeficiente de determinación</strong> (<span class="math inline">\(R^2\)</span>), que en el ANOVA de una vía se
@@ -515,13 +550,10 @@ SS_{dentro}}\]</span></p>
 <p>Es la <strong>proporción de la variabilidad total</strong> de la
 variable respuesta que explican los grupos. Va de 0 (el factor no
 explica nada) a 1 (lo explica todo).</p>
-<p><strong>a) Calcúlalo a mano</strong> con las sumas de cuadrados
-(<code>Sum Sq</code>) de la tabla del ANOVA:</p>
-<p><strong>b) Calcúlalo con <code>R</code>.</strong> Como el ANOVA es un
-modelo lineal, la función <code>lm()</code> ajusta el mismo modelo, y
-<code>summary(lm())</code> nos da el <span class="math inline">\(R^2\)</span> en la línea
+<p>Como el ANOVA es un modelo lineal, <code>summary()</code> del modelo
+ajustado con <code>lm()</code> (paso 7) nos da el <span class="math inline">\(R^2\)</span> en la línea
 <code>Multiple R-squared</code> (<a href="https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#144">ejemplo</a>):</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(variable_respuesta <span class="sc">~</span> grupos, <span class="at">data =</span> data_frame))</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">summary</span>(modelo_lm_urb)</span></code></pre></div>
 <p>Valores orientativos de Cohen para <span class="math inline">\(\eta^2\)</span>: <strong>0.01</strong> pequeño,
 <strong>0.06</strong> mediano, <strong>0.14</strong> grande (como
 siempre, son solo una guía: la relevancia depende del contexto).</p>
@@ -532,33 +564,24 @@ en el tamaño de la muestra y en todo lo que puede influir en el número
 de especies de una trampa, además de la urbanización.)</p>
 </div>
 <div id="test-post-hoc-tukey" class="section level3">
-<h3>8. Test <em>post hoc</em>: Tukey</h3>
+<h3>9. Test <em>post hoc</em>: Tukey</h3>
 <p>El ANOVA nos dice que al menos una media es diferente, pero no
 <strong>cuáles</strong>. Para saberlo, comparamos todas las parejas de
-grupos con el test de Tukey (<code>TukeyHSD()</code>), que corrige por
-comparaciones múltiples (<a href="https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#71">ejemplo</a>).
-Puedes visualizar el resultado con
-<code>plot(TukeyHSD(modelo_aov))</code> (<a href="https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#74">ejemplo</a>).</p>
+grupos con el test de Tukey, que corrige por comparaciones múltiples.
+Ejecuta <code>TukeyHSD(modelo_aov)</code> (<a href="https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#71">ejemplo</a>):</p>
+<p>Para visualizar el resultado, ejecuta el siguiente código (<a href="https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#74">ejemplo</a>).
+Cada línea horizontal es el intervalo de confianza del 95% de la
+diferencia entre dos grupos: si el intervalo <strong>no incluye el
+0</strong> (la línea vertical discontinua), la diferencia es
+significativa.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">12</span>, <span class="dv">4</span>, <span class="dv">2</span>))  <span class="co"># margen izquierdo más ancho para que quepan los nombres de las parejas</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">TukeyHSD</span>(modelo_aov), <span class="at">las =</span> <span class="dv">1</span>)</span></code></pre></div>
 <p><strong>¿Qué parejas de grupos difieren significativamente
 (<code>p adj</code> &lt; 0.05)? ¿Cuánto difieren sus
 medias?</strong></p>
-</div>
-<div id="comprobación-no-paramétrica-kruskal-wallis-y-dunn" class="section level3">
-<h3>9. Comprobación no paramétrica: Kruskal-Wallis y Dunn</h3>
-<p>Como el test de Shapiro-Wilk ha dado significativo, vamos a comprobar
-si la alternativa no paramétrica llega a la misma conclusión (<a href="https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#79">ejemplo</a>):</p>
-<ul>
-<li>Test global:
-<code>kruskal.test(variable_respuesta ~ grupos, data = data_frame)</code>.</li>
-<li><em>Post hoc</em>: test de Dunn con corrección de Holm,
-<code>dunn_test(data_frame, variable_respuesta ~ grupos, p.adjust.method = &quot;holm&quot;)</code>.</li>
-<li>Tamaño del efecto:
-<code>kruskal_effsize(data_frame, variable_respuesta ~ grupos)</code>
-(el equivalente al <span class="math inline">\(\eta^2\)</span> para
-Kruskal-Wallis).</li>
-</ul>
-<p><strong>¿Llegas a las mismas conclusiones que con el ANOVA y el test
-de Tukey?</strong></p>
+<p><strong>Fíjate en la columna <code>diff</code> de las parejas con
+<code>Natural</code>: ¿te suenan estos valores?</strong> (Pista: mira
+los coeficientes de <code>lm()</code> del paso 7.)</p>
 </div>
 <div id="conclusión" class="section level3">
 <h3>10. Conclusión</h3>
@@ -572,8 +595,8 @@ solo el XXXX% de la variabilidad de la riqueza de especies (<span class="math in
 </div>
 </div>
 </div>
-<div id="parte-2.-regresión-lineal-simple" class="section level1">
-<h1>Parte 2. Regresión lineal simple</h1>
+<div id="parte-2.-correlación-y-regresión-lineal-simple" class="section level1">
+<h1>Parte 2. Correlación y regresión lineal simple</h1>
 <div id="recordatorio-correlación-y-regresión" class="section level2">
 <h2>Recordatorio: correlación y regresión</h2>
 <ul>
@@ -592,8 +615,9 @@ en el origen</strong> (<em>intercept</em>: el valor de <span class="math inline"
 <strong>pendiente</strong> (cuánto cambia <span class="math inline">\(Y\)</span>, de media, cuando <span class="math inline">\(X\)</span> aumenta una unidad).</p>
 <ul>
 <li>El contraste de hipótesis de la regresión se hace sobre la
-pendiente: <span class="math inline">\(H_0\)</span>: <span class="math inline">\(\beta = 0\)</span> (no hay relación lineal) frente
-a <span class="math inline">\(H_A\)</span>: <span class="math inline">\(\beta \neq 0\)</span>.</li>
+pendiente: <span class="math inline">\(H_0\)</span>: <span class="math inline">\(b = 0\)</span> (no hay relación lineal) frente a
+<span class="math inline">\(H_A\)</span>: <span class="math inline">\(b
+\neq 0\)</span>.</li>
 <li>El <strong>coeficiente de determinación</strong> (<span class="math inline">\(R^2\)</span>) es la proporción de la variabilidad
 de <span class="math inline">\(Y\)</span> que explica la recta. En la
 regresión lineal simple, <span class="math inline">\(R^2 =
@@ -642,10 +666,10 @@ con <code>read.csv()</code> y guárdalo en un objeto llamado
 <p>En una regresión, lo primero es siempre hacer un <strong>diagrama de
 dispersión</strong>, con la variable explicativa en el eje x y la
 respuesta en el eje y. Completa la plantilla:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ___, <span class="fu">aes</span>(<span class="at">x =</span> ___, <span class="at">y =</span> ___)) <span class="sc">+</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;___&quot;</span>, <span class="at">y =</span> <span class="st">&quot;___&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ___, <span class="fu">aes</span>(<span class="at">x =</span> ___, <span class="at">y =</span> ___)) <span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;___&quot;</span>, <span class="at">y =</span> <span class="st">&quot;___&quot;</span>)</span></code></pre></div>
 <p><strong>¿Qué tipo de relación ves (positiva, negativa, ninguna)?
 ¿Parece lineal?</strong></p>
 </div>
@@ -662,14 +686,14 @@ significativa la correlación?</strong></p>
 (<em>linear model</em>), con la misma fórmula que usábamos en el ANOVA:
 <code>lm(variable_respuesta ~ variable_explicativa, data = data_frame)</code>.
 Ajusta el modelo, guárdalo en un objeto llamado <code>modelo_lm</code> y
-aplícale <code>summary()</code>:</p>
+después ejecuta <code>summary(modelo_lm)</code>:</p>
 <p>En la salida de <code>summary()</code>, fíjate en:</p>
 <ul>
 <li><strong><code>Coefficients</code></strong>: la columna
 <code>Estimate</code> da la <strong>ordenada en el origen</strong>
 (<code>(Intercept)</code>, <span class="math inline">\(a\)</span>) y la
 <strong>pendiente</strong> (la fila de la variable explicativa, <span class="math inline">\(b\)</span>). La columna <code>Pr(&gt;|t|)</code>
-de la pendiente es el p-valor del contraste <span class="math inline">\(H_0\)</span>: <span class="math inline">\(\beta =
+de la pendiente es el p-valor del contraste <span class="math inline">\(H_0\)</span>: <span class="math inline">\(b =
 0\)</span>.</li>
 <li><strong><code>Multiple R-squared</code></strong>: el
 <strong>coeficiente de determinación</strong> <span class="math inline">\(R^2\)</span>.</li>
@@ -687,23 +711,23 @@ endogamia?</p>
 <h3>5. Comprobar los supuestos</h3>
 <p><strong>a) Linealidad</strong>: lo hemos visto en el diagrama de
 dispersión del paso 2.</p>
-<p><strong>b) Normalidad de los residuos</strong>: aplica el test de
-Shapiro-Wilk a <code>resid(modelo_lm)</code> y genera su QQ-plot con la
-función <code>QQ_plot()</code>:</p>
+<p><strong>b) Normalidad de los residuos</strong>: ejecuta
+<code>shapiro.test(resid(modelo_lm))</code> y
+<code>QQ_plot(resid(modelo_lm))</code>:</p>
 <p><strong>c) Homocedasticidad</strong>: ejecuta el siguiente código,
 que representa los <strong>residuos</strong> frente a los
 <strong>valores ajustados</strong> por la recta (<code>fitted()</code>).
 Si se cumple la homocedasticidad, los puntos deben repartirse sin ningún
 patrón alrededor de la línea del 0, con una dispersión parecida de
 izquierda a derecha (sin forma de embudo):</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>residuos_lobos <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ajustados =</span> <span class="fu">fitted</span>(modelo_lm),</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>                             <span class="at">residuos  =</span> <span class="fu">resid</span>(modelo_lm))</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="fu">ggplot</span>(residuos_lobos, <span class="fu">aes</span>(<span class="at">x =</span> ajustados, <span class="at">y =</span> residuos)) <span class="sc">+</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="sc">+</span></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Valores ajustados&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Residuos&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>residuos_lobos <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ajustados =</span> <span class="fu">fitted</span>(modelo_lm),</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>                             <span class="at">residuos  =</span> <span class="fu">resid</span>(modelo_lm))</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="fu">ggplot</span>(residuos_lobos, <span class="fu">aes</span>(<span class="at">x =</span> ajustados, <span class="at">y =</span> residuos)) <span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="sc">+</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Valores ajustados&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Residuos&quot;</span>)</span></code></pre></div>
 <p><strong>¿Se cumplen los supuestos?</strong> Ten en cuenta que
 <code>nPups</code> es un número de crías (solo puede tomar valores
 enteros, entre 1 y 8) y que solo tenemos 24 camadas.</p>
@@ -715,11 +739,6 @@ explica el coeficiente de endogamia?</strong></p>
 <p><strong>b)</strong> Comprueba que, en la regresión lineal simple,
 <span class="math inline">\(R^2 = r^2\)</span>: eleva al cuadrado el
 coeficiente de correlación del paso 3.</p>
-<p><strong>c)</strong> La regresión también tiene su <strong>tabla
-ANOVA</strong>, que obtenemos con <code>anova(modelo_lm)</code>. Calcula
-el <span class="math inline">\(R^2\)</span> con las sumas de cuadrados,
-igual que en la parte 1: <span class="math inline">\(R^2 =
-SS_{regresión} / (SS_{regresión} + SS_{residuos})\)</span>.</p>
 <p>El <span class="math inline">\(R^2\)</span> es el <strong>mismo
 concepto</strong> en el ANOVA y en la regresión: la proporción de la
 variabilidad total que explica el modelo. La única diferencia es que en
@@ -733,19 +752,18 @@ regresión es cuantitativa.</p>
 <p>Añade la recta de regresión al diagrama de dispersión con
 <code>geom_smooth(method = &quot;lm&quot;)</code>. La banda gris es el intervalo
 de confianza del 95% de la recta.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ___, <span class="fu">aes</span>(<span class="at">x =</span> ___, <span class="at">y =</span> ___)) <span class="sc">+</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="sc">+</span></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;___&quot;</span>, <span class="at">y =</span> <span class="st">&quot;___&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ___, <span class="fu">aes</span>(<span class="at">x =</span> ___, <span class="at">y =</span> ___)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;___&quot;</span>, <span class="at">y =</span> <span class="st">&quot;___&quot;</span>)</span></code></pre></div>
 <p>Una de las utilidades de la regresión es <strong>predecir</strong>.
 Con la función <code>predict()</code>, calcula cuántas crías
 esperaríamos en una camada con un coeficiente de endogamia de 0.25:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">predict</span>(modelo_lm, <span class="at">newdata =</span> <span class="fu">data.frame</span>(<span class="at">inbreedCoef =</span> <span class="fl">0.25</span>))</span></code></pre></div>
-<p><strong>Comprueba el resultado con la ecuación de la recta del paso
-4. ¿Tendría sentido usar la recta para predecir el número de crías con
-un coeficiente de endogamia de 0.8?</strong> (Pista: mira el rango de
-valores de <code>inbreedCoef</code> en los datos.)</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">predict</span>(modelo_lm, <span class="at">newdata =</span> <span class="fu">data.frame</span>(<span class="at">inbreedCoef =</span> <span class="fl">0.25</span>))</span></code></pre></div>
+<p><strong>¿Tendría sentido usar la recta para predecir el número de
+crías con un coeficiente de endogamia de 0.8?</strong> (Pista: mira el
+rango de valores de <code>inbreedCoef</code> en los datos.)</p>
 </div>
 <div id="conclusión-1" class="section level3">
 <h3>8. Conclusión</h3>
@@ -755,28 +773,20 @@ valores de <code>inbreedCoef</code> en los datos.)</p>
 0.1 en el coeficiente de endogamia, sobreviven de media XXXX crías
 menos. La endogamia explica el XXXX% de la variabilidad en el número de
 crías (<span class="math inline">\(R^2\)</span> = XXXX).</p>
+<p><strong>¿Demuestra este estudio que la endogamia <em>causa</em> la
+pérdida de crías?</strong> Piensa en cómo se obtuvieron los datos (¿se
+asignó la endogamia al azar?) y en qué otras variables podrían influir
+en la supervivencia de las crías.</p>
 <hr>
 </div>
 </div>
 </div>
-<div id="para-practicar-qué-variables-ambientales-explican-la-biodiversidad" class="section level1">
-<h1><i class="fa fa-rocket"></i> Para practicar: ¿qué variables
-ambientales explican la biodiversidad?</h1>
-<p>Vuelve a los datos de los insectos (<code>insectos</code>). Además
-del nivel de urbanización, se midieron tres variables ambientales
-cuantitativas: la temperatura media (<code>Temp.Mean</code>), la humedad
-relativa media (<code>Rh.Mean</code>) y el fotoperiodo
-(<code>Photoperiod</code>).</p>
-<p>Haz una <strong>regresión lineal</strong> de la riqueza de especies
-(<code>Richness</code>) frente a cada una de estas tres variables:
-dibuja el diagrama de dispersión con la recta, ajusta el modelo con
-<code>lm()</code> y anota la pendiente, su p-valor y el <span class="math inline">\(R^2\)</span>. <strong>¿Qué variable explica más
-variabilidad de la riqueza de especies? ¿Cómo interpretas el
-resultado?</strong></p>
-<hr>
-</div>
-<div id="resumen-anova-y-regresión" class="section level1">
-<h1>Resumen: ANOVA y regresión</h1>
+<div id="resumen-un-único-modelo-lineal" class="section level1">
+<h1>Resumen: un único modelo lineal</h1>
+<p>El ANOVA y la regresión son el <strong>mismo modelo</strong>:
+<strong>observación = predicción + residuo</strong>. Lo único que cambia
+es el tipo de variable explicativa y, por tanto, qué predice el
+modelo.</p>
 <table>
 <colgroup>
 <col width="33%" />
@@ -803,34 +813,41 @@ resultado?</strong></p>
 </tr>
 <tr class="odd">
 <td align="left">Función en <code>R</code></td>
-<td align="left"><code>aov(y ~ grupos)</code> +
-<code>summary()</code></td>
-<td align="left"><code>lm(y ~ x)</code> + <code>summary()</code></td>
+<td align="left"><code>lm(y ~ grupos)</code> (o <code>aov()</code>,
+necesario para <code>TukeyHSD()</code>)</td>
+<td align="left"><code>lm(y ~ x)</code></td>
+</tr>
+<tr class="even">
+<td align="left">Qué predice el modelo</td>
+<td align="left">la <strong>media de cada grupo</strong></td>
+<td align="left">una <strong>recta</strong></td>
+</tr>
+<tr class="odd">
+<td align="left">Coeficientes</td>
+<td align="left"><code>(Intercept)</code> = media del grupo de
+referencia; el resto, <strong>diferencias</strong> respecto a ella
+(variables <em>dummy</em>)</td>
+<td align="left">ordenada <span class="math inline">\(a\)</span> y
+pendiente <span class="math inline">\(b\)</span></td>
 </tr>
 <tr class="even">
 <td align="left">Hipótesis nula</td>
 <td align="left">todas las medias son iguales</td>
-<td align="left">la pendiente es 0 (<span class="math inline">\(\beta =
+<td align="left">la pendiente es 0 (<span class="math inline">\(b =
 0\)</span>)</td>
 </tr>
 <tr class="odd">
-<td align="left">Supuestos</td>
-<td align="left">independencia, normalidad de los residuos, homogeneidad
-de varianzas</td>
-<td align="left">independencia, linealidad, normalidad de los residuos,
-homocedasticidad</td>
-</tr>
-<tr class="even">
 <td align="left">Tamaño del efecto</td>
 <td align="left"><span class="math inline">\(R^2 = \eta^2 = SS_{entre} /
 SS_{total}\)</span></td>
 <td align="left"><span class="math inline">\(R^2 = SS_{regresión} /
 SS_{total}\)</span> (<span class="math inline">\(= r^2\)</span>)</td>
 </tr>
-<tr class="odd">
-<td align="left">Si no se cumplen los supuestos</td>
-<td align="left">Kruskal-Wallis + Dunn</td>
-<td align="left">correlación de Spearman</td>
+<tr class="even">
+<td align="left">Supuestos (sobre los <strong>residuos</strong>)</td>
+<td align="left">independencia, normalidad, homogeneidad de
+varianzas</td>
+<td align="left">los mismos + linealidad</td>
 </tr>
 </tbody>
 </table>

@@ -15,7 +15,6 @@ library(dplyr)
 library(ggplot2)
 library(prettydoc)
 library(car)
-library(rstatix)
 ```
 
 <style>
@@ -41,13 +40,14 @@ En esta práctica vamos a hacer dos análisis completos con datos reales:
 
 En los dos casos calcularemos el **coeficiente de determinación ($R^2$)**, que nos dice **cuánta** variabilidad explica el modelo: es una medida del **tamaño del efecto**, igual que la *d* de Cohen en el `t`-test.
 
+La idea central de la práctica es que **los dos análisis son el mismo modelo**: un **modelo lineal**, que en `R` se ajusta con la función `lm()`. Lo único que cambia es si la variable explicativa es **categórica** (ANOVA) o **cuantitativa** (regresión).
+
 Necesitarás estas librerías (si alguna no está instalada, instálala con `install.packages()`):
 
 ```{r}
 library(dplyr)
 library(ggplot2)
 library(car)      # leveneTest()
-library(rstatix)  # dunn_test() y kruskal_effsize()
 ```
 
 <hr>
@@ -206,13 +206,13 @@ Ajusta el modelo con `aov(variable_respuesta ~ grupos, data = data_frame)` y gu�
 
 ```
 
-**a) Normalidad de los residuos.** Extrae los residuos del modelo con `resid(modelo_aov)` y aplícales el test de Shapiro-Wilk ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#63)):
+**a) Normalidad de los residuos.** `resid(modelo_aov)` extrae los residuos del modelo. Para hacer el test de Shapiro-Wilk sobre ellos, ejecuta `shapiro.test(resid(modelo_aov))` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#63)):
 
 ```{r}
 
 ```
 
-Genera también el QQ-plot de los residuos. <i class="fa fa-cogs"></i> Ejecuta primero el siguiente bloque para cargar la función `QQ_plot()` (la misma de la práctica 3):
+Genera también el QQ-plot de los residuos. <i class="fa fa-cogs"></i> Ejecuta primero el siguiente bloque para cargar la función `QQ_plot()` (la misma de la práctica 3), y después ejecuta `QQ_plot(resid(modelo_aov))`:
 
 ```{r}
 QQ_plot <- function(vector_datos) {
@@ -229,7 +229,7 @@ QQ_plot <- function(vector_datos) {
 
 ```
 
-**b) Homogeneidad de varianzas.** Aplica el test de Levene: `leveneTest(variable_respuesta ~ grupos, data = data_frame)` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#65)):
+**b) Homogeneidad de varianzas.** Haz el test de Levene con `leveneTest(variable_respuesta ~ grupos, data = data_frame)`, sustituyendo los nombres por los de tus datos ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#65)):
 
 ```{r}
 
@@ -237,13 +237,13 @@ QQ_plot <- function(vector_datos) {
 
 **¿Qué concluyes de cada test? ¿Qué te dice el QQ-plot?**
 
-<i class="fa fa-info-circle"></i> **El test de Shapiro-Wilk y el tamaño de la muestra.** Con muestras grandes (aquí tenemos 240 trampas), el test de Shapiro-Wilk detecta desviaciones de la normalidad muy pequeñas, que en la práctica no afectan al ANOVA. Por eso conviene mirar siempre también el **QQ-plot**: si los puntos siguen razonablemente la recta, el ANOVA es fiable, porque es **robusto** a desviaciones moderadas de la normalidad cuando la muestra es grande. Aun así, en el paso 9 comprobaremos el resultado con la alternativa no paramétrica.
+<i class="fa fa-info-circle"></i> **El test de Shapiro-Wilk y el tamaño de la muestra.** Con muestras grandes (aquí tenemos 240 trampas), el test de Shapiro-Wilk detecta desviaciones de la normalidad muy pequeñas, que en la práctica no afectan al ANOVA. Por eso conviene mirar siempre también el **QQ-plot**: si los puntos siguen razonablemente la recta, el ANOVA es fiable, porque es **robusto** a desviaciones moderadas de la normalidad cuando la muestra es grande.
 
 
 
 ### 6. El test de ANOVA
 
-Aplica `summary()` al modelo para obtener la tabla del ANOVA ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#67)):
+Ejecuta `summary(modelo_aov)` para obtener la tabla del ANOVA ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#67)):
 
 ```{r}
 
@@ -261,7 +261,38 @@ Como vimos en clase, también podemos tomar la decisión comparando *F* con el v
 
 
 
-### 7. Tamaño del efecto: el coeficiente de determinación $R^2$
+### 7. El ANOVA es un modelo lineal
+
+El ANOVA también se puede ajustar con `lm()` (*linear model*), la misma función que usaremos en la regresión. Ajusta el modelo con `lm()` y guárdalo en un objeto llamado `modelo_lm_urb` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/14/14.regresion.html#68)):
+
+```{r eval = F}
+modelo_lm_urb <- lm(Richness ~ Urban.Name, data = insectos)
+```
+
+```{r}
+
+```
+
+**a) La tabla del ANOVA.** Ejecuta `anova(modelo_lm_urb)` y compara el resultado con el `summary(modelo_aov)` del paso 6 ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/14/14.regresion.html#68)). **¿Coinciden los grados de libertad, las sumas de cuadrados, la *F* y el p-valor?**
+
+```{r}
+
+```
+
+**b) Los coeficientes.** Ejecuta `coef(modelo_lm_urb)`. Para poder usar una variable categórica en un modelo lineal, `R` la transforma en **variables *dummy*** (0/1), una por cada nivel **excepto el primero**, que queda como **referencia** ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/14/14.regresion.html#66)):
+
+```{r}
+
+```
+
+La `(Intercept)` es la **media del nivel de referencia**, y cada uno de los otros coeficientes es la **diferencia** entre la media de ese nivel y la de referencia.
+
+- **¿Cuál es el nivel de referencia?** Comprueba que la `(Intercept)` coincide con su media del paso 3.
+- Calcula la media de las zonas **densas** con los coeficientes (`(Intercept)` + `Urban.NameDenso`). **¿Coincide con la del paso 3?**
+
+
+
+### 8. Tamaño del efecto: el coeficiente de determinación $R^2$
 
 El ANOVA nos dice **si** hay diferencias entre los grupos, pero no **cuánto** importa el factor. Para eso calculamos el **coeficiente de determinación** ($R^2$), que en el ANOVA de una vía se conoce también como **eta cuadrado** ($\eta^2$) ([diapositiva](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#140)):
 
@@ -269,16 +300,10 @@ $$R^2 = \eta^2 = \frac{SS_{entre}}{SS_{total}} = \frac{SS_{entre}}{SS_{entre} + 
 
 Es la **proporción de la variabilidad total** de la variable respuesta que explican los grupos. Va de 0 (el factor no explica nada) a 1 (lo explica todo).
 
-**a) Calcúlalo a mano** con las sumas de cuadrados (`Sum Sq`) de la tabla del ANOVA:
-
-```{r}
-
-```
-
-**b) Calcúlalo con `R`.** Como el ANOVA es un modelo lineal, la función `lm()` ajusta el mismo modelo, y `summary(lm())` nos da el $R^2$ en la línea `Multiple R-squared` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#144)):
+Como el ANOVA es un modelo lineal, `summary()` del modelo ajustado con `lm()` (paso 7) nos da el $R^2$ en la línea `Multiple R-squared` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#144)):
 
 ```{r eval = F}
-summary(lm(variable_respuesta ~ grupos, data = data_frame))
+summary(modelo_lm_urb)
 ```
 
 ```{r}
@@ -291,9 +316,20 @@ Valores orientativos de Cohen para $\eta^2$: **0.01** pequeño, **0.06** mediano
 
 
 
-### 8. Test *post hoc*: Tukey
+### 9. Test *post hoc*: Tukey
 
-El ANOVA nos dice que al menos una media es diferente, pero no **cuáles**. Para saberlo, comparamos todas las parejas de grupos con el test de Tukey (`TukeyHSD()`), que corrige por comparaciones múltiples ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#71)). Puedes visualizar el resultado con `plot(TukeyHSD(modelo_aov))` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#74)).
+El ANOVA nos dice que al menos una media es diferente, pero no **cuáles**. Para saberlo, comparamos todas las parejas de grupos con el test de Tukey, que corrige por comparaciones múltiples. Ejecuta `TukeyHSD(modelo_aov)` ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#71)):
+
+```{r}
+
+```
+
+Para visualizar el resultado, ejecuta el siguiente código ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#74)). Cada línea horizontal es el intervalo de confianza del 95% de la diferencia entre dos grupos: si el intervalo **no incluye el 0** (la línea vertical discontinua), la diferencia es significativa.
+
+```{r eval = F}
+par(mar = c(5, 12, 4, 2))  # margen izquierdo más ancho para que quepan los nombres de las parejas
+plot(TukeyHSD(modelo_aov), las = 1)
+```
 
 ```{r}
 
@@ -301,21 +337,7 @@ El ANOVA nos dice que al menos una media es diferente, pero no **cuáles**. Para
 
 **¿Qué parejas de grupos difieren significativamente (`p adj` < 0.05)? ¿Cuánto difieren sus medias?**
 
-
-
-### 9. Comprobación no paramétrica: Kruskal-Wallis y Dunn
-
-Como el test de Shapiro-Wilk ha dado significativo, vamos a comprobar si la alternativa no paramétrica llega a la misma conclusión ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#79)):
-
-- Test global: `kruskal.test(variable_respuesta ~ grupos, data = data_frame)`.
-- *Post hoc*: test de Dunn con corrección de Holm, `dunn_test(data_frame, variable_respuesta ~ grupos, p.adjust.method = "holm")`.
-- Tamaño del efecto: `kruskal_effsize(data_frame, variable_respuesta ~ grupos)` (el equivalente al $\eta^2$ para Kruskal-Wallis).
-
-```{r}
-
-```
-
-**¿Llegas a las mismas conclusiones que con el ANOVA y el test de Tukey?**
+**Fíjate en la columna `diff` de las parejas con `Natural`: ¿te suenan estos valores?** (Pista: mira los coeficientes de `lm()` del paso 7.)
 
 
 
@@ -327,7 +349,7 @@ La riqueza media de especies de insectos [sí/no] difiere entre los niveles de u
 
 <hr>
 
-# Parte 2. Regresión lineal simple
+# Parte 2. Correlación y regresión lineal simple
 
 ## Recordatorio: correlación y regresión
 
@@ -338,7 +360,7 @@ $$Y = a + b\,X$$
 
 donde $a$ es la **ordenada en el origen** (*intercept*: el valor de $Y$ cuando $X = 0$) y $b$ es la **pendiente** (cuánto cambia $Y$, de media, cuando $X$ aumenta una unidad).
 
-- El contraste de hipótesis de la regresión se hace sobre la pendiente: $H_0$: $\beta = 0$ (no hay relación lineal) frente a $H_A$: $\beta \neq 0$.
+- El contraste de hipótesis de la regresión se hace sobre la pendiente: $H_0$: $b = 0$ (no hay relación lineal) frente a $H_A$: $b \neq 0$.
 - El **coeficiente de determinación** ($R^2$) es la proporción de la variabilidad de $Y$ que explica la recta. En la regresión lineal simple, $R^2 = r^2$.
 
 **Supuestos de la regresión lineal:**
@@ -402,7 +424,7 @@ Calcula el coeficiente de correlación de Pearson con `cor.test(~ variable_1 + v
 
 ### 4. Ajustar la recta de regresión
 
-La regresión lineal se ajusta con la función `lm()` (*linear model*), con la misma fórmula que usábamos en el ANOVA: `lm(variable_respuesta ~ variable_explicativa, data = data_frame)`. Ajusta el modelo, guárdalo en un objeto llamado `modelo_lm` y aplícale `summary()`:
+La regresión lineal se ajusta con la función `lm()` (*linear model*), con la misma fórmula que usábamos en el ANOVA: `lm(variable_respuesta ~ variable_explicativa, data = data_frame)`. Ajusta el modelo, guárdalo en un objeto llamado `modelo_lm` y después ejecuta `summary(modelo_lm)`:
 
 ```{r}
 
@@ -410,7 +432,7 @@ La regresión lineal se ajusta con la función `lm()` (*linear model*), con la m
 
 En la salida de `summary()`, fíjate en:
 
-- **`Coefficients`**: la columna `Estimate` da la **ordenada en el origen** (`(Intercept)`, $a$) y la **pendiente** (la fila de la variable explicativa, $b$). La columna `Pr(>|t|)` de la pendiente es el p-valor del contraste $H_0$: $\beta = 0$.
+- **`Coefficients`**: la columna `Estimate` da la **ordenada en el origen** (`(Intercept)`, $a$) y la **pendiente** (la fila de la variable explicativa, $b$). La columna `Pr(>|t|)` de la pendiente es el p-valor del contraste $H_0$: $b = 0$.
 - **`Multiple R-squared`**: el **coeficiente de determinación** $R^2$.
 
 **a) Escribe la ecuación de la recta** ($Y = a + b\,X$) con los valores que has obtenido.
@@ -425,7 +447,7 @@ En la salida de `summary()`, fíjate en:
 
 **a) Linealidad**: lo hemos visto en el diagrama de dispersión del paso 2.
 
-**b) Normalidad de los residuos**: aplica el test de Shapiro-Wilk a `resid(modelo_lm)` y genera su QQ-plot con la función `QQ_plot()`:
+**b) Normalidad de los residuos**: ejecuta `shapiro.test(resid(modelo_lm))` y `QQ_plot(resid(modelo_lm))`:
 
 ```{r}
 
@@ -457,12 +479,6 @@ ggplot(residuos_lobos, aes(x = ajustados, y = residuos)) +
 **a) ¿Qué proporción de la variabilidad del número de crías explica el coeficiente de endogamia?**
 
 **b)** Comprueba que, en la regresión lineal simple, $R^2 = r^2$: eleva al cuadrado el coeficiente de correlación del paso 3.
-
-```{r}
-
-```
-
-**c)** La regresión también tiene su **tabla ANOVA**, que obtenemos con `anova(modelo_lm)`. Calcula el $R^2$ con las sumas de cuadrados, igual que en la parte 1: $R^2 = SS_{regresión} / (SS_{regresión} + SS_{residuos})$.
 
 ```{r}
 
@@ -500,7 +516,7 @@ predict(modelo_lm, newdata = data.frame(inbreedCoef = 0.25))
 
 ```
 
-**Comprueba el resultado con la ecuación de la recta del paso 4. ¿Tendría sentido usar la recta para predecir el número de crías con un coeficiente de endogamia de 0.8?** (Pista: mira el rango de valores de `inbreedCoef` en los datos.)
+**¿Tendría sentido usar la recta para predecir el número de crías con un coeficiente de endogamia de 0.8?** (Pista: mira el rango de valores de `inbreedCoef` en los datos.)
 
 
 
@@ -510,28 +526,21 @@ predict(modelo_lm, newdata = data.frame(inbreedCoef = 0.25))
 
 El número de crías que sobreviven a su primer invierno [aumenta/disminuye] con el coeficiente de endogamia ($b$ = XXXX, p = XXXX). Por cada aumento de 0.1 en el coeficiente de endogamia, sobreviven de media XXXX crías menos. La endogamia explica el XXXX% de la variabilidad en el número de crías ($R^2$ = XXXX).
 
-<hr>
-
-# <i class="fa fa-rocket"></i> Para practicar: ¿qué variables ambientales explican la biodiversidad?
-
-Vuelve a los datos de los insectos (`insectos`). Además del nivel de urbanización, se midieron tres variables ambientales cuantitativas: la temperatura media (`Temp.Mean`), la humedad relativa media (`Rh.Mean`) y el fotoperiodo (`Photoperiod`).
-
-Haz una **regresión lineal** de la riqueza de especies (`Richness`) frente a cada una de estas tres variables: dibuja el diagrama de dispersión con la recta, ajusta el modelo con `lm()` y anota la pendiente, su p-valor y el $R^2$. **¿Qué variable explica más variabilidad de la riqueza de especies? ¿Cómo interpretas el resultado?**
-
-```{r}
-
-```
+**¿Demuestra este estudio que la endogamia *causa* la pérdida de crías?** Piensa en cómo se obtuvieron los datos (¿se asignó la endogamia al azar?) y en qué otras variables podrían influir en la supervivencia de las crías.
 
 <hr>
 
-# Resumen: ANOVA y regresión
+# Resumen: un único modelo lineal
+
+El ANOVA y la regresión son el **mismo modelo**: **observación = predicción + residuo**. Lo único que cambia es el tipo de variable explicativa y, por tanto, qué predice el modelo.
 
 |  | ANOVA de una vía | Regresión lineal simple |
 |:--|:--|:--|
 | Variable respuesta | cuantitativa | cuantitativa |
 | Variable explicativa | **categórica** (grupos) | **cuantitativa** |
-| Función en `R` | `aov(y ~ grupos)` + `summary()` | `lm(y ~ x)` + `summary()` |
-| Hipótesis nula | todas las medias son iguales | la pendiente es 0 ($\beta = 0$) |
-| Supuestos | independencia, normalidad de los residuos, homogeneidad de varianzas | independencia, linealidad, normalidad de los residuos, homocedasticidad |
+| Función en `R` | `lm(y ~ grupos)` (o `aov()`, necesario para `TukeyHSD()`) | `lm(y ~ x)` |
+| Qué predice el modelo | la **media de cada grupo** | una **recta** |
+| Coeficientes | `(Intercept)` = media del grupo de referencia; el resto, **diferencias** respecto a ella (variables *dummy*) | ordenada $a$ y pendiente $b$ |
+| Hipótesis nula | todas las medias son iguales | la pendiente es 0 ($b = 0$) |
 | Tamaño del efecto | $R^2 = \eta^2 = SS_{entre} / SS_{total}$ | $R^2 = SS_{regresión} / SS_{total}$ ($= r^2$) |
-| Si no se cumplen los supuestos | Kruskal-Wallis + Dunn | correlación de Spearman |
+| Supuestos (sobre los **residuos**) | independencia, normalidad, homogeneidad de varianzas | los mismos + linealidad |
