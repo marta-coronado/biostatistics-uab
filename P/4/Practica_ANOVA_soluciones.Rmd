@@ -174,7 +174,7 @@ El modelo **predice para cada trampa la media de su grupo**: a una trampa de una
 summary(modelo_lm_urb)
 ```
 
-$R^2$ = 0.059 (`Multiple R-squared`): el nivel de urbanización explica solo el **5.9%** de la variabilidad de la riqueza de especies. Según la guía de Cohen, es un efecto **mediano** (está justo en el límite de 0.06).
+$R^2$ = 0.059 (`Multiple R-squared`): el nivel de urbanización explica solo el **5.9%** de la variabilidad de la riqueza de especies. El **94.1%** restante queda sin explicar: es un modelo que explica **poco**.
 
 **¿Por qué el p-valor es tan pequeño y el $R^2$ tan bajo?** Porque son dos cosas distintas:
 
@@ -205,7 +205,7 @@ La diferencia Suburbano − Natural (8.8 especies menos) no llega a ser signific
 
 ### 10. Conclusión
 
-La riqueza media de especies de insectos **sí** difiere entre los niveles de urbanización (ANOVA: *F* = 4.90, gl = 3 y 236, p = 0.0025). Según el test de Tukey, las zonas **naturales** tienen más especies que las zonas **desarrolladas** y **densas**. Sin embargo, el nivel de urbanización explica solo el **5.9%** de la variabilidad de la riqueza de especies ($R^2$ = 0.059), un efecto **mediano**.
+La riqueza media de especies de insectos **sí** difiere entre los niveles de urbanización (ANOVA: *F* = 4.90, gl = 3 y 236, p = 0.0025). Según el test de Tukey, las zonas **naturales** tienen más especies que las zonas **desarrolladas** y **densas**. Sin embargo, el nivel de urbanización explica solo el **5.9%** de la variabilidad de la riqueza de especies ($R^2$ = 0.059): el **94.1%** restante se debe a otros factores.
 
 <hr>
 
@@ -292,7 +292,7 @@ La correlación de Spearman también es negativa y significativa ($r_s$ = −0.6
 
 ### 6. Tamaño del efecto: $R^2$
 
-**a)** $R^2$ = 0.37: el coeficiente de endogamia explica el **37%** de la variabilidad del número de crías que sobreviven.
+**a)** $R^2$ = 0.37 (`Multiple R-squared` del paso 4): el coeficiente de endogamia explica el **37%** de la variabilidad del número de crías que sobreviven. El **63%** restante queda sin explicar y se debe a otros factores (la edad y el estado de salud de los padres, la disponibilidad de presas, la meteorología del invierno...).
 
 **b)**
 
@@ -300,9 +300,21 @@ La correlación de Spearman también es negativa y significativa ($r_s$ = −0.6
 cor(lobos$nPups, lobos$inbreedCoef)^2
 ```
 
-$r^2 = (-0.61)^2 = 0.37 = R^2$.
+$r^2 = (-0.61)^2 = 0.37 = R^2$: es el mismo valor que el `Multiple R-squared`. El $r$ es negativo, pero $R^2$ siempre es positivo: nos dice cuánto explica el modelo, no el sentido de la relación.
 
-El modelo de los lobos explica mucha más variabilidad (37%) que el de la urbanización (5.9%), aunque en los dos casos el efecto sea significativo.
+**c)**
+
+| | Parte 1: urbanización (ANOVA) | Parte 2: endogamia (regresión) |
+|---|---|---|
+| Tamaño de la muestra (*n*) | 240 trampas | 24 camadas |
+| p-valor | 0.0025 | 0.0016 |
+| $R^2$ | 0.059 | 0.37 |
+| % de variabilidad explicada | 5.9% | 37% |
+| % de variabilidad sin explicar | 94.1% | 63% |
+
+El modelo de los lobos explica mucha más variabilidad (37%) que el de la urbanización (5.9%), aunque en los dos casos el efecto sea significativo y los p-valores sean parecidos. El p-valor depende de la fuerza de la relación **y del tamaño de la muestra**: con 240 trampas, la urbanización da un p-valor muy pequeño aunque explique poco; con solo 24 camadas, la endogamia necesita explicar mucho para llegar a un p-valor parecido. El $R^2$, en cambio, no aumenta por tener más datos: mide cuánto explica el modelo.
+
+La riqueza de especies de una trampa depende de muchísimos factores (vegetación, temperatura, época del año, azar...), y la urbanización es solo uno de ellos. En los lobos, la endogamia tiene un efecto muy directo sobre la supervivencia de las crías (depresión por endogamia), así que, por sí sola, explica una parte importante de la variabilidad.
 
 ### 7. Visualizar la recta y hacer predicciones
 

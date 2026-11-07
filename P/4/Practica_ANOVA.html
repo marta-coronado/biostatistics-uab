@@ -537,6 +537,23 @@ referencia.</p>
 coeficientes (<code>(Intercept)</code> + <code>Urban.NameDenso</code>).
 <strong>¿Coincide con la del paso 3?</strong></li>
 </ul>
+<p><strong>¿Qué significa que el ANOVA sea un modelo lineal?</strong> El
+modelo <strong>predice para cada trampa la media de su grupo</strong>: a
+todas las trampas de una zona densa les asigna la misma riqueza, la
+media de las zonas densas. Lo que queda, la diferencia entre la riqueza
+observada en cada trampa y la media de su grupo, es el
+<strong>residuo</strong>, el mismo que usamos en el paso 5 para
+comprobar los supuestos:</p>
+<p><span class="math display">\[\text{observación} = \text{media del
+grupo} + \text{residuo}\]</span></p>
+<p>Es la misma idea que en la regresión (<span class="math inline">\(Y =
+a + b\,X + \text{residuo}\)</span>), solo que aquí la “recta” se
+sustituye por la media de cada grupo, que se construye a partir de la
+<code>(Intercept)</code> y los coeficientes de las variables
+<em>dummy</em>. Cuanto más pequeños sean los residuos en comparación con
+las diferencias entre las medias, más variabilidad explicará el modelo:
+es justo lo que mide el <span class="math inline">\(R^2\)</span> del
+paso siguiente.</p>
 </div>
 <div id="tamaño-del-efecto-el-coeficiente-de-determinación-r2" class="section level3">
 <h3>8. Tamaño del efecto: el coeficiente de determinación <span class="math inline">\(R^2\)</span></h3>
@@ -554,14 +571,23 @@ explica nada) a 1 (lo explica todo).</p>
 ajustado con <code>lm()</code> (paso 7) nos da el <span class="math inline">\(R^2\)</span> en la línea
 <code>Multiple R-squared</code> (<a href="https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#144">ejemplo</a>):</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">summary</span>(modelo_lm_urb)</span></code></pre></div>
-<p>Valores orientativos de Cohen para <span class="math inline">\(\eta^2\)</span>: <strong>0.01</strong> pequeño,
-<strong>0.06</strong> mediano, <strong>0.14</strong> grande (como
-siempre, son solo una guía: la relevancia depende del contexto).</p>
+<p>El <span class="math inline">\(R^2\)</span> nos dice <strong>lo bueno
+que es el modelo</strong>: qué parte de la variabilidad de <span class="math inline">\(Y\)</span> explica, y qué parte (<span class="math inline">\(1 - R^2\)</span>) queda <strong>sin
+explicar</strong> y se debe a otros factores que no están en el modelo.
+No hay un umbral universal de “<span class="math inline">\(R^2\)</span>
+alto”: depende del sistema. En un experimento controlado en el
+laboratorio esperamos <span class="math inline">\(R^2\)</span> altos; en
+datos de campo o en caracteres complejos, donde influyen muchos factores
+a la vez, un solo factor rara vez explica mucho. Por ejemplo, cada
+variante genética asociada a la altura humana explica menos del 1% de su
+variabilidad, y aun así su efecto es real.</p>
 <p><strong>¿Qué porcentaje de la variabilidad de la riqueza de especies
-explica el nivel de urbanización? ¿Es un efecto pequeño, mediano o
-grande? Si el p-valor es tan pequeño, ¿por qué el <span class="math inline">\(R^2\)</span> es tan bajo?</strong> (Pista: piensa
-en el tamaño de la muestra y en todo lo que puede influir en el número
-de especies de una trampa, además de la urbanización.)</p>
+explica el nivel de urbanización? ¿Qué porcentaje queda sin explicar?
+¿Es un modelo que explica mucho o poco? Si el p-valor es tan pequeño,
+¿por qué el <span class="math inline">\(R^2\)</span> es tan
+bajo?</strong> (Pista: piensa en el tamaño de la muestra y en todo lo
+que puede influir en el número de especies de una trampa, además de la
+urbanización.)</p>
 </div>
 <div id="test-post-hoc-tukey" class="section level3">
 <h3>9. Test <em>post hoc</em>: Tukey</h3>
@@ -590,7 +616,8 @@ los coeficientes de <code>lm()</code> del paso 7.)</p>
 niveles de urbanización (ANOVA: <em>F</em> = XXXX, gl = XXXX y XXXX, p =
 XXXX). Según el test de Tukey, las zonas XXXX tienen más especies que
 las zonas XXXX y XXXX. Sin embargo, el nivel de urbanización explica
-solo el XXXX% de la variabilidad de la riqueza de especies (<span class="math inline">\(R^2\)</span> = XXXX), un efecto XXXX.</p>
+solo el XXXX% de la variabilidad de la riqueza de especies (<span class="math inline">\(R^2\)</span> = XXXX): el XXXX% restante se debe a
+otros factores.</p>
 <hr>
 </div>
 </div>
@@ -734,33 +761,94 @@ enteros, entre 1 y 8) y que solo tenemos 24 camadas.</p>
 </div>
 <div id="tamaño-del-efecto-r2" class="section level3">
 <h3>6. Tamaño del efecto: <span class="math inline">\(R^2\)</span></h3>
+<p>Igual que en el ANOVA, el <span class="math inline">\(R^2\)</span>
+nos dice <strong>lo bueno que es el modelo</strong>: qué proporción de
+la variabilidad de la variable respuesta (aquí, el número de crías)
+explica la variable explicativa (el coeficiente de endogamia). El resto,
+<span class="math inline">\(1 - R^2\)</span>, queda <strong>sin
+explicar</strong> y se debe a otros factores que no están en el
+modelo.</p>
 <p><strong>a) ¿Qué proporción de la variabilidad del número de crías
-explica el coeficiente de endogamia?</strong></p>
-<p><strong>b)</strong> Comprueba que, en la regresión lineal simple,
-<span class="math inline">\(R^2 = r^2\)</span>: eleva al cuadrado el
-coeficiente de correlación del paso 3.</p>
-<p>El <span class="math inline">\(R^2\)</span> es el <strong>mismo
-concepto</strong> en el ANOVA y en la regresión: la proporción de la
-variabilidad total que explica el modelo. La única diferencia es que en
-el ANOVA la variable explicativa es categórica (grupos) y en la
-regresión es cuantitativa.</p>
-<p><strong>¿Qué modelo explica más variabilidad, el de la parte 1
-(urbanización) o el de los lobos (endogamia)?</strong></p>
+explica el coeficiente de endogamia?</strong> No hace falta calcular
+nada nuevo: busca el valor de <code>Multiple R-squared</code> en la
+salida de <code>summary(modelo_lm)</code> del paso 4. Exprésalo también
+en <strong>porcentaje</strong> (multiplica por 100) y di qué porcentaje
+queda <strong>sin explicar</strong>.</p>
+<p><strong>b) Comprueba que, en la regresión lineal simple, <span class="math inline">\(R^2 = r^2\)</span>.</strong> Calcula el
+coeficiente de correlación con <code>cor()</code> y elévalo al cuadrado
+con <code>^2</code>. Completa la plantilla (las dos variables son las
+mismas que usaste en el paso 3):</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">cor</span>(lobos<span class="sc">$</span>___, lobos<span class="sc">$</span>___)<span class="sc">^</span><span class="dv">2</span></span></code></pre></div>
+<p><strong>¿Obtienes el mismo valor que el
+<code>Multiple R-squared</code> del paso 4?</strong> Fíjate en que <span class="math inline">\(r\)</span> es negativo, pero <span class="math inline">\(r^2\)</span> (y por tanto <span class="math inline">\(R^2\)</span>) siempre es positivo: el <span class="math inline">\(R^2\)</span> nos dice <strong>cuánto</strong>
+explica el modelo, pero no el <strong>sentido</strong> de la relación
+(eso nos lo dice el signo de <span class="math inline">\(r\)</span> o de
+la pendiente <span class="math inline">\(b\)</span>).</p>
+<p><strong>c) Compara los dos modelos.</strong> El <span class="math inline">\(R^2\)</span> es el <strong>mismo concepto</strong>
+en el ANOVA y en la regresión: la proporción de la variabilidad total
+que explica el modelo. La única diferencia es que en el ANOVA la
+variable explicativa es categórica (grupos) y en la regresión es
+cuantitativa. Por eso podemos comparar los dos modelos directamente.
+Completa la tabla:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Parte 1: urbanización (ANOVA)</th>
+<th>Parte 2: endogamia (regresión)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Tamaño de la muestra (<em>n</em>)</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>p-valor</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(R^2\)</span></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>% de variabilidad explicada</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>% de variabilidad sin explicar</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>¿Qué modelo explica más variabilidad?</strong> Fíjate en que
+los dos p-valores son muy parecidos, pero los <span class="math inline">\(R^2\)</span> son muy distintos: ¿cómo es posible?
+(Pista: compara el tamaño de las dos muestras. ¿De qué depende el
+p-valor además de la fuerza de la relación? ¿Y el <span class="math inline">\(R^2\)</span>?)</p>
+<p><strong>¿Por qué crees que la endogamia explica una parte mayor de la
+variabilidad del número de crías que la urbanización de la riqueza de
+especies?</strong> Piensa en cuántos otros factores pueden influir en
+cada variable respuesta.</p>
 </div>
 <div id="visualizar-la-recta-y-hacer-predicciones" class="section level3">
 <h3>7. Visualizar la recta y hacer predicciones</h3>
 <p>Añade la recta de regresión al diagrama de dispersión con
 <code>geom_smooth(method = &quot;lm&quot;)</code>. La banda gris es el intervalo
 de confianza del 95% de la recta.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ___, <span class="fu">aes</span>(<span class="at">x =</span> ___, <span class="at">y =</span> ___)) <span class="sc">+</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="sc">+</span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;___&quot;</span>, <span class="at">y =</span> <span class="st">&quot;___&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ___, <span class="fu">aes</span>(<span class="at">x =</span> ___, <span class="at">y =</span> ___)) <span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">color =</span> <span class="st">&quot;firebrick4&quot;</span>) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;___&quot;</span>, <span class="at">y =</span> <span class="st">&quot;___&quot;</span>)</span></code></pre></div>
 <p>Una de las utilidades de la regresión es <strong>predecir</strong>.
 Con la función <code>predict()</code>, calcula cuántas crías
 esperaríamos en una camada con un coeficiente de endogamia de 0.25:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">predict</span>(modelo_lm, <span class="at">newdata =</span> <span class="fu">data.frame</span>(<span class="at">inbreedCoef =</span> <span class="fl">0.25</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">predict</span>(modelo_lm, <span class="at">newdata =</span> <span class="fu">data.frame</span>(<span class="at">inbreedCoef =</span> <span class="fl">0.25</span>))</span></code></pre></div>
 <p><strong>¿Tendría sentido usar la recta para predecir el número de
 crías con un coeficiente de endogamia de 0.8?</strong> (Pista: mira el
 rango de valores de <code>inbreedCoef</code> en los datos.)</p>

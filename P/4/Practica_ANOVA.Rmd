@@ -292,6 +292,12 @@ La `(Intercept)` es la **media del nivel de referencia**, y cada uno de los otro
 
 
 
+**¿Qué significa que el ANOVA sea un modelo lineal?** El modelo **predice para cada trampa la media de su grupo**: a todas las trampas de una zona densa les asigna la misma riqueza, la media de las zonas densas. Lo que queda, la diferencia entre la riqueza observada en cada trampa y la media de su grupo, es el **residuo**, el mismo que usamos en el paso 5 para comprobar los supuestos:
+
+$$\text{observación} = \text{media del grupo} + \text{residuo}$$
+
+Es la misma idea que en la regresión ($Y = a + b\,X + \text{residuo}$), solo que aquí la "recta" se sustituye por la media de cada grupo, que se construye a partir de la `(Intercept)` y los coeficientes de las variables *dummy*. Cuanto más pequeños sean los residuos en comparación con las diferencias entre las medias, más variabilidad explicará el modelo: es justo lo que mide el $R^2$ del paso siguiente.
+
 ### 8. Tamaño del efecto: el coeficiente de determinación $R^2$
 
 El ANOVA nos dice **si** hay diferencias entre los grupos, pero no **cuánto** importa el factor. Para eso calculamos el **coeficiente de determinación** ($R^2$), que en el ANOVA de una vía se conoce también como **eta cuadrado** ($\eta^2$) ([diapositiva](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#140)):
@@ -310,9 +316,9 @@ summary(modelo_lm_urb)
 
 ```
 
-Valores orientativos de Cohen para $\eta^2$: **0.01** pequeño, **0.06** mediano, **0.14** grande (como siempre, son solo una guía: la relevancia depende del contexto).
+El $R^2$ nos dice **lo bueno que es el modelo**: qué parte de la variabilidad de $Y$ explica, y qué parte ($1 - R^2$) queda **sin explicar** y se debe a otros factores que no están en el modelo. No hay un umbral universal de "$R^2$ alto": depende del sistema. En un experimento controlado en el laboratorio esperamos $R^2$ altos; en datos de campo o en caracteres complejos, donde influyen muchos factores a la vez, un solo factor rara vez explica mucho. Por ejemplo, cada variante genética asociada a la altura humana explica menos del 1% de su variabilidad, y aun así su efecto es real.
 
-**¿Qué porcentaje de la variabilidad de la riqueza de especies explica el nivel de urbanización? ¿Es un efecto pequeño, mediano o grande? Si el p-valor es tan pequeño, ¿por qué el $R^2$ es tan bajo?** (Pista: piensa en el tamaño de la muestra y en todo lo que puede influir en el número de especies de una trampa, además de la urbanización.)
+**¿Qué porcentaje de la variabilidad de la riqueza de especies explica el nivel de urbanización? ¿Qué porcentaje queda sin explicar? ¿Es un modelo que explica mucho o poco? Si el p-valor es tan pequeño, ¿por qué el $R^2$ es tan bajo?** (Pista: piensa en el tamaño de la muestra y en todo lo que puede influir en el número de especies de una trampa, además de la urbanización.)
 
 
 
@@ -345,7 +351,7 @@ plot(TukeyHSD(modelo_aov), las = 1)
 
 **Completa la conclusión:**
 
-La riqueza media de especies de insectos [sí/no] difiere entre los niveles de urbanización (ANOVA: *F* = XXXX, gl = XXXX y XXXX, p = XXXX). Según el test de Tukey, las zonas XXXX tienen más especies que las zonas XXXX y XXXX. Sin embargo, el nivel de urbanización explica solo el XXXX% de la variabilidad de la riqueza de especies ($R^2$ = XXXX), un efecto XXXX.
+La riqueza media de especies de insectos [sí/no] difiere entre los niveles de urbanización (ANOVA: *F* = XXXX, gl = XXXX y XXXX, p = XXXX). Según el test de Tukey, las zonas XXXX tienen más especies que las zonas XXXX y XXXX. Sin embargo, el nivel de urbanización explica solo el XXXX% de la variabilidad de la riqueza de especies ($R^2$ = XXXX): el XXXX% restante se debe a otros factores.
 
 <hr>
 
@@ -476,17 +482,39 @@ ggplot(residuos_lobos, aes(x = ajustados, y = residuos)) +
 
 ### 6. Tamaño del efecto: $R^2$
 
-**a) ¿Qué proporción de la variabilidad del número de crías explica el coeficiente de endogamia?**
+Igual que en el ANOVA, el $R^2$ nos dice **lo bueno que es el modelo**: qué proporción de la variabilidad de la variable respuesta (aquí, el número de crías) explica la variable explicativa (el coeficiente de endogamia). El resto, $1 - R^2$, queda **sin explicar** y se debe a otros factores que no están en el modelo.
 
-**b)** Comprueba que, en la regresión lineal simple, $R^2 = r^2$: eleva al cuadrado el coeficiente de correlación del paso 3.
+**a) ¿Qué proporción de la variabilidad del número de crías explica el coeficiente de endogamia?** No hace falta calcular nada nuevo: busca el valor de `Multiple R-squared` en la salida de `summary(modelo_lm)` del paso 4. Exprésalo también en **porcentaje** (multiplica por 100) y di qué porcentaje queda **sin explicar**.
+
+
+
+**b) Comprueba que, en la regresión lineal simple, $R^2 = r^2$.** Calcula el coeficiente de correlación con `cor()` y elévalo al cuadrado con `^2`. Completa la plantilla (las dos variables son las mismas que usaste en el paso 3):
+
+```{r eval = F}
+cor(lobos$___, lobos$___)^2
+```
 
 ```{r}
 
 ```
 
-El $R^2$ es el **mismo concepto** en el ANOVA y en la regresión: la proporción de la variabilidad total que explica el modelo. La única diferencia es que en el ANOVA la variable explicativa es categórica (grupos) y en la regresión es cuantitativa.
+**¿Obtienes el mismo valor que el `Multiple R-squared` del paso 4?** Fíjate en que $r$ es negativo, pero $r^2$ (y por tanto $R^2$) siempre es positivo: el $R^2$ nos dice **cuánto** explica el modelo, pero no el **sentido** de la relación (eso nos lo dice el signo de $r$ o de la pendiente $b$).
 
-**¿Qué modelo explica más variabilidad, el de la parte 1 (urbanización) o el de los lobos (endogamia)?**
+
+
+**c) Compara los dos modelos.** El $R^2$ es el **mismo concepto** en el ANOVA y en la regresión: la proporción de la variabilidad total que explica el modelo. La única diferencia es que en el ANOVA la variable explicativa es categórica (grupos) y en la regresión es cuantitativa. Por eso podemos comparar los dos modelos directamente. Completa la tabla:
+
+| | Parte 1: urbanización (ANOVA) | Parte 2: endogamia (regresión) |
+|---|---|---|
+| Tamaño de la muestra (*n*) | | |
+| p-valor | | |
+| $R^2$ | | |
+| % de variabilidad explicada | | |
+| % de variabilidad sin explicar | | |
+
+**¿Qué modelo explica más variabilidad?** Fíjate en que los dos p-valores son muy parecidos, pero los $R^2$ son muy distintos: ¿cómo es posible? (Pista: compara el tamaño de las dos muestras. ¿De qué depende el p-valor además de la fuerza de la relación? ¿Y el $R^2$?)
+
+**¿Por qué crees que la endogamia explica una parte mayor de la variabilidad del número de crías que la urbanización de la riqueza de especies?** Piensa en cuántos otros factores pueden influir en cada variable respuesta.
 
 
 
