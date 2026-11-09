@@ -197,7 +197,7 @@ Dos parejas difieren significativamente (su intervalo de confianza no incluye el
 
 La diferencia Suburbano − Natural (8.8 especies menos) no llega a ser significativa (p = 0.066), y entre los tres niveles urbanos no hay diferencias significativas.
 
-**Comparación con los coeficientes de `lm()`.** Las diferencias respecto a `Natural` (−8.80, −11.15 y −12.58) son **exactamente los coeficientes** del paso 7: el test de Tukey compara las mismas medias que estima el modelo lineal.
+**⭐ Opcional. Comparación con los coeficientes de `lm()`.** Las diferencias respecto a `Natural` (−8.80, −11.15 y −12.58) son **exactamente los coeficientes** del paso 7: el test de Tukey compara las mismas medias que estima el modelo lineal.
 
 ### 10. Conclusión
 
@@ -220,10 +220,12 @@ La variable explicativa ($X$) es el coeficiente de endogamia (`inbreedCoef`), y 
 ### 2. Visualizar los datos
 
 ```{r}
-ggplot(data = lobos, aes(x = inbreedCoef, y = nPups)) +
+plot_lobos <- ggplot(data = lobos, aes(x = inbreedCoef, y = nPups)) +
   geom_point(size = 2) +
   theme_classic() +
   labs(x = "Coeficiente de endogamia", y = "Crías que sobreviven al primer invierno")
+
+plot_lobos
 ```
 
 La relación es **negativa**: las camadas más endogámicas tienden a tener menos crías. Parece aproximadamente lineal, aunque con bastante dispersión.
@@ -298,28 +300,16 @@ cor(lobos$nPups, lobos$inbreedCoef)^2
 
 $r^2 = (-0.61)^2 = 0.37 = R^2$: es el mismo valor que el `Multiple R-squared`. El $r$ es negativo, pero $R^2$ siempre es positivo: nos dice cuánto explica el modelo, no el sentido de la relación.
 
-**c)**
+**c)** Urbanización (ANOVA): $R^2$ = 0.059, p = 0.0025, *n* = 240 trampas. Endogamia (regresión): $R^2$ = 0.37, p = 0.0016, *n* = 24 camadas.
 
-| | Parte 1: urbanización (ANOVA) | Parte 2: endogamia (regresión) |
-|---|---|---|
-| Tamaño de la muestra (*n*) | 240 trampas | 24 camadas |
-| p-valor | 0.0025 | 0.0016 |
-| $R^2$ | 0.059 | 0.37 |
-| % de variabilidad explicada | 5.9% | 37% |
-| % de variabilidad sin explicar | 94.1% | 63% |
-
-El modelo de los lobos explica mucha más variabilidad (37%) que el de la urbanización (5.9%), aunque en los dos casos el efecto sea significativo y los p-valores sean parecidos. El p-valor depende de la fuerza de la relación **y del tamaño de la muestra**: con 240 trampas, la urbanización da un p-valor muy pequeño aunque explique poco; con solo 24 camadas, la endogamia necesita explicar mucho para llegar a un p-valor parecido. El $R^2$, en cambio, no aumenta por tener más datos: mide cuánto explica el modelo.
+El modelo de los lobos explica mucha más variabilidad (37%) que el de la urbanización (5.9%), aunque en los dos casos el efecto sea significativo (p < 0.05). El p-valor depende de la fuerza de la relación **y del tamaño de la muestra**: con 240 trampas, la urbanización da un p-valor muy pequeño aunque explique poco; con solo 24 camadas, la endogamia necesita explicar mucho más para ser significativa. El $R^2$, en cambio, no aumenta por tener más datos: mide cuánto explica el modelo.
 
 La riqueza de especies de una trampa depende de muchísimos factores (vegetación, temperatura, época del año, azar...), y la urbanización es solo uno de ellos. En los lobos, la endogamia tiene un efecto muy directo sobre la supervivencia de las crías (depresión por endogamia), así que, por sí sola, explica una parte importante de la variabilidad.
 
 ### 7. Visualizar la recta y hacer predicciones
 
 ```{r}
-ggplot(data = lobos, aes(x = inbreedCoef, y = nPups)) +
-  geom_point(size = 2) +
-  geom_smooth(method = "lm", color = "firebrick4") +
-  theme_classic() +
-  labs(x = "Coeficiente de endogamia", y = "Crías que sobreviven al primer invierno")
+plot_lobos + geom_smooth(method = "lm", color = "firebrick4")
 ```
 
 ```{r}
@@ -334,5 +324,3 @@ Esperaríamos **3.7 crías** en una camada con un coeficiente de endogamia de 0.
 ### 8. Conclusión
 
 El número de crías que sobreviven a su primer invierno **disminuye** con el coeficiente de endogamia ($b$ = −11.45, p = 0.0016). Por cada aumento de 0.1 en el coeficiente de endogamia, sobreviven de media **1.14** crías menos. La endogamia explica el **37%** de la variabilidad en el número de crías ($R^2$ = 0.37).
-
-**¿Demuestra que la endogamia *causa* la pérdida de crías?** No por sí solo. Es un estudio **observacional**: los investigadores no asignaron la endogamia al azar a las camadas, sino que la midieron. Las camadas más endogámicas podrían diferir en otras cosas que también afectan a la supervivencia de las crías: el territorio, la disponibilidad de presas, la edad o la experiencia de los padres, o el año (si la endogamia de la población aumentó con el tiempo). El resultado es **compatible** con un efecto de la endogamia, y tiene sentido biológico (depresión endogámica), pero para hablar de causa haría falta un diseño experimental o controlar estas otras variables.

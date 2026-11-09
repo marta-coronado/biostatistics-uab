@@ -194,7 +194,7 @@ Calcula también el número de trampas (`n()`), la media (`mean()`) y la desviac
 
 ### 4. Hipótesis
 
-**Escribe la hipótesis nula y la alternativa, con palabras y con símbolos.**
+**Escribe la hipótesis nula y la alternativa.**
 
 
 
@@ -337,7 +337,7 @@ plot(TukeyHSD(modelo_aov), las = 1)
 
 **¿Qué parejas de grupos difieren significativamente (`p adj` < 0.05)? ¿Cuánto difieren sus medias?**
 
-**Fíjate en la columna `diff` de las parejas con `Natural`: ¿te suenan estos valores?** (Pista: mira los coeficientes de `lm()` del paso 7.)
+**⭐ Opcional (si te da tiempo): fíjate en la columna `diff` de las parejas con `Natural`. ¿Te suenan estos valores?** (Pista: mira los coeficientes de `lm()` del paso 7.)
 
 
 
@@ -397,13 +397,15 @@ El enlace URL es: `https://raw.githubusercontent.com/marta-coronado/biostatistic
 
 ### 2. Visualizar los datos
 
-En una regresión, lo primero es siempre hacer un **diagrama de dispersión**, con la variable explicativa en el eje x y la respuesta en el eje y. Completa la plantilla:
+En una regresión, lo primero es siempre hacer un **diagrama de dispersión**, con la variable explicativa en el eje x y la respuesta en el eje y. Completa la plantilla. Fíjate en que guardamos el gráfico en un objeto llamado `plot_lobos` y después lo imprimimos escribiendo su nombre: así, en el paso 7, podremos añadirle la recta de regresión sin tener que volver a escribirlo todo.
 
 ```{r eval = F}
-ggplot(data = ___, aes(x = ___, y = ___)) +
+plot_lobos <- ggplot(data = ___, aes(x = ___, y = ___)) +
   geom_point(size = 2) +
   theme_classic() +
   labs(x = "___", y = "___")
+
+plot_lobos
 ```
 
 **¿Qué tipo de relación ves (positiva, negativa, ninguna)? ¿Parece lineal?**
@@ -437,7 +439,7 @@ En la salida de `summary()`, fíjate en:
 
 **a) Escribe la ecuación de la recta** ($Y = a + b\,X$) con los valores que has obtenido.
 
-**b) Interpreta la pendiente.** ¿Cuántas crías menos sobreviven, de media, por cada aumento de 0.1 en el coeficiente de endogamia?
+**b) Interpreta la pendiente.** ¿Cuántas crías menos sobreviven, de media, por cada aumento de 0.1 en el coeficiente de endogamia? (Pista: la pendiente $b$ es el cambio en el número de crías cuando el coeficiente de endogamia aumenta **1 unidad**. Si aumenta 0.1, el cambio es $b \times 0.1$.)
 
 **c) ¿Es la pendiente significativamente distinta de 0?** ¿Coincide el p-valor con el de la correlación del paso 3?
 
@@ -496,17 +498,9 @@ cor(lobos$___, lobos$___)^2
 
 
 
-**c) Compara los dos modelos.** El $R^2$ es el **mismo concepto** en el ANOVA y en la regresión: la proporción de la variabilidad total que explica el modelo. La única diferencia es que en el ANOVA la variable explicativa es categórica (grupos) y en la regresión es cuantitativa. Por eso podemos comparar los dos modelos directamente. Completa la tabla:
+**c) Compara los dos modelos.** El $R^2$ es el **mismo concepto** en el ANOVA y en la regresión: la proporción de la variabilidad total que explica el modelo. La única diferencia es que en el ANOVA la variable explicativa es categórica (grupos) y en la regresión es cuantitativa. Por eso podemos comparar los dos modelos directamente: compara el $R^2$ de los lobos (apartado a) con el de la urbanización (parte 1, paso 8).
 
-| | Parte 1: urbanización (ANOVA) | Parte 2: endogamia (regresión) |
-|---|---|---|
-| Tamaño de la muestra (*n*) | | |
-| p-valor | | |
-| $R^2$ | | |
-| % de variabilidad explicada | | |
-| % de variabilidad sin explicar | | |
-
-**¿Qué modelo explica más variabilidad?** Fíjate en que los dos p-valores son muy parecidos, pero los $R^2$ son muy distintos: ¿cómo es posible? (Pista: compara el tamaño de las dos muestras. ¿De qué depende el p-valor además de la fuerza de la relación? ¿Y el $R^2$?)
+**¿Qué modelo explica más variabilidad?** Fíjate en que los dos modelos son significativos (p < 0.05), pero los $R^2$ son muy distintos: ¿cómo es posible? (Pista: compara el tamaño de las dos muestras. ¿De qué depende el p-valor además de la fuerza de la relación? ¿Y el $R^2$?)
 
 **¿Por qué crees que la endogamia explica una parte mayor de la variabilidad del número de crías que la urbanización de la riqueza de especies?** Piensa en cuántos otros factores pueden influir en cada variable respuesta.
 
@@ -514,14 +508,10 @@ cor(lobos$___, lobos$___)^2
 
 ### 7. Visualizar la recta y hacer predicciones
 
-Añade la recta de regresión al diagrama de dispersión con `geom_smooth(method = "lm")`. La banda gris es el intervalo de confianza del 95% de la recta.
+Añade la recta de regresión al diagrama de dispersión del paso 2 con `geom_smooth(method = "lm")`. Como lo guardamos en el objeto `plot_lobos`, basta con sumarle la nueva capa. La banda gris es el intervalo de confianza del 95% de la recta.
 
 ```{r eval = F}
-ggplot(data = ___, aes(x = ___, y = ___)) +
-  geom_point(size = 2) +
-  geom_smooth(method = "lm", color = "firebrick4") +
-  theme_classic() +
-  labs(x = "___", y = "___")
+plot_lobos + geom_smooth(method = "lm", color = "firebrick4")
 ```
 
 ```{r}
@@ -547,8 +537,6 @@ predict(modelo_lm, newdata = data.frame(inbreedCoef = 0.25))
 **Completa la conclusión:**
 
 El número de crías que sobreviven a su primer invierno [aumenta/disminuye] con el coeficiente de endogamia ($b$ = XXXX, p = XXXX). Por cada aumento de 0.1 en el coeficiente de endogamia, sobreviven de media XXXX crías menos. La endogamia explica el XXXX% de la variabilidad en el número de crías ($R^2$ = XXXX).
-
-**¿Demuestra este estudio que la endogamia *causa* la pérdida de crías?** Piensa en cómo se obtuvieron los datos (¿se asignó la endogamia al azar?) y en qué otras variables podrían influir en la supervivencia de las crías.
 
 <hr>
 
