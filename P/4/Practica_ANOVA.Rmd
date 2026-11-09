@@ -251,13 +251,7 @@ Ejecuta `summary(modelo_aov)` para obtener la tabla del ANOVA ([ejemplo](https:/
 
 En la tabla, la fila del factor corresponde a la variabilidad **entre** grupos, y la fila `Residuals`, a la variabilidad **dentro** de los grupos. **Anota el valor de *F*, sus grados de libertad (`Df`) y el p-valor.**
 
-Como vimos en clase, también podemos tomar la decisión comparando *F* con el valor crítico de la distribución *F*. Calcúlalo con `qf(0.95, df1 = gl_entre, df2 = gl_dentro)`, sustituyendo los grados de libertad por los de tu tabla ([ejemplo](https://marta-coronado.github.io/biostatistics-uab/T/12/13.ANOVA_ampliado.html#90)):
-
-```{r}
-
-```
-
-**¿Rechazas $H_0$? ¿Llegas a la misma conclusión con el p-valor y con la *F* crítica?**
+**¿Rechazas $H_0$?**
 
 
 

@@ -136,11 +136,7 @@ summary(modelo_aov)
 
 *F* = 4.90, con 3 y 236 grados de libertad, p = 0.0025.
 
-```{r}
-qf(0.95, df1 = 3, df2 = 236)
-```
-
-*F* = 4.90 > *F* crítica = 2.64, y p = 0.0025 < 0.05: las dos formas llevan a la misma conclusión. **Rechazamos $H_0$**: la riqueza media de especies difiere en al menos un nivel de urbanización.
+p = 0.0025 < 0.05: **rechazamos $H_0$**: la riqueza media de especies difiere en al menos un nivel de urbanización.
 
 ### 7. El ANOVA es un modelo lineal
 
